@@ -140,7 +140,7 @@ flash_get_halfword(x49gp_flash_t *flash, uint32_t offset)
 		break;
 
 	case FLASH_STATE_CFI_QUERY:
-		if (offset < flash->cfi_size) {
+		if ( (offset>>1) < flash->cfi_size) {
 			data = flash->cfi_data[offset >> 1];
 		} else {
 			data = 0x0000;
