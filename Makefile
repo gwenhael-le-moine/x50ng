@@ -138,13 +138,13 @@ $(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 	$(CC) $(LDFLAGS) $(X49GP_LDFLAGS) -o $@ $(OBJS) $(VVFATOBJS) $(LDLIBS) $(X49GP_LDLIBS)
 
 install: all $(TARGET).desktop $(TARGET).man
-	install -D -m 755 $(TARGET) "$(INSTALL_BINARY_DIR)/$(TARGET)"
-	install -D -m 644 $(BOOT49GP) "$(INSTALL_DATA_DIR)/$(BOOT49GP)"
-	install -D -m 644 $(BOOT50G) "$(INSTALL_DATA_DIR)/$(BOOT50G)"
-	install -D -m 644 $(IMAGE49GP) "$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
-	install -D -m 644 $(IMAGE50G) "$(INSTALL_DATA_DIR)/$(IMAGE50G)"
-	install -D -m 644 $(TARGET).desktop "$(INSTALL_MENU_DIR)/$(TARGET).desktop"
-	install -D -m 644 $(TARGET).man "$(INSTALL_MAN_DIR)/$(TARGET).1"
+	install -D -m 755 $(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
+	install -D -m 644 $(BOOT49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(BOOT49GP)"
+	install -D -m 644 $(BOOT50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(BOOT50G)"
+	install -D -m 644 $(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
+	install -D -m 644 $(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
+	install -D -m 644 $(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
+	install -D -m 644 $(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 
 $(TARGET).desktop: x49gp.desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" <x49gp.desktop.in >$@
