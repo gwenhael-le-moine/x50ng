@@ -82,7 +82,7 @@ CC += $(shell if [ "`uname -m`" = "sparc64" -o "`uname -m`" = "sun4u" ]; then ec
 
 COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)
 
-X49GP_CFLAGS = -O2 -Wall -Werror $(DEBUG) $(INCLUDES) $(DEFINES)
+X49GP_CFLAGS = -O2 -Wall -Werror $(DEBUG) $(INCLUDES) $(DEFINES) -Wno-error=deprecated-declarations -Wno-error=stringop-overflow= -Wno-error=array-bounds
 X49GP_LDFLAGS += $(DEBUG) $(GDB_LDFLAGS)
 X49GP_LDLIBS = $(X49GP_LIBS) $(GDB_LIBS) $(COCOA_LIBS)
 
