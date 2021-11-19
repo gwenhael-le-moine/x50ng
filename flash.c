@@ -524,8 +524,8 @@ flash_load(x49gp_module_t *module, GKeyFile *key)
 		bootfd = x49gp_module_open_rodata(module,
 						  calc == UI_CALCULATOR_HP49GP ||
 						  calc == UI_CALCULATOR_HP49GP_NEWRPL ?
-						  "boot-49g+.bin" :
-						  "boot-50g.bin",
+                                                  "firmware/boot-49g+.bin" :
+                                                  "firmware/boot-50g.bin",
 						  &bootfile);
 
 		if (bootfd < 0) {

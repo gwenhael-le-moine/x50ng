@@ -464,7 +464,7 @@ action_longopt(struct options *opt, struct option_def *match, char *this_opt,
 			return TRUE;
 		case '=':
 			(option_defs[i].action)(opt, option_defs + i, this_opt,
-						option_str+2, progname);
+                                                option_str+1, progname);
 			return TRUE;
 		}
 	}
