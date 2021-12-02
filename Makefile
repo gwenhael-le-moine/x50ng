@@ -35,8 +35,6 @@ X49GP_DEBUG = \
 
 DEBUG = -g # -pg
 
-BOOT49GP = boot-49g+.bin
-BOOT50G = boot-50g.bin
 IMAGE49GP = hp49g+.png
 IMAGE50G = hp50g.png
 
@@ -69,6 +67,7 @@ INCLUDES = $(GDB_INCLUDES) $(X49GP_INCLUDES)
 INSTALL_PREFIX = /usr/local
 INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
 INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
+INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
 INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
 INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
 DEFINES += -DX49GP_DATADIR=\"$(INSTALL_DATA_DIR)\"
@@ -139,10 +138,9 @@ $(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 
 install: all $(TARGET).desktop $(TARGET).man
 	install -D -m 755 $(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
-	install -D -m 644 $(BOOT49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(BOOT49GP)"
-	install -D -m 644 $(BOOT50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(BOOT50G)"
 	install -D -m 644 $(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
 	install -D -m 644 $(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
+	install -D -m 644 pull-roms.sh "$(DESTDIR)$(INSTALL_DOC_DIR)/pull-roms.sh"
 	install -D -m 644 $(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 $(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 
