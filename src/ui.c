@@ -2556,6 +2556,12 @@ x49gp_ui_key_event(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	case GDK_KEY_ssharp:				index = 30;	break;
 	case GDK_KEY_numbersign:			index = 35;	break;
 
+	case GDK_KEY_F7:
+	case GDK_KEY_F10:
+		x49gp->arm_exit = 1;
+		cpu_exit(x49gp->env);
+		return FALSE;
+
 	case GDK_KEY_F12:
 		switch (event->type) {
 		case GDK_KEY_PRESS:
