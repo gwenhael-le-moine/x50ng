@@ -208,7 +208,7 @@ depend: depend-libs
 mrproper: clean-qemu distclean
 
 pretty-code:
-	clang-format -i *.c *.h
+	clang-format -i $(SRC_DIR)/*.c $(SRC_DIR)/*.h
 
 pull-firmware:
 	./pull-firmware.sh
