@@ -150,7 +150,7 @@ install: all $(TARGET).desktop $(TARGET).man
 	install -D -m 755 $(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
 	install -D -m 644 $(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
 	install -D -m 644 $(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
-	install -D -m 644 pull-roms.sh "$(DESTDIR)$(INSTALL_DOC_DIR)/pull-roms.sh"
+	install -D -m 644 pull-firmware.sh "$(DESTDIR)$(INSTALL_DOC_DIR)/pull-roms.sh"
 	install -D -m 644 $(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 $(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 
