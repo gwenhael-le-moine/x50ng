@@ -2,96 +2,97 @@
  */
 
 #include <stdlib.h>
-#include <bitmap_font.h>
 
-#include <tiny_notdef.xbm>
+#include "include/bitmap_font.h"
 
-#include <tiny_quotedbl.xbm>
-#include <tiny_numbersign.xbm>
-#include <tiny_ampersand.xbm>
-#include <tiny_parenleft.xbm>
-#include <tiny_parenright.xbm>
-#include <tiny_comma.xbm>
-#include <tiny_hyphen.xbm>
-#include <tiny_period.xbm>
-#include <tiny_slash.xbm>
-#include <tiny_colon.xbm>
-#include <tiny_less.xbm>
-#include <tiny_equal.xbm>
-#include <tiny_greater.xbm>
-#include <tiny_bracketleft.xbm>
-#include <tiny_bracketright.xbm>
-#include <tiny_underscore.xbm>
-#include <tiny_braceleft.xbm>
-#include <tiny_braceright.xbm>
+#include "bitmaps/tiny_notdef.xbm"
 
-#include <tiny_guillemotleft.xbm>
-#include <tiny_guillemotright.xbm>
-#include <tiny_arrowleft.xbm>
-#include <tiny_arrowright.xbm>
+#include "bitmaps/tiny_quotedbl.xbm"
+#include "bitmaps/tiny_numbersign.xbm"
+#include "bitmaps/tiny_ampersand.xbm"
+#include "bitmaps/tiny_parenleft.xbm"
+#include "bitmaps/tiny_parenright.xbm"
+#include "bitmaps/tiny_comma.xbm"
+#include "bitmaps/tiny_hyphen.xbm"
+#include "bitmaps/tiny_period.xbm"
+#include "bitmaps/tiny_slash.xbm"
+#include "bitmaps/tiny_colon.xbm"
+#include "bitmaps/tiny_less.xbm"
+#include "bitmaps/tiny_equal.xbm"
+#include "bitmaps/tiny_greater.xbm"
+#include "bitmaps/tiny_bracketleft.xbm"
+#include "bitmaps/tiny_bracketright.xbm"
+#include "bitmaps/tiny_underscore.xbm"
+#include "bitmaps/tiny_braceleft.xbm"
+#include "bitmaps/tiny_braceright.xbm"
 
-#include <tiny_large_comma.xbm>
-#include <tiny_overscore.xbm>
+#include "bitmaps/tiny_guillemotleft.xbm"
+#include "bitmaps/tiny_guillemotright.xbm"
+#include "bitmaps/tiny_arrowleft.xbm"
+#include "bitmaps/tiny_arrowright.xbm"
 
-#include <tiny_xsuperior.xbm>
-#include <tiny_twosuperior.xbm>
+#include "bitmaps/tiny_large_comma.xbm"
+#include "bitmaps/tiny_overscore.xbm"
 
-#include <tiny_math_e.xbm>
-#include <tiny_math_x.xbm>
-#include <tiny_math_y.xbm>
-#include <tiny_math_pi.xbm>
-#include <tiny_math_summation.xbm>
-#include <tiny_math_radical.xbm>
-#include <tiny_math_partialdiff.xbm>
-#include <tiny_math_integral.xbm>
-#include <tiny_math_infinity.xbm>
+#include "bitmaps/tiny_xsuperior.xbm"
+#include "bitmaps/tiny_twosuperior.xbm"
 
-#include <tiny_math_numbersign.xbm>
-#include <tiny_math_less.xbm>
-#include <tiny_math_greater.xbm>
-#include <tiny_math_lessequal.xbm>
-#include <tiny_math_greaterequal.xbm>
-#include <tiny_math_equal.xbm>
-#include <tiny_math_notequal.xbm>
+#include "bitmaps/tiny_math_e.xbm"
+#include "bitmaps/tiny_math_x.xbm"
+#include "bitmaps/tiny_math_y.xbm"
+#include "bitmaps/tiny_math_pi.xbm"
+#include "bitmaps/tiny_math_summation.xbm"
+#include "bitmaps/tiny_math_radical.xbm"
+#include "bitmaps/tiny_math_partialdiff.xbm"
+#include "bitmaps/tiny_math_integral.xbm"
+#include "bitmaps/tiny_math_infinity.xbm"
 
-#include <tiny_math_arrowleft.xbm>
-#include <tiny_math_arrowright.xbm>
-#include <tiny_math_downarrowleft.xbm>
-#include <tiny_math_downarrowright.xbm>
+#include "bitmaps/tiny_math_numbersign.xbm"
+#include "bitmaps/tiny_math_less.xbm"
+#include "bitmaps/tiny_math_greater.xbm"
+#include "bitmaps/tiny_math_lessequal.xbm"
+#include "bitmaps/tiny_math_greaterequal.xbm"
+#include "bitmaps/tiny_math_equal.xbm"
+#include "bitmaps/tiny_math_notequal.xbm"
 
-#include <tiny_zero.xbm>
-#include <tiny_one.xbm>
-#include <tiny_two.xbm>
-#include <tiny_three.xbm>
+#include "bitmaps/tiny_math_arrowleft.xbm"
+#include "bitmaps/tiny_math_arrowright.xbm"
+#include "bitmaps/tiny_math_downarrowleft.xbm"
+#include "bitmaps/tiny_math_downarrowright.xbm"
 
-#include <tiny_A.xbm>
-#include <tiny_B.xbm>
-#include <tiny_C.xbm>
-#include <tiny_D.xbm>
-#include <tiny_E.xbm>
-#include <tiny_F.xbm>
-#include <tiny_G.xbm>
-#include <tiny_H.xbm>
-#include <tiny_I.xbm>
-#include <tiny_J.xbm>
-#include <tiny_K.xbm>
-#include <tiny_L.xbm>
-#include <tiny_M.xbm>
-#include <tiny_N.xbm>
-#include <tiny_O.xbm>
-#include <tiny_P.xbm>
-#include <tiny_Q.xbm>
-#include <tiny_R.xbm>
-#include <tiny_S.xbm>
-#include <tiny_T.xbm>
-#include <tiny_U.xbm>
-#include <tiny_V.xbm>
-#include <tiny_W.xbm>
-#include <tiny_X.xbm>
-#include <tiny_Y.xbm>
-#include <tiny_Z.xbm>
+#include "bitmaps/tiny_zero.xbm"
+#include "bitmaps/tiny_one.xbm"
+#include "bitmaps/tiny_two.xbm"
+#include "bitmaps/tiny_three.xbm"
 
-#include <tiny__i.xbm>
+#include "bitmaps/tiny_A.xbm"
+#include "bitmaps/tiny_B.xbm"
+#include "bitmaps/tiny_C.xbm"
+#include "bitmaps/tiny_D.xbm"
+#include "bitmaps/tiny_E.xbm"
+#include "bitmaps/tiny_F.xbm"
+#include "bitmaps/tiny_G.xbm"
+#include "bitmaps/tiny_H.xbm"
+#include "bitmaps/tiny_I.xbm"
+#include "bitmaps/tiny_J.xbm"
+#include "bitmaps/tiny_K.xbm"
+#include "bitmaps/tiny_L.xbm"
+#include "bitmaps/tiny_M.xbm"
+#include "bitmaps/tiny_N.xbm"
+#include "bitmaps/tiny_O.xbm"
+#include "bitmaps/tiny_P.xbm"
+#include "bitmaps/tiny_Q.xbm"
+#include "bitmaps/tiny_R.xbm"
+#include "bitmaps/tiny_S.xbm"
+#include "bitmaps/tiny_T.xbm"
+#include "bitmaps/tiny_U.xbm"
+#include "bitmaps/tiny_V.xbm"
+#include "bitmaps/tiny_W.xbm"
+#include "bitmaps/tiny_X.xbm"
+#include "bitmaps/tiny_Y.xbm"
+#include "bitmaps/tiny_Z.xbm"
+
+#include "bitmaps/tiny__i.xbm"
 
 const bitmap_font_t tiny_font =
 {

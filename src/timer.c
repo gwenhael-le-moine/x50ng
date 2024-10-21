@@ -14,11 +14,11 @@
 #include <errno.h>
 #include <poll.h>
 
-#include <x49gp.h>
-#include <x49gp_timer.h>
-#include <s3c2410.h>
-
 #include <glib.h>
+
+#include "include/x49gp.h"
+#include "include/x49gp_timer.h"
+#include "include/s3c2410.h"
 
 #include "gdbstub.h"
 

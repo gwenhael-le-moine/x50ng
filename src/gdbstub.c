@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "qemu-common.h"
+#include "qemu-git/qemu-common.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -29,7 +29,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-#include <x49gp.h>
+#include "include/x49gp.h"
 #include "gdbstub.h"
 
 #define MAX_PACKET_LENGTH 4096

@@ -9,11 +9,12 @@
 #include <sys/mman.h>
 #include <errno.h>
 
-#include <x49gp.h>
 #include <memory.h>
-#include <byteorder.h>
 
-#include <saturn.h>
+#include "include/x49gp.h"
+#include "include/byteorder.h"
+
+#include "include/saturn.h"
 
 typedef struct {
 	void		*data;

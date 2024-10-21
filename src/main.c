@@ -15,13 +15,14 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 
-#include <x49gp.h>
-#include <x49gp_ui.h>
 #include <memory.h>
-#include <s3c2410.h>
-#include <s3c2410_power.h>
-#include <s3c2410_timer.h>
-#include <x49gp_timer.h>
+
+#include "include/x49gp.h"
+#include "include/x49gp_ui.h"
+#include "include/s3c2410.h"
+#include "include/s3c2410_power.h"
+#include "include/s3c2410_timer.h"
+#include "include/x49gp_timer.h"
 
 #include "gdbstub.h"
 

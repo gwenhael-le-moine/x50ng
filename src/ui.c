@@ -16,18 +16,17 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <cairo.h>
+#include <gdk/gdkkeysyms.h>
 
-#include <x49gp.h>
-#include <x49gp_ui.h>
-#include <s3c2410.h>
-#include <bitmaps.h>
-#include <bitmap_font.h>
-#include <symbol.h>
-#include <glyphname.h>
+#include "include/x49gp.h"
+#include "include/x49gp_ui.h"
+#include "include/s3c2410.h"
+#include "include/bitmaps.h"
+#include "include/bitmap_font.h"
+#include "include/symbol.h"
+#include "include/glyphname.h"
 
 #include "gdbstub.h"
-
-#include <gdk/gdkkeysyms.h>
 
 #if defined(__linux__)
 #define X49GP_UI_NORMAL_FONT	"urw gothic l"

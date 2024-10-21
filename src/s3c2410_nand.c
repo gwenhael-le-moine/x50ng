@@ -9,8 +9,8 @@
 #include <sys/mman.h>
 #include <errno.h>
 
-#include <x49gp.h>
-#include <s3c2410.h>
+#include "include/x49gp.h"
+#include "include/s3c2410.h"
 
 
 typedef struct {

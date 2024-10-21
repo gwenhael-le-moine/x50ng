@@ -9,14 +9,15 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#include <memory.h>
+
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <cairo.h>
 
-#include <x49gp.h>
-#include <x49gp_ui.h>
-#include <memory.h>
-#include <byteorder.h>
+#include "include/x49gp.h"
+#include "include/x49gp_ui.h"
+#include "include/byteorder.h"
 
 #define FLASH_STATE_NORMAL		0
 

@@ -10,9 +10,9 @@
 #include <time.h>
 #include <errno.h>
 
-#include <x49gp.h>
-#include <s3c2410.h>
-#include <s3c2410_intc.h>
+#include "include/x49gp.h"
+#include "include/s3c2410.h"
+#include "include/s3c2410_intc.h"
 
 
 typedef struct {

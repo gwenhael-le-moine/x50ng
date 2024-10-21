@@ -9,7 +9,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 
-#include <x49gp.h>
+#include "include/x49gp.h"
 
 int
 x49gp_modules_init(x49gp_t *x49gp)

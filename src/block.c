@@ -8,9 +8,9 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include "qemu-common.h"
-#include <block.h>
-#include "block_int.h"
+#include "qemu-git/qemu-common.h"
+#include "include/block.h"
+#include "include/block_int.h"
 
 #define SECTOR_BITS	9
 #define SECTOR_SIZE	(1 << SECTOR_BITS)

@@ -10,8 +10,8 @@
 #include <sys/times.h>
 #include <errno.h>
 
-#include <x49gp.h>
-#include <s3c2410.h>
+#include "include/x49gp.h"
+#include "include/s3c2410.h"
 
 /*
  * Boot SRAM:			0x40000000

@@ -9,9 +9,9 @@
 #include <sys/mman.h>
 #include <errno.h>
 
-#include <x49gp.h>
-#include <s3c2410.h>
-#include <byteorder.h>
+#include "include/x49gp.h"
+#include "include/s3c2410.h"
+#include "include/byteorder.h"
 
 typedef struct {
 	void		*data;
