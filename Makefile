@@ -1,7 +1,7 @@
 # $Id: Makefile,v 1.29 2008/12/11 12:18:17 ecd Exp $
 #
 
-SRC_DIR = .
+SRC_DIR = ./src
 
 X49GP_DEBUG = \
 	-DDEBUG_X49GP_MODULES \
@@ -184,14 +184,14 @@ _dir_qemu: dummy
 %.o: %.c
 	$(CC) $(CFLAGS) $(X49GP_CFLAGS) -o $@ -c $<
 
-block-vvfat.o: block-vvfat.c
+$(SRC_DIR)/block-vvfat.o: $(SRC_DIR)/block-vvfat.c
 	$(CC) $(CFLAGS) $(X49GP_CFLAGS) -fno-aggressive-loop-optimizations -o $@ -c $<
 
 clean-qemu:
 	$(MAKE) -C $(QEMU) -f Makefile-small clean
 
 clean: clean-qemu
-	rm -f *.o core *~ .depend
+	rm -f $(SRC_DIR)/*.o core *~ .depend
 
 distclean: clean
 	$(MAKE) -C $(QEMU) -f Makefile-small distclean
