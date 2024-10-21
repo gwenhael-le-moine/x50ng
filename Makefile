@@ -49,7 +49,7 @@ QEMU_DEFINES = -DTARGET_ARM -DX49GP \
 # Use this for speed
 DEFINES = $(QEMU_DEFINES)
 
-QEMU=qemu/qemu-git
+QEMU=src/qemu-git
 
 QEMUMAKE = $(shell if [ "`uname -s`" = "Linux" -a "`uname -m`" = "sun4u" ]; then echo "sparc32 $(MAKE)"; else echo "$(MAKE)"; fi)
 
