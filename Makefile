@@ -195,4 +195,7 @@ depend-and-build: depend
 depend: depend-libs
 	$(MAKEDEPEND) $(CFLAGS) $(X49GP_CFLAGS) $(SRCS) >.depend
 
+pretty-code:
+	clang-format -i *.c *.h
+
 dummy:
