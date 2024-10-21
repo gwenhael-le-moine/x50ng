@@ -210,4 +210,7 @@ mrproper: clean-qemu distclean
 pretty-code:
 	clang-format -i *.c *.h
 
+pull-firmware:
+	./pull-firmware.sh
+
 dummy:

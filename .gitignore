@@ -10,3 +10,4 @@ qemu/qemu-git/libhw32
 qemu/qemu-git/libhw64
 qemu/qemu-git/config-host.*
 qemu/qemu-git/config-all-devices.mak
+/firmware/*.bin
