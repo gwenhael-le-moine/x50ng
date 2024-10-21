@@ -1,6 +1,8 @@
 # $Id: Makefile,v 1.29 2008/12/11 12:18:17 ecd Exp $
 #
 
+SRC_DIR = .
+
 X49GP_DEBUG = \
 	-DDEBUG_X49GP_MODULES \
 	-DDEBUG_S3C2410_SRAM \
@@ -60,7 +62,7 @@ X49GP_LIBS = $(QEMU_OBJS)
 QEMU_INCDIR=$(QEMU_DIR)
 QEMU_INC=-I$(QEMU_INCDIR)/target-arm -I$(QEMU_INCDIR) -I$(QEMU_INCDIR)/fpu -I$(QEMU_INCDIR)/arm-softmmu
 
-X49GP_INCLUDES = -Iinclude -Ibitmaps $(QEMU_INC)
+X49GP_INCLUDES = -I$(SRC_DIR)/include -I$(SRC_DIR)/bitmaps $(QEMU_INC)
 
 INCLUDES = $(GDB_INCLUDES) $(X49GP_INCLUDES)
 
@@ -92,32 +94,40 @@ X49GP_LDLIBS += $(shell pkg-config --libs gtk+-2.0) -lz -lm
 
 LIBS = $(QEMU)
 
-SRCS = main.c module.c flash.c sram.c s3c2410.c \
-	s3c2410_sram.c \
-	s3c2410_memc.c \
-	s3c2410_intc.c \
-	s3c2410_power.c \
-	s3c2410_lcd.c \
-	s3c2410_nand.c \
-	s3c2410_uart.c \
-	s3c2410_timer.c \
-	s3c2410_usbdev.c \
-	s3c2410_watchdog.c \
-	s3c2410_io_port.c \
-	s3c2410_rtc.c \
-	s3c2410_adc.c \
-	s3c2410_spi.c \
-	s3c2410_sdi.c \
-	s3c2410_arm.c \
-	ui.c timer.c tiny_font.c symbol.c \
-	gdbstub.c block.c
+SRCS = $(SRC_DIR)/main.c \
+	$(SRC_DIR)/module.c \
+	$(SRC_DIR)/flash.c \
+	$(SRC_DIR)/sram.c \
+	$(SRC_DIR)/s3c2410.c \
+	$(SRC_DIR)/s3c2410_sram.c \
+	$(SRC_DIR)/s3c2410_memc.c \
+	$(SRC_DIR)/s3c2410_intc.c \
+	$(SRC_DIR)/s3c2410_power.c \
+	$(SRC_DIR)/s3c2410_lcd.c \
+	$(SRC_DIR)/s3c2410_nand.c \
+	$(SRC_DIR)/s3c2410_uart.c \
+	$(SRC_DIR)/s3c2410_timer.c \
+	$(SRC_DIR)/s3c2410_usbdev.c \
+	$(SRC_DIR)/s3c2410_watchdog.c \
+	$(SRC_DIR)/s3c2410_io_port.c \
+	$(SRC_DIR)/s3c2410_rtc.c \
+	$(SRC_DIR)/s3c2410_adc.c \
+	$(SRC_DIR)/s3c2410_spi.c \
+	$(SRC_DIR)/s3c2410_sdi.c \
+	$(SRC_DIR)/s3c2410_arm.c \
+	$(SRC_DIR)/ui.c \
+	$(SRC_DIR)/timer.c \
+	$(SRC_DIR)/tiny_font.c \
+	$(SRC_DIR)/symbol.c \
+	$(SRC_DIR)/gdbstub.c \
+	$(SRC_DIR)/block.c
 
 OBJS = $(SRCS:.c=.o)
 
 # TEMPO hack
-VVFATOBJS = block-vvfat.o \
-	block-qcow.o \
-	block-raw.o
+VVFATOBJS = $(SRC_DIR)/block-vvfat.o \
+	$(SRC_DIR)/block-qcow.o \
+	$(SRC_DIR)/block-raw.o
 
 VVFATOBJS += $(QEMU_DIR)/cutils.o
 
@@ -194,6 +204,8 @@ depend-and-build: depend
 
 depend: depend-libs
 	$(MAKEDEPEND) $(CFLAGS) $(X49GP_CFLAGS) $(SRCS) >.depend
+
+mrproper: clean-qemu distclean
 
 pretty-code:
 	clang-format -i *.c *.h
