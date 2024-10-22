@@ -15,9 +15,9 @@ typedef unsigned int u32;
 typedef unsigned long long u64;
 
 struct __x49gp_s__;
-typedef struct __x49gp_s__	x49gp_t;
+typedef struct __x49gp_s__ x49gp_t;
 
 struct __x49gp_ui_s__;
-typedef struct __x49gp_ui_s__	x49gp_ui_t;
+typedef struct __x49gp_ui_s__ x49gp_ui_t;
 
 #endif /* !(_X49GP_TYPES_H) */

@@ -5,32 +5,29 @@
 #define _X49GP_BITMAP_FONT_H 1
 
 typedef struct {
-	const char		*name;
-	int			width;
-	int			kern;
-	int			ascent;
-	int			descent;
-	const unsigned char	*bits;
+    const char* name;
+    int width;
+    int kern;
+    int ascent;
+    int descent;
+    const unsigned char* bits;
 } bitmap_glyph_t;
 
 typedef struct {
-	int		ascent;
-	int		descent;
-	bitmap_glyph_t	glyphs[];
+    int ascent;
+    int descent;
+    bitmap_glyph_t glyphs[];
 } bitmap_font_t;
 
-#define GLYPH(font, name)						\
-	{								\
-		#name,							\
-		font##_##name##_width - font##_##name##_x_hot,		\
-		-font##_##name##_x_hot,					\
-		font##_##name##_y_hot + 1,				\
-		font##_##name##_y_hot + 1 - font##_##name##_height,	\
-		font##_##name##_bits					\
-	}
+#define GLYPH( font, name )                                                                                                                \
+    { #name,                                                                                                                               \
+      font##_##name##_width - font##_##name##_x_hot,                                                                                       \
+      -font##_##name##_x_hot,                                                                                                              \
+      font##_##name##_y_hot + 1,                                                                                                           \
+      font##_##name##_y_hot + 1 - font##_##name##_height,                                                                                  \
+      font##_##name##_bits }
 
-#define SPACE(name, width, kern) \
-	{ name, width, kern, 0, 0, NULL }
+#define SPACE( name, width, kern ) { name, width, kern, 0, 0, NULL }
 
 extern const bitmap_font_t tiny_font;
 

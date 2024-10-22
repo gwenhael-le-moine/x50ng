@@ -34,34 +34,29 @@
  * SPI Interface:		0x59000000
  * SDI Interface:		0x5a000000
  */
-int
-x49gp_s3c2410_init(x49gp_t *x49gp)
+int x49gp_s3c2410_init( x49gp_t* x49gp )
 {
-	x49gp_s3c2410_sram_init(x49gp);
-	x49gp_s3c2410_memc_init(x49gp);
-		/* x49gp_s3c2410_usbhost_init(x49gp); */
-	x49gp_s3c2410_intc_init(x49gp);
-		/* x49gp_s3c2410_dma_init(x49gp); */
-	x49gp_s3c2410_power_init(x49gp);
-	x49gp_s3c2410_lcd_init(x49gp);
-	x49gp_s3c2410_nand_init(x49gp);
-	x49gp_s3c2410_uart_init(x49gp);
-	x49gp_s3c2410_timer_init(x49gp);
-	x49gp_s3c2410_usbdev_init(x49gp);
-	x49gp_s3c2410_watchdog_init(x49gp);
-		/* x49gp_s3c2410_i2c_init(x49gp); */
-		/* x49gp_s3c2410_iis_init(x49gp); */
-	x49gp_s3c2410_io_port_init(x49gp);
-	x49gp_s3c2410_rtc_init(x49gp);
-	x49gp_s3c2410_adc_init(x49gp);
-	x49gp_s3c2410_spi_init(x49gp);
-	x49gp_s3c2410_sdi_init(x49gp);
+    x49gp_s3c2410_sram_init( x49gp );
+    x49gp_s3c2410_memc_init( x49gp );
+    /* x49gp_s3c2410_usbhost_init(x49gp); */
+    x49gp_s3c2410_intc_init( x49gp );
+    /* x49gp_s3c2410_dma_init(x49gp); */
+    x49gp_s3c2410_power_init( x49gp );
+    x49gp_s3c2410_lcd_init( x49gp );
+    x49gp_s3c2410_nand_init( x49gp );
+    x49gp_s3c2410_uart_init( x49gp );
+    x49gp_s3c2410_timer_init( x49gp );
+    x49gp_s3c2410_usbdev_init( x49gp );
+    x49gp_s3c2410_watchdog_init( x49gp );
+    /* x49gp_s3c2410_i2c_init(x49gp); */
+    /* x49gp_s3c2410_iis_init(x49gp); */
+    x49gp_s3c2410_io_port_init( x49gp );
+    x49gp_s3c2410_rtc_init( x49gp );
+    x49gp_s3c2410_adc_init( x49gp );
+    x49gp_s3c2410_spi_init( x49gp );
+    x49gp_s3c2410_sdi_init( x49gp );
 
-	return 0;
+    return 0;
 }
 
-int
-s3c2410_exit(x49gp_t *x49gp)
-{
-	return 0;
-}
+int s3c2410_exit( x49gp_t* x49gp ) { return 0; }
