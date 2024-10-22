@@ -42,9 +42,6 @@ X49GP_DEBUG = \
 
 DEBUG = -g # -pg
 
-IMAGE49GP = hp49g+.png
-IMAGE50G = hp50g.png
-
 QEMU_DEFINES = -DTARGET_ARM -DX49GP \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-D_LARGEFILE_SOURCE \
@@ -172,8 +169,7 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
-	install -D -m 644 dist/$(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
-	install -D -m 644 dist/$(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
+	cp dist/*.png "$(DESTDIR)$(INSTALL_DATA_DIR)/"
 	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 	cp -R dist/firmware/ "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
