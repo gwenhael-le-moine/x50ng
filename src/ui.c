@@ -2901,7 +2901,7 @@ x49gp_window_configure_event(GtkWidget *widget, GdkEventConfigure *event,
 	case UI_CALCULATOR_HP49GP_NEWRPL:
 		x49gp_ui_draw_text(cr, &widget->style->black,
 				   X49GP_UI_NORMAL_FONT, 15.0, 0.0,
-				   38, 42, 2,
+				   14 /* 38 */, 20 /* 42 */, 2,
 				   CAIRO_FONT_SLANT_NORMAL,
 				   CAIRO_FONT_WEIGHT_BOLD,
 				   "hp",
@@ -2911,13 +2911,13 @@ x49gp_window_configure_event(GtkWidget *widget, GdkEventConfigure *event,
 
 		x49gp_ui_draw_text(cr, &widget->style->black,
 				   X49GP_UI_NORMAL_FONT, 13.0, 0.0,
-				   38, 56, 1,
+				   14 /* 38 */, 34 /* 56 */, 1,
 				   CAIRO_FONT_SLANT_NORMAL,
 				   CAIRO_FONT_WEIGHT_NORMAL,
 				   "graphing calculator");
 
 		x49gp_ui_draw_symbol(cr, &widget->style->black, 10.0, 0.0, TRUE,
-				     138, 25, symbol_get_by_name("triangleup"));
+				     114 /* 138 */, 8 /* 25 */, symbol_get_by_name("triangleup"));
 
 		left_color = UI_COLOR_GREEN;
 		right_color = UI_COLOR_RED;
@@ -2932,7 +2932,7 @@ x49gp_window_configure_event(GtkWidget *widget, GdkEventConfigure *event,
 	case UI_CALCULATOR_HP50G_NEWRPL:
 		x49gp_ui_draw_text(cr, &widget->style->white,
 				   X49GP_UI_NORMAL_FONT, 15.0, 0.0,
-				   38, 42, 2,
+				   14 /* 38 */, 20 /* 42 */, 2,
 				   CAIRO_FONT_SLANT_NORMAL,
 				   CAIRO_FONT_WEIGHT_NORMAL,
 				   "HP",
@@ -2942,13 +2942,13 @@ x49gp_window_configure_event(GtkWidget *widget, GdkEventConfigure *event,
 
 		x49gp_ui_draw_text(cr, &widget->style->white,
 				   X49GP_UI_NORMAL_FONT, 13.0, 0.0,
-				   38, 56, 1,
+				   14 /* 38 */, 34 /* 56 */, 1,
 				   CAIRO_FONT_SLANT_NORMAL,
 				   CAIRO_FONT_WEIGHT_NORMAL,
 				   "Graphing Calculator");
 
 		x49gp_ui_draw_symbol(cr, &widget->style->white, 10.0, 0.0, TRUE,
-				     168, 25, symbol_get_by_name("triangleup"));
+				     134 /* 168 */, 8 /* 25 */, symbol_get_by_name("triangleup"));
 
 		left_color = UI_COLOR_WHITE;
 		right_color = UI_COLOR_ORANGE;
@@ -3162,7 +3162,7 @@ gui_load(x49gp_module_t *module, GKeyFile *keyfile)
 	fd = x49gp_module_open_rodata(module,
 				      ui->calculator == UI_CALCULATOR_HP49GP ||
 				      ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL ?
-				      "hp49g+.png" : "hp50g.png",
+				      "hp49g+-cropped.png" : "hp50g-cropped.png",
 				      &imagefile);
 	if (fd < 0) return fd;
 
@@ -3173,10 +3173,10 @@ gui_load(x49gp_module_t *module, GKeyFile *keyfile)
 	ui->lcd_height = 80 * 2 + ui->lcd_top_margin;
 
 	ui->lcd_x_offset = (ui->width - ui->lcd_width) / 2;
-	ui->lcd_y_offset = 69;
+	ui->lcd_y_offset = 48; //69;
 
-	ui->kb_x_offset = 36;
-	ui->kb_y_offset = 301;
+	ui->kb_x_offset = 10; //36;
+	ui->kb_y_offset = 280; //301;
 
 	ui->bg_pixbuf = gdk_pixbuf_new_from_file(imagefile, &gerror);
 	close(fd);
@@ -3187,7 +3187,7 @@ gui_load(x49gp_module_t *module, GKeyFile *keyfile)
 	gtk_widget_set(ui->window, "accept-focus", TRUE, NULL);
 	gtk_widget_set(ui->window, "focus-on-map", TRUE, NULL);
 	gtk_widget_set(ui->window, "resizable", FALSE, NULL);
-	gtk_window_set_decorated(GTK_WINDOW(ui->window), FALSE);
+	gtk_window_set_decorated(GTK_WINDOW(ui->window), TRUE);
 
 	gtk_widget_set_name(ui->window, ui->name);
 	gtk_window_set_title(GTK_WINDOW(ui->window), ui->name);
