@@ -437,24 +437,27 @@ static inline int short2long_name( char* dest, const char* src )
     dest[ 2 * i ] = dest[ 2 * i + 1 ] = 0;
     for ( i = 2 * i + 2; ( i % 26 ); i++ )
         dest[ i ] = 0xff;
+
     return i;
 }
 
 static inline direntry_t* create_long_filename( BDRVVVFATState* s, const char* filename )
 {
-    char buffer[ 258 ];
-    int length = short2long_name( buffer, filename ), number_of_entries = ( length + 25 ) / 26, i;
+    char buffer[ 260 ];
+    int length = short2long_name( buffer, filename );
+    int number_of_entries = ( length + 25 ) / 26;
+    int offset;
     direntry_t* entry;
 
-    for ( i = 0; i < number_of_entries; i++ ) {
+    for ( int i = 0; i < number_of_entries; i++ ) {
         entry = array_get_next( &( s->directory ) );
         entry->attributes = 0xf;
         entry->reserved[ 0 ] = 0;
         entry->begin = 0;
         entry->name[ 0 ] = ( number_of_entries - i ) | ( i == 0 ? 0x40 : 0 );
     }
-    for ( i = 0; i < length; i++ ) {
-        int offset = ( i % 26 );
+    for ( int i = 0; i < length; i++ ) {
+        offset = ( i % 26 );
         if ( offset < 10 )
             offset = 1 + offset;
         else if ( offset < 22 )

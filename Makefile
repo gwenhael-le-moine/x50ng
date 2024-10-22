@@ -95,9 +95,7 @@ X49GP_CFLAGS = -O2 \
 	$(DEBUG) \
 	$(INCLUDES) \
 	$(DEFINES) \
-	-Wno-error=deprecated-declarations \
-	-Wno-error=stringop-overflow= \
-	-Wno-error=array-bounds
+	-Wno-error=deprecated-declarations
 X49GP_LDFLAGS += $(DEBUG) $(GDB_LDFLAGS)
 X49GP_LDLIBS = $(X49GP_LIBS) $(GDB_LIBS) $(COCOA_LIBS)
 
