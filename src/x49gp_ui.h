@@ -4,7 +4,7 @@
 #ifndef _X49GP_UI_H
 #define _X49GP_UI_H 1
 
-#include <x49gp_types.h>
+#include "x49gp_types.h"
 
 typedef enum {
 	UI_COLOR_BLACK = 0,

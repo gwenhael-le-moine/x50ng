@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "include/bitmap_font.h"
+#include "bitmap_font.h"
 
 #include "bitmaps/tiny_notdef.xbm"
 

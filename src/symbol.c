@@ -7,7 +7,7 @@
 #include <glib.h>
 #include <cairo.h>
 
-#include "include/symbol.h"
+#include "symbol.h"
 
 static const cairo_path_data_t symbol_square_path_data[] =
 {

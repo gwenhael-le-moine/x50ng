@@ -5,7 +5,8 @@
 #define _X49GP_TIMER_H 1
 
 #include <time.h>
-#include <list.h>
+
+#include "list.h"
 
 #define X49GP_TIMER_VIRTUAL	0
 #define X49GP_TIMER_REALTIME	1

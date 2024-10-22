@@ -11,10 +11,10 @@
 
 #include <memory.h>
 
-#include "include/x49gp.h"
-#include "include/byteorder.h"
+#include "x49gp.h"
+#include "byteorder.h"
 
-#include "include/saturn.h"
+#include "saturn.h"
 
 typedef struct {
 	void		*data;

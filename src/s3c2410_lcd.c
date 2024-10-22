@@ -11,9 +11,9 @@
 
 #include <gtk/gtk.h>
 
-#include "include/x49gp.h"
-#include "include/x49gp_ui.h"
-#include "include/s3c2410.h"
+#include "x49gp.h"
+#include "x49gp_ui.h"
+#include "s3c2410.h"
 
 
 typedef struct {

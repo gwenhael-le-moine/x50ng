@@ -10,13 +10,14 @@
 
 #include <glib.h>
 
-#include <cpu.h>
-
-#include <x49gp_types.h>
-#include <x49gp_timer.h>
-#include <s3c2410_mmu.h>
 #include <memory.h>
-#include <list.h>
+
+#include "qemu-git/target-arm/cpu.h"
+
+#include "x49gp_types.h"
+#include "x49gp_timer.h"
+#include "s3c2410_mmu.h"
+#include "list.h"
 
 /* LD TEMPO HACK */
 extern uint8_t *phys_ram_base;

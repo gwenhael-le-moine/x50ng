@@ -10,8 +10,8 @@
 
 #include "qemu-git/target-arm/cpu.h"
 
-#include "include/x49gp.h"
-#include "include/s3c2410.h"
+#include "x49gp.h"
+#include "s3c2410.h"
 
 #include "qemu-git/cpu-all.h"
 

@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 #include "qemu-git/qemu-common.h"
-#include "include/block.h"
-#include "include/block_int.h"
+#include "block.h"
+#include "block_int.h"
 #include <zlib.h>
 #if 0
 #include "aes.h"

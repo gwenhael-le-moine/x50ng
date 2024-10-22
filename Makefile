@@ -80,7 +80,7 @@ QEMU_INC=-I$(QEMU_INCDIR)/target-arm \
 	-I$(QEMU_INCDIR)/fpu \
 	-I$(QEMU_INCDIR)/arm-softmmu
 
-X49GP_INCLUDES = -I./src/include \
+X49GP_INCLUDES = -I./src \
 	-I./src/bitmaps $(QEMU_INC)
 
 INCLUDES = $(GDB_INCLUDES) $(X49GP_INCLUDES)

@@ -4,7 +4,7 @@
 #ifndef _S3C2410_TIMER_H
 #define _S3C2410_TIMER_H 1
 
-#include <x49gp_types.h>
+#include "x49gp_types.h"
 
 #define TCFG0_DEAD_SHIFT	16
 #define TCFG0_DEAD_MASK		0xff

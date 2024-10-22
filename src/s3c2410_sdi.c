@@ -10,10 +10,10 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#include "include/x49gp.h"
-#include "include/s3c2410.h"
+#include "x49gp.h"
+#include "s3c2410.h"
 
-#include "include/block.h"
+#include "block.h"
 
 //#define DEBUG_S3C2410_SDI 1
 
