@@ -132,6 +132,7 @@ VVFATOBJS = $(SRC_DIR)/block-vvfat.o \
 VVFATOBJS += $(QEMU_DIR)/cutils.o
 
 TARGET = dist/x49gp
+TARGET_BIN = x49gp
 TARGET_ALLCAPS = X49GP
 
 all: do-it-all
@@ -155,10 +156,10 @@ install: all $(TARGET).desktop $(TARGET).man
 	install -D -m 644 $(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 
 $(TARGET).desktop: $(TARGET).desktop.in
-	perl -p -e "s!TARGET!$(TARGET)!" <x49gp.desktop.in >$@
+	perl -p -e "s!TARGET!$(TARGET_BIN)!" < $(TARGET).desktop.in >$@
 
 $(TARGET).man: $(TARGET).man.in
-	perl -p -e "s!TARGET_ALLCAPS!$(TARGET_ALLCAPS)!;" -e "s!TARGET!$(TARGET)!" <x49gp.man.in >$@
+	perl -p -e "s!TARGET_ALLCAPS!$(TARGET_ALLCAPS)!;" -e "s!TARGET!$(TARGET_BIN)!" < $(TARGET).man.in >$@
 
 dist/sdcard:
 ifeq ($(shell uname),Darwin)
