@@ -169,6 +169,7 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
+	mkdir -p "$(DESTDIR)$(INSTALL_DATA_DIR)/"
 	cp dist/*.png "$(DESTDIR)$(INSTALL_DATA_DIR)/"
 	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
