@@ -178,7 +178,7 @@ as the configuration file instead of the default one. See below for details on t
 .El
 .Sh FILES
 .Bl -tag -width indent
-.It Sy ~/. Ns Nm Ns Sy /config
+.It Sy ~/.config/ Ns Nm Ns Sy /config
 The default location for the configuration file. The file format is the INI-like
 .Dq key-file
 format defined by GLib. The configuration file stores, for the most part, the state of the calculator's hardware, excluding the memory. The peripherals' official names according the the S3C2410 datasheet are used as section names with the prefix

@@ -653,10 +653,10 @@ main(int argc, char **argv)
 	}
 
 	if (opt.config == NULL) {
-		char config_dir[strlen(progname) + 2];
+		char config_dir[strlen(progname) + 9];
 
 		home = g_get_home_dir();
-		sprintf(config_dir, ".%s", progname);
+		sprintf(config_dir, ".config/%s", progname);
 		opt.config = g_build_filename(home, config_dir,
 					      "config", NULL);
 	}
