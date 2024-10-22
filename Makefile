@@ -1,7 +1,12 @@
 # $Id: Makefile,v 1.29 2008/12/11 12:18:17 ecd Exp $
 #
 
-SRC_DIR = ./src
+CC = gcc
+LD = $(CC)
+AR = ar
+RANLIB = ranlib
+
+CC += $(shell if [ "`uname -m`" = "sparc64" -o "`uname -m`" = "sun4u" ]; then echo "-mcpu=ultrasparc -m32"; fi)
 
 X49GP_DEBUG = \
 	-DDEBUG_X49GP_MODULES \
@@ -41,7 +46,8 @@ IMAGE49GP = hp49g+.png
 IMAGE50G = hp50g.png
 
 QEMU_DEFINES = -DTARGET_ARM -DX49GP \
-	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
+	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
+	-D_LARGEFILE_SOURCE \
 	-fno-strict-aliasing
 
 # Use this to debug
@@ -56,34 +62,45 @@ QEMUMAKE = $(shell if [ "`uname -s`" = "Linux" -a "`uname -m`" = "sun4u" ]; then
 QEMU_DIR=$(QEMU)
 QEMU_DIR_BUILD=$(QEMU_DIR)/arm-softmmu
 QEMU_DEFINES+=-DNEED_CPU_H
-QEMU_OBJS = $(QEMU_DIR_BUILD)/exec.o $(QEMU_DIR_BUILD)/translate-all.o $(QEMU_DIR_BUILD)/cpu-exec.o $(QEMU_DIR_BUILD)/translate.o $(QEMU_DIR_BUILD)/fpu/softfloat.o $(QEMU_DIR_BUILD)/op_helper.o $(QEMU_DIR_BUILD)/helper.o $(QEMU_DIR_BUILD)/disas.o $(QEMU_DIR_BUILD)/i386-dis.o $(QEMU_DIR_BUILD)/arm-dis.o $(QEMU_DIR_BUILD)/tcg/tcg.o $(QEMU_DIR_BUILD)/iwmmxt_helper.o $(QEMU_DIR_BUILD)/neon_helper.o
+QEMU_OBJS = $(QEMU_DIR_BUILD)/exec.o \
+	$(QEMU_DIR_BUILD)/translate-all.o \
+	$(QEMU_DIR_BUILD)/cpu-exec.o \
+	$(QEMU_DIR_BUILD)/translate.o \
+	$(QEMU_DIR_BUILD)/fpu/softfloat.o \
+	$(QEMU_DIR_BUILD)/op_helper.o \
+	$(QEMU_DIR_BUILD)/helper.o \
+	$(QEMU_DIR_BUILD)/disas.o \
+	$(QEMU_DIR_BUILD)/i386-dis.o \
+	$(QEMU_DIR_BUILD)/arm-dis.o \
+	$(QEMU_DIR_BUILD)/tcg/tcg.o \
+	$(QEMU_DIR_BUILD)/iwmmxt_helper.o \
+	$(QEMU_DIR_BUILD)/neon_helper.o
 X49GP_LDFLAGS =
 X49GP_LIBS = $(QEMU_OBJS)
 QEMU_INCDIR=$(QEMU_DIR)
-QEMU_INC=-I$(QEMU_INCDIR)/target-arm -I$(QEMU_INCDIR) -I$(QEMU_INCDIR)/fpu -I$(QEMU_INCDIR)/arm-softmmu
+QEMU_INC=-I$(QEMU_INCDIR)/target-arm \
+	-I$(QEMU_INCDIR) \
+	-I$(QEMU_INCDIR)/fpu \
+	-I$(QEMU_INCDIR)/arm-softmmu
 
-X49GP_INCLUDES = -I$(SRC_DIR)/include -I$(SRC_DIR)/bitmaps $(QEMU_INC)
+X49GP_INCLUDES = -I./src/include \
+	-I./src/bitmaps $(QEMU_INC)
 
 INCLUDES = $(GDB_INCLUDES) $(X49GP_INCLUDES)
 
-INSTALL_PREFIX = /usr/local
-INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
-INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
-INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
-INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
-INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
 DEFINES += -DX49GP_DATADIR=\"$(INSTALL_DATA_DIR)\"
-
-CC = gcc
-LD = $(CC)
-AR = ar
-RANLIB = ranlib
-
-CC += $(shell if [ "`uname -m`" = "sparc64" -o "`uname -m`" = "sun4u" ]; then echo "-mcpu=ultrasparc -m32"; fi)
 
 COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)
 
-X49GP_CFLAGS = -O2 -Wall -Werror $(DEBUG) $(INCLUDES) $(DEFINES) -Wno-error=deprecated-declarations -Wno-error=stringop-overflow= -Wno-error=array-bounds
+X49GP_CFLAGS = -O2 \
+	-Wall \
+	-Werror \
+	$(DEBUG) \
+	$(INCLUDES) \
+	$(DEFINES) \
+	-Wno-error=deprecated-declarations \
+	-Wno-error=stringop-overflow= \
+	-Wno-error=array-bounds
 X49GP_LDFLAGS += $(DEBUG) $(GDB_LDFLAGS)
 X49GP_LDLIBS = $(X49GP_LIBS) $(GDB_LIBS) $(COCOA_LIBS)
 
@@ -94,45 +111,52 @@ X49GP_LDLIBS += $(shell pkg-config --libs gtk+-2.0) -lz -lm
 
 LIBS = $(QEMU)
 
-SRCS = $(SRC_DIR)/main.c \
-	$(SRC_DIR)/module.c \
-	$(SRC_DIR)/flash.c \
-	$(SRC_DIR)/sram.c \
-	$(SRC_DIR)/s3c2410.c \
-	$(SRC_DIR)/s3c2410_sram.c \
-	$(SRC_DIR)/s3c2410_memc.c \
-	$(SRC_DIR)/s3c2410_intc.c \
-	$(SRC_DIR)/s3c2410_power.c \
-	$(SRC_DIR)/s3c2410_lcd.c \
-	$(SRC_DIR)/s3c2410_nand.c \
-	$(SRC_DIR)/s3c2410_uart.c \
-	$(SRC_DIR)/s3c2410_timer.c \
-	$(SRC_DIR)/s3c2410_usbdev.c \
-	$(SRC_DIR)/s3c2410_watchdog.c \
-	$(SRC_DIR)/s3c2410_io_port.c \
-	$(SRC_DIR)/s3c2410_rtc.c \
-	$(SRC_DIR)/s3c2410_adc.c \
-	$(SRC_DIR)/s3c2410_spi.c \
-	$(SRC_DIR)/s3c2410_sdi.c \
-	$(SRC_DIR)/s3c2410_arm.c \
-	$(SRC_DIR)/ui.c \
-	$(SRC_DIR)/timer.c \
-	$(SRC_DIR)/tiny_font.c \
-	$(SRC_DIR)/symbol.c \
-	$(SRC_DIR)/gdbstub.c \
-	$(SRC_DIR)/block.c
+SRCS = ./src/main.c \
+	./src/module.c \
+	./src/flash.c \
+	./src/sram.c \
+	./src/s3c2410.c \
+	./src/s3c2410_sram.c \
+	./src/s3c2410_memc.c \
+	./src/s3c2410_intc.c \
+	./src/s3c2410_power.c \
+	./src/s3c2410_lcd.c \
+	./src/s3c2410_nand.c \
+	./src/s3c2410_uart.c \
+	./src/s3c2410_timer.c \
+	./src/s3c2410_usbdev.c \
+	./src/s3c2410_watchdog.c \
+	./src/s3c2410_io_port.c \
+	./src/s3c2410_rtc.c \
+	./src/s3c2410_adc.c \
+	./src/s3c2410_spi.c \
+	./src/s3c2410_sdi.c \
+	./src/s3c2410_arm.c \
+	./src/ui.c \
+	./src/timer.c \
+	./src/tiny_font.c \
+	./src/symbol.c \
+	./src/gdbstub.c \
+	./src/block.c
 
 OBJS = $(SRCS:.c=.o)
 
 # TEMPO hack
-VVFATOBJS = $(SRC_DIR)/block-vvfat.o \
-	$(SRC_DIR)/block-qcow.o \
-	$(SRC_DIR)/block-raw.o
+VVFATOBJS = ./src/block-vvfat.o \
+	./src/block-qcow.o \
+	./src/block-raw.o
 
 VVFATOBJS += $(QEMU_DIR)/cutils.o
 
 TARGET = x49gp
 TARGET_ALLCAPS = X49GP
+
+INSTALL_PREFIX = /usr/local
+INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
+INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
+INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
+INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
+INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
 
 all: do-it-all
 
@@ -184,14 +208,14 @@ _dir_qemu: dummy
 %.o: %.c
 	$(CC) $(CFLAGS) $(X49GP_CFLAGS) -o $@ -c $<
 
-$(SRC_DIR)/block-vvfat.o: $(SRC_DIR)/block-vvfat.c
+./src/block-vvfat.o: ./src/block-vvfat.c
 	$(CC) $(CFLAGS) $(X49GP_CFLAGS) -fno-aggressive-loop-optimizations -o $@ -c $<
 
 clean-qemu:
 	$(MAKE) -C $(QEMU) -f Makefile-small clean
 
 clean: clean-qemu
-	rm -f $(SRC_DIR)/*.o core *~ .depend
+	rm -f ./src/*.o core *~ .depend
 
 distclean: clean
 	$(MAKE) -C $(QEMU) -f Makefile-small distclean
@@ -210,7 +234,7 @@ mrproper: clean-qemu distclean
 
 
 pretty-code:
-	clang-format -i $(SRC_DIR)/*.c $(SRC_DIR)/*.h
+	clang-format -i ./src/*.c ./src/*.h
 
 pull-firmware:
 	make -C dist/firmware/
