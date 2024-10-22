@@ -37,8 +37,8 @@ X49GP_DEBUG = \
 
 DEBUG = -g # -pg
 
-IMAGE49GP = hp49g+.png
-IMAGE50G = hp50g.png
+IMAGE49GP = dist/hp49g+.png
+IMAGE50G = dist/hp50g.png
 
 QEMU_DEFINES = -DTARGET_ARM -DX49GP \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
@@ -131,7 +131,7 @@ VVFATOBJS = $(SRC_DIR)/block-vvfat.o \
 
 VVFATOBJS += $(QEMU_DIR)/cutils.o
 
-TARGET = x49gp
+TARGET = dist/x49gp
 TARGET_ALLCAPS = X49GP
 
 all: do-it-all
@@ -150,20 +150,20 @@ install: all $(TARGET).desktop $(TARGET).man
 	install -D -m 755 $(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
 	install -D -m 644 $(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
 	install -D -m 644 $(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
-	install -D -m 755 pull-firmware.sh "$(DESTDIR)$(INSTALL_DATA_DIR)/pull-firmware.sh"
+	install -D -m 755 dist/firmware "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
 	install -D -m 644 $(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 $(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 
-$(TARGET).desktop: x49gp.desktop.in
+$(TARGET).desktop: $(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" <x49gp.desktop.in >$@
 
-$(TARGET).man: x49gp.man.in
+$(TARGET).man: $(TARGET).man.in
 	perl -p -e "s!TARGET_ALLCAPS!$(TARGET_ALLCAPS)!;" -e "s!TARGET!$(TARGET)!" <x49gp.man.in >$@
 
-sdcard:
+dist/sdcard:
 ifeq ($(shell uname),Darwin)
 	rm -f sdcard.dmg
-	hdiutil create sdcard -megabytes 64 -fs MS-DOS -volname x49gp
+	hdiutil create $@ -megabytes 64 -fs MS-DOS -volname x49gp
 else
 	/sbin/mkdosfs -v -C -S 512 -f 2 -F 16 -r 512 -R 2 -n "x49gp" $@ 65536
 endif
@@ -206,11 +206,13 @@ depend: depend-libs
 	$(MAKEDEPEND) $(CFLAGS) $(X49GP_CFLAGS) $(SRCS) >.depend
 
 mrproper: clean-qemu distclean
+	make -C dist/firmware/ mrproper
+
 
 pretty-code:
 	clang-format -i $(SRC_DIR)/*.c $(SRC_DIR)/*.h
 
 pull-firmware:
-	./pull-firmware.sh
+	make -C dist/firmware/
 
 dummy:
