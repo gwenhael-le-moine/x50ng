@@ -37,8 +37,8 @@ X49GP_DEBUG = \
 
 DEBUG = -g # -pg
 
-IMAGE49GP = dist/hp49g+.png
-IMAGE50G = dist/hp50g.png
+IMAGE49GP = hp49g+.png
+IMAGE50G = hp50g.png
 
 QEMU_DEFINES = -DTARGET_ARM -DX49GP \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
@@ -68,8 +68,8 @@ INCLUDES = $(GDB_INCLUDES) $(X49GP_INCLUDES)
 
 INSTALL_PREFIX = /usr/local
 INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
-INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET_BIN)
-INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET_BIN)
+INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
+INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
 INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
 INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
 DEFINES += -DX49GP_DATADIR=\"$(INSTALL_DATA_DIR)\"
@@ -131,37 +131,36 @@ VVFATOBJS = $(SRC_DIR)/block-vvfat.o \
 
 VVFATOBJS += $(QEMU_DIR)/cutils.o
 
-TARGET = dist/x49gp
-TARGET_BIN = x49gp
+TARGET = x49gp
 TARGET_ALLCAPS = X49GP
 
 all: do-it-all
 
 ifeq (.depend,$(wildcard .depend))
 include .depend
-do-it-all: $(QEMU) $(TARGET)
+do-it-all: $(QEMU) dist/$(TARGET)
 else
 do-it-all: depend-and-build
 endif
 
-$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
+dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 	$(CC) $(LDFLAGS) $(X49GP_LDFLAGS) -o $@ $(OBJS) $(VVFATOBJS) $(LDLIBS) $(X49GP_LDLIBS)
 
-install: all $(TARGET).desktop $(TARGET).man
-	install -D -m 755 $(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET_BIN)"
-	install -D -m 644 $(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
-	install -D -m 644 $(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
-	install -D -m 644 $(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET_BIN).desktop"
-	install -D -m 644 $(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET_BIN).1"
-	cp -R dist/firmware "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
+install: all dist/$(TARGET).desktop dist/$(TARGET).man
+	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
+	install -D -m 644 dist/$(IMAGE49GP) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE49GP)"
+	install -D -m 644 dist/$(IMAGE50G) "$(DESTDIR)$(INSTALL_DATA_DIR)/$(IMAGE50G)"
+	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
+	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
+	cp -R dist/firmware/ "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
 
-$(TARGET).desktop: $(TARGET).desktop.in
-	perl -p -e "s!TARGET!$(TARGET_BIN)!" < $(TARGET).desktop.in >$@
+dist/$(TARGET).desktop: dist/$(TARGET).desktop.in
+	perl -p -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).desktop.in >$@
 
-$(TARGET).man: $(TARGET).man.in
-	perl -p -e "s!TARGET_ALLCAPS!$(TARGET_ALLCAPS)!;" -e "s!TARGET!$(TARGET_BIN)!" < $(TARGET).man.in >$@
+dist/$(TARGET).man: dist/$(TARGET).man.in
+	perl -p -e "s!TARGET_ALLCAPS!$(TARGET_ALLCAPS)!;" -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).man.in >$@
 
-dist/sdcard:
+sdcard:
 ifeq ($(shell uname),Darwin)
 	rm -f sdcard.dmg
 	hdiutil create $@ -megabytes 64 -fs MS-DOS -volname x49gp
@@ -196,7 +195,7 @@ clean: clean-qemu
 
 distclean: clean
 	$(MAKE) -C $(QEMU) -f Makefile-small distclean
-	rm -f $(TARGET) $(TARGET).desktop $(TARGET).man
+	rm -f dist/$(TARGET) dist/$(TARGET).desktop dist/$(TARGET).man
 
 depend-libs: $(QEMU)/config-host.h
 

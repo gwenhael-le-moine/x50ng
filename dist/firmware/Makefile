@@ -3,7 +3,7 @@
 all: bootloaders official newrpl
 
 mrproper:
-	rm -f ./hp-arm-models-bootloader ./hp4950v215 ./newrpl
+	rm -fr ./hp-arm-models-bootloader ./hp4950v215 ./newrpl
 
 bootloaders:
 	wget https://www.hpcalc.org/hp49/pc/rom/hp-arm-models-bootloader.zip
