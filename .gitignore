@@ -10,7 +10,9 @@
 /src/qemu-git/config-all-devices.mak
 /dist/x49gp
 /dist/sdcard
+/dist/x49gp.desktop
+/dist/x49gp.man
 /dist/firmware/*.zip
 /dist/firmware/hp-arm-models-bootloader/
 /dist/firmware/hp4950v215/
-/dist/firmware/newrpl/
+/dist/firmware/newrpl-latest/

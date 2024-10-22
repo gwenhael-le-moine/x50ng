@@ -16,6 +16,6 @@ official:
 	rm hp4950v215.zip
 
 newrpl:
-	mkdir -p newrpl
-	wget https://hpgcc3.org/downloads/newrplfw.bin -O newrpl/newrplfw.bin
-	echo "newrplfw.bin" > newrpl/update.scp
+	mkdir -p newrpl-latest
+	wget https://hpgcc3.org/downloads/newrplfw.bin -O newrpl-latest/newrplfw.bin
+	echo "newrplfw.bin" > newrpl-latest/update.scp
