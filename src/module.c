@@ -33,7 +33,7 @@ int x49gp_modules_init( x49gp_t* x49gp )
     phys_ram_base = mmap( 0, phys_ram_size, PROT_NONE, MAP_SHARED | MAP_ANON, -1, 0 );
     if ( phys_ram_base == ( uint8_t* )-1 ) {
         fprintf( stderr, "%s: can't mmap %08x anonymous bytes\n", __FUNCTION__, phys_ram_size );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 
 #ifdef DEBUG_X49GP_MODULES

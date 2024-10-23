@@ -423,7 +423,7 @@ int main( int argc, char** argv )
     x49gp_s3c2410_init( x49gp );
 
     if ( x49gp_modules_init( x49gp ) ) {
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 
     if ( opt.config == NULL ) {
@@ -442,7 +442,7 @@ int main( int argc, char** argv )
     error = x49gp_modules_load( x49gp, opt.config );
     if ( error || opt.reinit >= X49GP_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN ) {
-            exit( 1 );
+            exit( EXIT_FAILURE );
         }
         x49gp_modules_reset( x49gp, X49GP_RESET_POWER_ON );
     }

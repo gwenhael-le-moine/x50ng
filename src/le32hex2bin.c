@@ -36,7 +36,7 @@ int main( int argc, char** argv )
 
     if ( argc < 3 ) {
         fprintf( stderr, "usage: %s <infile> <outfile>\n", argv[ 0 ] );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 
     if ( !strcmp( argv[ 1 ], "-" ) )
@@ -45,7 +45,7 @@ int main( int argc, char** argv )
         in = open( argv[ 1 ], O_RDONLY );
         if ( in < 0 ) {
             perror( argv[ 1 ] );
-            exit( 1 );
+            exit( EXIT_FAILURE );
         }
     }
 
@@ -55,7 +55,7 @@ int main( int argc, char** argv )
         out = open( argv[ 2 ], O_WRONLY | O_CREAT | O_TRUNC, 0666 );
         if ( out < 0 ) {
             perror( argv[ 2 ] );
-            exit( 1 );
+            exit( EXIT_FAILURE );
         }
     }
 
@@ -65,12 +65,12 @@ int main( int argc, char** argv )
     input = ( unsigned char* )malloc( size );
     if ( !input ) {
         fprintf( stderr, "%s: out of memory\n", argv[ 0 ] );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 
     if ( read( in, input, size ) != size ) {
         perror( "read" );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 
     close( in );
@@ -78,7 +78,7 @@ int main( int argc, char** argv )
     memory = malloc( size >> 1 );
     if ( !memory ) {
         fprintf( stderr, "%s: out of memory\n", argv[ 0 ] );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
 
     p = input;
@@ -91,7 +91,7 @@ int main( int argc, char** argv )
             memory[ ( i & ~3 ) + 3 - ( i & 3 ) ] = ( *p - 'A' + 10 ) << 0;
         else {
             fprintf( stderr, "%s: parse error at byte %d\n", argv[ 0 ], i );
-            exit( 1 );
+            exit( EXIT_FAILURE );
         }
         p++;
         if ( '0' <= *p && *p <= '9' )
@@ -102,7 +102,7 @@ int main( int argc, char** argv )
             memory[ ( i & ~3 ) + 3 - ( i & 3 ) ] |= ( *p - 'A' + 10 ) << 4;
         else {
             fprintf( stderr, "%s: parse error at byte %d\n", argv[ 0 ], i );
-            exit( 1 );
+            exit( EXIT_FAILURE );
         }
         p++;
     }
