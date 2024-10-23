@@ -21,6 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+#include <stdbool.h>
+
 #include "qemu-git/qemu-common.h"
 #include "block.h"
 #include "block_int.h"
@@ -627,7 +630,7 @@ static int raw_pread( BlockDriverState* bs, int64_t offset, uint8_t* buf, int co
     ov.OffsetHigh = offset >> 32;
     ret = ReadFile( s->hfile, buf, count, &ret_count, &ov );
     if ( !ret ) {
-        ret = GetOverlappedResult( s->hfile, &ov, &ret_count, TRUE );
+        ret = GetOverlappedResult( s->hfile, &ov, &ret_count, true );
         if ( !ret )
             return -EIO;
         else
@@ -648,7 +651,7 @@ static int raw_pwrite( BlockDriverState* bs, int64_t offset, const uint8_t* buf,
     ov.OffsetHigh = offset >> 32;
     ret = WriteFile( s->hfile, buf, count, &ret_count, &ov );
     if ( !ret ) {
-        ret = GetOverlappedResult( s->hfile, &ov, &ret_count, TRUE );
+        ret = GetOverlappedResult( s->hfile, &ov, &ret_count, true );
         if ( !ret )
             return -EIO;
         else
@@ -705,7 +708,7 @@ static int64_t raw_getlength( BlockDriverState* bs )
             break;
         case FTYPE_HARDDISK:
             status = DeviceIoControl( s->hfile, IOCTL_DISK_GET_DRIVE_GEOMETRY, NULL, 0, &dg, sizeof( dg ), &count, NULL );
-            if ( status != FALSE ) {
+            if ( status != false ) {
                 l.QuadPart = dg.Cylinders.QuadPart * dg.TracksPerCylinder * dg.SectorsPerTrack * dg.BytesPerSector;
             }
             break;

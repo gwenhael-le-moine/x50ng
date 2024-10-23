@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -159,7 +160,7 @@ done:
     rect.width = ui->lcd_width;
     rect.height = ui->lcd_height;
 
-    gdk_window_invalidate_rect( ui->lcd_canvas->window, &rect, FALSE );
+    gdk_window_invalidate_rect( ui->lcd_canvas->window, &rect, false );
 }
 
 static uint32_t s3c2410_lcd_read( void* opaque, target_phys_addr_t offset )

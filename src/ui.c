@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -1586,7 +1587,7 @@ static GdkPixbuf* x49gp_pixbuf_new_from_inline( gint data_length, const guint8* 
 
     pixdata = ( void* )( pbd + 1 );
 
-    return gdk_pixbuf_new_from_data( pixdata, GDK_COLORSPACE_RGB, TRUE, 8, width, height, rowstride, NULL, NULL );
+    return gdk_pixbuf_new_from_data( pixdata, GDK_COLORSPACE_RGB, true, 8, width, height, rowstride, NULL, NULL );
 }
 
 static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* button, x49gp_ui_color_t color )
@@ -1967,50 +1968,50 @@ static void x49gp_ui_draw_text( cairo_t* cr, GdkColor* color, const char* family
 static void
 x49gp_ui_dump_path(cairo_t *cr, const char *family, int n, ...)
 {
-	va_list ap;
-	const cairo_path_t *path;
-	const cairo_path_data_t *data;
+        va_list ap;
+        const cairo_path_t *path;
+        const cairo_path_data_t *data;
 
-	if (n < 1)
-		return;
+        if (n < 1)
+                return;
 
-	va_start(ap, n);
+        va_start(ap, n);
 
-	x49gp_ui_vtext_path(cr, family, 1000.0, 0.0, 0.0, n, ap);
+        x49gp_ui_vtext_path(cr, family, 1000.0, 0.0, 0.0, n, ap);
 
-	path = cairo_copy_path(cr);
-	if (NULL == path)
-		return;
+        path = cairo_copy_path(cr);
+        if (NULL == path)
+                return;
 
-	cairo_new_path(cr);
+        cairo_new_path(cr);
 
-	for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
-		data = &path->data[i];
+        for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
+                data = &path->data[i];
 
-		switch (data->header.type) {
-		case CAIRO_PATH_MOVE_TO:
-			printf("path: move to  %4.0f %4.0f\n",
-				data[1].point.x, -data[1].point.y);
-			break;
-		case CAIRO_PATH_LINE_TO:
-			printf("path: line to  %4.0f %4.0f\n",
-				data[1].point.x, -data[1].point.y);
-			break;
-		case CAIRO_PATH_CURVE_TO:
-			printf("path: curve to %4.0f %4.0f\n"
-			       "               %4.0f %4.0f\n"
-			       "               %4.0f %4.0f\n",
-				data[1].point.x, -data[1].point.y,
-				data[2].point.x, -data[2].point.y,
-				data[3].point.x, -data[3].point.y);
-			break;
-		case CAIRO_PATH_CLOSE_PATH:
-			printf("path: close path\n");
-			break;
-		}
-	}
+                switch (data->header.type) {
+                case CAIRO_PATH_MOVE_TO:
+                        printf("path: move to  %4.0f %4.0f\n",
+                                data[1].point.x, -data[1].point.y);
+                        break;
+                case CAIRO_PATH_LINE_TO:
+                        printf("path: line to  %4.0f %4.0f\n",
+                                data[1].point.x, -data[1].point.y);
+                        break;
+                case CAIRO_PATH_CURVE_TO:
+                        printf("path: curve to %4.0f %4.0f\n"
+                               "               %4.0f %4.0f\n"
+                               "               %4.0f %4.0f\n",
+                                data[1].point.x, -data[1].point.y,
+                                data[2].point.x, -data[2].point.y,
+                                data[3].point.x, -data[3].point.y);
+                        break;
+                case CAIRO_PATH_CLOSE_PATH:
+                        printf("path: close path\n");
+                        break;
+                }
+        }
 
-	va_end(ap);
+        va_end(ap);
 }
 #endif
 
@@ -2313,7 +2314,7 @@ static void bitmap_font_draw_text( GdkDrawable* drawable, GdkColor* color, const
         gdk_gc_set_stipple( gc, bitmap );
         gdk_gc_set_fill( gc, GDK_STIPPLED );
 
-        gdk_draw_rectangle( drawable, gc, TRUE, x + glyph->kern, y + font->ascent - glyph->ascent, w, h );
+        gdk_draw_rectangle( drawable, gc, true, x + glyph->kern, y + font->ascent - glyph->ascent, w, h );
 
         g_object_unref( bitmap );
 
@@ -2346,8 +2347,8 @@ static void x49gp_ui_choose_file( x49gp_t* x49gp, const char* prompt, GtkFileCho
     dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN,
                                           GTK_RESPONSE_ACCEPT, NULL );
 
-    gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), TRUE );
-    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), FALSE );
+    gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true );
+    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
 
     if ( gtk_dialog_run( GTK_DIALOG( dialog ) ) == GTK_RESPONSE_ACCEPT )
         *filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( dialog ) );
@@ -2374,24 +2375,24 @@ static gboolean x49gp_ui_button_press( GtkWidget* widget, GdkEventButton* event,
 #endif
 
     if ( event->type != GDK_BUTTON_PRESS )
-        return FALSE;
+        return false;
 
     switch ( event->button ) {
         case 1:
             ui->buttons_down++;
             if ( button->down )
-                return FALSE;
-            button->down = TRUE;
+                return false;
+            button->down = true;
             break;
         case 3:
-            button->hold = TRUE;
+            button->hold = true;
             if ( button->down )
-                return FALSE;
+                return false;
             gtk_button_pressed( GTK_BUTTON( button->button ) );
-            button->down = TRUE;
+            button->down = true;
             break;
         default:
-            return TRUE;
+            return true;
     }
 
 #ifdef DEBUG_X49GP_UI
@@ -2404,7 +2405,7 @@ static gboolean x49gp_ui_button_press( GtkWidget* widget, GdkEventButton* event,
     else
         s3c2410_io_port_f_set_bit( x49gp, key->eint, 1 );
 
-    return FALSE;
+    return false;
 }
 
 static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause )
@@ -2418,13 +2419,13 @@ static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_but
             button->key->eint );
 #endif
 
-    button->down = FALSE;
-    button->hold = FALSE;
+    button->down = false;
+    button->hold = false;
 
     gtkbutton = GTK_BUTTON( button->button );
 
     if ( button != cause )
-        gtkbutton->in_button = FALSE;
+        gtkbutton->in_button = false;
     gtk_button_released( gtkbutton );
 
     key = button->key;
@@ -2457,13 +2458,13 @@ static gboolean x49gp_ui_button_release( GtkWidget* widget, GdkEventButton* even
     x49gp_ui_t* ui = x49gp->ui;
 
     if ( event->type != GDK_BUTTON_RELEASE )
-        return FALSE;
+        return false;
 
     switch ( event->button ) {
         case 1:
             break;
         default:
-            return TRUE;
+            return true;
     }
 
     if ( ui->buttons_down > 0 )
@@ -2474,7 +2475,7 @@ static gboolean x49gp_ui_button_release( GtkWidget* widget, GdkEventButton* even
     else
         x49gp_release_single_button( button, button );
 
-    return FALSE;
+    return false;
 }
 
 static gboolean x49gp_ui_show_menu( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
@@ -2488,10 +2489,10 @@ static gboolean x49gp_ui_show_menu( GtkWidget* widget, GdkEventButton* event, gp
 
     if ( event->type == GDK_BUTTON_PRESS && event->button == 3 ) {
         gtk_menu_popup( GTK_MENU( ui->menu ), NULL, NULL, NULL, NULL, event->button, event->time );
-        return TRUE;
+        return true;
     }
 
-    return FALSE;
+    return false;
 }
 
 static gboolean x49gp_ui_button_leave( GtkWidget* widget, GdkEventCrossing* event, gpointer user_data )
@@ -2499,12 +2500,12 @@ static gboolean x49gp_ui_button_leave( GtkWidget* widget, GdkEventCrossing* even
     x49gp_ui_button_t* button = user_data;
 
     if ( event->type != GDK_LEAVE_NOTIFY )
-        return FALSE;
+        return false;
 
     if ( !button->hold )
-        return FALSE;
+        return false;
 
-    return TRUE;
+    return true;
 }
 
 static gboolean x49gp_ui_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpointer user_data )
@@ -2513,12 +2514,12 @@ static gboolean x49gp_ui_focus_lost( GtkWidget* widget, GdkEventFocus* event, gp
     x49gp_ui_t* ui = x49gp->ui;
 
     if ( event->type != GDK_FOCUS_CHANGE )
-        return FALSE;
+        return false;
 
     ui->buttons_down = 0;
     x49gp_release_all_buttons( x49gp, NULL );
 
-    return FALSE;
+    return false;
 }
 
 static void x49gp_ui_popup_at_widget( GtkMenu* menu, gint* x, gint* y, gboolean* push_in, gpointer user_data )
@@ -2587,7 +2588,7 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     /* which normally is represented by MOD2. */
     if ( !gdk_keymap_translate_keyboard_state( gdk_keymap_get_default(), event->hardware_keycode, event->state & GDK_MOD2_MASK,
                                                event->group, &keyval, NULL, NULL, NULL ) )
-        return FALSE;
+        return false;
 #ifdef DEBUG_X49GP_UI
     fprintf( stderr, "%s:%u: state %u, base keyval %04x\n", __FUNCTION__, __LINE__, event->state, keyval );
 #endif
@@ -2812,7 +2813,7 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
         case GDK_KEY_F10:
             x49gp->arm_exit = 1;
             cpu_exit( x49gp->env );
-            return FALSE;
+            return false;
 
         case GDK_KEY_F12:
             switch ( event->type ) {
@@ -2827,7 +2828,7 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
                 default:
                     break;
             }
-            return FALSE;
+            return false;
 
         case GDK_KEY_Menu:
             gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) );
@@ -2835,10 +2836,10 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
                 gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() );
 
             gtk_menu_popup( GTK_MENU( ui->menu ), NULL, NULL, x49gp_ui_popup_at_widget, ui->lcd_canvas, 0, event->time );
-            return FALSE;
+            return false;
 
         default:
-            return FALSE;
+            return false;
     }
 
     button = &ui->buttons[ index ];
@@ -2855,22 +2856,22 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
         case GDK_KEY_PRESS:
             bev.type = GDK_BUTTON_PRESS;
             x49gp_ui_button_press( button->button, &bev, button );
-            GTK_BUTTON( button->button )->in_button = TRUE;
+            GTK_BUTTON( button->button )->in_button = true;
             gtk_button_pressed( GTK_BUTTON( button->button ) );
             GTK_BUTTON( button->button )->in_button = save_in;
             break;
         case GDK_KEY_RELEASE:
             bev.type = GDK_BUTTON_RELEASE;
-            GTK_BUTTON( button->button )->in_button = TRUE;
+            GTK_BUTTON( button->button )->in_button = true;
             gtk_button_released( GTK_BUTTON( button->button ) );
             GTK_BUTTON( button->button )->in_button = save_in;
             x49gp_ui_button_release( button->button, &bev, button );
             break;
         default:
-            return FALSE;
+            return false;
     }
 
-    return TRUE;
+    return true;
 }
 
 static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
@@ -2887,7 +2888,7 @@ static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, 
     gdk_draw_drawable( widget->window, widget->style->black_gc, button->pixmap, 0, 0, x, y, widget->allocation.width,
                        widget->allocation.height );
 
-    return FALSE;
+    return false;
 }
 
 static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
@@ -2920,14 +2921,14 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
 #if 0 /* Layout Debug */
-	cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-	cairo_set_line_width(cr, 1.0);
-	cairo_move_to(cr, xoffset, yoffset);
-	cairo_line_to(cr, xoffset + w - 1, yoffset);
-	cairo_line_to(cr, xoffset + w - 1, yoffset + h - 1);
-	cairo_line_to(cr, xoffset, yoffset + h - 1);
-	cairo_close_path(cr);
-	cairo_stroke(cr);
+        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+        cairo_set_line_width(cr, 1.0);
+        cairo_move_to(cr, xoffset, yoffset);
+        cairo_line_to(cr, xoffset + w - 1, yoffset);
+        cairo_line_to(cr, xoffset + w - 1, yoffset + h - 1);
+        cairo_line_to(cr, xoffset, yoffset + h - 1);
+        cairo_close_path(cr);
+        cairo_stroke(cr);
 #endif
 
     if ( key->letter ) {
@@ -2983,7 +2984,7 @@ static int x49gp_lcd_expose_event( GtkWidget* widget, GdkEventExpose* event, gpo
 
     g_free( rects );
 
-    return FALSE;
+    return false;
 }
 
 static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
@@ -2992,7 +2993,7 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
     x49gp_ui_t* ui = x49gp->ui;
 
     if ( NULL != ui->lcd_pixmap )
-        return FALSE;
+        return false;
 
     ui->ann_left = gdk_bitmap_create_from_data( ui->lcd_canvas->window, ( char* )ann_left_bits, ann_left_width, ann_left_height );
     ui->ann_right = gdk_bitmap_create_from_data( ui->lcd_canvas->window, ( char* )ann_right_bits, ann_right_width, ann_right_height );
@@ -3042,32 +3043,32 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
 
 #if 0 /* Debug Symbols on LCD screen ;) */
 {
-	cairo_t *cr;
+        cairo_t *cr;
 
-	cr = gdk_cairo_create(ui->bg_pixmap);
-	cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
-	cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
+        cr = gdk_cairo_create(ui->bg_pixmap);
+        cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
+        cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
 
 #  if 1
-	x49gp_ui_draw_text(cr, &widget->style->black,
-			   X49GP_UI_NORMAL_FONT, 100.0, 1.0,
-			   ui->lcd_x_offset + 10, ui->lcd_y_offset + 160,
-			   1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD,
-			   "\\arrowleftdblfull");
+        x49gp_ui_draw_text(cr, &widget->style->black,
+                           X49GP_UI_NORMAL_FONT, 100.0, 1.0,
+                           ui->lcd_x_offset + 10, ui->lcd_y_offset + 160,
+                           1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD,
+                           "\\arrowleftdblfull");
 #  else
-	x49gp_ui_dump_path(cr, X49GP_UI_NORMAL_FONT,
-			   1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD,
-			   "\\arrowleftdblfull");
+        x49gp_ui_dump_path(cr, X49GP_UI_NORMAL_FONT,
+                           1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD,
+                           "\\arrowleftdblfull");
 #  endif
 
-	cairo_destroy(cr);
+        cairo_destroy(cr);
 }
 #endif
 
     gdk_draw_drawable( ui->lcd_pixmap, widget->style->black_gc, ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0, 0, ui->lcd_width,
                        ui->lcd_height );
 
-    return FALSE;
+    return false;
 }
 
 static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
@@ -3085,7 +3086,7 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
     int dl = 0, dr = 0;
 
     if ( NULL != ui->bg_pixmap )
-        return FALSE;
+        return false;
 
     ui->bg_pixmap = gdk_pixmap_new( widget->window, ui->width, ui->height, -1 );
 
@@ -3106,7 +3107,7 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
             x49gp_ui_draw_text( cr, &widget->style->black, X49GP_UI_NORMAL_FONT, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
                                 CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "graphing calculator" );
 
-            x49gp_ui_draw_symbol( cr, &widget->style->black, 10.0, 0.0, TRUE, 114 /* 138 */, 8 /* 25 */,
+            x49gp_ui_draw_symbol( cr, &widget->style->black, 10.0, 0.0, true, 114 /* 138 */, 8 /* 25 */,
                                   symbol_get_by_name( "triangleup" ) );
 
             left_color = UI_COLOR_GREEN;
@@ -3127,7 +3128,7 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
             x49gp_ui_draw_text( cr, &widget->style->white, X49GP_UI_NORMAL_FONT, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
                                 CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "Graphing Calculator" );
 
-            x49gp_ui_draw_symbol( cr, &widget->style->white, 10.0, 0.0, TRUE, 134 /* 168 */, 8 /* 25 */,
+            x49gp_ui_draw_symbol( cr, &widget->style->white, 10.0, 0.0, true, 134 /* 168 */, 8 /* 25 */,
                                   symbol_get_by_name( "triangleup" ) );
 
             left_color = UI_COLOR_WHITE;
@@ -3184,17 +3185,17 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
         }
 
 #if 0 /* Debug Button Layout */
-		gdk_draw_rectangle(ui->bg_pixmap, ui->window->style->white_gc,
-				   FALSE,
-				   ui->kb_x_offset + key->x,
-				   ui->kb_y_offset + key->y,
-				   key->width, key->height);
+                gdk_draw_rectangle(ui->bg_pixmap, ui->window->style->white_gc,
+                                   false,
+                                   ui->kb_x_offset + key->x,
+                                   ui->kb_y_offset + key->y,
+                                   key->width, key->height);
 #endif
     }
 
-    gdk_window_set_back_pixmap( widget->window, ui->bg_pixmap, FALSE );
+    gdk_window_set_back_pixmap( widget->window, ui->bg_pixmap, false );
 
-    return FALSE;
+    return false;
 }
 
 static gboolean x49gp_window_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
@@ -3207,14 +3208,14 @@ static gboolean x49gp_window_button_press( GtkWidget* widget, GdkEventButton* ev
     gdk_window_raise( widget->window );
 
     if ( event->type != GDK_BUTTON_PRESS )
-        return FALSE;
+        return false;
 
     if ( event->button != 1 )
-        return FALSE;
+        return false;
 
     gdk_window_begin_move_drag( widget->window, event->button, event->x_root, event->y_root, event->time );
 
-    return FALSE;
+    return false;
 }
 
 static void x49gp_ui_quit( gpointer user_data, GtkWidget* widget, GdkEvent* event )
@@ -3321,11 +3322,11 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     close( fd );
 
     ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-    gtk_widget_set( ui->window, "can-focus", TRUE, NULL );
-    gtk_widget_set( ui->window, "accept-focus", TRUE, NULL );
-    gtk_widget_set( ui->window, "focus-on-map", TRUE, NULL );
-    gtk_widget_set( ui->window, "resizable", FALSE, NULL );
-    gtk_window_set_decorated( GTK_WINDOW( ui->window ), TRUE );
+    gtk_widget_set( ui->window, "can-focus", true, NULL );
+    gtk_widget_set( ui->window, "accept-focus", true, NULL );
+    gtk_widget_set( ui->window, "focus-on-map", true, NULL );
+    gtk_widget_set( ui->window, "resizable", false, NULL );
+    gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
 
     gtk_widget_set_name( ui->window, ui->name );
     gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
@@ -3388,8 +3389,8 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     ui->lcd_canvas = gtk_drawing_area_new();
     gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
     screen_box = gtk_event_box_new();
-    gtk_event_box_set_visible_window( GTK_EVENT_BOX( screen_box ), TRUE );
-    gtk_event_box_set_above_child( GTK_EVENT_BOX( screen_box ), FALSE );
+    gtk_event_box_set_visible_window( GTK_EVENT_BOX( screen_box ), true );
+    gtk_event_box_set_above_child( GTK_EVENT_BOX( screen_box ), false );
     gtk_container_add( GTK_CONTAINER( screen_box ), ui->lcd_canvas );
     x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width, ui->lcd_height );
 
@@ -3418,7 +3419,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
         button->button = gtk_button_new();
         gtk_widget_set_size_request( button->button, key->width, key->height );
-        gtk_widget_set( button->button, "can-focus", FALSE, NULL );
+        gtk_widget_set( button->button, "can-focus", false, NULL );
 
         x49gp_ui_button_pixmaps_init( x49gp, button, key->color );
 
@@ -3433,8 +3434,8 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
         }
 
         button->box = gtk_event_box_new();
-        gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), TRUE );
-        gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), FALSE );
+        gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), true );
+        gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
         gtk_widget_shape_combine_mask( button->box, ui->shapes[ key->shape ], 0, 0 );
         gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 

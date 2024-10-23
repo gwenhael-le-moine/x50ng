@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -30,10 +31,10 @@
 #  define VERSION_MAJOR 0
 #endif
 #ifndef VERSION_MINOR
-#define VERSION_MINOR 0
+#  define VERSION_MINOR 0
 #endif
 #ifndef PATCHLEVEL
-#define PATCHLEVEL 0
+#  define PATCHLEVEL 0
 #endif
 
 static x49gp_t* x49gp;
@@ -205,7 +206,7 @@ void x49gp_gtk_timer( void* data )
 {
     while ( gtk_events_pending() ) {
         // printf("%s: gtk_main_iteration_do()\n", __FUNCTION__);
-        gtk_main_iteration_do( FALSE );
+        gtk_main_iteration_do( false );
     }
 
     x49gp_mod_timer( x49gp->gtk_timer, x49gp_get_clock() + X49GP_GTK_REFRESH_INTERVAL );
@@ -317,7 +318,7 @@ static int action_help( struct options* opt, struct option_def* match, char* thi
              "If the config file is omitted, ~/.config/%s/config is used.\n"
              "Please consult the manual for more details on config file"
              " settings.\n",
-            progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
+             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
     exit( 0 );
 }
 
@@ -329,7 +330,7 @@ static int action_debuglater( struct options* opt, struct option_def* match, cha
     if ( param == NULL ) {
         if ( opt->debug_port == 0 )
             opt->debug_port = DEFAULT_GDBSTUB_PORT;
-        return FALSE;
+        return false;
     }
 
     port = strtoul( param, &end, 0 );
@@ -337,7 +338,7 @@ static int action_debuglater( struct options* opt, struct option_def* match, cha
         fprintf( stderr, "Invalid port \"%s\", using default\n", param );
         if ( opt->debug_port == 0 )
             opt->debug_port = DEFAULT_GDBSTUB_PORT;
-        return TRUE;
+        return true;
     }
 
     if ( opt->debug_port != 0 && opt->debug_port != DEFAULT_GDBSTUB_PORT )
@@ -346,12 +347,12 @@ static int action_debuglater( struct options* opt, struct option_def* match, cha
                  " overriding\n",
                  param );
     opt->debug_port = port;
-    return TRUE;
+    return true;
 }
 
 static int action_debug( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
 {
-    opt->start_debugger = TRUE;
+    opt->start_debugger = true;
     return action_debuglater( opt, match, this_opt, param, progname );
 }
 
@@ -361,7 +362,7 @@ static int action_reinit_flash( struct options* opt, struct option_def* match, c
         opt->reinit = X49GP_REINIT_FLASH;
 
     if ( param == NULL )
-        return FALSE;
+        return false;
 
     if ( opt->firmware != NULL )
         fprintf( stderr,
@@ -369,7 +370,7 @@ static int action_reinit_flash( struct options* opt, struct option_def* match, c
                  " overriding\n",
                  param );
     opt->firmware = param;
-    return TRUE;
+    return true;
 }
 
 static int action_reinit_flash_full( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
@@ -396,7 +397,7 @@ static int action_longopt( struct options* opt, struct option_def* match, char* 
 
     if ( this_opt[ 1 ] != '-' || param != NULL ) {
         fprintf( stderr, "Unrecognized option '-', ignoring\n" );
-        return FALSE;
+        return false;
     }
 
     for ( i = 0; i < sizeof( option_defs ) / sizeof( option_defs[ 0 ] ); i++ ) {
@@ -417,26 +418,26 @@ static int action_longopt( struct options* opt, struct option_def* match, char* 
         switch ( *option_str ) {
             case '\0':
                 ( option_defs[ i ].action )( opt, option_defs + i, this_opt, NULL, progname );
-                return TRUE;
+                return true;
             case '=':
                 ( option_defs[ i ].action )( opt, option_defs + i, this_opt, option_str + 1, progname );
-                return TRUE;
+                return true;
         }
     }
 
     fprintf( stderr, "Unrecognized option \"%s\", ignoring\n", this_opt + 2 );
-    return TRUE;
+    return true;
 }
 
 static int action_unknown_with_param( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
 {
-    return TRUE;
+    return true;
 }
 
 static int action_endopt( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
 {
-    opt->more_options = FALSE;
-    return TRUE;
+    opt->more_options = false;
+    return true;
 }
 
 static void parse_shortopt( struct options* opt, char* this_opt, char* progname )
@@ -474,7 +475,7 @@ static void parse_shortopt( struct options* opt, char* this_opt, char* progname 
 
 static void parse_options( struct options* opt, int argc, char** argv, char* progname )
 {
-    opt->more_options = TRUE;
+    opt->more_options = true;
 
     while ( argc > 1 ) {
         switch ( argv[ 1 ][ 0 ] ) {
@@ -530,7 +531,7 @@ int main( int argc, char** argv )
 
     opt.config = NULL;
     opt.debug_port = 0;
-    opt.start_debugger = FALSE;
+    opt.start_debugger = false;
     opt.reinit = X49GP_REINIT_NONE;
     opt.firmware = NULL;
     parse_options( &opt, argc, argv, progname );
