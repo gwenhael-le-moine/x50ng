@@ -4,6 +4,7 @@
 #ifndef _X49GP_BYTEORDER_H
 #define _X49GP_BYTEORDER_H 1
 
+#include <stdint.h>
 #include <sys/types.h>
 
 static __inline__ uint16_t swab16( uint16_t x ) { return ( ( x & 0xff00 ) >> 8 ) | ( ( x & 0x00ff ) << 8 ); }
