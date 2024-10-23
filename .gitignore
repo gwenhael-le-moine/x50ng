@@ -8,10 +8,10 @@
 /src/qemu-git/libhw64
 /src/qemu-git/config-host.*
 /src/qemu-git/config-all-devices.mak
-/dist/x49gp
+/dist/x49gpng
 /dist/sdcard
-/dist/x49gp.desktop
-/dist/x49gp.man
+/dist/x49gpng.desktop
+/dist/x49gpng.man
 /dist/firmware/*.zip
 /dist/firmware/hp-arm-models-bootloader/
 /dist/firmware/hp4950v215/

@@ -1,6 +1,9 @@
 # $Id: Makefile,v 1.29 2008/12/11 12:18:17 ecd Exp $
 #
 
+TARGET = x49gpng
+TARGET_ALLCAPS = X49GPNG
+
 CC = gcc
 LD = $(CC)
 AR = ar
@@ -143,9 +146,6 @@ VVFATOBJS = ./src/block-vvfat.o \
 
 VVFATOBJS += $(QEMU_DIR)/cutils.o
 
-TARGET = x49gp
-TARGET_ALLCAPS = X49GP
-
 INSTALL_PREFIX = /usr/local
 INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
 INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
@@ -182,9 +182,9 @@ dist/$(TARGET).man: dist/$(TARGET).man.in
 sdcard:
 ifeq ($(shell uname),Darwin)
 	rm -f sdcard.dmg
-	hdiutil create $@ -megabytes 64 -fs MS-DOS -volname x49gp
+	hdiutil create $@ -megabytes 64 -fs MS-DOS -volname $(TARGET)
 else
-	/sbin/mkdosfs -v -C -S 512 -f 2 -F 16 -r 512 -R 2 -n "x49gp" $@ 65536
+	/sbin/mkdosfs -v -C -S 512 -f 2 -F 16 -r 512 -R 2 -n "$(TARGET)" $@ 65536
 endif
 
 sim: dummy
