@@ -300,7 +300,7 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
         drv = find_protocol( filename );
         if ( !drv ) {
 #ifdef DEBUG_X49GP_BLOCK
-            f printf( stderr, "%s:%u: drv: %p\n", __FUNCTION__, __LINE__, drv );
+            fprintf( stderr, "%s:%u: drv: %p\n", __FUNCTION__, __LINE__, drv );
 #endif
             return -ENOENT;
         }

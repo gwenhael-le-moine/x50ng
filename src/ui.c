@@ -2414,10 +2414,10 @@ static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_but
     const x49gp_ui_key_t* key;
     GtkButton* gtkbutton;
 
-#ifdef DEBUG_X49GP_UI
-    printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row,
-            button->key->eint );
-#endif
+/* #ifdef DEBUG_X49GP_UI */
+/*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
+/*             button->key->eint ); */
+/* #endif */
 
     button->down = false;
     button->hold = false;
