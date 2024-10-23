@@ -41,10 +41,10 @@ Start up X11 and use xterm
 
 ------------------------------------------------------------------------
 
-Download x49gp source:
+Download x49gpng source:
 
 ```
-git clone https://github.com/chwdt/x49gp.git
+git clone https://github.com/gwenhael-le-moine/x49gpng.git
 ```
 
 ------------------------------------------------------------------------
@@ -52,7 +52,7 @@ git clone https://github.com/chwdt/x49gp.git
 Build:
 
 ```
-cd x49gp
+cd x49gpng
 make
 ```
 
@@ -69,14 +69,14 @@ make install
 Run:
 
 ```
-./x49gp
+./dist/x49gpng
 ```
 
-When installed, there should be an applications menu entry to run x49gp.
+When installed, there should be an applications menu entry to run x49gpng.
 Installing also enables running it from the terminal in any directory:
 
 ```
-x49gp
+x49gpng
 ```
 
 ------------------------------------------------------------------------
@@ -87,7 +87,7 @@ On the first launch, the calculator will be missing a firmware, forcing
 the bootloader to complain and demand a fresh one.
 HP's official firmwares can be found at e.g.:
 https://www.hpcalc.org/hp49/pc/rom/
-Some of the most popular of these are also included in x49gp's source
+Some of the most popular of these are also included in x49gpng's source
 directory.
 Alternatively, the most up-to-date version of NewRPL can be found at:
 https://hpgcc3.org/downloads/newrplfw.bin
@@ -159,17 +159,17 @@ rm -r ~/.config/x49gpng/
 
 * soft reset only?
 
-With x49gp running, press F12, or right click on the screen and select
+With x49gpng running, press F12, or right click on the screen and select
 "Reset" from the menu.
 
 ------------------------------------------------------------------------
 
-Debugging with x49gp
+Debugging with x49gpng
 
 There is a GDB interface for debugging ARM programs, e.g. HPGCC2/3
-applications or replacement firmwares. To use it, start x49gp from a
+applications or replacement firmwares. To use it, start x49gpng from a
 terminal with the -d option, and start arm-none-eabi-gdb with an
-appropriate ELF file in another terminal. To connect to x49gp, type in
+appropriate ELF file in another terminal. To connect to x49gpng, type in
 the GDB console:
 
 ```
