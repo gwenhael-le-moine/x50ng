@@ -13,6 +13,8 @@
 #include <time.h>
 #include <errno.h>
 
+#include <getopt.h>
+
 #include <gtk/gtk.h>
 #include <glib.h>
 
@@ -21,8 +23,6 @@
 #include "x49gp.h"
 #include "x49gp_ui.h"
 #include "s3c2410.h"
-#include "s3c2410_power.h"
-#include "s3c2410_timer.h"
 #include "x49gp_timer.h"
 
 #include "gdbstub.h"
@@ -54,9 +54,9 @@ int singlestep;
 #if !( defined( __APPLE__ ) || defined( _POSIX_C_SOURCE ) && !defined( __sun__ ) )
 static void* oom_check( void* ptr )
 {
-    if ( ptr == NULL ) {
+    if ( ptr == NULL )
         abort();
-    }
+
     return ptr;
 }
 #endif
@@ -228,6 +228,10 @@ void x49gp_lcd_timer( void* data )
     x49gp_mod_timer( x49gp->lcd_timer, expires );
 }
 
+/***********/
+/* OPTIONS */
+/***********/
+
 struct options {
     char* config;
     int debug_port;
@@ -238,272 +242,128 @@ struct options {
     int more_options;
 };
 
-struct option_def;
+struct options opt;
 
-typedef int ( *option_action )( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-
-struct option_def {
-    option_action action;
-    char* longname;
-    char shortname;
-};
-
-static int action_help( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_debuglater( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_debug( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_reinit_flash( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_reinit_flash_full( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_reboot( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-
-static int action_unknown_with_param( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_longopt( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-static int action_endopt( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname );
-
-struct option_def option_defs[] = {
-    {action_help,               "help",         'h' },
-    {action_debuglater,         "enable-debug", 'D' },
-    {action_debug,              "debug",        'd' },
-    {action_reinit_flash,       "reflash",      'f' },
-    {action_reinit_flash_full,  "reflash-full", 'F' },
-    {action_reboot,             "reboot",       'r' },
-
-    {action_longopt,            NULL,           '-' },
-    {action_unknown_with_param, NULL,           '=' },
-    {action_endopt,             "",             '\0'}
-};
-
-static void warn_unneeded_param( struct option_def* match, char* this_opt )
+static void config_init( char* progname, int argc, char* argv[] )
 {
-    if ( this_opt[ 1 ] == '-' ) {
-        fprintf( stderr,
-                 "The option \"--%s\" does not support"
-                 " parameters\n",
-                 match->longname );
-    } else
-        fprintf( stderr, "The option '-%c' does not support parameters\n", match->shortname );
-}
+    int option_index;
+    int c = '?';
 
-static int action_help( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    if ( param != NULL )
-        warn_unneeded_param( match, this_opt );
+    opt.config = NULL;
+    opt.debug_port = 0;
+    opt.start_debugger = false;
+    opt.reinit = X49GP_REINIT_NONE;
+    opt.firmware = NULL;
 
-    fprintf( stderr,
-             "%s %i.%i.%i Emulator for HP 49G+ / 50G calculators\n"
-             "Usage: %s [<options>] [<config-file>]\n"
-             "Valid options:\n"
-             " -D, --enable-debug[=<port]    enable the debugger interface\n"
-             "                               (default port: %u)\n"
-             " -d, --debug[=<port>]          like -D, but also start the"
-             " debugger immediately\n"
-             " -f, --reflash[=firmware]      rebuild the flash using the"
-             " supplied firmware\n"
-             "                               (default: select one"
-             " interactively)\n"
-             "                               (implies -r for safety"
-             " reasons)\n"
-             " -F, --reflash-full[=firmware] like -f, but don't preserve the"
-             " flash contents\n"
-             "                               in the area beyond the"
-             " firmware\n"
-             " -r, --reboot                  reboot on startup instead of"
-             " continuing from the\n"
-             "                               saved state in the config"
-             " file\n"
-             " -h, --help                    print this message and exit\n"
-             "The config file is formatted as INI file and contains the"
-             " settings for which\n"
-             "persistence makes sense, like calculator model, CPU"
-             " registers, etc.\n"
-             "If the config file is omitted, ~/.config/%s/config is used.\n"
-             "Please consult the manual for more details on config file"
-             " settings.\n",
-             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
-    exit( 0 );
-}
+    const char* optstring = "hrc:D:df:F";
+    struct option long_options[] = {
+        {"help",         no_argument,       NULL, 'h'},
 
-static int action_debuglater( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    char* end;
-    int port;
+        {"config", required_argument, NULL, 'c'},
 
-    if ( param == NULL ) {
-        if ( opt->debug_port == 0 )
-            opt->debug_port = DEFAULT_GDBSTUB_PORT;
-        return false;
-    }
+        {"enable-debug", required_argument, NULL, 'D'},
+        {"debug",        no_argument, NULL, 'd'},
+        {"reflash",      required_argument, NULL, 'f'},
+        {"reflash-full", no_argument, NULL, 'F'},
+        {"reboot",       no_argument,       NULL, 'r'},
 
-    port = strtoul( param, &end, 0 );
-    if ( ( end == param ) || ( *end != '\0' ) ) {
-        fprintf( stderr, "Invalid port \"%s\", using default\n", param );
-        if ( opt->debug_port == 0 )
-            opt->debug_port = DEFAULT_GDBSTUB_PORT;
-        return true;
-    }
+        {0,              0,                 0,    0  }
+    };
 
-    if ( opt->debug_port != 0 && opt->debug_port != DEFAULT_GDBSTUB_PORT )
-        fprintf( stderr,
-                 "Additional debug port \"%s\" specified,"
-                 " overriding\n",
-                 param );
-    opt->debug_port = port;
-    return true;
-}
+    while ( c != EOF ) {
+        c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
-static int action_debug( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    opt->start_debugger = true;
-    return action_debuglater( opt, match, this_opt, param, progname );
-}
+        switch ( c ) {
+            case 'h':
+                fprintf( stderr,
+                         "%s %i.%i.%i Emulator for HP 49G+ / 50G calculators\n"
+                         "Usage: %s [<options>] [<config-file>]\n"
+                         "Valid options:\n"
+                         " -c, --config[=<filename>]     alternate config file\n"
+                         " -D, --enable-debug[=<port>]   enable the debugger interface\n"
+                         "                               (default port: %u)\n"
+                         " -d, --debug                   use along -D to also start the"
+                         " debugger immediately\n"
+                         " -f, --reflash[=firmware]      rebuild the flash using the"
+                         " supplied firmware\n"
+                         "                               (default: select one"
+                         " interactively)\n"
+                         "                               (implies -r for safety"
+                         " reasons)\n"
+                         " -F, --reflash-full            use along -f to drop the"
+                         " flash contents\n"
+                         "                               in the area beyond the"
+                         " firmware\n"
+                         " -r, --reboot                  reboot on startup instead of"
+                         " continuing from the\n"
+                         "                               saved state in the config"
+                         " file\n"
+                         " -h, --help                    print this message and exit\n"
+                         "The config file is formatted as INI file and contains the"
+                         " settings for which\n"
+                         "persistence makes sense, like calculator model, CPU"
+                         " registers, etc.\n"
+                         "If the config file is omitted, ~/.config/%s/config is used.\n"
+                         "Please consult the manual for more details on config file"
+                         " settings.\n",
+                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
+                exit( EXIT_SUCCESS );
+                break;
+        case 'r':
+            if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
+                opt.reinit = X49GP_REINIT_REBOOT_ONLY;
+            break;
+        case 'c':
+            opt.config = strdup( optarg );
+            break;
+        case 'D':
+            {
+                char* end;
+                int port;
 
-static int action_reinit_flash( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    if ( opt->reinit < X49GP_REINIT_FLASH )
-        opt->reinit = X49GP_REINIT_FLASH;
+                if ( optarg == NULL && opt.debug_port == 0 )
+                        opt.debug_port = DEFAULT_GDBSTUB_PORT;
 
-    if ( param == NULL )
-        return false;
-
-    if ( opt->firmware != NULL )
-        fprintf( stderr,
-                 "Additional firmware file \"%s\" specified,"
-                 " overriding\n",
-                 param );
-    opt->firmware = param;
-    return true;
-}
-
-static int action_reinit_flash_full( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    int result = action_reinit_flash( opt, match, this_opt, param, progname );
-    opt->reinit = X49GP_REINIT_FLASH_FULL;
-    return result;
-}
-
-static int action_reboot( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    if ( param != NULL )
-        warn_unneeded_param( match, this_opt );
-
-    if ( opt->reinit < X49GP_REINIT_REBOOT_ONLY )
-        opt->reinit = X49GP_REINIT_REBOOT_ONLY;
-    return param != NULL;
-}
-
-static int action_longopt( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    int i;
-    char *test_str, *option_str;
-
-    if ( this_opt[ 1 ] != '-' || param != NULL ) {
-        fprintf( stderr, "Unrecognized option '-', ignoring\n" );
-        return false;
-    }
-
-    for ( i = 0; i < sizeof( option_defs ) / sizeof( option_defs[ 0 ] ); i++ ) {
-        if ( option_defs[ i ].longname == NULL )
-            continue;
-
-        test_str = option_defs[ i ].longname;
-        option_str = this_opt + 2;
-
-        while ( *test_str != '\0' && *test_str == *option_str ) {
-            test_str++;
-            option_str++;
-        }
-
-        if ( *test_str != '\0' )
-            continue;
-
-        switch ( *option_str ) {
-            case '\0':
-                ( option_defs[ i ].action )( opt, option_defs + i, this_opt, NULL, progname );
-                return true;
-            case '=':
-                ( option_defs[ i ].action )( opt, option_defs + i, this_opt, option_str + 1, progname );
-                return true;
-        }
-    }
-
-    fprintf( stderr, "Unrecognized option \"%s\", ignoring\n", this_opt + 2 );
-    return true;
-}
-
-static int action_unknown_with_param( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    return true;
-}
-
-static int action_endopt( struct options* opt, struct option_def* match, char* this_opt, char* param, char* progname )
-{
-    opt->more_options = false;
-    return true;
-}
-
-static void parse_shortopt( struct options* opt, char* this_opt, char* progname )
-{
-    char* option = this_opt + 1;
-    char* param;
-    int i;
-
-    if ( *option == '\0' ) {
-        fprintf( stderr, "Empty option present, ignoring\n" );
-        return;
-    }
-
-    do {
-        for ( i = 0; i < sizeof( option_defs ) / sizeof( option_defs[ 0 ] ); i++ ) {
-
-            if ( *option == option_defs[ i ].shortname ) {
-                if ( *( option + 1 ) == '=' ) {
-                    param = option + 2;
-                } else {
-                    param = NULL;
+                port = strtoul( optarg, &end, 0 );
+                if ( ( end == optarg ) || ( *end != '\0' ) ) {
+                    fprintf( stderr, "Invalid port \"%s\", using default\n", optarg );
+                    if ( opt.debug_port == 0 )
+                        opt.debug_port = DEFAULT_GDBSTUB_PORT;
                 }
 
-                if ( ( option_defs[ i ].action )( opt, option_defs + i, this_opt, param, progname ) )
-                    return;
-                break;
-            }
-        }
-
-        if ( i == sizeof( option_defs ) / sizeof( option_defs[ 0 ] ) )
-            fprintf( stderr, "Unrecognized option '%c', ignoring\n", *option );
-        option++;
-    } while ( *option != '\0' );
-}
-
-static void parse_options( struct options* opt, int argc, char** argv, char* progname )
-{
-    opt->more_options = true;
-
-    while ( argc > 1 ) {
-        switch ( argv[ 1 ][ 0 ] ) {
-            case '\0':
-                break;
-                break;
-
-            case '-':
-                if ( opt->more_options ) {
-                    parse_shortopt( opt, argv[ 1 ], progname );
-                    break;
-                }
-                /* FALL THROUGH */
-
-            default:
-                if ( opt->config != NULL ) {
+                if ( opt.debug_port != 0 && opt.debug_port != DEFAULT_GDBSTUB_PORT )
                     fprintf( stderr,
-                             "Additional config file \"%s\""
-                             " specified, overriding\n",
-                             argv[ 1 ] );
-                }
-                opt->config = argv[ 1 ];
-        }
+                            "Additional debug port \"%s\" specified,"
+                            " overriding\n",
+                            optarg );
+                opt.debug_port = port;
+            }
+            break;
+        case 'd':
+            opt.start_debugger = true;
+            break;
+        case 'F':
+            opt.reinit = X49GP_REINIT_FLASH_FULL;
+            break;
+        case 'f':
+            if ( opt.reinit < X49GP_REINIT_FLASH )
+                opt.reinit = X49GP_REINIT_FLASH;
 
-        argc--;
-        argv++;
+            if ( opt.firmware != NULL )
+                fprintf( stderr,
+                        "Additional firmware file \"%s\" specified,"
+                        " overriding\n",
+                        optarg );
+            opt.firmware = optarg;
+            break;
+        default:
+            break;
+        }
     }
 }
+/************/
+/* \OPTIONS */
+/************/
 
 void ui_sighnd( int sig )
 {
@@ -521,7 +381,6 @@ int main( int argc, char** argv )
 {
     char *progname, *progpath;
     int error;
-    struct options opt;
     const char* home;
 
     progname = g_path_get_basename( argv[ 0 ] );
@@ -529,12 +388,7 @@ int main( int argc, char** argv )
 
     gtk_init( &argc, &argv );
 
-    opt.config = NULL;
-    opt.debug_port = 0;
-    opt.start_debugger = false;
-    opt.reinit = X49GP_REINIT_NONE;
-    opt.firmware = NULL;
-    parse_options( &opt, argc, argv, progname );
+    config_init( progname, argc, argv );
 
     x49gp = malloc( sizeof( x49gp_t ) );
     if ( NULL == x49gp ) {
