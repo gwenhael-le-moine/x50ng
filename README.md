@@ -154,7 +154,7 @@ Start Over:
 * clean slate?
 
 ```
-rm -r ~/.config/x49gp
+rm -r ~/.config/x49gpng/
 ```
 
 * soft reset only?
