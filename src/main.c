@@ -26,6 +26,16 @@
 
 #include "gdbstub.h"
 
+#ifndef VERSION_MAJOR
+#  define VERSION_MAJOR 0
+#endif
+#ifndef VERSION_MINOR
+#define VERSION_MINOR 0
+#endif
+#ifndef PATCHLEVEL
+#define PATCHLEVEL 0
+#endif
+
 static x49gp_t* x49gp;
 
 /* LD TEMPO HACK */
@@ -278,7 +288,7 @@ static int action_help( struct options* opt, struct option_def* match, char* thi
         warn_unneeded_param( match, this_opt );
 
     fprintf( stderr,
-             "Emulator for HP 49G+ / 50G calculators\n"
+             "%s %i.%i.%i Emulator for HP 49G+ / 50G calculators\n"
              "Usage: %s [<options>] [<config-file>]\n"
              "Valid options:\n"
              " -D, --enable-debug[=<port]    enable the debugger interface\n"
@@ -304,10 +314,10 @@ static int action_help( struct options* opt, struct option_def* match, char* thi
              " settings for which\n"
              "persistence makes sense, like calculator model, CPU"
              " registers, etc.\n"
-             "If the config file is omitted, ~/.%s/config is used.\n"
+             "If the config file is omitted, ~/.config/%s/config is used.\n"
              "Please consult the manual for more details on config file"
              " settings.\n",
-             progname, DEFAULT_GDBSTUB_PORT, progname );
+            progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
     exit( 0 );
 }
 
@@ -619,15 +629,15 @@ int main( int argc, char** argv )
     x49gp_modules_exit( x49gp );
 
 #if 0
-	printf("ClkTicks: %lu\n", ARMul_Time(x49gp->arm));
-	printf("D TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
-		x49gp->mmu->dTLB.hit0, x49gp->mmu->dTLB.hit1,
-		x49gp->mmu->dTLB.search, x49gp->mmu->dTLB.nsearch,
-		x49gp->mmu->dTLB.walk);
-	printf("I TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
-		x49gp->mmu->iTLB.hit0, x49gp->mmu->iTLB.hit1,
-		x49gp->mmu->iTLB.search, x49gp->mmu->iTLB.nsearch,
-		x49gp->mmu->iTLB.walk);
+        printf("ClkTicks: %lu\n", ARMul_Time(x49gp->arm));
+        printf("D TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
+                x49gp->mmu->dTLB.hit0, x49gp->mmu->dTLB.hit1,
+                x49gp->mmu->dTLB.search, x49gp->mmu->dTLB.nsearch,
+                x49gp->mmu->dTLB.walk);
+        printf("I TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
+                x49gp->mmu->iTLB.hit0, x49gp->mmu->iTLB.hit1,
+                x49gp->mmu->iTLB.search, x49gp->mmu->iTLB.nsearch,
+                x49gp->mmu->iTLB.walk);
 #endif
     return 0;
 }
