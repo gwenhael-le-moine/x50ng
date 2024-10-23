@@ -8,12 +8,14 @@ mrproper:
 bootloaders:
 	wget https://www.hpcalc.org/hp49/pc/rom/hp-arm-models-bootloader.zip
 	unzip -j hp-arm-models-bootloader.zip
-	rm hp-arm-models-bootloader.zip
+	rm -f hp-arm-models-bootloader.zip
 
 official:
 	wget https://www.hpcalc.org/hp49/pc/rom/hp4950v215.zip
 	unzip -j hp4950v215.zip -d hp4950v215
-	rm hp4950v215.zip
+	rm -f hp4950v215.zip
+	unzip -j hp4950v215/2MB\ FIX.zip -d hp4950v215/2MB_FIX
+	rm -f hp4950v215/2MB\ FIX.zip
 
 newrpl:
 	mkdir -p newrpl-latest
