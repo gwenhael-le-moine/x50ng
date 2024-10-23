@@ -259,7 +259,7 @@ static void config_init( char* progname, int argc, char* argv[] )
     struct option long_options[] = {
         {"help",         no_argument,       NULL, 'h'},
 
-        {"config", required_argument, NULL, 'c'},
+        {"config",       required_argument, NULL, 'c'},
 
         {"enable-debug", required_argument, NULL, 'D'},
         {"debug",        no_argument, NULL, 'd'},
@@ -277,35 +277,24 @@ static void config_init( char* progname, int argc, char* argv[] )
             case 'h':
                 fprintf( stderr,
                          "%s %i.%i.%i Emulator for HP 49G+ / 50G calculators\n"
-                         "Usage: %s [<options>] [<config-file>]\n"
+                         "Usage: %s [<options>]\n"
                          "Valid options:\n"
-                         " -c, --config[=<filename>]     alternate config file\n"
-                         " -D, --enable-debug[=<port>]   enable the debugger interface\n"
-                         "                               (default port: %u)\n"
-                         " -d, --debug                   use along -D to also start the"
-                         " debugger immediately\n"
-                         " -f, --reflash[=firmware]      rebuild the flash using the"
-                         " supplied firmware\n"
-                         "                               (default: select one"
-                         " interactively)\n"
-                         "                               (implies -r for safety"
-                         " reasons)\n"
-                         " -F, --reflash-full            use along -f to drop the"
-                         " flash contents\n"
-                         "                               in the area beyond the"
-                         " firmware\n"
-                         " -r, --reboot                  reboot on startup instead of"
-                         " continuing from the\n"
-                         "                               saved state in the config"
-                         " file\n"
-                         " -h, --help                    print this message and exit\n"
-                         "The config file is formatted as INI file and contains the"
-                         " settings for which\n"
-                         "persistence makes sense, like calculator model, CPU"
-                         " registers, etc.\n"
+                         " -c --config[=<filename>]     alternate config file\n"
+                         " -D --enable-debug[=<port>]   enable the debugger interface\n"
+                         "                              (default port: %u)\n"
+                         " -d --debug                   use along -D to also start the debugger immediately\n"
+                         " -f --reflash[=firmware]      rebuild the flash using the supplied firmware\n"
+                         "                              (default: select one interactively)\n"
+                         "                              (implies -r for safety reasons)\n"
+                         " -F --reflash-full            use along -f to drop the flash contents\n"
+                         "                              in the area beyond the firmware\n"
+                         " -r --reboot                  reboot on startup instead of continuing from the\n"
+                         "                              saved state in the config file\n"
+                         " -h --help                    print this message and exit\n"
+                         "The config file is formatted as INI file and contains the settings for which\n"
+                         "  persistence makes sense, like calculator model, CPU registers, etc.\n"
                          "If the config file is omitted, ~/.config/%s/config is used.\n"
-                         "Please consult the manual for more details on config file"
-                         " settings.\n",
+                         "Please consult the manual for more details on config file settings.\n",
                          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
                 exit( EXIT_SUCCESS );
                 break;
@@ -333,8 +322,7 @@ static void config_init( char* progname, int argc, char* argv[] )
 
                 if ( opt.debug_port != 0 && opt.debug_port != DEFAULT_GDBSTUB_PORT )
                     fprintf( stderr,
-                            "Additional debug port \"%s\" specified,"
-                            " overriding\n",
+                            "Additional debug port \"%s\" specified, overriding\n",
                             optarg );
                 opt.debug_port = port;
             }
@@ -393,7 +381,7 @@ int main( int argc, char** argv )
     x49gp = malloc( sizeof( x49gp_t ) );
     if ( NULL == x49gp ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", progname, __FUNCTION__, __LINE__ );
-        exit( 1 );
+        exit( EXIT_FAILURE );
     }
     memset( x49gp, 0, sizeof( x49gp_t ) );
 
