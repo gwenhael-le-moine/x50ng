@@ -47,33 +47,33 @@ struct list_head {
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_add( struct list_head* new, struct list_head* prev, struct list_head* next )
+static inline void __list_add( struct list_head* new_entry, struct list_head* prev, struct list_head* next )
 {
-    next->prev = new;
-    new->next = next;
-    new->prev = prev;
-    prev->next = new;
+    next->prev = new_entry;
+    new_entry->next = next;
+    new_entry->prev = prev;
+    prev->next = new_entry;
 }
 
 /**
  * list_add - add a new entry
- * @new: new entry to be added
+ * @new_entry: new entry to be added
  * @head: list head to add it after
  *
  * Insert a new entry after the specified head.
  * This is good for implementing stacks.
  */
-static inline void list_add( struct list_head* new, struct list_head* head ) { __list_add( new, head, head->next ); }
+static inline void list_add( struct list_head* new_entry, struct list_head* head ) { __list_add( new_entry, head, head->next ); }
 
 /**
  * list_add_tail - add a new entry
- * @new: new entry to be added
+ * @new_entry: new entry to be added
  * @head: list head to add it before
  *
  * Insert a new entry before the specified head.
  * This is useful for implementing queues.
  */
-static inline void list_add_tail( struct list_head* new, struct list_head* head ) { __list_add( new, head->prev, head ); }
+static inline void list_add_tail( struct list_head* new_entry, struct list_head* head ) { __list_add( new_entry, head->prev, head ); }
 
 /*
  * Delete a list entry by making the prev/next entries
