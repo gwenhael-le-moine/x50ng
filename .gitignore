@@ -13,6 +13,7 @@
 /dist/x49gpng.desktop
 /dist/x49gpng.man
 /dist/firmware/*.zip
-/dist/firmware/hp-arm-models-bootloader/
+/dist/firmware/Readme.txt
+/dist/firmware/boot-*.bin
 /dist/firmware/hp4950v215/
 /dist/firmware/newrpl-latest/
