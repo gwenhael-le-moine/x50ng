@@ -29,6 +29,8 @@
 
 #include "gdbstub.h"
 
+#define DEBUG_LAYOUT true
+
 #if defined( __linux__ )
 #  define X49GP_UI_NORMAL_FONT "urw gothic l"
 #else
@@ -1532,6 +1534,17 @@ static const x49gp_ui_key_t x50g_newrpl_ui_keys[] = {
 };
 #define X50G_NEWRPL_UI_NR_KEYS ( sizeof( x50g_newrpl_ui_keys ) / sizeof( x50g_newrpl_ui_keys[ 0 ] ) )
 
+static const uint32_t PIXBUF_MAGIC = 0x47646b50;
+
+typedef struct {
+    uint32_t magic;
+    uint32_t length;
+    uint32_t pixdata_type;
+    uint32_t rowstride;
+    uint32_t width;
+    uint32_t height;
+} pixbuf_inline_data_t;
+
 static void x49gp_ui_color_init( GdkColor* color, u8 red, u8 green, u8 blue )
 {
     color->red = ( red << 8 ) | red;
@@ -1552,17 +1565,6 @@ static void x49gp_ui_style_init( GtkStyle* style, GtkWidget* widget, GdkColor* f
     style->xthickness = 0;
     style->ythickness = 0;
 }
-
-static const uint32_t PIXBUF_MAGIC = 0x47646b50;
-
-typedef struct {
-    uint32_t magic;
-    uint32_t length;
-    uint32_t pixdata_type;
-    uint32_t rowstride;
-    uint32_t width;
-    uint32_t height;
-} pixbuf_inline_data_t;
 
 static GdkPixbuf* x49gp_pixbuf_new_from_inline( gint data_length, const guint8* data )
 {
@@ -1683,18 +1685,18 @@ static void x49gp_ui_draw_symbol( cairo_t* cr, GdkColor* color, double size, dou
         cairo_stroke( cr );
 }
 
-static int x49gp_ui_lookup_glyph( const char* name, int namelen, gunichar* glyph )
+static bool x49gp_ui_lookup_glyph( const char* name, int namelen, gunichar* glyph )
 {
     for ( int i = 0; i < NR_GLYPHNAMES; i++ ) {
         if ( ( strlen( x49gp_glyphs[ i ].name ) == namelen ) && !strncmp( x49gp_glyphs[ i ].name, name, namelen ) ) {
             if ( glyph )
                 *glyph = x49gp_glyphs[ i ].unichar;
 
-            return 1;
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 static int x49gp_text_strlen( const char* text )
@@ -1963,57 +1965,6 @@ static void x49gp_ui_draw_text( cairo_t* cr, GdkColor* color, const char* family
 
     va_end( ap );
 }
-
-#if 0
-static void
-x49gp_ui_dump_path(cairo_t *cr, const char *family, int n, ...)
-{
-        va_list ap;
-        const cairo_path_t *path;
-        const cairo_path_data_t *data;
-
-        if (n < 1)
-                return;
-
-        va_start(ap, n);
-
-        x49gp_ui_vtext_path(cr, family, 1000.0, 0.0, 0.0, n, ap);
-
-        path = cairo_copy_path(cr);
-        if (NULL == path)
-                return;
-
-        cairo_new_path(cr);
-
-        for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
-                data = &path->data[i];
-
-                switch (data->header.type) {
-                case CAIRO_PATH_MOVE_TO:
-                        printf("path: move to  %4.0f %4.0f\n",
-                                data[1].point.x, -data[1].point.y);
-                        break;
-                case CAIRO_PATH_LINE_TO:
-                        printf("path: line to  %4.0f %4.0f\n",
-                                data[1].point.x, -data[1].point.y);
-                        break;
-                case CAIRO_PATH_CURVE_TO:
-                        printf("path: curve to %4.0f %4.0f\n"
-                               "               %4.0f %4.0f\n"
-                               "               %4.0f %4.0f\n",
-                                data[1].point.x, -data[1].point.y,
-                                data[2].point.x, -data[2].point.y,
-                                data[3].point.x, -data[3].point.y);
-                        break;
-                case CAIRO_PATH_CLOSE_PATH:
-                        printf("path: close path\n");
-                        break;
-                }
-        }
-
-        va_end(ap);
-}
-#endif
 
 static unsigned char bitmap_font_lookup_glyph( const bitmap_font_t* font, const char* name, int namelen )
 {
@@ -2877,10 +2828,9 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
-    int x, y;
 
-    x = widget->allocation.x;
-    y = widget->allocation.y;
+    int x = widget->allocation.x;
+    int y = widget->allocation.y;
 
     if ( GTK_WIDGET_STATE( widget ) == GTK_STATE_ACTIVE )
         y -= 1;
@@ -2920,7 +2870,7 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
     cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
-#if 0 /* Layout Debug */
+#if DEBUG_LAYOUT /* Layout Debug */
         cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
         cairo_set_line_width(cr, 1.0);
         cairo_move_to(cr, xoffset, yoffset);
@@ -3041,7 +2991,7 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
 
     ui->lcd_pixmap = gdk_pixmap_new( ui->lcd_canvas->window, ui->lcd_width, ui->lcd_height, -1 );
 
-#if 0 /* Debug Symbols on LCD screen ;) */
+#if DEBUG_LAYOUT /* Debug Symbols on LCD screen ;) */
 {
         cairo_t *cr;
 
@@ -3049,17 +2999,11 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
         cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
         cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
 
-#  if 1
         x49gp_ui_draw_text(cr, &widget->style->black,
                            X49GP_UI_NORMAL_FONT, 100.0, 1.0,
                            ui->lcd_x_offset + 10, ui->lcd_y_offset + 160,
                            1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD,
                            "\\arrowleftdblfull");
-#  else
-        x49gp_ui_dump_path(cr, X49GP_UI_NORMAL_FONT,
-                           1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD,
-                           "\\arrowleftdblfull");
-#  endif
 
         cairo_destroy(cr);
 }
@@ -3184,7 +3128,7 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
                                    ui->kb_y_offset + key->y + key->height + 2, key->below );
         }
 
-#if 0 /* Debug Button Layout */
+#if DEBUG_LAYOUT /* Debug Button Layout */
                 gdk_draw_rectangle(ui->bg_pixmap, ui->window->style->white_gc,
                                    false,
                                    ui->kb_x_offset + key->x,
