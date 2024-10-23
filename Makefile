@@ -143,7 +143,8 @@ SRCS = ./src/main.c \
 	./src/tiny_font.c \
 	./src/symbol.c \
 	./src/gdbstub.c \
-	./src/block.c
+	./src/block.c \
+	./src/options.c
 
 OBJS = $(SRCS:.c=.o)
 

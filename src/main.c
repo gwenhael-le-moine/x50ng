@@ -24,18 +24,10 @@
 #include "x49gp_ui.h"
 #include "s3c2410.h"
 #include "x49gp_timer.h"
-
 #include "gdbstub.h"
+#include "options.h"
 
-#ifndef VERSION_MAJOR
-#  define VERSION_MAJOR 0
-#endif
-#ifndef VERSION_MINOR
-#  define VERSION_MINOR 0
-#endif
-#ifndef PATCHLEVEL
-#  define PATCHLEVEL 0
-#endif
+extern struct options opt;
 
 static x49gp_t* x49gp;
 
@@ -48,7 +40,7 @@ uint8_t* phys_ram_base;
 int phys_ram_size;
 ram_addr_t ram_size = 0x80000; // LD ???
 
-/* vl.c */
+/* for qemu-git */
 int singlestep;
 
 #if !( defined( __APPLE__ ) || defined( _POSIX_C_SOURCE ) && !defined( __sun__ ) )
@@ -125,11 +117,11 @@ void* qemu_vmalloc( size_t size )
 uint32_t do_arm_semihosting( CPUState* env )
 {
     uint32_t number;
-    if ( env->thumb ) {
+    if ( env->thumb )
         number = lduw_code( env->regs[ 15 ] - 2 ) & 0xff;
-    } else {
+    else
         number = ldl_code( env->regs[ 15 ] - 4 ) & 0xffffff;
-    }
+
     switch ( number ) {
         case SWI_Breakpoint:
             break;
@@ -181,9 +173,9 @@ void x49gp_set_idle( x49gp_t* x49gp, x49gp_arm_idle_t idle )
 
     x49gp->arm_idle = idle;
 
-    if ( x49gp->arm_idle == X49GP_ARM_RUN ) {
+    if ( x49gp->arm_idle == X49GP_ARM_RUN )
         x49gp->env->halted = 0;
-    } else {
+    else {
         x49gp->env->halted = 1;
         cpu_exit( x49gp->env );
     }
@@ -228,131 +220,6 @@ void x49gp_lcd_timer( void* data )
     x49gp_mod_timer( x49gp->lcd_timer, expires );
 }
 
-/***********/
-/* OPTIONS */
-/***********/
-
-struct options {
-    char* config;
-    int debug_port;
-    int start_debugger;
-    char* firmware;
-    x49gp_reinit_t reinit;
-
-    int more_options;
-};
-
-struct options opt;
-
-static void config_init( char* progname, int argc, char* argv[] )
-{
-    int option_index;
-    int c = '?';
-
-    opt.config = NULL;
-    opt.debug_port = 0;
-    opt.start_debugger = false;
-    opt.reinit = X49GP_REINIT_NONE;
-    opt.firmware = NULL;
-
-    const char* optstring = "hrc:D:df:F";
-    struct option long_options[] = {
-        {"help",         no_argument,       NULL, 'h'},
-
-        {"config",       required_argument, NULL, 'c'},
-
-        {"enable-debug", required_argument, NULL, 'D'},
-        {"debug",        no_argument, NULL, 'd'},
-        {"reflash",      required_argument, NULL, 'f'},
-        {"reflash-full", no_argument, NULL, 'F'},
-        {"reboot",       no_argument,       NULL, 'r'},
-
-        {0,              0,                 0,    0  }
-    };
-
-    while ( c != EOF ) {
-        c = getopt_long( argc, argv, optstring, long_options, &option_index );
-
-        switch ( c ) {
-            case 'h':
-                fprintf( stderr,
-                         "%s %i.%i.%i Emulator for HP 49G+ / 50G calculators\n"
-                         "Usage: %s [<options>]\n"
-                         "Valid options:\n"
-                         " -c --config[=<filename>]     alternate config file\n"
-                         " -D --enable-debug[=<port>]   enable the debugger interface\n"
-                         "                              (default port: %u)\n"
-                         " -d --debug                   use along -D to also start the debugger immediately\n"
-                         " -f --reflash[=firmware]      rebuild the flash using the supplied firmware\n"
-                         "                              (default: select one interactively)\n"
-                         "                              (implies -r for safety reasons)\n"
-                         " -F --reflash-full            use along -f to drop the flash contents\n"
-                         "                              in the area beyond the firmware\n"
-                         " -r --reboot                  reboot on startup instead of continuing from the\n"
-                         "                              saved state in the config file\n"
-                         " -h --help                    print this message and exit\n"
-                         "The config file is formatted as INI file and contains the settings for which\n"
-                         "  persistence makes sense, like calculator model, CPU registers, etc.\n"
-                         "If the config file is omitted, ~/.config/%s/config is used.\n"
-                         "Please consult the manual for more details on config file settings.\n",
-                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
-                exit( EXIT_SUCCESS );
-                break;
-        case 'r':
-            if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
-                opt.reinit = X49GP_REINIT_REBOOT_ONLY;
-            break;
-        case 'c':
-            opt.config = strdup( optarg );
-            break;
-        case 'D':
-            {
-                char* end;
-                int port;
-
-                if ( optarg == NULL && opt.debug_port == 0 )
-                        opt.debug_port = DEFAULT_GDBSTUB_PORT;
-
-                port = strtoul( optarg, &end, 0 );
-                if ( ( end == optarg ) || ( *end != '\0' ) ) {
-                    fprintf( stderr, "Invalid port \"%s\", using default\n", optarg );
-                    if ( opt.debug_port == 0 )
-                        opt.debug_port = DEFAULT_GDBSTUB_PORT;
-                }
-
-                if ( opt.debug_port != 0 && opt.debug_port != DEFAULT_GDBSTUB_PORT )
-                    fprintf( stderr,
-                            "Additional debug port \"%s\" specified, overriding\n",
-                            optarg );
-                opt.debug_port = port;
-            }
-            break;
-        case 'd':
-            opt.start_debugger = true;
-            break;
-        case 'F':
-            opt.reinit = X49GP_REINIT_FLASH_FULL;
-            break;
-        case 'f':
-            if ( opt.reinit < X49GP_REINIT_FLASH )
-                opt.reinit = X49GP_REINIT_FLASH;
-
-            if ( opt.firmware != NULL )
-                fprintf( stderr,
-                        "Additional firmware file \"%s\" specified,"
-                        " overriding\n",
-                        optarg );
-            opt.firmware = optarg;
-            break;
-        default:
-            break;
-        }
-    }
-}
-/************/
-/* \OPTIONS */
-/************/
-
 void ui_sighnd( int sig )
 {
     switch ( sig ) {
@@ -367,12 +234,8 @@ void ui_sighnd( int sig )
 
 int main( int argc, char** argv )
 {
-    char *progname, *progpath;
-    int error;
-    const char* home;
-
-    progname = g_path_get_basename( argv[ 0 ] );
-    progpath = g_path_get_dirname( argv[ 0 ] );
+    char* progname = g_path_get_basename( argv[ 0 ] );
+    char* progpath = g_path_get_dirname( argv[ 0 ] );
 
     gtk_init( &argc, &argv );
 
@@ -396,7 +259,6 @@ int main( int argc, char** argv )
     x49gp->progname = progname;
     x49gp->progpath = progpath;
     x49gp->clk_tck = sysconf( _SC_CLK_TCK );
-
     x49gp->emulator_fclk = 75000000;
     x49gp->PCLK_ratio = 4;
     x49gp->PCLK = 75000000 / 4;
@@ -416,34 +278,23 @@ int main( int argc, char** argv )
     x49gp_ui_init( x49gp );
 
     x49gp_s3c2410_arm_init( x49gp );
-
     x49gp_flash_init( x49gp );
     x49gp_sram_init( x49gp );
-
     x49gp_s3c2410_init( x49gp );
 
-    if ( x49gp_modules_init( x49gp ) ) {
+    if ( x49gp_modules_init( x49gp ) )
         exit( EXIT_FAILURE );
-    }
-
-    if ( opt.config == NULL ) {
-        char config_dir[ strlen( progname ) + 9 ];
-
-        home = g_get_home_dir();
-        sprintf( config_dir, ".config/%s", progname );
-        opt.config = g_build_filename( home, config_dir, "config", NULL );
-    }
 
     x49gp->basename = g_path_get_dirname( opt.config );
     x49gp->debug_port = opt.debug_port;
     x49gp->startup_reinit = opt.reinit;
     x49gp->firmware = opt.firmware;
 
-    error = x49gp_modules_load( x49gp, opt.config );
+    int error = x49gp_modules_load( x49gp, opt.config );
     if ( error || opt.reinit >= X49GP_REINIT_REBOOT_ONLY ) {
-        if ( error && error != -EAGAIN ) {
+        if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
-        }
+
         x49gp_modules_reset( x49gp, X49GP_RESET_POWER_ON );
     }
     // x49gp_modules_reset(x49gp, X49GP_RESET_POWER_ON);
@@ -471,7 +322,7 @@ int main( int argc, char** argv )
     x49gp_modules_save( x49gp, opt.config );
     x49gp_modules_exit( x49gp );
 
-#if 0
+#if false
         printf("ClkTicks: %lu\n", ARMul_Time(x49gp->arm));
         printf("D TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
                 x49gp->mmu->dTLB.hit0, x49gp->mmu->dTLB.hit1,

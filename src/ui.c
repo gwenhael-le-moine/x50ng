@@ -19,6 +19,7 @@
 #include <cairo.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "options.h"
 #include "x49gp.h"
 #include "x49gp_ui.h"
 #include "s3c2410.h"
@@ -3273,30 +3274,28 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GtkWidget *menu_debug, *menu_reset, *menu_quit;
     GError* gerror = NULL;
     GdkBitmap* shape;
-    char* typestr;
     char* imagefile;
     int fd;
 
-    x49gp_module_get_string( module, keyfile, "type", "hp50g", &typestr );
-    if ( !strcmp( typestr, "hp49g+" ) )
-        ui->calculator = UI_CALCULATOR_HP49GP;
-    else if ( !strcmp( typestr, "hp49g+/newrpl" ) )
-        ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
-    else if ( !strcmp( typestr, "hp50g" ) )
-        ui->calculator = UI_CALCULATOR_HP50G;
-    else if ( !strcmp( typestr, "hp50g/newrpl" ) )
+    switch ( opt.model ) {
+    case MODEL_50G_NEWRPL:
         ui->calculator = UI_CALCULATOR_HP50G_NEWRPL;
-    else {
-        fprintf( stderr, "Invalid calculator type, reverting to default\n" );
+        ui->name = opt.name != NULL ? opt.name : "HP 50g / newRPL";
+        break;
+    case MODEL_49GP:
+        ui->calculator = UI_CALCULATOR_HP49GP;
+        ui->name = opt.name != NULL ? opt.name : "HP 49g+";
+        break;
+    case MODEL_49GP_NEWRPL:
+        ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
+        ui->name = "opt.name != NULL ? opt.name : HP 49g+ / newRPL";
+        break;
+    case MODEL_50G:
+    default:
         ui->calculator = UI_CALCULATOR_HP50G;
+        ui->name = opt.name != NULL ? opt.name : "HP 50g";
+        break;
     }
-
-    x49gp_module_get_string( module, keyfile, "name",
-                             ui->calculator == UI_CALCULATOR_HP49GP          ? "HP 49g+"
-                             : ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL ? "HP 49g+ / newRPL"
-                             : ui->calculator == UI_CALCULATOR_HP50G         ? "HP 50g"
-                                                                             : "HP 50g / newRPL",
-                             &( ui->name ) );
 
     fd = x49gp_module_open_rodata( module,
                                    ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
@@ -3508,15 +3507,6 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
 static int gui_save( x49gp_module_t* module, GKeyFile* keyfile )
 {
-    x49gp_ui_t* ui = module->user_data;
-
-    x49gp_module_set_string( module, keyfile, "type",
-                             ui->calculator == UI_CALCULATOR_HP49GP          ? "hp49g+"
-                             : ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL ? "hp49g+/newrpl"
-                             : ui->calculator == UI_CALCULATOR_HP50G         ? "hp50g"
-                                                                             : "hp50g/newrpl" );
-    x49gp_module_set_string( module, keyfile, "name", ui->name );
-
     return 0;
 }
 

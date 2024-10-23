@@ -142,10 +142,7 @@ to rebuild the flash and ask for a firmware again.
 Please consult HP's manual (for their official firmware) or the documentation of the custom firmware (if using one) for an explanation of using the calculator.
 .Sh OPTIONS
 .Bl -tag -width indent
-.It Fl d Ns Oo Ns = Ns Ar port Oc , Fl Fl debug Ns Oo Ns = Ns Ar port Oc
-Enable the GDB remote debugging interface on the specified port (default 1234) and start the interface immediately. When used multiple times, the last explicitly specified port wins. If the connection is closed before
-.Nm
-is shut down, then the interface can be restarted from the popup menu.
+
 .It Fl D Ns Oo Ns = Ns Ar port Oc , Fl Fl enable-debug Ns Oo Ns = Ns Ar port Oc
 Same as
 .Fl d ,
@@ -155,6 +152,12 @@ the last explicitly specified port will still win, and the GDB interface will be
 .Do Nm
 .Fl D Dc
 when the possibility for spontaneous debug sessions exists.
+
+.It Fl d , Fl Fl debug
+Enable the GDB remote debugging interface on the specified port (default 1234) and start the interface immediately. When used multiple times, the last explicitly specified port wins. If the connection is closed before
+.Nm
+is shut down, then the interface can be restarted from the popup menu.
+
 .It Fl f Ns Oo Ns = Ns Ar firmware Oc , Fl Fl reflash Ns Oo Ns = Ns Ar firmware Oc
 Rebuild the flash. If the firmware is not specified,
 .Nm
@@ -163,15 +166,30 @@ will ask for one through a file selection dialog window like on the first launch
 for safety reasons: the firmware may have changed, so the code at the location where
 .Nm
 was stopped previously could be entirely different from the code at that location afterwards; a reboot ensures an orderly reinitialization of the operating system.
-.It Fl F Ns Oo Ns = Ns Ar firmware Oc , Fl Fl reflash-full Ns Oo Ns = Ns Ar firmware Oc
+.It Fl F , Fl Fl reflash-full
 Same as
 .Fl f ,
 but erase the area beyond the firmware too. This has the same effect as deleting the flash, but with the added benefit of being able to specify the firmware on the command-line for automation in scripts.
+
 .It Fl r , Fl Fl reboot
 Reboot the calculator instead of starting from the state saved in the configuration file.
+
 .It Fl h , Fl Fl help
 Print a compact help message and exit.
-.It Ar config
+
+.It Fl Fl 50g
+show HP 50g faceplate (default)
+
+.It Fl Fl 50g-newrpl
+show HP 50g faceplate with newRPL labels
+
+.It Fl Fl 49gp
+show HP 49g+ faceplate
+
+.It Fl Fl 49gp-newrpl
+show HP 49g+ faceplate with newRPL labels
+
+.It Fl c Ns Oo Ns = Ns Ar config Oc , Fl Fl config Ns Oo Ns = Ns Ar config Oc
 Use
 .Ar config
 as the configuration file instead of the default one. See below for details on the format; if the file does not exist, it will be created with default values.
@@ -195,17 +213,6 @@ in the sections
 which allow changing the filename of the files where the state of the respective memory is held. These can be absolute paths, or paths relative to the location of the configuration file (in the simplest case, only a filename). Any files that do not exist will be created with appropriate size and placeholder content. For
 .Em s3c2410-sdi ,
 the empty string is accepted as a special value for no inserted SD card.
-.Pp
-Finally, the
-.Em gui
-section contains the keys
-.Em name ,
-which specifies the window title (possibly useful when multiple different instances are present), and
-.Em type ,
-which specifies the type of the calculator (accepted values are
-.Sy hp49g+
-and
-.Sy hp50g ) .
 .It Sy flash
 The default name of the file backing the flash memory; required size: 2 MiB. If this file does not exist or is too small, the calculator type's appropriate bootloader will be copied into the first 16 KiB. Do NOT simply put a firmware file here, it will not work. Just use the builtin firmware installation mechanism instead.
 .It Sy sram
