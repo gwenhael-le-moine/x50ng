@@ -2,15 +2,9 @@
  */
 
 #include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <fcntl.h>
-#include <time.h>
 #include <sys/times.h>
-#include <errno.h>
 
-#include "x49gp.h"
 #include "s3c2410.h"
 
 /*

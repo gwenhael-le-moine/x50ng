@@ -11,7 +11,6 @@
 
 #include "x49gp.h"
 #include "s3c2410.h"
-#include "byteorder.h"
 
 typedef struct {
     void* data;

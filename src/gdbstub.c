@@ -29,7 +29,6 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-#include "x49gp.h"
 #include "gdbstub.h"
 
 #define MAX_PACKET_LENGTH 4096

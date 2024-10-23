@@ -10,7 +10,6 @@
 #include "x49gp.h"
 #include "s3c2410.h"
 #include "s3c2410_intc.h"
-#include "byteorder.h"
 
 typedef struct {
     uint32_t gpacon;

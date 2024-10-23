@@ -166,6 +166,7 @@ will ask for one through a file selection dialog window like on the first launch
 for safety reasons: the firmware may have changed, so the code at the location where
 .Nm
 was stopped previously could be entirely different from the code at that location afterwards; a reboot ensures an orderly reinitialization of the operating system.
+
 .It Fl F , Fl Fl reflash-full
 Same as
 .Fl f ,
@@ -196,6 +197,7 @@ as the configuration file instead of the default one. See below for details on t
 .El
 .Sh FILES
 .Bl -tag -width indent
+
 .It Sy ~/.config/ Ns Nm Ns Sy /config
 The default location for the configuration file. The file format is the INI-like
 .Dq key-file
@@ -213,12 +215,16 @@ in the sections
 which allow changing the filename of the files where the state of the respective memory is held. These can be absolute paths, or paths relative to the location of the configuration file (in the simplest case, only a filename). Any files that do not exist will be created with appropriate size and placeholder content. For
 .Em s3c2410-sdi ,
 the empty string is accepted as a special value for no inserted SD card.
+
 .It Sy flash
 The default name of the file backing the flash memory; required size: 2 MiB. If this file does not exist or is too small, the calculator type's appropriate bootloader will be copied into the first 16 KiB. Do NOT simply put a firmware file here, it will not work. Just use the builtin firmware installation mechanism instead.
+
 .It Sy sram
 The default name of the file backing the SRAM memory; required size: 512 KiB.
+
 .It Sy s3c2410-sram
 The default name of the file backing the S3C2410's internal SRAM memory; required size: 4 KiB.
+
 .El
 .Sh CAVEATS
 The emulation of the calculators' hardware is not fully accurate. Most notably, emulation speed is not authentic (it depends on the host's capabilites), and communication ports (serial, infrared, USB) are not available. For most purposes this is good enough, though.

@@ -11,7 +11,6 @@
 #include <time.h>
 #include <sys/time.h>
 #include <signal.h>
-#include <errno.h>
 #include <poll.h>
 
 #include <glib.h>

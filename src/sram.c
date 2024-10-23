@@ -12,9 +12,6 @@
 #include <memory.h>
 
 #include "x49gp.h"
-#include "byteorder.h"
-
-#include "saturn.h"
 
 typedef struct {
     void* data;
@@ -375,25 +372,21 @@ static uint32_t sram_get_word( void* opaque, target_phys_addr_t offset )
     data = ldl_p( sram->data + offset );
 
 #  if 0
-	if (offset == 0x00000a1c) {
-		printf("read  SRAM at offset %08x: %08x (pc %08x)\n", offset, data, x49gp->arm->Reg[15]);
-	}
+        if (offset == 0x00000a1c)
+                printf("read  SRAM at offset %08x: %08x (pc %08x)\n", offset, data, x49gp->arm->Reg[15]);
 #  endif
 
 #  ifdef DEBUG_X49GP_SYSRAM_READ
-    if ( ( offset & ~( 0x0001ffff ) ) == 0x00000000 ) {
+    if ( ( offset & ~( 0x0001ffff ) ) == 0x00000000 )
         printf( "read  SRAM 4 at offset %08x: %08x\n", offset, data );
-    }
 #  endif
 #  ifdef DEBUG_X49GP_ERAM_READ
-    if ( ( offset & ~( 0x0001ffff ) ) == 0x00020000 ) {
+    if ( ( offset & ~( 0x0001ffff ) ) == 0x00020000 )
         printf( "read  SRAM 4 at offset %08x: %08x\n", offset, data );
-    }
 #  endif
 #  ifdef DEBUG_X49GP_IRAM_READ
-    if ( ( offset & ~( 0x0003ffff ) ) == 0x00040000 ) {
+    if ( ( offset & ~( 0x0003ffff ) ) == 0x00040000 )
         printf( "read  SRAM 4 at offset %08x: %08x\n", offset, data );
-    }
 #  endif
 
     return data;
@@ -462,18 +455,18 @@ static void sram_put_word( void* opaque, target_phys_addr_t offset, uint32_t dat
     debug_saturn( sram->x49gp, sram );
 
 #  if 0
-	if (offset == 0x3340 + SATURN(D1)) {
-		printf("write D1 at offset %08x: %08x (pc %08x)\n",
-			offset, data, sram->x49gp->env->regs[15]);
-	}
-	if (offset == 0x3340 + SATURN(A)) {
-		printf("write A at offset %08x: %08x (pc %08x)\n",
-			offset, data, sram->x49gp->env->regs[15]);
-	}
-	if (offset == 0x3340 + SATURN(A) + 8) {
-		printf("write Al at offset %08x: %08x (pc %08x)\n",
-			offset, data, sram->x49gp->env->regs[15]);
-	}
+        if (offset == 0x3340 + SATURN(D1)) {
+                printf("write D1 at offset %08x: %08x (pc %08x)\n",
+                        offset, data, sram->x49gp->env->regs[15]);
+        }
+        if (offset == 0x3340 + SATURN(A)) {
+                printf("write A at offset %08x: %08x (pc %08x)\n",
+                        offset, data, sram->x49gp->env->regs[15]);
+        }
+        if (offset == 0x3340 + SATURN(A) + 8) {
+                printf("write Al at offset %08x: %08x (pc %08x)\n",
+                        offset, data, sram->x49gp->env->regs[15]);
+        }
 #  endif
 
 #  ifdef DEBUG_X49GP_SYSRAM_WRITE

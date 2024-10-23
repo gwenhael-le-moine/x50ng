@@ -10,8 +10,6 @@
 #include "x49gp.h"
 #include "s3c2410.h"
 #include "s3c2410_intc.h"
-#include "s3c2410_power.h"
-#include "byteorder.h"
 
 extern int do_trace;
 

@@ -8,7 +8,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>
-#include <signal.h>
 #include <sys/times.h>
 #include <math.h>
 #include <errno.h>

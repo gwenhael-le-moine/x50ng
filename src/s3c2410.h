@@ -4,6 +4,8 @@
 #ifndef _X49GP_S3C2410_H
 #define _X49GP_S3C2410_H 1
 
+#include <stdint.h>
+
 #include "x49gp_types.h"
 
 typedef struct {

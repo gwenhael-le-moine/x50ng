@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
-#include <ctype.h>
 #include <netinet/in.h>
 
 int main( int argc, char** argv )
