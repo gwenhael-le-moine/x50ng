@@ -13,7 +13,7 @@ DEBUG_CFLAGS = -g # -pg
 OPTIM = 2
 
 # GTK
-GTK_CFLAGS = $(shell pkg-config --cflags gtk+-2.0)
+GTK_CFLAGS = $(shell pkg-config --cflags gtk+-2.0) -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE
 GTK_LDLIBS = $(shell pkg-config --libs gtk+-2.0) -lz -lm
 
 # Embedded qemu
