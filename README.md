@@ -1,6 +1,6 @@
-Quick Start Guide
-03/27/2017
-Egan Ford <egan@sense.net>
+Quick Start Guide (2024-10-24)
+
+Taken over by gwh, originally by Egan Ford <egan@sense.net>
 
 NOTE: READ ALL INSTRUCTIONS
 
@@ -140,6 +140,8 @@ To Exit Emulator
 
 Use any of:
 
+* Press F7 or F10
+
 * Press Alt-F4 or your system's equivalent key combination
 
 * Open the menu using a right click on the screen or the menu key, then
@@ -186,3 +188,9 @@ Known Limitations:
   - `f*` calls stable (HPGCC3)
 
 ------------------------------------------------------------------------
+
+Post fork todo-list:
+
+* [DOING] first port `gtk+-2` code to `gtk+-3`
+  - in progress, starting https://docs.gtk.org/gtk3/migrating-2to3.html#use-cairo-for-drawing
+* then port `gtk+-3` code to `gtk4`
