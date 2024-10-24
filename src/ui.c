@@ -2375,8 +2375,8 @@ static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_but
 
     gtkbutton = GTK_BUTTON( button->button );
 
-    if ( button != cause )
-        gtkbutton->in_button = false;
+    /* if ( button != cause ) */
+    /*     gtkbutton->in_button = false; */
     gtk_button_released( gtkbutton );
 
     key = button->key;
@@ -2530,7 +2530,7 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     x49gp_ui_t* ui = x49gp->ui;
     x49gp_ui_button_t* button;
     GdkEventButton bev;
-    gboolean save_in;
+    /* gboolean save_in; */
     int index;
     guint keyval;
 
@@ -2804,21 +2804,21 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     bev.button = 1;
     bev.state = event->state;
 
-    save_in = GTK_BUTTON( button->button )->in_button;
+    /* save_in = GTK_BUTTON( button->button )->in_button; */
 
     switch ( event->type ) {
         case GDK_KEY_PRESS:
             bev.type = GDK_BUTTON_PRESS;
             x49gp_ui_button_press( button->button, &bev, button );
-            GTK_BUTTON( button->button )->in_button = true;
+            /* GTK_BUTTON( button->button )->in_button = true; */
             gtk_button_pressed( GTK_BUTTON( button->button ) );
-            GTK_BUTTON( button->button )->in_button = save_in;
+            /* GTK_BUTTON( button->button )->in_button = save_in; */
             break;
         case GDK_KEY_RELEASE:
             bev.type = GDK_BUTTON_RELEASE;
-            GTK_BUTTON( button->button )->in_button = true;
+            /* GTK_BUTTON( button->button )->in_button = true; */
             gtk_button_released( GTK_BUTTON( button->button ) );
-            GTK_BUTTON( button->button )->in_button = save_in;
+            /* GTK_BUTTON( button->button )->in_button = save_in; */
             x49gp_ui_button_release( button->button, &bev, button );
             break;
         default:
