@@ -2365,10 +2365,10 @@ static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_but
     const x49gp_ui_key_t* key;
     GtkButton* gtkbutton;
 
-/* #ifdef DEBUG_X49GP_UI */
-/*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
-/*             button->key->eint ); */
-/* #endif */
+    /* #ifdef DEBUG_X49GP_UI */
+    /*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
+    /*             button->key->eint ); */
+    /* #endif */
 
     button->down = false;
     button->hold = false;
@@ -2880,14 +2880,14 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
 #if DEBUG_LAYOUT /* Layout Debug */
-        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-        cairo_set_line_width(cr, 1.0);
-        cairo_move_to(cr, xoffset, yoffset);
-        cairo_line_to(cr, xoffset + w - 1, yoffset);
-        cairo_line_to(cr, xoffset + w - 1, yoffset + h - 1);
-        cairo_line_to(cr, xoffset, yoffset + h - 1);
-        cairo_close_path(cr);
-        cairo_stroke(cr);
+    cairo_set_source_rgb( cr, 1.0, 1.0, 1.0 );
+    cairo_set_line_width( cr, 1.0 );
+    cairo_move_to( cr, xoffset, yoffset );
+    cairo_line_to( cr, xoffset + w - 1, yoffset );
+    cairo_line_to( cr, xoffset + w - 1, yoffset + h - 1 );
+    cairo_line_to( cr, xoffset, yoffset + h - 1 );
+    cairo_close_path( cr );
+    cairo_stroke( cr );
 #endif
 
     if ( key->letter ) {
@@ -3224,23 +3224,23 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     int fd;
 
     switch ( opt.model ) {
-    case MODEL_50G_NEWRPL:
-        ui->calculator = UI_CALCULATOR_HP50G_NEWRPL;
-        ui->name = opt.name != NULL ? opt.name : "HP 50g / newRPL";
-        break;
-    case MODEL_49GP:
-        ui->calculator = UI_CALCULATOR_HP49GP;
-        ui->name = opt.name != NULL ? opt.name : "HP 49g+";
-        break;
-    case MODEL_49GP_NEWRPL:
-        ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
-        ui->name = "opt.name != NULL ? opt.name : HP 49g+ / newRPL";
-        break;
-    case MODEL_50G:
-    default:
-        ui->calculator = UI_CALCULATOR_HP50G;
-        ui->name = opt.name != NULL ? opt.name : "HP 50g";
-        break;
+        case MODEL_50G_NEWRPL:
+            ui->calculator = UI_CALCULATOR_HP50G_NEWRPL;
+            ui->name = opt.name != NULL ? opt.name : "HP 50g / newRPL";
+            break;
+        case MODEL_49GP:
+            ui->calculator = UI_CALCULATOR_HP49GP;
+            ui->name = opt.name != NULL ? opt.name : "HP 49g+";
+            break;
+        case MODEL_49GP_NEWRPL:
+            ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
+            ui->name = "opt.name != NULL ? opt.name : HP 49g+ / newRPL";
+            break;
+        case MODEL_50G:
+        default:
+            ui->calculator = UI_CALCULATOR_HP50G;
+            ui->name = opt.name != NULL ? opt.name : "HP 50g";
+            break;
     }
 
     fd = x49gp_module_open_rodata( module,
@@ -3451,10 +3451,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     return 0;
 }
 
-static int gui_save( x49gp_module_t* module, GKeyFile* keyfile )
-{
-    return 0;
-}
+static int gui_save( x49gp_module_t* module, GKeyFile* keyfile ) { return 0; }
 
 int x49gp_ui_init( x49gp_t* x49gp )
 {
