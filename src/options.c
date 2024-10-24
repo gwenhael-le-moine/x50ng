@@ -29,7 +29,6 @@ void config_init( char* progname, int argc, char* argv[] )
     opt.model = MODEL_50G;
     opt.name = NULL;
 
-
     const char* optstring = "hrc:D:df:Fn:";
     struct option long_options[] = {
         {"help",         no_argument,       NULL, 'h'},
@@ -42,11 +41,11 @@ void config_init( char* progname, int argc, char* argv[] )
         {"reflash-full", no_argument,       NULL, 'F'},
         {"reboot",       no_argument,       NULL, 'r'},
 
-        {"50g", no_argument, NULL, 506},
-        {"50g-newrpl", no_argument, NULL, 507},
-        {"49gp", no_argument, NULL, 496},
-        {"49gp-newrpl", no_argument, NULL, 497},
-        {"name",      required_argument, NULL, 'n'},
+        {"50g",          no_argument,       NULL, 506},
+        {"50g-newrpl",   no_argument,       NULL, 507},
+        {"49gp",         no_argument,       NULL, 496},
+        {"49gp-newrpl",  no_argument,       NULL, 497},
+        {"name",         required_argument, NULL, 'n'},
 
         {0,              0,                 0,    0  }
     };
@@ -84,80 +83,78 @@ void config_init( char* progname, int argc, char* argv[] )
                          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
                 exit( EXIT_SUCCESS );
                 break;
-        case 'r':
-            if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
-                opt.reinit = X49GP_REINIT_REBOOT_ONLY;
-            break;
-        case 'c':
-            opt.config = strdup( optarg );
-            break;
-        case 'D':
-            do_enable_debugger = true;
-            break;
-        case 'd':
-            do_start_debugger = true;
-            break;
-        case 'f':
-            do_reflash = true;
-            break;
-        case 'F':
-            do_reflash_full = true;
-            break;
-        case 496:
-            opt.model = MODEL_49GP;
-            break;
-        case 497:
-            opt.model = MODEL_49GP_NEWRPL;
-            break;
-        case 506:
-            opt.model = MODEL_50G;
-            break;
-        case 507:
-            opt.model = MODEL_50G_NEWRPL;
-            break;
-        case 'n':
-            opt.name = strdup( optarg );
-            break;
-        default:
-            break;
+            case 'r':
+                if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
+                    opt.reinit = X49GP_REINIT_REBOOT_ONLY;
+                break;
+            case 'c':
+                opt.config = strdup( optarg );
+                break;
+            case 'D':
+                do_enable_debugger = true;
+                break;
+            case 'd':
+                do_start_debugger = true;
+                break;
+            case 'f':
+                do_reflash = true;
+                break;
+            case 'F':
+                do_reflash_full = true;
+                break;
+            case 496:
+                opt.model = MODEL_49GP;
+                break;
+            case 497:
+                opt.model = MODEL_49GP_NEWRPL;
+                break;
+            case 506:
+                opt.model = MODEL_50G;
+                break;
+            case 507:
+                opt.model = MODEL_50G_NEWRPL;
+                break;
+            case 'n':
+                opt.name = strdup( optarg );
+                break;
+            default:
+                break;
         }
     }
 
     if ( do_enable_debugger ) {
-                char* end;
-                int port;
+        char* end;
+        int port;
 
-                if ( optarg == NULL && opt.debug_port == 0 )
-                        opt.debug_port = DEFAULT_GDBSTUB_PORT;
+        if ( optarg == NULL && opt.debug_port == 0 )
+            opt.debug_port = DEFAULT_GDBSTUB_PORT;
 
-                port = strtoul( optarg, &end, 0 );
-                if ( ( end == optarg ) || ( *end != '\0' ) ) {
-                    fprintf( stderr, "Invalid port \"%s\", using default\n", optarg );
-                    if ( opt.debug_port == 0 )
-                        opt.debug_port = DEFAULT_GDBSTUB_PORT;
-                }
+        port = strtoul( optarg, &end, 0 );
+        if ( ( end == optarg ) || ( *end != '\0' ) ) {
+            fprintf( stderr, "Invalid port \"%s\", using default\n", optarg );
+            if ( opt.debug_port == 0 )
+                opt.debug_port = DEFAULT_GDBSTUB_PORT;
+        }
 
-                if ( opt.debug_port != 0 && opt.debug_port != DEFAULT_GDBSTUB_PORT )
-                    fprintf( stderr,
-                            "Additional debug port \"%s\" specified, overriding\n",
-                            optarg );
-                opt.debug_port = port;
+        if ( opt.debug_port != 0 && opt.debug_port != DEFAULT_GDBSTUB_PORT )
+            fprintf( stderr, "Additional debug port \"%s\" specified, overriding\n", optarg );
+        opt.debug_port = port;
 
-                opt.start_debugger = do_start_debugger;
+        opt.start_debugger = do_start_debugger;
     }
     if ( do_reflash ) {
-            if ( opt.reinit < X49GP_REINIT_FLASH )
-                opt.reinit = X49GP_REINIT_FLASH;
+        if ( opt.reinit < X49GP_REINIT_FLASH )
+            opt.reinit = X49GP_REINIT_FLASH;
 
-            if ( opt.firmware != NULL )
-                fprintf( stderr,
-                        "Additional firmware file \"%s\" specified,"
-                        " overriding\n",
-                        optarg );
-            opt.firmware = optarg;
+        if ( opt.firmware != NULL )
+            fprintf( stderr,
+                     "Additional firmware file \"%s\" specified,"
+                     " overriding\n",
+                     optarg );
+        opt.firmware = optarg;
 
-            if ( do_reflash_full )
-                opt.reinit = X49GP_REINIT_FLASH_FULL;
+        if ( do_reflash_full )
+            opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
 
     if ( opt.config == NULL ) {
