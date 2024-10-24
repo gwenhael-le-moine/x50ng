@@ -2663,8 +2663,8 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
             index = 31;
             break;
 #ifndef __APPLE__
-        // case GDK_KEY_Alt_L: case GDK_KEY_Alt_R:
-        // case GDK_KEY_Meta_L: case GDK_KEY_Meta_R:
+        case GDK_KEY_Alt_L: case GDK_KEY_Alt_R:
+        case GDK_KEY_Meta_L: case GDK_KEY_Meta_R:
         case GDK_KEY_Mode_switch:
             index = 31;
             break;
