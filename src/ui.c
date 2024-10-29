@@ -3413,15 +3413,15 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     // {
     ui->menu = gtk_menu_new();
 
-    GtkWidget *menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." );
+    GtkWidget* menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_folder );
     g_signal_connect( G_OBJECT( menu_mount_folder ), "activate", G_CALLBACK( x49gp_ui_mount_sd_folder ), x49gp );
 
-    GtkWidget *menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." );
+    GtkWidget* menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_image );
     g_signal_connect( G_OBJECT( menu_mount_image ), "activate", G_CALLBACK( x49gp_ui_mount_sd_image ), x49gp );
 
-    GtkWidget *menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" );
+    GtkWidget* menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_unmount );
     g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
     ui->menu_unmount = menu_unmount;
@@ -3429,7 +3429,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     if ( x49gp->debug_port != 0 ) {
         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
 
-        GtkWidget *menu_debug = gtk_menu_item_new_with_label( "Start debugger" );
+        GtkWidget* menu_debug = gtk_menu_item_new_with_label( "Start debugger" );
         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_debug );
         g_signal_connect( G_OBJECT( menu_debug ), "activate", G_CALLBACK( x49gp_ui_debug ), x49gp );
         ui->menu_debug = menu_debug;
@@ -3438,11 +3438,11 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
 
-    GtkWidget *menu_reset = gtk_menu_item_new_with_label( "Reset" );
+    GtkWidget* menu_reset = gtk_menu_item_new_with_label( "Reset" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset );
     g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( x49gp_ui_calculator_reset ), x49gp );
 
-    GtkWidget *menu_quit = gtk_menu_item_new_with_label( "Quit" );
+    GtkWidget* menu_quit = gtk_menu_item_new_with_label( "Quit" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_quit );
     g_signal_connect_swapped( G_OBJECT( menu_quit ), "activate", G_CALLBACK( x49gp_ui_quit ), x49gp );
 
