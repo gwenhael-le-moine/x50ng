@@ -281,6 +281,17 @@ static int x49gp_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
     }
 }
 
+void x49gp_draw_rectangle( GdkPixmap* target, int x, int y, int w, int h, GdkColor* color )
+{
+    cairo_t* cr = gdk_cairo_create (target);
+    cairo_set_source_rgb( cr, color->red, color->green, color->blue );
+
+    cairo_rectangle (cr, x, y, w, h );
+    cairo_fill (cr);
+
+    cairo_destroy (cr);
+}
+
 void x49gp_lcd_update( x49gp_t* x49gp )
 {
     x49gp_ui_t* ui = x49gp->ui;
@@ -322,19 +333,12 @@ void x49gp_lcd_update( x49gp_t* x49gp )
         for ( int y = 0; y < ( ui->lcd_height - ui->lcd_annunciators_height ) / LCD_PIXEL_SCALE; y++ ) {
             for ( int x = 0; x < ui->lcd_width / LCD_PIXEL_SCALE; x++ ) {
                 color = x49gp_get_pixel_color( lcd, x, y );
-                gdk_gc_set_rgb_fg_color( gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+                /* gdk_gc_set_rgb_fg_color( gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) ); */
 
-                gdk_draw_rectangle( ui->lcd_pixmap, gc, true, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height,
-                                    LCD_PIXEL_SCALE, LCD_PIXEL_SCALE );
+                /* gdk_draw_rectangle( ui->lcd_pixmap, gc, true, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height, */
+                /*                     LCD_PIXEL_SCALE, LCD_PIXEL_SCALE ); */
 
-                /* gdk_draw_point( ui->lcd_pixmap, gc, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height ); */
-
-                /* cr = gdk_cairo_create (ui->lcd_pixmap); */
-
-                /* cairo_rectangle (cr, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height, LCD_PIXEL_SCALE, LCD_PIXEL_SCALE ); */
-                /* cairo_fill (cr); */
-
-                /* cairo_destroy (cr); */
+                x49gp_draw_rectangle( ui->lcd_pixmap, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height, LCD_PIXEL_SCALE, LCD_PIXEL_SCALE, &(ui->colors[ UI_COLOR_GRAYSCALE_0 + color ]) );
             }
         }
 
