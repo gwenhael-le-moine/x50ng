@@ -3306,31 +3306,31 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_drawing_area_size( GTK_DRAWING_AREA( ui->background ), ui->width, ui->height );
     x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
 
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLACK ], 0x00, 0x00, 0x00 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_WHITE ], 0xff, 0xff, 0xff );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_YELLOW ], 0xfa, 0xe8, 0x2c );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_RED ], 0x8e, 0x25, 0x18 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GREEN ], 0x14, 0x4d, 0x49 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_SILVER ], 0xe0, 0xe0, 0xe0 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_ORANGE ], 0xc0, 0x6e, 0x60 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLUE ], 0x40, 0x60, 0xa4 );
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLACK ], 0x00, 0x00, 0x00 );  /* #000000 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_WHITE ], 0xff, 0xff, 0xff );  /* #ffffff */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_YELLOW ], 0xfa, 0xe8, 0x2c ); /* #fae82c */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_RED ], 0x8e, 0x25, 0x18 );    /* #8e2518 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GREEN ], 0x14, 0x4d, 0x49 );  /* #144d49 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_SILVER ], 0xe0, 0xe0, 0xe0 ); /* #e0e0e0 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_ORANGE ], 0xc0, 0x6e, 0x60 ); /* #c06e60 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLUE ], 0x40, 0x60, 0xa4 );   /* #4060a4 */
 
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_0 ], 0xab, 0xd2, 0xb4 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_1 ], 0xa0, 0xc4, 0xa8 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_2 ], 0x94, 0xb6, 0x9c );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_3 ], 0x89, 0xa8, 0x90 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_4 ], 0x7d, 0x9a, 0x84 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_5 ], 0x72, 0x8c, 0x78 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_6 ], 0x67, 0x7e, 0x6c );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_7 ], 0x5b, 0x70, 0x60 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_8 ], 0x50, 0x62, 0x54 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_9 ], 0x44, 0x54, 0x48 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_10 ], 0x39, 0x46, 0x3c );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_11 ], 0x2e, 0x38, 0x30 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_12 ], 0x22, 0x2a, 0x24 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_13 ], 0x17, 0x1c, 0x18 );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_14 ], 0x0b, 0x03, 0x0c );
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 );
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_0 ], 0xab, 0xd2, 0xb4 );  /* #abd2b4 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_1 ], 0xa0, 0xc4, 0xa8 );  /* #a0c4a8 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_2 ], 0x94, 0xb6, 0x9c );  /* #94b69c */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_3 ], 0x89, 0xa8, 0x90 );  /* #89a890 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_4 ], 0x7d, 0x9a, 0x84 );  /* #7d9a84 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_5 ], 0x72, 0x8c, 0x78 );  /* #728c78 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_6 ], 0x67, 0x7e, 0x6c );  /* #677e6c */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_7 ], 0x5b, 0x70, 0x60 );  /* #5b7060 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_8 ], 0x50, 0x62, 0x54 );  /* #506254 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_9 ], 0x44, 0x54, 0x48 );  /* #445448 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_10 ], 0x39, 0x46, 0x3c ); /* #39463c */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_11 ], 0x2e, 0x38, 0x30 ); /* #2e3830 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_12 ], 0x22, 0x2a, 0x24 ); /* #222a24 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_13 ], 0x17, 0x1c, 0x18 ); /* #171c18 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_14 ], 0x0b, 0x03, 0x0c ); /* #0b030c */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 ); /* #000000 */
 
     ui->lcd_canvas = gtk_drawing_area_new();
     gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
