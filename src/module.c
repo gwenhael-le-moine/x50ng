@@ -9,6 +9,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#include "list.h"
 #include "x49gp.h"
 
 int x49gp_modules_init( x49gp_t* x49gp )
@@ -25,9 +26,8 @@ int x49gp_modules_init( x49gp_t* x49gp )
     list_for_each_entry( module, &x49gp->modules, list )
     {
         error = module->init( module );
-        if ( error ) {
+        if ( error )
             return error;
-        }
     }
 
     phys_ram_base = mmap( 0, phys_ram_size, PROT_NONE, MAP_SHARED | MAP_ANON, -1, 0 );
@@ -61,9 +61,8 @@ int x49gp_modules_exit( x49gp_t* x49gp )
     list_for_each_entry_safe_reverse( module, next, &x49gp->modules, list )
     {
         error = module->exit( module );
-        if ( error ) {
+        if ( error )
             return error;
-        }
     }
 
     return 0;
@@ -81,9 +80,8 @@ int x49gp_modules_reset( x49gp_t* x49gp, x49gp_reset_t reset )
     list_for_each_entry( module, &x49gp->modules, list )
     {
         error = module->reset( module, reset );
-        if ( error ) {
+        if ( error )
             return error;
-        }
     }
 
     return 0;
@@ -124,11 +122,10 @@ int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
     {
         error = module->load( module, x49gp->config );
         if ( error ) {
-            if ( error == -EAGAIN ) {
+            if ( error == -EAGAIN )
                 result = -EAGAIN;
-            } else {
+            else
                 return error;
-            }
         }
     }
 
@@ -161,9 +158,8 @@ int x49gp_modules_save( x49gp_t* x49gp, const char* filename )
     list_for_each_entry( module, &x49gp->modules, list )
     {
         error = module->save( module, x49gp->config );
-        if ( error ) {
+        if ( error )
             return error;
-        }
     }
 
     data = g_key_file_to_data( x49gp->config, &length, &gerror );
