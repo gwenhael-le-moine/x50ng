@@ -285,6 +285,7 @@ void x49gp_lcd_update( x49gp_t* x49gp )
 {
     x49gp_ui_t* ui = x49gp->ui;
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
+    //cairo_t* cr;
 
     gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( ui->window )->bg_gc[ 0 ], ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0,
                        0, ui->lcd_width, ui->lcd_height );
@@ -322,8 +323,18 @@ void x49gp_lcd_update( x49gp_t* x49gp )
             for ( int x = 0; x < ui->lcd_width / LCD_PIXEL_SCALE; x++ ) {
                 color = x49gp_get_pixel_color( lcd, x, y );
                 gdk_gc_set_rgb_fg_color( gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+
                 gdk_draw_rectangle( ui->lcd_pixmap, gc, true, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height,
                                     LCD_PIXEL_SCALE, LCD_PIXEL_SCALE );
+
+                /* gdk_draw_point( ui->lcd_pixmap, gc, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height ); */
+
+                /* cr = gdk_cairo_create (ui->lcd_pixmap); */
+
+                /* cairo_rectangle (cr, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height, LCD_PIXEL_SCALE, LCD_PIXEL_SCALE ); */
+                /* cairo_fill (cr); */
+
+                /* cairo_destroy (cr); */
             }
         }
 
