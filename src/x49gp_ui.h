@@ -4,6 +4,10 @@
 #ifndef _X49GP_UI_H
 #define _X49GP_UI_H 1
 
+#include <gtk/gtk.h>
+#include <glib.h>
+#include <cairo.h>
+
 #include "x49gp_types.h"
 
 #define LCD_PIXEL_SCALE 2
