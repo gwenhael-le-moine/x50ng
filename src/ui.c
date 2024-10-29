@@ -3241,7 +3241,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             break;
         case MODEL_49GP_NEWRPL:
             ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
-            ui->name = "opt.name != NULL ? opt.name : HP 49g+ / newRPL";
+            ui->name = opt.name != NULL ? opt.name : "HP 49g+ / newRPL";
             break;
         case MODEL_50G:
         default:
