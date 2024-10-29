@@ -6,6 +6,8 @@
 
 #include "x49gp_types.h"
 
+#define LCD_PIXEL_SCALE 2
+
 typedef enum {
     UI_COLOR_BLACK = 0,
     UI_COLOR_WHITE,

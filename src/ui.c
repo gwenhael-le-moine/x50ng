@@ -3251,11 +3251,12 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     if ( fd < 0 )
         return fd;
 
+    /* set ui->width and ui->height based on imagefile dimensions */
     gdk_pixbuf_get_file_info( imagefile, &ui->width, &ui->height );
 
-    ui->lcd_width = 131 * 2;
+    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
     ui->lcd_top_margin = 16;
-    ui->lcd_height = 80 * 2 + ui->lcd_top_margin;
+    ui->lcd_height = 80 * LCD_PIXEL_SCALE + ui->lcd_top_margin;
 
     ui->lcd_x_offset = ( ui->width - ui->lcd_width ) / 2;
     ui->lcd_y_offset = 48; // 69;

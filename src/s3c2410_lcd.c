@@ -69,100 +69,6 @@ static int s3c2410_lcd_data_init( s3c2410_lcd_t* lcd )
     return 0;
 }
 
-void x49gp_schedule_lcd_update( x49gp_t* x49gp )
-{
-    if ( !x49gp_timer_pending( x49gp->lcd_timer ) ) {
-        x49gp_mod_timer( x49gp->lcd_timer, x49gp_get_clock() + X49GP_LCD_REFRESH_INTERVAL );
-    }
-}
-
-static int x49gp_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
-{
-    uint32_t bank, addr, data, offset, pixel_offset;
-    int bits_per_pixel = lcd->lcdcon5 > 2 ? 1 : 4 >> lcd->lcdcon5;
-
-    bank = ( lcd->lcdsaddr1 << 1 ) & 0x7fc00000;
-    addr = bank | ( ( lcd->lcdsaddr1 << 1 ) & 0x003ffffe );
-
-    pixel_offset = ( 160 * y + x ) * bits_per_pixel;
-    offset = ( pixel_offset >> 3 ) & 0xfffffffc;
-
-    data = ldl_phys( addr + offset );
-    data >>= pixel_offset & 31;
-    data &= ( 1 << bits_per_pixel ) - 1;
-
-    switch ( bits_per_pixel ) {
-        case 1:
-            return 15 * data;
-        case 2:
-            return 15 & ( lcd->bluelut >> ( 4 * data ) );
-        default:
-            return data;
-    }
-}
-
-void x49gp_lcd_update( x49gp_t* x49gp )
-{
-    x49gp_ui_t* ui = x49gp->ui;
-    s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
-    GdkRectangle rect;
-    GdkGC* gc;
-    int color, x, y;
-
-    if ( !( lcd->lcdcon1 & 1 ) ) {
-        gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( ui->window )->bg_gc[ 0 ], ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0, 0,
-                           ui->lcd_width, ui->lcd_height );
-        goto done;
-    }
-
-    gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( ui->window )->bg_gc[ 0 ], ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0, 0,
-                       ui->lcd_width, ui->lcd_height );
-
-    color = x49gp_get_pixel_color( lcd, 131, 0 );
-    gdk_gc_set_rgb_fg_color( ui->ann_io_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-    gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_io_gc, TRUE, 236, 0, 15, 12 );
-
-    color = x49gp_get_pixel_color( lcd, 131, 1 );
-    gdk_gc_set_rgb_fg_color( ui->ann_left_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-    gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_left_gc, TRUE, 11, 0, 15, 12 );
-
-    color = x49gp_get_pixel_color( lcd, 131, 2 );
-    gdk_gc_set_rgb_fg_color( ui->ann_right_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-    gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_right_gc, TRUE, 56, 0, 15, 12 );
-
-    color = x49gp_get_pixel_color( lcd, 131, 3 );
-    gdk_gc_set_rgb_fg_color( ui->ann_alpha_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-    gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_alpha_gc, TRUE, 101, 0, 15, 12 );
-
-    color = x49gp_get_pixel_color( lcd, 131, 4 );
-    gdk_gc_set_rgb_fg_color( ui->ann_battery_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-    gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_battery_gc, TRUE, 146, 0, 15, 12 );
-
-    color = x49gp_get_pixel_color( lcd, 131, 5 );
-    gdk_gc_set_rgb_fg_color( ui->ann_busy_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-    gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_busy_gc, TRUE, 191, 0, 15, 12 );
-
-    gc = gdk_gc_new( gtk_widget_get_window( ui->lcd_canvas ) );
-
-    for ( y = 0; y < ( ui->lcd_height - ui->lcd_top_margin ) / 2; y++ ) {
-        for ( x = 0; x < ui->lcd_width / 2; x++ ) {
-            color = x49gp_get_pixel_color( lcd, x, y );
-            gdk_gc_set_rgb_fg_color( gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-            gdk_draw_rectangle( ui->lcd_pixmap, gc, TRUE, 2 * x, 2 * y + ui->lcd_top_margin, 2, 2 );
-        }
-    }
-
-    g_object_unref( gc );
-
-done:
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = ui->lcd_width;
-    rect.height = ui->lcd_height;
-
-    gdk_window_invalidate_rect( gtk_widget_get_window( ui->lcd_canvas ), &rect, false );
-}
-
 static uint32_t s3c2410_lcd_read( void* opaque, target_phys_addr_t offset )
 {
     s3c2410_lcd_t* lcd = opaque;
@@ -350,14 +256,101 @@ static int s3c2410_lcd_exit( x49gp_module_t* module )
     return 0;
 }
 
+void x49gp_schedule_lcd_update( x49gp_t* x49gp )
+{
+    if ( !x49gp_timer_pending( x49gp->lcd_timer ) )
+        x49gp_mod_timer( x49gp->lcd_timer, x49gp_get_clock() + X49GP_LCD_REFRESH_INTERVAL );
+}
+
+static int x49gp_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
+{
+    uint32_t bank, addr, data, offset, pixel_offset;
+    int bits_per_pixel = lcd->lcdcon5 > 2 ? 1 : 4 >> lcd->lcdcon5;
+
+    bank = ( lcd->lcdsaddr1 << 1 ) & 0x7fc00000;
+    addr = bank | ( ( lcd->lcdsaddr1 << 1 ) & 0x003ffffe );
+
+    pixel_offset = ( 160 * y + x ) * bits_per_pixel;
+    offset = ( pixel_offset >> 3 ) & 0xfffffffc;
+
+    data = ldl_phys( addr + offset );
+    data >>= pixel_offset & 31;
+    data &= ( 1 << bits_per_pixel ) - 1;
+
+    switch ( bits_per_pixel ) {
+        case 1:
+            return 15 * data;
+        case 2:
+            return 15 & ( lcd->bluelut >> ( 4 * data ) );
+        default:
+            return data;
+    }
+}
+
+void x49gp_lcd_update( x49gp_t* x49gp )
+{
+    x49gp_ui_t* ui = x49gp->ui;
+    s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
+
+    gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( ui->window )->bg_gc[ 0 ], ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0,
+                       0, ui->lcd_width, ui->lcd_height );
+
+    if ( lcd->lcdcon1 & 1 ) {
+        int color;
+        color = x49gp_get_pixel_color( lcd, 131, 1 );
+        gdk_gc_set_rgb_fg_color( ui->ann_left_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_left_gc, true, 11, 0, 15, 12 );
+
+        color = x49gp_get_pixel_color( lcd, 131, 2 );
+        gdk_gc_set_rgb_fg_color( ui->ann_right_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_right_gc, true, 56, 0, 15, 12 );
+
+        color = x49gp_get_pixel_color( lcd, 131, 3 );
+        gdk_gc_set_rgb_fg_color( ui->ann_alpha_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_alpha_gc, true, 101, 0, 15, 12 );
+
+        color = x49gp_get_pixel_color( lcd, 131, 4 );
+        gdk_gc_set_rgb_fg_color( ui->ann_battery_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_battery_gc, true, 146, 0, 15, 12 );
+
+        color = x49gp_get_pixel_color( lcd, 131, 5 );
+        gdk_gc_set_rgb_fg_color( ui->ann_busy_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_busy_gc, true, 191, 0, 15, 12 );
+
+        color = x49gp_get_pixel_color( lcd, 131, 0 );
+        gdk_gc_set_rgb_fg_color( ui->ann_io_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_io_gc, true, 236, 0, 15, 12 );
+
+        GdkGC* gc = gdk_gc_new( gtk_widget_get_window( ui->lcd_canvas ) );
+
+        for ( int y = 0; y < ( ui->lcd_height - ui->lcd_top_margin ) / LCD_PIXEL_SCALE; y++ ) {
+            for ( int x = 0; x < ui->lcd_width / LCD_PIXEL_SCALE; x++ ) {
+                color = x49gp_get_pixel_color( lcd, x, y );
+                gdk_gc_set_rgb_fg_color( gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
+                gdk_draw_rectangle( ui->lcd_pixmap, gc, true, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_top_margin,
+                                    LCD_PIXEL_SCALE, LCD_PIXEL_SCALE );
+            }
+        }
+
+        g_object_unref( gc );
+    }
+
+    GdkRectangle rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = ui->lcd_width;
+    rect.height = ui->lcd_height;
+
+    gdk_window_invalidate_rect( gtk_widget_get_window( ui->lcd_canvas ), &rect, false );
+}
+
 int x49gp_s3c2410_lcd_init( x49gp_t* x49gp )
 {
     x49gp_module_t* module;
 
     if ( x49gp_module_init( x49gp, "s3c2410-lcd", s3c2410_lcd_init, s3c2410_lcd_exit, s3c2410_lcd_reset, s3c2410_lcd_load, s3c2410_lcd_save,
-                            NULL, &module ) ) {
+                            NULL, &module ) )
         return -1;
-    }
 
     return x49gp_module_register( module );
 }
