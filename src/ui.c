@@ -1597,6 +1597,7 @@ static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* butt
 {
     x49gp_ui_t* ui = x49gp->ui;
     GdkPixbuf *src, *dst;
+    cairo_t* cr;
     GtkStyle* style = gtk_style_new();
     x49gp_ui_style_init( style, button->button, &ui->colors[ button->key->color ], &ui->colors[ UI_COLOR_BLACK ] );
 
@@ -1624,8 +1625,10 @@ static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* butt
             src = gdk_pixbuf_new_subpixbuf( ui->bg_pixbuf, ui->kb_x_offset + button->key->x, ui->kb_y_offset + button->key->y,
                                             button->key->width, button->key->height );
 
-        gdk_draw_pixbuf( style->bg_pixmap[ i ], gtk_widget_get_style( ui->window )->black_gc, src, 0, 0, 0, 0, button->key->width,
-                         button->key->height, GDK_RGB_DITHER_NORMAL, 0, 0 );
+        cr = gdk_cairo_create( style->bg_pixmap[ i ] );
+        gdk_cairo_set_source_pixbuf( cr, src, 0, 0 );
+        cairo_paint( cr );
+        cairo_destroy( cr );
 
         g_object_unref( src );
     }
@@ -3045,8 +3048,10 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
 
     ui->bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( widget ), ui->width, ui->height, -1 );
 
-    gdk_draw_pixbuf( ui->bg_pixmap, gtk_widget_get_style( widget )->black_gc, ui->bg_pixbuf, 0, 0, 0, 0, ui->width, ui->height,
-                     GDK_RGB_DITHER_NORMAL, 0, 0 );
+    cr = gdk_cairo_create( ui->bg_pixmap );
+    gdk_cairo_set_source_pixbuf( cr, ui->bg_pixbuf, 0, 0 );
+    cairo_paint( cr );
+    cairo_destroy( cr );
 
     cr = gdk_cairo_create( ui->bg_pixmap );
     cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
@@ -3223,10 +3228,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GtkWidget* screen_box;
     GtkWidget *menu_mount_folder, *menu_mount_image, *menu_unmount;
     GtkWidget *menu_debug, *menu_reset, *menu_quit;
-    GError* gerror = NULL;
     GdkBitmap* shape;
-    char* imagefile;
-    int fd;
 
     switch ( opt.model ) {
         case MODEL_50G_NEWRPL:
@@ -3249,16 +3251,22 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     /* Load faceplate base texture into  imagefile */
-    fd = x49gp_module_open_rodata( module,
-                                   ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
-                                       ? "hp49g+-cropped.png"
-                                       : "hp50g-cropped.png",
-                                   &imagefile );
+    GError* gerror = NULL;
+    char* imagefile;
+    int fd = x49gp_module_open_rodata( module,
+                                       ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
+                                           ? "hp49g+-cropped.png"
+                                           : "hp50g-cropped.png",
+                                       &imagefile );
     if ( fd < 0 )
         return fd;
 
+    ui->bg_pixbuf = gdk_pixbuf_new_from_file( imagefile, &gerror );
+    /* ui->bg_pixbuf = gdk_pixbuf_new_from_file_at_scale( imagefile, 302, 727, true, &gerror ); */
+
     /* set ui->width and ui->height based on imagefile dimensions */
     gdk_pixbuf_get_file_info( imagefile, &ui->width, &ui->height );
+    close( fd );
 
     ui->lcd_width = 131 * LCD_PIXEL_SCALE;
     ui->lcd_top_margin = 16;
@@ -3269,9 +3277,6 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     ui->kb_x_offset = 10;  // 36;
     ui->kb_y_offset = 280; // 301;
-
-    ui->bg_pixbuf = gdk_pixbuf_new_from_file( imagefile, &gerror );
-    close( fd );
 
     ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     gtk_widget_set( ui->window, "can-focus", true, NULL );
