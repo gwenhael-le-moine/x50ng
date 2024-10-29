@@ -75,20 +75,18 @@ static uint32_t s3c2410_lcd_read( void* opaque, target_phys_addr_t offset )
     s3c2410_offset_t* reg;
     uint32_t linecnt;
 
-    if ( !S3C2410_OFFSET_OK( lcd, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( lcd, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( lcd, offset );
 
     switch ( offset ) {
         case S3C2410_LCD_LCDCON1:
             linecnt = ( lcd->lcdcon1 >> 18 ) & 0x3ff;
-            if ( linecnt > 0 ) {
+            if ( linecnt > 0 )
                 linecnt--;
-            } else {
+            else
                 linecnt = ( lcd->lcdcon2 >> 14 ) & 0x3ff;
-            }
 
             lcd->lcdcon1 &= ~( 0x3ff << 18 );
             lcd->lcdcon1 |= ( linecnt << 18 );
@@ -108,9 +106,8 @@ static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t
     x49gp_t* x49gp = lcd->x49gp;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( lcd, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( lcd, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( lcd, offset );
 
@@ -120,9 +117,8 @@ static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t
 
     switch ( offset ) {
         case S3C2410_LCD_LCDCON1:
-            if ( ( lcd->lcdcon1 ^ data ) & 1 ) {
+            if ( ( lcd->lcdcon1 ^ data ) & 1 )
                 x49gp_schedule_lcd_update( x49gp );
-            }
 
             lcd->lcdcon1 = ( lcd->lcdcon1 & ( 0x3ff << 18 ) ) | ( data & ~( 0x3ff << 18 ) );
             break;
@@ -137,13 +133,12 @@ static int s3c2410_lcd_load( x49gp_module_t* module, GKeyFile* key )
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
     int error = 0;
-    int i;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    for ( i = 0; i < lcd->nr_regs; i++ ) {
+    for ( int i = 0; i < lcd->nr_regs; i++ ) {
         reg = &lcd->regs[ i ];
 
         if ( NULL == reg->name )
@@ -160,13 +155,12 @@ static int s3c2410_lcd_save( x49gp_module_t* module, GKeyFile* key )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    for ( i = 0; i < lcd->nr_regs; i++ ) {
+    for ( int i = 0; i < lcd->nr_regs; i++ ) {
         reg = &lcd->regs[ i ];
 
         if ( NULL == reg->name )
@@ -182,13 +176,12 @@ static int s3c2410_lcd_reset( x49gp_module_t* module, x49gp_reset_t reset )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    for ( i = 0; i < lcd->nr_regs; i++ ) {
+    for ( int i = 0; i < lcd->nr_regs; i++ ) {
         reg = &lcd->regs[ i ];
 
         if ( NULL == reg->name )
@@ -232,6 +225,7 @@ static int s3c2410_lcd_init( x49gp_module_t* module )
     printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_LCD_BASE, S3C2410_MAP_SIZE, iotype );
+
     return 0;
 }
 
@@ -297,6 +291,7 @@ void x49gp_lcd_update( x49gp_t* x49gp )
 
     if ( lcd->lcdcon1 & 1 ) {
         int color;
+
         color = x49gp_get_pixel_color( lcd, 131, 1 );
         gdk_gc_set_rgb_fg_color( ui->ann_left_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
         gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_left_gc, true, 11, 0, 15, 12 );
