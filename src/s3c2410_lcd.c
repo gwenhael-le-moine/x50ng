@@ -318,11 +318,11 @@ void x49gp_lcd_update( x49gp_t* x49gp )
 
         GdkGC* gc = gdk_gc_new( gtk_widget_get_window( ui->lcd_canvas ) );
 
-        for ( int y = 0; y < ( ui->lcd_height - ui->lcd_top_margin ) / LCD_PIXEL_SCALE; y++ ) {
+        for ( int y = 0; y < ( ui->lcd_height - ui->lcd_annunciators_height ) / LCD_PIXEL_SCALE; y++ ) {
             for ( int x = 0; x < ui->lcd_width / LCD_PIXEL_SCALE; x++ ) {
                 color = x49gp_get_pixel_color( lcd, x, y );
                 gdk_gc_set_rgb_fg_color( gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-                gdk_draw_rectangle( ui->lcd_pixmap, gc, true, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_top_margin,
+                gdk_draw_rectangle( ui->lcd_pixmap, gc, true, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height,
                                     LCD_PIXEL_SCALE, LCD_PIXEL_SCALE );
             }
         }

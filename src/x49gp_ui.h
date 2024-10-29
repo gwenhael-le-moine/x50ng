@@ -137,7 +137,7 @@ struct __x49gp_ui_s__ {
     gint lcd_y_offset;
     gint lcd_width;
     gint lcd_height;
-    gint lcd_top_margin;
+    gint lcd_annunciators_height;
 };
 
 int x49gp_ui_init( x49gp_t* x49gp );

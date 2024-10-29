@@ -3223,82 +3223,8 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
     x49gp_ui_t* ui = module->user_data;
-    x49gp_ui_button_t* button;
-    const x49gp_ui_key_t* key;
-    GtkWidget* screen_box;
-    GtkWidget *menu_mount_folder, *menu_mount_image, *menu_unmount;
-    GtkWidget *menu_debug, *menu_reset, *menu_quit;
-    GdkBitmap* shape;
 
-    switch ( opt.model ) {
-        case MODEL_50G_NEWRPL:
-            ui->calculator = UI_CALCULATOR_HP50G_NEWRPL;
-            ui->name = opt.name != NULL ? opt.name : "HP 50g / newRPL";
-            break;
-        case MODEL_49GP:
-            ui->calculator = UI_CALCULATOR_HP49GP;
-            ui->name = opt.name != NULL ? opt.name : "HP 49g+";
-            break;
-        case MODEL_49GP_NEWRPL:
-            ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
-            ui->name = opt.name != NULL ? opt.name : "HP 49g+ / newRPL";
-            break;
-        case MODEL_50G:
-        default:
-            ui->calculator = UI_CALCULATOR_HP50G;
-            ui->name = opt.name != NULL ? opt.name : "HP 50g";
-            break;
-    }
-
-    /* Load faceplate base texture into  imagefile */
-    GError* gerror = NULL;
-    char* imagefile;
-    int fd = x49gp_module_open_rodata( module,
-                                       ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
-                                           ? "hp49g+-cropped.png"
-                                           : "hp50g-cropped.png",
-                                       &imagefile );
-    if ( fd < 0 )
-        return fd;
-
-    ui->bg_pixbuf = gdk_pixbuf_new_from_file( imagefile, &gerror );
-    /* ui->bg_pixbuf = gdk_pixbuf_new_from_file_at_scale( imagefile, 302, 727, true, &gerror ); */
-
-    /* set ui->width and ui->height based on imagefile dimensions */
-    gdk_pixbuf_get_file_info( imagefile, &ui->width, &ui->height );
-    close( fd );
-
-    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
-    ui->lcd_top_margin = 16;
-    ui->lcd_height = 80 * LCD_PIXEL_SCALE + ui->lcd_top_margin;
-
-    ui->lcd_x_offset = ( ui->width - ui->lcd_width ) / 2;
-    ui->lcd_y_offset = 48; // 69;
-
-    ui->kb_x_offset = 10;  // 36;
-    ui->kb_y_offset = 280; // 301;
-
-    ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-    gtk_widget_set( ui->window, "can-focus", true, NULL );
-    gtk_widget_set( ui->window, "accept-focus", true, NULL );
-    gtk_widget_set( ui->window, "focus-on-map", true, NULL );
-    gtk_widget_set( ui->window, "resizable", false, NULL );
-    gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
-
-    gtk_widget_set_name( ui->window, ui->name );
-    gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
-
-    //	gtk_window_set_icon(GTK_WINDOW(ui->window), ui->bg_pixbuf);
-
-    gdk_pixbuf_render_pixmap_and_mask( ui->bg_pixbuf, NULL, &shape, 255 );
-
-    gtk_widget_set_size_request( ui->window, ui->width, ui->height );
-    gtk_widget_shape_combine_mask( ui->window, shape, 0, 0 );
-
-    g_object_unref( shape );
-
-    gtk_widget_realize( ui->window );
-
+    /* create all buttons' shapes */
     ui->shapes[ UI_SHAPE_BUTTON_TINY ] =
         gdk_bitmap_create_from_data( NULL, ( char* )button_tiny_bits, button_tiny_width, button_tiny_height );
     ui->shapes[ UI_SHAPE_BUTTON_SMALL ] =
@@ -3310,13 +3236,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     ui->shapes[ UI_SHAPE_BUTTON_ROUND ] =
         gdk_bitmap_create_from_data( NULL, ( char* )button_round_bits, button_round_width, button_round_height );
 
-    ui->fixed = gtk_fixed_new();
-    gtk_container_add( GTK_CONTAINER( ui->window ), ui->fixed );
-
-    ui->background = gtk_drawing_area_new();
-    gtk_drawing_area_size( GTK_DRAWING_AREA( ui->background ), ui->width, ui->height );
-    x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
-
+    /* create all colors */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLACK ], 0x00, 0x00, 0x00 );  /* #000000 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_WHITE ], 0xff, 0xff, 0xff );  /* #ffffff */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_YELLOW ], 0xfa, 0xe8, 0x2c ); /* #fae82c */
@@ -3343,14 +3263,95 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_14 ], 0x0b, 0x03, 0x0c ); /* #0b030c */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 ); /* #000000 */
 
+    /* set calculator type and name */
+    switch ( opt.model ) {
+        case MODEL_50G_NEWRPL:
+            ui->calculator = UI_CALCULATOR_HP50G_NEWRPL;
+            ui->name = opt.name != NULL ? opt.name : "HP 50g / newRPL";
+            break;
+        case MODEL_49GP:
+            ui->calculator = UI_CALCULATOR_HP49GP;
+            ui->name = opt.name != NULL ? opt.name : "HP 49g+";
+            break;
+        case MODEL_49GP_NEWRPL:
+            ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
+            ui->name = opt.name != NULL ? opt.name : "HP 49g+ / newRPL";
+            break;
+        case MODEL_50G:
+        default:
+            ui->calculator = UI_CALCULATOR_HP50G;
+            ui->name = opt.name != NULL ? opt.name : "HP 50g";
+            break;
+    }
+
+    /* Load faceplate base texture into imagefile */
+    GError* gerror = NULL;
+    char* imagefile;
+    int fd = x49gp_module_open_rodata( module,
+                                       ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
+                                           ? "hp49g+-cropped.png"
+                                           : "hp50g-cropped.png",
+                                       &imagefile );
+    if ( fd < 0 )
+        return fd;
+
+    ui->bg_pixbuf = gdk_pixbuf_new_from_file( imagefile, &gerror );
+    /* ui->bg_pixbuf = gdk_pixbuf_new_from_file_at_scale( imagefile, 302, 727, true, &gerror ); */
+
+    /* set ui->width and ui->height based on imagefile dimensions */
+    gdk_pixbuf_get_file_info( imagefile, &ui->width, &ui->height );
+    close( fd );
+
+    /* set coordinates of LCD and keyboard */
+    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
+    ui->lcd_annunciators_height = 16;
+    ui->lcd_height = ( 80 * LCD_PIXEL_SCALE ) + ui->lcd_annunciators_height;
+    ui->lcd_x_offset = ( ui->width - ui->lcd_width ) / 2;
+    ui->lcd_y_offset = 48; // 69;
+
+    ui->kb_x_offset = 10;  // 36;
+    ui->kb_y_offset = 280; // 301;
+
+    ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+    gtk_widget_set( ui->window, "can-focus", true, NULL );
+    gtk_widget_set( ui->window, "accept-focus", true, NULL );
+    gtk_widget_set( ui->window, "focus-on-map", true, NULL );
+    gtk_widget_set( ui->window, "resizable", false, NULL );
+    gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
+
+    gtk_widget_set_name( ui->window, ui->name );
+    gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
+
+    //	gtk_window_set_icon(GTK_WINDOW(ui->window), ui->bg_pixbuf);
+
+    GdkBitmap* shape;
+    gdk_pixbuf_render_pixmap_and_mask( ui->bg_pixbuf, NULL, &shape, 255 );
+
+    gtk_widget_set_size_request( ui->window, ui->width, ui->height );
+    gtk_widget_shape_combine_mask( ui->window, shape, 0, 0 );
+
+    g_object_unref( shape );
+
+    gtk_widget_realize( ui->window );
+
+    ui->fixed = gtk_fixed_new();
+    gtk_container_add( GTK_CONTAINER( ui->window ), ui->fixed );
+
+    ui->background = gtk_drawing_area_new();
+    gtk_drawing_area_size( GTK_DRAWING_AREA( ui->background ), ui->width, ui->height );
+    x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
+
     ui->lcd_canvas = gtk_drawing_area_new();
     gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
-    screen_box = gtk_event_box_new();
+
+    GtkWidget* screen_box = gtk_event_box_new();
     gtk_event_box_set_visible_window( GTK_EVENT_BOX( screen_box ), true );
     gtk_event_box_set_above_child( GTK_EVENT_BOX( screen_box ), false );
     gtk_container_add( GTK_CONTAINER( screen_box ), ui->lcd_canvas );
     x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width, ui->lcd_height );
 
+    x49gp_ui_button_t* button;
+    const x49gp_ui_key_t* key;
     for ( int i = 0; i < ui->nr_buttons; i++ ) {
         switch ( ui->calculator ) {
             case UI_CALCULATOR_HP49GP:
@@ -3408,24 +3409,27 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
     }
 
+    // right-click menu
+    // {
     ui->menu = gtk_menu_new();
 
-    menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." );
+    GtkWidget *menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_folder );
     g_signal_connect( G_OBJECT( menu_mount_folder ), "activate", G_CALLBACK( x49gp_ui_mount_sd_folder ), x49gp );
 
-    menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." );
+    GtkWidget *menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_image );
     g_signal_connect( G_OBJECT( menu_mount_image ), "activate", G_CALLBACK( x49gp_ui_mount_sd_image ), x49gp );
 
-    menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" );
+    GtkWidget *menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_unmount );
     g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
     ui->menu_unmount = menu_unmount;
 
     if ( x49gp->debug_port != 0 ) {
         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
-        menu_debug = gtk_menu_item_new_with_label( "Start debugger" );
+
+        GtkWidget *menu_debug = gtk_menu_item_new_with_label( "Start debugger" );
         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_debug );
         g_signal_connect( G_OBJECT( menu_debug ), "activate", G_CALLBACK( x49gp_ui_debug ), x49gp );
         ui->menu_debug = menu_debug;
@@ -3433,14 +3437,17 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
         ui->menu_debug = NULL;
 
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
-    menu_reset = gtk_menu_item_new_with_label( "Reset" );
+
+    GtkWidget *menu_reset = gtk_menu_item_new_with_label( "Reset" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset );
     g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( x49gp_ui_calculator_reset ), x49gp );
-    menu_quit = gtk_menu_item_new_with_label( "Quit" );
+
+    GtkWidget *menu_quit = gtk_menu_item_new_with_label( "Quit" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_quit );
     g_signal_connect_swapped( G_OBJECT( menu_quit ), "activate", G_CALLBACK( x49gp_ui_quit ), x49gp );
 
     gtk_widget_show_all( ui->menu );
+    // }
 
     g_signal_connect( G_OBJECT( screen_box ), "button-press-event", G_CALLBACK( x49gp_ui_show_menu ), x49gp );
 
@@ -3462,6 +3469,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 
     gtk_widget_show_all( ui->window );
+
     return 0;
 }
 
