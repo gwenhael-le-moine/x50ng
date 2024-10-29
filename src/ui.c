@@ -29,7 +29,7 @@
 
 #include "gdbstub.h"
 
-#define DEBUG_LAYOUT true
+#define DEBUG_LAYOUT false
 
 #if defined( __linux__ )
 #  define X49GP_UI_NORMAL_FONT "urw gothic l"
@@ -783,7 +783,6 @@ static const x49gp_ui_key_t x49gp_newrpl_ui_keys[] = {
      ( 1 << 7 ),
      7                                                                                                                                                                                                                                                      },
 };
-
 #define X49GP_NEWRPL_UI_NR_KEYS ( sizeof( x49gp_newrpl_ui_keys ) / sizeof( x49gp_newrpl_ui_keys[ 0 ] ) )
 
 static const x49gp_ui_key_t x50g_ui_keys[] = {
@@ -1534,8 +1533,6 @@ static const x49gp_ui_key_t x50g_newrpl_ui_keys[] = {
 };
 #define X50G_NEWRPL_UI_NR_KEYS ( sizeof( x50g_newrpl_ui_keys ) / sizeof( x50g_newrpl_ui_keys[ 0 ] ) )
 
-static const uint32_t PIXBUF_MAGIC = 0x47646b50;
-
 typedef struct {
     uint32_t magic;
     uint32_t length;
@@ -1545,6 +1542,9 @@ typedef struct {
     uint32_t height;
 } pixbuf_inline_data_t;
 
+/*************/
+/* functions */
+/*************/
 static void x49gp_ui_color_init( GdkColor* color, u8 red, u8 green, u8 blue )
 {
     color->red = ( red << 8 ) | red;
@@ -1573,6 +1573,7 @@ static GdkPixbuf* x49gp_pixbuf_new_from_inline( gint data_length, const guint8* 
     const guint8* pixdata;
 
     magic = ntohl( pbd->magic );
+    const uint32_t PIXBUF_MAGIC = 0x47646b50;
     if ( magic != PIXBUF_MAGIC )
         return NULL;
 
@@ -1596,9 +1597,7 @@ static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* butt
 {
     x49gp_ui_t* ui = x49gp->ui;
     GdkPixbuf *src, *dst;
-    GtkStyle* style;
-
-    style = gtk_style_new();
+    GtkStyle* style = gtk_style_new();
     x49gp_ui_style_init( style, button->button, &ui->colors[ button->key->color ], &ui->colors[ UI_COLOR_BLACK ] );
 
     for ( int i = 0; i < 5; i++ ) {
@@ -1625,8 +1624,8 @@ static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* butt
             src = gdk_pixbuf_new_subpixbuf( ui->bg_pixbuf, ui->kb_x_offset + button->key->x, ui->kb_y_offset + button->key->y,
                                             button->key->width, button->key->height );
 
-        gdk_draw_pixbuf( style->bg_pixmap[ i ], gtk_widget_get_style( ui->window )->black_gc, src, 0, 0, 0, 0, button->key->width, button->key->height,
-                         GDK_RGB_DITHER_NORMAL, 0, 0 );
+        gdk_draw_pixbuf( style->bg_pixmap[ i ], gtk_widget_get_style( ui->window )->black_gc, src, 0, 0, 0, 0, button->key->width,
+                         button->key->height, GDK_RGB_DITHER_NORMAL, 0, 0 );
 
         g_object_unref( src );
     }
@@ -2478,7 +2477,7 @@ static void x49gp_ui_popup_at_widget( GtkMenu* menu, gint* x, gint* y, gboolean*
     GtkWidget* widget = GTK_WIDGET( user_data );
     GtkAllocation widget_allocation;
 
-    gtk_widget_get_allocation( widget, &widget_allocation);
+    gtk_widget_get_allocation( widget, &widget_allocation );
 
     gdk_window_get_origin( gtk_widget_get_window( widget ), x, y );
     *x += widget_allocation.x;
@@ -2663,8 +2662,10 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
             index = 31;
             break;
 #ifndef __APPLE__
-        case GDK_KEY_Alt_L: case GDK_KEY_Alt_R:
-        case GDK_KEY_Meta_L: case GDK_KEY_Meta_R:
+        case GDK_KEY_Alt_L:
+        case GDK_KEY_Alt_R:
+        case GDK_KEY_Meta_L:
+        case GDK_KEY_Meta_R:
         case GDK_KEY_Mode_switch:
             index = 31;
             break;
@@ -2833,7 +2834,7 @@ static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, 
     x49gp_ui_button_t* button = user_data;
     GtkAllocation widget_allocation;
 
-    gtk_widget_get_allocation( widget, &widget_allocation);
+    gtk_widget_get_allocation( widget, &widget_allocation );
 
     int x = widget_allocation.x;
     int y = widget_allocation.y;
@@ -2841,8 +2842,8 @@ static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, 
     if ( gtk_widget_get_state( widget ) == GTK_STATE_ACTIVE )
         y -= 1;
 
-    gdk_draw_drawable( gtk_widget_get_window( widget ), gtk_widget_get_style( widget )->black_gc, button->pixmap, 0, 0, x, y, widget_allocation.width,
-                      widget_allocation.height );
+    gdk_draw_drawable( gtk_widget_get_window( widget ), gtk_widget_get_style( widget )->black_gc, button->pixmap, 0, 0, x, y,
+                       widget_allocation.width, widget_allocation.height );
 
     return false;
 }
@@ -2858,7 +2859,7 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     int xoffset, yoffset, x, y;
     GtkAllocation widget_allocation;
 
-    gtk_widget_get_allocation( widget, &widget_allocation);
+    gtk_widget_get_allocation( widget, &widget_allocation );
 
     xoffset = widget_allocation.x;
     yoffset = widget_allocation.y;
@@ -2867,8 +2868,8 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
 
     button->pixmap = gdk_pixmap_new( gtk_widget_get_style( widget )->bg_pixmap[ 0 ], w, h, -1 );
 
-    gdk_draw_drawable( button->pixmap, gtk_widget_get_style( widget )->black_gc, gtk_widget_get_style( widget )->bg_pixmap[ 0 ], xoffset, yoffset, 0, 0, button->key->width,
-                       button->key->height );
+    gdk_draw_drawable( button->pixmap, gtk_widget_get_style( widget )->black_gc, gtk_widget_get_style( widget )->bg_pixmap[ 0 ], xoffset,
+                       yoffset, 0, 0, button->key->width, button->key->height );
 
     xoffset += 2;
     yoffset += 2;
@@ -2922,8 +2923,8 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     x = ( int )floor( ( w - 1.0 - width ) / 2.0 - xoff + 0.5 );
     y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
 
-    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], X49GP_UI_NORMAL_FONT, key->font_size, 0.0, x + xoffset, y + yoffset, 1,
-                        CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
+    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], X49GP_UI_NORMAL_FONT, key->font_size, 0.0, x + xoffset, y + yoffset,
+                        1, CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
 
     cairo_destroy( cr );
 }
@@ -2937,8 +2938,8 @@ static int x49gp_lcd_expose_event( GtkWidget* widget, GdkEventExpose* event, gpo
 
     gdk_region_get_rectangles( event->region, &rects, &n );
     for ( int i = 0; i < n; i++ ) {
-        gdk_draw_drawable( gtk_widget_get_window(widget), gtk_widget_get_style( widget )->black_gc, ui->lcd_pixmap, rects[ i ].x, rects[ i ].y, rects[ i ].x, rects[ i ].y,
-                           rects[ i ].width, rects[ i ].height );
+        gdk_draw_drawable( gtk_widget_get_window( widget ), gtk_widget_get_style( widget )->black_gc, ui->lcd_pixmap, rects[ i ].x,
+                           rects[ i ].y, rects[ i ].x, rects[ i ].y, rects[ i ].width, rects[ i ].height );
     }
 
     g_free( rects );
@@ -2954,12 +2955,16 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
     if ( NULL != ui->lcd_pixmap )
         return false;
 
-    ui->ann_left = gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_left_bits, ann_left_width, ann_left_height );
-    ui->ann_right = gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_right_bits, ann_right_width, ann_right_height );
-    ui->ann_alpha = gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_alpha_bits, ann_alpha_width, ann_alpha_height );
-    ui->ann_battery =
-        gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_battery_bits, ann_battery_width, ann_battery_height );
-    ui->ann_busy = gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_busy_bits, ann_busy_width, ann_busy_height );
+    ui->ann_left =
+        gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_left_bits, ann_left_width, ann_left_height );
+    ui->ann_right =
+        gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_right_bits, ann_right_width, ann_right_height );
+    ui->ann_alpha =
+        gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_alpha_bits, ann_alpha_width, ann_alpha_height );
+    ui->ann_battery = gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_battery_bits, ann_battery_width,
+                                                   ann_battery_height );
+    ui->ann_busy =
+        gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_busy_bits, ann_busy_width, ann_busy_height );
     ui->ann_io = gdk_bitmap_create_from_data( gtk_widget_get_window( ui->lcd_canvas ), ( char* )ann_io_bits, ann_io_width, ann_io_height );
 
     ui->ann_left_gc = gdk_gc_new( gtk_widget_get_window( ui->lcd_canvas ) );
@@ -3008,15 +3013,15 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
         cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
         cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
-        x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, X49GP_UI_NORMAL_FONT, 100.0, 1.0, ui->lcd_x_offset + 10, ui->lcd_y_offset + 160, 1,
-                            CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "\\arrowleftdblfull" );
+        x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, X49GP_UI_NORMAL_FONT, 100.0, 1.0, ui->lcd_x_offset + 10,
+                            ui->lcd_y_offset + 160, 1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "\\arrowleftdblfull" );
 
         cairo_destroy( cr );
     }
 #endif
 
-    gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( widget )->black_gc, ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0, 0, ui->lcd_width,
-                       ui->lcd_height );
+    gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( widget )->black_gc, ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0, 0,
+                       ui->lcd_width, ui->lcd_height );
 
     return false;
 }
@@ -3040,8 +3045,8 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
 
     ui->bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( widget ), ui->width, ui->height, -1 );
 
-    gdk_draw_pixbuf( ui->bg_pixmap, gtk_widget_get_style( widget )->black_gc, ui->bg_pixbuf, 0, 0, 0, 0, ui->width, ui->height, GDK_RGB_DITHER_NORMAL, 0,
-                     0 );
+    gdk_draw_pixbuf( ui->bg_pixmap, gtk_widget_get_style( widget )->black_gc, ui->bg_pixbuf, 0, 0, 0, 0, ui->width, ui->height,
+                     GDK_RGB_DITHER_NORMAL, 0, 0 );
 
     cr = gdk_cairo_create( ui->bg_pixmap );
     cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
@@ -3135,8 +3140,8 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
         }
 
 #if DEBUG_LAYOUT /* Debug Button Layout */
-    gdk_draw_rectangle( ui->bg_pixmap, gtk_widget_get_style( ui->window )->white_gc, false, ui->kb_x_offset + key->x, ui->kb_y_offset + key->y,
-                            key->width, key->height );
+        gdk_draw_rectangle( ui->bg_pixmap, gtk_widget_get_style( ui->window )->white_gc, false, ui->kb_x_offset + key->x,
+                            ui->kb_y_offset + key->y, key->width, key->height );
 #endif
     }
 
@@ -3243,6 +3248,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             break;
     }
 
+    /* Load faceplate base texture into  imagefile */
     fd = x49gp_module_open_rodata( module,
                                    ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
                                        ? "hp49g+-cropped.png"
@@ -3402,9 +3408,11 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_folder );
     g_signal_connect( G_OBJECT( menu_mount_folder ), "activate", G_CALLBACK( x49gp_ui_mount_sd_folder ), x49gp );
+
     menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_image );
     g_signal_connect( G_OBJECT( menu_mount_image ), "activate", G_CALLBACK( x49gp_ui_mount_sd_image ), x49gp );
+
     menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_unmount );
     g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
