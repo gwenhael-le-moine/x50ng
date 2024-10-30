@@ -2358,8 +2358,8 @@ static gboolean x49gp_ui_button_press( GtkWidget* widget, GdkEventButton* event,
 static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause )
 {
     x49gp_t* x49gp = button->x49gp;
-    const x49gp_ui_key_t* key;
-    GtkButton* gtkbutton;
+    const x49gp_ui_key_t* key = button->key;
+    GtkButton* gtkbutton = GTK_BUTTON( button->button );
 
     /* #ifdef DEBUG_X49GP_UI */
     /*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
@@ -2369,13 +2369,9 @@ static void x49gp_release_single_button( x49gp_ui_button_t* button, x49gp_ui_but
     button->down = false;
     button->hold = false;
 
-    gtkbutton = GTK_BUTTON( button->button );
-
     /* if ( button != cause ) */
     /*     gtkbutton->in_button = false; */
     gtk_button_released( gtkbutton );
-
-    key = button->key;
 
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 0 );

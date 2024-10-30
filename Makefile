@@ -168,6 +168,9 @@ $(QEMU_DIR)/config-host.h:
 $(QEMU_OBJS): dummy
 	+$(MAKE) -C $(QEMU_DIR) -f Makefile-small
 
+clean-qemu:
+	$(MAKE) -C $(QEMU_DIR) -f Makefile-small clean
+
 # Depend
 MAKEDEPEND = $(CC) -MM
 
@@ -180,17 +183,13 @@ depend: depend-libs
 	$(MAKEDEPEND) $(X49GP_CFLAGS) $(SRCS) >.depend
 
 # Cleaning
-clean-qemu:
-	$(MAKE) -C $(QEMU_DIR) -f Makefile-small clean
-
-clean: clean-qemu
+clean:
 	rm -f ./src/x49gpng/*.o core *~ .depend
 
-distclean: clean
-	$(MAKE) -C $(QEMU_DIR) -f Makefile-small distclean
+distclean: clean clean-qemu
 	rm -f dist/$(TARGET) dist/$(TARGET).desktop dist/$(TARGET).man
 
-mrproper: clean-qemu distclean
+mrproper: distclean
 	make -C dist/firmware/ mrproper
 
 # auto-format code
