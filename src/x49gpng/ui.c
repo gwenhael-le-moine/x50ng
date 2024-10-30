@@ -3300,7 +3300,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     ui->lcd_y_offset = 48; // 69;
 
     ui->kb_x_offset = 10;  // 36;
-    ui->kb_y_offset = 280; // 301;
+    ui->kb_y_offset = ui->lcd_y_offset + ui->lcd_height + 56;// 280; // 301;
 
     ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     gtk_widget_set( ui->window, "can-focus", true, NULL );
