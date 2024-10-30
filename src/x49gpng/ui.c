@@ -1593,6 +1593,7 @@ static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* butt
     GdkPixbuf *src, *dst;
     cairo_t* cr;
     GtkStyle* style = gtk_style_new();
+
     x49gp_ui_style_init( style, button->button, &ui->colors[ button->key->color ], &ui->colors[ UI_COLOR_BLACK ] );
 
     for ( int i = 0; i < 5; i++ ) {
@@ -2286,30 +2287,6 @@ void x49gp_ui_show_error( x49gp_t* x49gp, const char* text )
     gtk_widget_destroy( dialog );
 }
 
-static void x49gp_ui_choose_file( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
-{
-    GtkWidget* dialog;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN,
-                                          GTK_RESPONSE_ACCEPT, NULL );
-
-    gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true );
-    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
-
-    if ( gtk_dialog_run( GTK_DIALOG( dialog ) ) == GTK_RESPONSE_ACCEPT )
-        *filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( dialog ) );
-    else
-        *filename = NULL;
-
-    gtk_widget_destroy( dialog );
-}
-
-void x49gp_ui_open_firmware( x49gp_t* x49gp, char** filename )
-{
-    x49gp_ui_choose_file( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
-}
-
 static gboolean x49gp_ui_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -2475,6 +2452,30 @@ static void x49gp_ui_popup_at_widget( GtkMenu* menu, gint* x, gint* y, gboolean*
     gdk_window_get_origin( gtk_widget_get_window( widget ), x, y );
     *x += widget_allocation.x;
     *y += widget_allocation.y;
+}
+
+static void x49gp_ui_choose_file( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
+{
+    GtkWidget* dialog;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN,
+                                          GTK_RESPONSE_ACCEPT, NULL );
+
+    gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true );
+    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
+
+    if ( gtk_dialog_run( GTK_DIALOG( dialog ) ) == GTK_RESPONSE_ACCEPT )
+        *filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( dialog ) );
+    else
+        *filename = NULL;
+
+    gtk_widget_destroy( dialog );
+}
+
+void x49gp_ui_open_firmware( x49gp_t* x49gp, char** filename )
+{
+    x49gp_ui_choose_file( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
 }
 
 static void x49gp_ui_mount_sd_folder( GtkMenuItem* menuitem, gpointer user_data )
@@ -2885,8 +2886,8 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
 #endif
 
     if ( key->letter ) {
-        x49gp_ui_text_size( cr, opt.font, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1,
-                            CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
+        x49gp_ui_text_size( cr, opt.font, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1, CAIRO_FONT_SLANT_NORMAL,
+                            key->font_weight, key->letter );
 
         switch ( key->layout ) {
             case UI_LAYOUT_LEFT:
@@ -2910,14 +2911,14 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
                             CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
     }
 
-    x49gp_ui_text_size( cr, opt.font, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1,
-                        CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
+    x49gp_ui_text_size( cr, opt.font, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1, CAIRO_FONT_SLANT_NORMAL,
+                        key->font_weight, key->label );
 
     x = ( int )floor( ( w - 1.0 - width ) / 2.0 - xoff + 0.5 );
     y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
 
-    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], opt.font, key->font_size, 0.0, x + xoffset, y + yoffset,
-                        1, CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
+    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], opt.font, key->font_size, 0.0, x + xoffset, y + yoffset, 1,
+                        CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
 
     cairo_destroy( cr );
 }
@@ -3006,8 +3007,8 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
         cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
         cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
-        x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 100.0, 1.0, ui->lcd_x_offset + 10,
-                            ui->lcd_y_offset + 160, 1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "\\arrowleftdblfull" );
+        x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 100.0, 1.0, ui->lcd_x_offset + 10, ui->lcd_y_offset + 160,
+                            1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "\\arrowleftdblfull" );
 
         cairo_destroy( cr );
     }
@@ -3280,13 +3281,12 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     int fd = x49gp_module_open_rodata( module,
                                        ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
                                            ? "hp49g+-cropped.png"
-                                           : "hp50g-cropped.png",
+                                           : "blank.png" /* "hp50g-cropped.png" */,
                                        &imagefile );
     if ( fd < 0 )
         return fd;
 
     ui->bg_pixbuf = gdk_pixbuf_new_from_file( imagefile, &gerror );
-    /* ui->bg_pixbuf = gdk_pixbuf_new_from_file_at_scale( imagefile, 302, 727, true, &gerror ); */
 
     /* set ui->width and ui->height based on imagefile dimensions */
     gdk_pixbuf_get_file_info( imagefile, &ui->width, &ui->height );
@@ -3314,14 +3314,6 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     //	gtk_window_set_icon(GTK_WINDOW(ui->window), ui->bg_pixbuf);
 
-    GdkBitmap* shape;
-    gdk_pixbuf_render_pixmap_and_mask( ui->bg_pixbuf, NULL, &shape, 255 );
-
-    gtk_widget_set_size_request( ui->window, ui->width, ui->height );
-    gtk_widget_shape_combine_mask( ui->window, shape, 0, 0 );
-
-    g_object_unref( shape );
-
     gtk_widget_realize( ui->window );
 
     ui->fixed = gtk_fixed_new();
@@ -3340,65 +3332,66 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( screen_box ), ui->lcd_canvas );
     x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width, ui->lcd_height );
 
-    x49gp_ui_button_t* button;
-    const x49gp_ui_key_t* key;
-    for ( int i = 0; i < ui->nr_buttons; i++ ) {
+    {
+        x49gp_ui_button_t* button;
+        const x49gp_ui_key_t* keys;
+
         switch ( ui->calculator ) {
             case UI_CALCULATOR_HP49GP:
-                key = &x49gp_ui_keys[ i ];
+                keys = x49gp_ui_keys;
                 break;
             case UI_CALCULATOR_HP49GP_NEWRPL:
-                key = &x49gp_newrpl_ui_keys[ i ];
+                keys = x49gp_newrpl_ui_keys;
                 break;
             default:
                 ui->calculator = UI_CALCULATOR_HP50G;
-                /* fall through */
+            /* fall through */
             case UI_CALCULATOR_HP50G:
-                key = &x50g_ui_keys[ i ];
+                keys = x50g_ui_keys;
                 break;
             case UI_CALCULATOR_HP50G_NEWRPL:
-                key = &x50g_newrpl_ui_keys[ i ];
+                keys = x50g_newrpl_ui_keys;
                 break;
         }
-        button = &ui->buttons[ i ];
 
-        button->x49gp = x49gp;
-        button->key = key;
+        for ( int i = 0; i < ui->nr_buttons; i++ ) {
+            button = &ui->buttons[ i ];
 
-        button->button = gtk_button_new();
-        gtk_widget_set_size_request( button->button, key->width, key->height );
-        gtk_widget_set( button->button, "can-focus", false, NULL );
+            button->x49gp = x49gp;
+            button->key = &keys[ i ];
 
-        x49gp_ui_button_pixmaps_init( x49gp, button, key->color );
+            button->button = gtk_button_new();
+            gtk_widget_set_size_request( button->button, keys[ i ].width, keys[ i ].height );
+            gtk_widget_set( button->button, "can-focus", false, NULL );
 
-        if ( key->label ) {
-            button->label = gtk_label_new( "" );
-            gtk_widget_set_style( button->label, gtk_widget_get_style( button->button ) );
-            gtk_container_add( GTK_CONTAINER( button->button ), button->label );
+            x49gp_ui_button_pixmaps_init( x49gp, button, keys[ i ].color );
 
-            g_signal_connect( G_OBJECT( button->label ), "expose-event", G_CALLBACK( x49gp_button_expose_event ), button );
+            if ( keys[ i ].label ) {
+                button->label = gtk_label_new( "" );
+                gtk_widget_set_style( button->label, gtk_widget_get_style( button->button ) );
+                gtk_container_add( GTK_CONTAINER( button->button ), button->label );
 
-            g_signal_connect_after( G_OBJECT( button->label ), "realize", G_CALLBACK( x49gp_button_realize ), button );
+                g_signal_connect( G_OBJECT( button->label ), "expose-event", G_CALLBACK( x49gp_button_expose_event ), button );
+
+                g_signal_connect_after( G_OBJECT( button->label ), "realize", G_CALLBACK( x49gp_button_realize ), button );
+            }
+
+            button->box = gtk_event_box_new();
+            gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), true );
+            gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
+            gtk_widget_shape_combine_mask( button->box, ui->shapes[ keys[ i ].shape ], 0, 0 );
+            gtk_container_add( GTK_CONTAINER( button->box ), button->button );
+
+            x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + keys[ i ].x, ui->kb_y_offset + keys[ i ].y,
+                               keys[ i ].width, keys[ i ].height );
+
+            g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( x49gp_ui_button_press ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( x49gp_ui_button_release ), button );
+            g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( x49gp_ui_button_leave ), button );
+
+            gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
         }
-
-        button->box = gtk_event_box_new();
-        gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), true );
-        gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
-        gtk_widget_shape_combine_mask( button->box, ui->shapes[ key->shape ], 0, 0 );
-        gtk_container_add( GTK_CONTAINER( button->box ), button->button );
-
-        x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + key->x, ui->kb_y_offset + key->y, key->width,
-                           key->height );
-
-        g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( x49gp_ui_button_press ), button );
-
-        g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( x49gp_ui_button_release ), button );
-
-        g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( x49gp_ui_button_leave ), button );
-
-        gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
     }
-
     // right-click menu
     // {
     ui->menu = gtk_menu_new();
@@ -3440,21 +3433,17 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     // }
 
     g_signal_connect( G_OBJECT( screen_box ), "button-press-event", G_CALLBACK( x49gp_ui_show_menu ), x49gp );
-
     g_signal_connect( G_OBJECT( ui->background ), "configure-event", G_CALLBACK( x49gp_window_configure_event ), x49gp );
 
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( x49gp_lcd_expose_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( x49gp_lcd_configure_event ), x49gp );
 
-    g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( x49gp_ui_quit ), x49gp );
-    g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( x49gp_ui_quit ), x49gp );
-
     g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( x49gp_ui_focus_lost ), x49gp );
-
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( x49gp_ui_key_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( x49gp_ui_key_event ), x49gp );
-
     g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( x49gp_window_button_press ), x49gp );
+    g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( x49gp_ui_quit ), x49gp );
+    g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( x49gp_ui_quit ), x49gp );
 
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 

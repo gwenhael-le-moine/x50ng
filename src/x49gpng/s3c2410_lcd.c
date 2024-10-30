@@ -337,7 +337,7 @@ void x49gp_lcd_update( x49gp_t* x49gp )
             for ( int x = 0; x < ( ui->lcd_width / LCD_PIXEL_SCALE ); x++ )
                 x49gp_draw_rectangle( ui->lcd_pixmap, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height,
                                       LCD_PIXEL_SCALE, LCD_PIXEL_SCALE,
-                                      &(ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ]) );
+                                      &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
     }
 
     GdkRectangle rect;
