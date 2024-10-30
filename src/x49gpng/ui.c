@@ -29,13 +29,7 @@
 
 #include "gdbstub.h"
 
-#define DEBUG_LAYOUT false
-
-#if defined( __linux__ )
-#  define X49GP_UI_NORMAL_FONT "urw gothic l"
-#else
-#  define X49GP_UI_NORMAL_FONT "Century Gothic"
-#endif
+#define DEBUG_LAYOUT true
 
 static const x49gp_ui_key_t x49gp_ui_keys[] = {
     {"F1",                              "A",  "Y=",                    NULL,      NULL,     UI_COLOR_BLACK,  12.0, CAIRO_FONT_WEIGHT_BOLD, UI_SHAPE_BUTTON_TINY,   12.0, UI_LAYOUT_LEFT,          0,   0,
@@ -2895,7 +2889,7 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
 #endif
 
     if ( key->letter ) {
-        x49gp_ui_text_size( cr, X49GP_UI_NORMAL_FONT, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1,
+        x49gp_ui_text_size( cr, opt.font, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1,
                             CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
 
         switch ( key->layout ) {
@@ -2916,17 +2910,17 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
                 break;
         }
 
-        x49gp_ui_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], X49GP_UI_NORMAL_FONT, key->letter_size, 0.0, x + xoffset, y + yoffset, 1,
+        x49gp_ui_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], opt.font, key->letter_size, 0.0, x + xoffset, y + yoffset, 1,
                             CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
     }
 
-    x49gp_ui_text_size( cr, X49GP_UI_NORMAL_FONT, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1,
+    x49gp_ui_text_size( cr, opt.font, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1,
                         CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
 
     x = ( int )floor( ( w - 1.0 - width ) / 2.0 - xoff + 0.5 );
     y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
 
-    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], X49GP_UI_NORMAL_FONT, key->font_size, 0.0, x + xoffset, y + yoffset,
+    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], opt.font, key->font_size, 0.0, x + xoffset, y + yoffset,
                         1, CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
 
     cairo_destroy( cr );
@@ -3016,7 +3010,7 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
         cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
         cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
-        x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, X49GP_UI_NORMAL_FONT, 100.0, 1.0, ui->lcd_x_offset + 10,
+        x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 100.0, 1.0, ui->lcd_x_offset + 10,
                             ui->lcd_y_offset + 160, 1, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "\\arrowleftdblfull" );
 
         cairo_destroy( cr );
@@ -3060,11 +3054,11 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
     switch ( ui->calculator ) {
         case UI_CALCULATOR_HP49GP:
         case UI_CALCULATOR_HP49GP_NEWRPL:
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, X49GP_UI_NORMAL_FONT, 15.0, 0.0, 14 /* 38 */, 20 /* 42 */, 2,
+            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 15.0, 0.0, 14 /* 38 */, 20 /* 42 */, 2,
                                 CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "hp", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL,
                                 " 49g+" );
 
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, X49GP_UI_NORMAL_FONT, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
+            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
                                 CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "graphing calculator" );
 
             x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->black, 10.0, 0.0, true, 114 /* 138 */, 8 /* 25 */,
@@ -3081,11 +3075,11 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
 
         case UI_CALCULATOR_HP50G:
         case UI_CALCULATOR_HP50G_NEWRPL:
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, X49GP_UI_NORMAL_FONT, 15.0, 0.0, 14 /* 38 */, 20 /* 42 */, 2,
+            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 15.0, 0.0, 14 /* 38 */, 20 /* 42 */, 2,
                                 CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "HP", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL,
                                 " 50g" );
 
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, X49GP_UI_NORMAL_FONT, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
+            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
                                 CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "Graphing Calculator" );
 
             x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->white, 10.0, 0.0, true, 134 /* 168 */, 8 /* 25 */,

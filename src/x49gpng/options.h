@@ -24,6 +24,8 @@ struct options {
 
     x49gpng_model_t model;
     char* name;
+
+    char* font;
 };
 
 extern struct options opt;

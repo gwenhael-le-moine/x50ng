@@ -29,7 +29,13 @@ void config_init( char* progname, int argc, char* argv[] )
     opt.model = MODEL_50G;
     opt.name = NULL;
 
-    const char* optstring = "hrc:D:df:Fn:";
+#if defined( __linux__ )
+    opt.font = "urw gothic l";
+#else
+    opt.font = "Century Gothic";
+#endif
+
+    const char* optstring = "hrc:D:df:Fn:t:";
     struct option long_options[] = {
         {"help",         no_argument,       NULL, 'h'},
 
@@ -46,6 +52,8 @@ void config_init( char* progname, int argc, char* argv[] )
         {"49gp",         no_argument,       NULL, 496},
         {"49gp-newrpl",  no_argument,       NULL, 497},
         {"name",         required_argument, NULL, 'n'},
+
+        {"font",         required_argument, NULL, 't'},
 
         {0,              0,                 0,    0  }
     };
@@ -66,6 +74,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --49gp                    show HP 49g+ faceplate\n"
                          "    --49gp-newrpl             show HP 49g+ faceplate with newRPL labels\n"
                          " -n --name[=<name>]           set alternate UI name\n"
+                         " -t --font[=<fontname>]           set alternate UI font\n"
                          " -D --enable-debug[=<port>]   enable the debugger interface\n"
                          "                              (default port: %u)\n"
                          " -d --debug                   use along -D to also start the debugger immediately\n"
@@ -116,6 +125,9 @@ void config_init( char* progname, int argc, char* argv[] )
                 break;
             case 'n':
                 opt.name = strdup( optarg );
+                break;
+            case 't':
+                opt.font = strdup( optarg );
                 break;
             default:
                 break;
