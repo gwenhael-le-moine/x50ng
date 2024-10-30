@@ -24,7 +24,8 @@
 #ifndef BLOCK_INT_H
 #define BLOCK_INT_H
 
-#include "qemu-git/qemu-common.h"
+#include "qemu-common.h"
+
 #include "block.h"
 
 struct BlockDriver {

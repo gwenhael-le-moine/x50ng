@@ -12,7 +12,7 @@
 
 #include <memory.h>
 
-#include "qemu-git/target-arm/cpu.h"
+#include "target-arm/cpu.h"
 
 #include "x49gp_types.h"
 #include "x49gp_timer.h"

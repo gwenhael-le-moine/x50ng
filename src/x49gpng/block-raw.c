@@ -24,10 +24,12 @@
 
 #include <stdbool.h>
 
-#include "qemu-git/qemu-common.h"
+#include "qemu-common.h"
+
 #include "block.h"
 #include "block_int.h"
 #include <assert.h>
+
 #ifndef _WIN32
 
 #  ifdef X49GP

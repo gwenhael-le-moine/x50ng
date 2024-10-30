@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "qemu-git/qemu-common.h"
+
+#include "qemu-common.h"
+
 #include "block.h"
 #include "block_int.h"
 #include <zlib.h>

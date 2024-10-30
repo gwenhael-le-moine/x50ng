@@ -1,7 +1,7 @@
 #ifndef GDBSTUB_H
 #define GDBSTUB_H
 
-#include "qemu-git/qemu-common.h"
+#include "qemu-common.h"
 
 #define DEFAULT_GDBSTUB_PORT 1234
 

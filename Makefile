@@ -76,8 +76,9 @@ X49GP_DEBUG = \
 	-DDEBUG_X49GP_MAIN \
 	-DDEBUG_X49GP_UI
 
-X49GP_INCLUDES = -I./src \
-	-I./src/bitmaps \
+X49GP_INCLUDES = -I./src/x49gpng/ \
+	-I./src/x49gpng/bitmaps/ \
+	-I./src/qemu-git/ \
 	$(QEMU_INCLUDES)
 
 X49GP_CFLAGS = $(CFLAGS) \
@@ -102,41 +103,41 @@ endif
 X49GP_LDFLAGS = $(DEBUG_CFLAGS) $(LDFLAGS)
 X49GP_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS)
 
-SRCS = ./src/main.c \
-	./src/module.c \
-	./src/flash.c \
-	./src/sram.c \
-	./src/s3c2410.c \
-	./src/s3c2410_sram.c \
-	./src/s3c2410_memc.c \
-	./src/s3c2410_intc.c \
-	./src/s3c2410_power.c \
-	./src/s3c2410_lcd.c \
-	./src/s3c2410_nand.c \
-	./src/s3c2410_uart.c \
-	./src/s3c2410_timer.c \
-	./src/s3c2410_usbdev.c \
-	./src/s3c2410_watchdog.c \
-	./src/s3c2410_io_port.c \
-	./src/s3c2410_rtc.c \
-	./src/s3c2410_adc.c \
-	./src/s3c2410_spi.c \
-	./src/s3c2410_sdi.c \
-	./src/s3c2410_arm.c \
-	./src/ui.c \
-	./src/timer.c \
-	./src/tiny_font.c \
-	./src/symbol.c \
-	./src/gdbstub.c \
-	./src/block.c \
-	./src/options.c
+SRCS = ./src/x49gpng/main.c \
+	./src/x49gpng/module.c \
+	./src/x49gpng/flash.c \
+	./src/x49gpng/sram.c \
+	./src/x49gpng/s3c2410.c \
+	./src/x49gpng/s3c2410_sram.c \
+	./src/x49gpng/s3c2410_memc.c \
+	./src/x49gpng/s3c2410_intc.c \
+	./src/x49gpng/s3c2410_power.c \
+	./src/x49gpng/s3c2410_lcd.c \
+	./src/x49gpng/s3c2410_nand.c \
+	./src/x49gpng/s3c2410_uart.c \
+	./src/x49gpng/s3c2410_timer.c \
+	./src/x49gpng/s3c2410_usbdev.c \
+	./src/x49gpng/s3c2410_watchdog.c \
+	./src/x49gpng/s3c2410_io_port.c \
+	./src/x49gpng/s3c2410_rtc.c \
+	./src/x49gpng/s3c2410_adc.c \
+	./src/x49gpng/s3c2410_spi.c \
+	./src/x49gpng/s3c2410_sdi.c \
+	./src/x49gpng/s3c2410_arm.c \
+	./src/x49gpng/ui.c \
+	./src/x49gpng/timer.c \
+	./src/x49gpng/tiny_font.c \
+	./src/x49gpng/symbol.c \
+	./src/x49gpng/gdbstub.c \
+	./src/x49gpng/block.c \
+	./src/x49gpng/options.c
 
 OBJS = $(SRCS:.c=.o)
 
 # TEMPO hack
-VVFATOBJS = ./src/block-vvfat.o \
-	./src/block-qcow.o \
-	./src/block-raw.o \
+VVFATOBJS = ./src/x49gpng/block-vvfat.o \
+	./src/x49gpng/block-qcow.o \
+	./src/x49gpng/block-raw.o \
 	$(QEMU_DIR)/cutils.o
 
 all: do-it-all
@@ -155,7 +156,7 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 %.o: %.c
 	$(CC) $(X49GP_CFLAGS) -o $@ -c $<
 
-./src/block-vvfat.o: ./src/block-vvfat.c
+./src/x49gpng/block-vvfat.o: ./src/x49gpng/block-vvfat.c
 	$(CC) $(X49GP_CFLAGS) -fno-aggressive-loop-optimizations -o $@ -c $<
 
 # Compilation of qemu-git
@@ -183,7 +184,7 @@ clean-qemu:
 	$(MAKE) -C $(QEMU_DIR) -f Makefile-small clean
 
 clean: clean-qemu
-	rm -f ./src/*.o core *~ .depend
+	rm -f ./src/x49gpng/*.o core *~ .depend
 
 distclean: clean
 	$(MAKE) -C $(QEMU_DIR) -f Makefile-small distclean
@@ -194,7 +195,7 @@ mrproper: clean-qemu distclean
 
 # auto-format code
 pretty-code:
-	clang-format -i ./src/*.c ./src/*.h
+	clang-format -i ./src/x49gpng/*.c ./src/x49gpng/*.h
 
 # Populate dist/firmware/ from hpcalc.org
 pull-firmware:

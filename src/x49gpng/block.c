@@ -8,7 +8,8 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include "qemu-git/qemu-common.h"
+#include "qemu-common.h"
+
 #include "block.h"
 #include "block_int.h"
 

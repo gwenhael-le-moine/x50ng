@@ -7,12 +7,12 @@
 #include <string.h>
 #include <errno.h>
 
-#include "qemu-git/target-arm/cpu.h"
+#include "target-arm/cpu.h"
 
 #include "x49gp.h"
 #include "s3c2410.h"
 
-#include "qemu-git/cpu-all.h"
+#include "cpu-all.h"
 
 static int s3c2410_arm_load( x49gp_module_t* module, GKeyFile* key )
 {
