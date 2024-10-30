@@ -79,6 +79,7 @@ typedef struct {
     unsigned char columnbit;
     unsigned char rowbit;
     int eint;
+    x49gp_ui_color_t bg_color;
 } x49gp_ui_key_t;
 
 typedef struct {
