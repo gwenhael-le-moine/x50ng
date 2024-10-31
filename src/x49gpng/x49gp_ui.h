@@ -118,19 +118,12 @@ struct __x49gp_ui_s__ {
     GtkWidget* lcd_canvas;
     GdkPixmap* lcd_pixmap;
 
-    GdkGC* ann_left_gc;
-    GdkGC* ann_right_gc;
-    GdkGC* ann_alpha_gc;
-    GdkGC* ann_battery_gc;
-    GdkGC* ann_busy_gc;
-    GdkGC* ann_io_gc;
-
-    GdkBitmap* ann_left;
-    GdkBitmap* ann_right;
-    GdkBitmap* ann_alpha;
-    GdkBitmap* ann_battery;
-    GdkBitmap* ann_busy;
-    GdkBitmap* ann_io;
+    cairo_surface_t* ann_left_surface;
+    cairo_surface_t* ann_right_surface;
+    cairo_surface_t* ann_alpha_surface;
+    cairo_surface_t* ann_battery_surface;
+    cairo_surface_t* ann_busy_surface;
+    cairo_surface_t* ann_io_surface;
 
     gint width;
     gint height;

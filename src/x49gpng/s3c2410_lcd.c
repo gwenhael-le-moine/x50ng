@@ -292,46 +292,41 @@ void x49gp_draw_rectangle( GdkPixmap* target, int x, int y, int w, int h, GdkCol
     cairo_destroy( cr );
 }
 
+void x49gp_draw_surface( GdkPixmap* target, cairo_surface_t* surface, int x, int y, int w, int h, GdkColor* color )
+{
+    cairo_t* cr = gdk_cairo_create( target );
+
+    cairo_set_source_rgb( cr, color->red / 65535.0, color->green / 65535.0, color->blue / 65535.0 );
+    cairo_mask_surface( cr, surface, x, y );
+
+    cairo_destroy( cr );
+}
+
 void x49gp_lcd_update( x49gp_t* x49gp )
 {
     x49gp_ui_t* ui = x49gp->ui;
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
-    // cairo_t* cr;
-
-    gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( ui->window )->bg_gc[ 0 ], ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0,
-                       0, ui->lcd_width, ui->lcd_height );
 
     if ( lcd->lcdcon1 & 1 ) {
-        int color;
+        GdkColor color;
 
-        color = x49gp_get_pixel_color( lcd, 131, 1 );
-        gdk_gc_set_rgb_fg_color( ui->ann_left_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_left_gc, true, 11, 0, 15, 12 );
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 1 ) ];
+        x49gp_draw_surface( ui->lcd_pixmap, ui->ann_left_surface, 11, 0, 15, 12, &color );
 
-        /* cr = gdk_cairo_create( ui->ann_left ); */
-        /* gdk_cairo_set_source_pixbuf( cr, ui->lcd_pixmap, 11, 0 ); */
-        /* cairo_paint( cr ); */
-        /* cairo_destroy( cr ); */
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 2 ) ];
+        x49gp_draw_surface( ui->lcd_pixmap, ui->ann_right_surface, 56, 0, 15, 12, &color );
 
-        color = x49gp_get_pixel_color( lcd, 131, 2 );
-        gdk_gc_set_rgb_fg_color( ui->ann_right_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_right_gc, true, 56, 0, 15, 12 );
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 3 ) ];
+        x49gp_draw_surface( ui->lcd_pixmap, ui->ann_alpha_surface, 101, 0, 15, 12, &color );
 
-        color = x49gp_get_pixel_color( lcd, 131, 3 );
-        gdk_gc_set_rgb_fg_color( ui->ann_alpha_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_alpha_gc, true, 101, 0, 15, 12 );
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 4 ) ];
+        x49gp_draw_surface( ui->lcd_pixmap, ui->ann_battery_surface, 146, 0, 15, 12, &color );
 
-        color = x49gp_get_pixel_color( lcd, 131, 4 );
-        gdk_gc_set_rgb_fg_color( ui->ann_battery_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_battery_gc, true, 146, 0, 15, 12 );
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 5 ) ];
+        x49gp_draw_surface( ui->lcd_pixmap, ui->ann_busy_surface, 191, 0, 15, 12, &color );
 
-        color = x49gp_get_pixel_color( lcd, 131, 5 );
-        gdk_gc_set_rgb_fg_color( ui->ann_busy_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_busy_gc, true, 191, 0, 15, 12 );
-
-        color = x49gp_get_pixel_color( lcd, 131, 0 );
-        gdk_gc_set_rgb_fg_color( ui->ann_io_gc, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + color ] ) );
-        gdk_draw_rectangle( ui->lcd_pixmap, ui->ann_io_gc, true, 236, 0, 15, 12 );
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 0 ) ];
+        x49gp_draw_surface( ui->lcd_pixmap, ui->ann_io_surface, 236, 0, 15, 12, &color );
 
         for ( int y = 0; y < ( ( ui->lcd_height - ui->lcd_annunciators_height ) / LCD_PIXEL_SCALE ); y++ )
             for ( int x = 0; x < ( ui->lcd_width / LCD_PIXEL_SCALE ); x++ )
