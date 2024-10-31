@@ -11,11 +11,4 @@
 #include "bitmaps/ann_busy.xbm"
 #include "bitmaps/ann_io.xbm"
 
-#include "bitmaps/button_tiny.xbm"
-#include "bitmaps/button_small.xbm"
-#include "bitmaps/button_normal.xbm"
-#include "bitmaps/button_large.xbm"
-#include "bitmaps/button_round.xbm"
-#include "bitmaps/button_round.pix"
-
 #endif /* !(_X49GP_BITMAPS_H) */

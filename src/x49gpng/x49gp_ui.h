@@ -40,15 +40,6 @@ typedef enum {
     UI_COLOR_MAX
 } x49gp_ui_color_t;
 
-typedef enum {
-    UI_SHAPE_BUTTON_TINY = 0,
-    UI_SHAPE_BUTTON_SMALL,
-    UI_SHAPE_BUTTON_NORMAL,
-    UI_SHAPE_BUTTON_LARGE,
-    UI_SHAPE_BUTTON_ROUND,
-    UI_SHAPE_MAX
-} x49gp_ui_shape_t;
-
 typedef enum { UI_LAYOUT_LEFT = 0, UI_LAYOUT_LEFT_NO_SPACE, UI_LAYOUT_BELOW, UI_LAYOUT_MAX } x49gp_ui_layout_t;
 
 typedef enum {
@@ -67,7 +58,6 @@ typedef struct {
     x49gp_ui_color_t color;
     double font_size;
     cairo_font_weight_t font_weight;
-    x49gp_ui_shape_t shape;
     double letter_size;
     x49gp_ui_layout_t layout;
     int x;
@@ -105,7 +95,6 @@ struct __x49gp_ui_s__ {
     GtkWidget* background;
 
     GdkColor colors[ UI_COLOR_MAX ];
-    GdkBitmap* shapes[ UI_SHAPE_MAX ];
 
     x49gp_ui_calculator_t calculator;
 
