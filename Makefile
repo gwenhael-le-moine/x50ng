@@ -1,6 +1,3 @@
-# $Id: Makefile,v 1.29 2008/12/11 12:18:17 ecd Exp $
-#
-
 TARGET = x49gpng
 TARGET_ALLCAPS = X49GPNG
 
@@ -165,7 +162,9 @@ $(QEMU_DIR)/config-host.h:
 	./configure-small --extra-cflags=-DX49GP; \
 	$(MAKE) -f Makefile-small )
 
-$(QEMU_OBJS): dummy
+$(QEMU_OBJS): qemu-objs
+
+qemu-objs:
 	+$(MAKE) -C $(QEMU_DIR) -f Makefile-small
 
 clean-qemu:
@@ -230,5 +229,3 @@ install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 	cp -R dist/firmware/ "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
-
-dummy:
