@@ -6049,7 +6049,6 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_SILVER ], 0xe0, 0xe0, 0xe0 ); /* #e0e0e0 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_ORANGE ], 0xc0, 0x6e, 0x60 ); /* #c06e60 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLUE ], 0x40, 0x60, 0xa4 );   /* #4060a4 */
-
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_0 ], 0xab, 0xd2, 0xb4 );  /* #abd2b4 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_1 ], 0xa0, 0xc4, 0xa8 );  /* #a0c4a8 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_2 ], 0x94, 0xb6, 0x9c );  /* #94b69c */
@@ -6088,21 +6087,21 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             break;
     }
 
-    /* Load faceplate base texture into imagefile */
+    /* Load faceplate base texture into faceplate_texture */
     GError* gerror = NULL;
-    char* imagefile;
+    char* faceplate_texture;
     int fd = x49gp_module_open_rodata( module,
                                        ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
                                            ? "hp49g+-cropped.png"
                                            : /* "blank.png" */ "hp50g-cropped.png",
-                                       &imagefile );
+                                       &faceplate_texture );
     if ( fd < 0 )
         return fd;
 
-    ui->bg_pixbuf = gdk_pixbuf_new_from_file( imagefile, &gerror );
+    ui->bg_pixbuf = gdk_pixbuf_new_from_file( faceplate_texture, &gerror );
 
-    /* set ui->width and ui->height based on imagefile dimensions */
-    gdk_pixbuf_get_file_info( imagefile, &ui->width, &ui->height );
+    /* set ui->width and ui->height based on faceplate_texture dimensions */
+    gdk_pixbuf_get_file_info( faceplate_texture, &ui->width, &ui->height );
     close( fd );
 
     /* set coordinates of LCD and keyboard */
