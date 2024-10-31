@@ -12,23 +12,19 @@
 static const cairo_path_data_t symbol_square_path_data[] = { SYMBOL_MOVE_TO( 0.100, 0.100 ), SYMBOL_LINE_TO( 0.500, 0.000 ),
                                                              SYMBOL_LINE_TO( 0.000, 0.500 ), SYMBOL_LINE_TO( -0.500, 0.000 ),
                                                              SYMBOL_CLOSE_PATH() };
-
 SYMBOL( square, 0.7, 0.0, 0.1, 0.1, 0.6, 0.6 );
 
 static const cairo_path_data_t symbol_triangleup_path_data[] = { SYMBOL_MOVE_TO( 0.100, 0.000 ), SYMBOL_LINE_TO( 0.800, 0.000 ),
                                                                  SYMBOL_LINE_TO( -0.400, 0.693 ), SYMBOL_CLOSE_PATH() };
-
 SYMBOL( triangleup, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
 
 static const cairo_path_data_t symbol_triangleright_path_data[] = { SYMBOL_MOVE_TO( 0.100, 0.000 ), SYMBOL_LINE_TO( 0.000, 0.800 ),
                                                                     SYMBOL_LINE_TO( 0.693, -0.400 ), SYMBOL_CLOSE_PATH() };
-
 SYMBOL( triangleright, 0.893, 0.0, 0.1, 0.0, 0.793, 0.8 );
 
 static const cairo_path_data_t symbol_arrowleftdblfull_path_data[] = {
     SYMBOL_MOVE_TO( 0.100, 0.370 ),  SYMBOL_LINE_TO( 0.652, 0.500 ),  SYMBOL_LINE_TO( 0.000, -0.250 ), SYMBOL_LINE_TO( 1.000, 0.000 ),
     SYMBOL_LINE_TO( 0.000, -0.500 ), SYMBOL_LINE_TO( -1.000, 0.000 ), SYMBOL_LINE_TO( 0.000, -0.250 ), SYMBOL_CLOSE_PATH() };
-
 SYMBOL( arrowleftdblfull, 1.852, 0.0, 0.1, -0.13, 1.752, 0.87 );
 
 static const cairo_path_data_t symbol_uparrowleft_path_data[] = { SYMBOL_MOVE_TO( 0.100, 0.500 ),  SYMBOL_LINE_TO( 0.600, 0.200 ),
@@ -36,7 +32,6 @@ static const cairo_path_data_t symbol_uparrowleft_path_data[] = { SYMBOL_MOVE_TO
                                                                   SYMBOL_LINE_TO( 0.000, -0.550 ), SYMBOL_LINE_TO( -0.100, 0.000 ),
                                                                   SYMBOL_LINE_TO( 0.000, 0.450 ),  SYMBOL_LINE_TO( -0.400, 0.000 ),
                                                                   SYMBOL_LINE_TO( 0.000, -0.150 ), SYMBOL_CLOSE_PATH() };
-
 SYMBOL( uparrowleft, 1.3, 0.0, 0.1, 0.0, 1.2, 0.7 );
 
 static const cairo_path_data_t symbol_uparrowright_path_data[] = { SYMBOL_MOVE_TO( 1.200, 0.500 ),  SYMBOL_LINE_TO( -0.600, 0.200 ),
@@ -44,13 +39,11 @@ static const cairo_path_data_t symbol_uparrowright_path_data[] = { SYMBOL_MOVE_T
                                                                    SYMBOL_LINE_TO( 0.000, -0.550 ), SYMBOL_LINE_TO( 0.100, 0.000 ),
                                                                    SYMBOL_LINE_TO( 0.000, 0.450 ),  SYMBOL_LINE_TO( 0.400, 0.000 ),
                                                                    SYMBOL_LINE_TO( 0.000, -0.150 ), SYMBOL_CLOSE_PATH() };
-
 SYMBOL( uparrowright, 1.3, 0.0, 0.1, 0.0, 1.2, 0.7 );
 
 static const cairo_path_data_t symbol_tick_path_data[] = { SYMBOL_MOVE_TO( 0.100, 0.400 ), SYMBOL_LINE_TO( 0.000, 0.450 ),
                                                            SYMBOL_LINE_TO( 0.150, 0.000 ), SYMBOL_LINE_TO( 0.000, -0.450 ),
                                                            SYMBOL_CLOSE_PATH() };
-
 SYMBOL( tick, 0.35, 0.0, 0.1, 0.4, 0.25, 0.85 );
 
 static const cairo_path_data_t symbol_radical_path_data[] = { SYMBOL_MOVE_TO( 0.000, 0.500 ),   SYMBOL_LINE_TO( 0.214, 0.100 ),
@@ -58,19 +51,16 @@ static const cairo_path_data_t symbol_radical_path_data[] = { SYMBOL_MOVE_TO( 0.
                                                               SYMBOL_LINE_TO( 0.077, 0.000 ),   SYMBOL_LINE_TO( 0.000, -0.100 ),
                                                               SYMBOL_LINE_TO( -0.281, -1.050 ), SYMBOL_LINE_TO( -0.287, 0.616 ),
                                                               SYMBOL_LINE_TO( -0.123, -0.057 ), SYMBOL_CLOSE_PATH() };
-
 SYMBOL( radical, 0.733, 0.0, 0.0, -0.15, 0.733, 1.0 );
 
 static const cairo_path_data_t symbol_overscore_path_data[] = { SYMBOL_MOVE_TO( 0.000, 1.000 ), SYMBOL_LINE_TO( 0.900, 0.000 ),
                                                                 SYMBOL_LINE_TO( 0.000, -0.100 ), SYMBOL_LINE_TO( -0.900, 0.000 ),
                                                                 SYMBOL_CLOSE_PATH() };
-
 SYMBOL( overscore, 0.8, 0.0, 0.0, 0.9, 0.9, 1.0 );
 
 static const cairo_path_data_t symbol_minus_path_data[] = { SYMBOL_MOVE_TO( 0.050, 0.312 ), SYMBOL_LINE_TO( 0.000, 0.118 ),
                                                             SYMBOL_LINE_TO( 0.500, 0.000 ), SYMBOL_LINE_TO( 0.000, -0.118 ),
                                                             SYMBOL_CLOSE_PATH() };
-
 SYMBOL( minus, 0.6, 0.0, 0.05, 0.312, 0.55, 0.430 );
 
 static const cairo_path_data_t symbol_divide_path_data[] = { SYMBOL_MOVE_TO( 0.050, 0.312 ),
@@ -88,14 +78,30 @@ static const cairo_path_data_t symbol_divide_path_data[] = { SYMBOL_MOVE_TO( 0.0
                                                              SYMBOL_LINE_TO( 0.135, 0.000 ),
                                                              SYMBOL_LINE_TO( 0.000, -0.135 ),
                                                              SYMBOL_CLOSE_PATH() };
-
 SYMBOL( divide, 0.6, 0.0, 0.05, 0.069, 0.55, 0.673 );
 
 static const cairo_path_data_t symbol_divisionslash_path_data[] = { SYMBOL_MOVE_TO( 0.050, 0.000 ), SYMBOL_LINE_TO( 0.345, 0.739 ),
                                                                     SYMBOL_LINE_TO( 0.130, 0.000 ), SYMBOL_LINE_TO( -0.345, -0.739 ),
                                                                     SYMBOL_CLOSE_PATH() };
-
 SYMBOL( divisionslash, 0.575, 0.000, 0.050, 0.000, 0.525, 0.739 );
+
+
+static const cairo_path_data_t symbol_arrowup_path_data[] = { SYMBOL_MOVE_TO( 0.000, 0.000 ), SYMBOL_LINE_TO( 1.000, 0.000 ),
+                                                              SYMBOL_LINE_TO( -0.500, 1.000 ), SYMBOL_CLOSE_PATH() };
+SYMBOL( arrowup, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
+
+static const cairo_path_data_t symbol_arrowdown_path_data[] = { SYMBOL_MOVE_TO( 0.000, 1.000 ), SYMBOL_LINE_TO( 1.000, 0.000 ),
+                                                              SYMBOL_LINE_TO( -0.500, -1.000 ), SYMBOL_CLOSE_PATH() };
+SYMBOL( arrowdown, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
+
+static const cairo_path_data_t symbol_arrowleft_path_data[] = { SYMBOL_MOVE_TO( 1.000, 0.000 ), SYMBOL_LINE_TO( 0.000, 1.000 ),
+                                                              SYMBOL_LINE_TO( -1.000, -0.500 ), SYMBOL_CLOSE_PATH() };
+SYMBOL( arrowleft, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
+
+static const cairo_path_data_t symbol_arrowright_path_data[] = { SYMBOL_MOVE_TO( 0.000, 0.000 ), SYMBOL_LINE_TO( 0.000, 1.000 ),
+                                                              SYMBOL_LINE_TO( 1.000, -0.500 ), SYMBOL_CLOSE_PATH() };
+SYMBOL( arrowright, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
+
 
 CONTROL( beginsuperscript, 0.0, 0.5, 1.0, 0.8 );
 CONTROL( endsuperscript, 0.0, 0.5, 1.25, 1.0 );
@@ -140,6 +146,11 @@ static const symbol_name_t symbol_names[] = {
     {"kern-7",           &symbol_kern_m7         },
     {"kern-8",           &symbol_kern_m8         },
     {"kern-9",           &symbol_kern_m9         },
+    {"arrowup",       &symbol_arrowup      },
+    {"arrowdown",       &symbol_arrowdown      },
+    {"arrowleft",       &symbol_arrowleft      },
+    {"arrowright",       &symbol_arrowright      },
+
     {NULL,               NULL                    }
 };
 #define NR_SYMBOLS ( sizeof( symbol_names ) / sizeof( symbol_names[ 0 ] ) - 1 )
