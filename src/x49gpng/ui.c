@@ -293,7 +293,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 1 ),
      .eint = 1,
-     .bg_color = UI_COLOR_GRAYSCALE_5     },
+     .bg_color = UI_COLOR_GRAYSCALE_5},
     {.label = "\\arrowleft",
      .letter = NULL,
      .left = NULL,
@@ -313,7 +313,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 2 ),
      .eint = 2,
-     .bg_color = UI_COLOR_GRAYSCALE_5     },
+     .bg_color = UI_COLOR_GRAYSCALE_5},
     {.label = "\\arrowdown",
      .letter = NULL,
      .left = NULL,
@@ -333,7 +333,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 3 ),
      .eint = 3,
-     .bg_color = UI_COLOR_GRAYSCALE_5     },
+     .bg_color = UI_COLOR_GRAYSCALE_5},
     {.label = "\\arrowright",
      .letter = NULL,
      .left = NULL,
@@ -353,7 +353,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 4 ),
      .eint = 4,
-     .bg_color = UI_COLOR_GRAYSCALE_5     },
+     .bg_color = UI_COLOR_GRAYSCALE_5},
     /* {.label = NULL, */
     /*  .letter = NULL, */
     /*  .left = NULL, */
@@ -2195,21 +2195,22 @@ static void x49gp_ui_style_init( GtkStyle* style, GtkWidget* widget, GdkColor* f
 static int x49gp_ui_button_pixmaps_init( x49gp_t* x49gp, x49gp_ui_button_t* button, x49gp_ui_color_t color )
 {
     x49gp_ui_t* ui = x49gp->ui;
-    GdkPixbuf *src;
+    GdkPixbuf* src;
     cairo_t* cr;
     GtkStyle* style = gtk_style_new();
+    int y;
 
     x49gp_ui_style_init( style, button->button, &ui->colors[ button->key->color ], &ui->colors[ UI_COLOR_BLACK ] );
 
     for ( int i = 0; i < 5; i++ ) {
         style->bg_pixmap[ i ] = gdk_pixmap_new( gtk_widget_get_window( ui->window ), button->key->width, button->key->height, -1 );
 
+        y = ui->kb_y_offset + button->key->y;
+
         if ( i == GTK_STATE_ACTIVE )
-            src = gdk_pixbuf_new_subpixbuf( ui->bg_pixbuf, ui->kb_x_offset + button->key->x, ui->kb_y_offset + button->key->y + 1,
-                                           button->key->width, button->key->height );
-        else
-            src = gdk_pixbuf_new_subpixbuf( ui->bg_pixbuf, ui->kb_x_offset + button->key->x, ui->kb_y_offset + button->key->y,
-                                           button->key->width, button->key->height );
+            y += 1;
+
+        src = gdk_pixbuf_new_subpixbuf( ui->bg_pixbuf, ui->kb_x_offset + button->key->x, y, button->key->width, button->key->height );
 
         cr = gdk_cairo_create( style->bg_pixmap[ i ] );
         gdk_cairo_set_source_pixbuf( cr, src, 0, 0 );
@@ -3462,7 +3463,7 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
     cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
 
-//#if DEBUG_LAYOUT /* Layout Debug */
+    // #if DEBUG_LAYOUT /* Layout Debug */
     cairo_set_source_rgb( cr, 1.0, 1.0, 1.0 );
     cairo_set_line_width( cr, 1.0 );
     cairo_move_to( cr, xoffset, yoffset );
@@ -3471,7 +3472,7 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_line_to( cr, xoffset, yoffset + h - 1 );
     cairo_close_path( cr );
     cairo_stroke( cr );
-//#endif
+    // #endif
 
     cairo_set_source_rgb( cr, ui->colors[ key->bg_color ].red / 65535.0, ui->colors[ key->bg_color ].green / 65535.0,
                           ui->colors[ key->bg_color ].blue / 65535.0 );
@@ -3753,12 +3754,8 @@ static int gui_exit( x49gp_module_t* module ) { return 0; }
 
 static int gui_reset( x49gp_module_t* module, x49gp_reset_t reset ) { return 0; }
 
-static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
+static void init_colors( x49gp_ui_t* ui )
 {
-    x49gp_t* x49gp = module->x49gp;
-    x49gp_ui_t* ui = module->user_data;
-
-    /* create all colors */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_BLACK ], 0x00, 0x00, 0x00 );        /* #000000 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_WHITE ], 0xff, 0xff, 0xff );        /* #ffffff */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_YELLOW ], 0xfa, 0xe8, 0x2c );       /* #fae82c */
@@ -3783,6 +3780,69 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_13 ], 0x17, 0x1c, 0x18 ); /* #171c18 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_14 ], 0x0b, 0x03, 0x0c ); /* #0b030c */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 ); /* #000000 */
+}
+
+static inline unsigned color2rgba( x49gp_ui_t* ui, int color )
+{
+    return 0x000000ff | ( ui->colors[ color ].red ) | ( ui->colors[ color ].green << 8 ) | ( ui->colors[ color ].blue << 16 );
+}
+
+static void setup_faceplate( x49gp_ui_t* ui )
+{
+    /* Load faceplate base texture */
+    /* gerror* gerror = NULL; */
+    /* char* faceplate_texture_data; */
+    /* int fd = x49gp_module_open_rodata( module, */
+    /*                                    ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL */
+    /*                                        ? "hp49g+-cropped.png" */
+    /*                                        : "blank.png" /\* "hp50g-cropped.png" *\/, */
+    /*                                    &faceplate_texture_data ); */
+    /* if ( fd < 0 ) */
+    /*     return fd; */
+
+    /* ui->bg_pixbuf = gdk_pixbuf_new_from_file( faceplate_texture_data, &gerror ); */
+
+    /* /\* set ui->width and ui->height based on faceplate_texture_data dimensions *\/ */
+    /* gdk_pixbuf_get_file_info( faceplate_texture_data, &ui->width, &ui->height ); */
+    /* close( fd ); */
+
+    ui->width = 302;
+    ui->height = 728;
+
+    /* set coordinates of LCD and keyboard */
+    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
+    ui->lcd_annunciators_height = 16;
+    ui->lcd_height = ( 80 * LCD_PIXEL_SCALE ) + ui->lcd_annunciators_height;
+    ui->lcd_x_offset = ( ui->width - ui->lcd_width ) / 2;
+    ui->lcd_y_offset = 48; // 69;
+
+    ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
+
+    gdk_pixbuf_fill( ui->bg_pixbuf, color2rgba( ui, UI_COLOR_GRAYSCALE_12 ) );
+
+    /* cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, ui->width, ui->height); */
+    /* cairo_t* cr = cairo_create( surface ); */
+    /* /\* Draw the pixbuf *\/ */
+    /* gdk_cairo_set_source_pixbuf (cr, ui->bg_pixbuf, 0, 0); */
+    /* cairo_paint (cr); */
+    /* /\* Draw a red rectangle *\/ */
+
+    /* GdkColor color = ui->colors[ UI_COLOR_GRAYSCALE_0 ]; */
+    /* cairo_set_source_rgb( cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0 ); */
+    /* cairo_rectangle (cr, ui->lcd_x_offset - 2, ui->lcd_y_offset - 2, ui->lcd_width + 4, ui->lcd_height + 4 ); */
+    /* cairo_fill (cr); */
+
+    /* cairo_surface_destroy( surface ); */
+    /* cairo_destroy( cr ); */
+}
+
+static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
+{
+    x49gp_t* x49gp = module->x49gp;
+    x49gp_ui_t* ui = module->user_data;
+
+    /* create all colors */
+    init_colors( ui );
 
     /* set calculator type and name */
     switch ( opt.model ) {
@@ -3805,29 +3865,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             break;
     }
 
-    /* Load faceplate base texture */
-    GError* gerror = NULL;
-    char* faceplate_texture_data;
-    int fd = x49gp_module_open_rodata( module,
-                                       ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
-                                           ? "hp49g+-cropped.png"
-                                           : "blank.png" /* "hp50g-cropped.png" */,
-                                       &faceplate_texture_data );
-    if ( fd < 0 )
-        return fd;
-
-    ui->bg_pixbuf = gdk_pixbuf_new_from_file( faceplate_texture_data, &gerror );
-
-    /* set ui->width and ui->height based on faceplate_texture_data dimensions */
-    gdk_pixbuf_get_file_info( faceplate_texture_data, &ui->width, &ui->height );
-    close( fd );
-
-    /* set coordinates of LCD and keyboard */
-    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
-    ui->lcd_annunciators_height = 16;
-    ui->lcd_height = ( 80 * LCD_PIXEL_SCALE ) + ui->lcd_annunciators_height;
-    ui->lcd_x_offset = ( ui->width - ui->lcd_width ) / 2;
-    ui->lcd_y_offset = 48; // 69;
+    setup_faceplate( ui );
 
     ui->kb_x_offset = 10;                                     // 36;
     ui->kb_y_offset = ui->lcd_y_offset + ui->lcd_height + 56; // 280; // 301;
@@ -3867,9 +3905,9 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
         const x49gp_ui_key_t* keys;
 
         if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
-             keys = ui_newrpl_keys;
+            keys = ui_newrpl_keys;
         else
-             keys = ui_keys;
+            keys = ui_keys;
 
         for ( int i = 0; i < ui->nr_buttons; i++ ) {
             button = &ui->buttons[ i ];

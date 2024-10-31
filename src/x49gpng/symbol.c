@@ -85,23 +85,21 @@ static const cairo_path_data_t symbol_divisionslash_path_data[] = { SYMBOL_MOVE_
                                                                     SYMBOL_CLOSE_PATH() };
 SYMBOL( divisionslash, 0.575, 0.000, 0.050, 0.000, 0.525, 0.739 );
 
-
 static const cairo_path_data_t symbol_arrowup_path_data[] = { SYMBOL_MOVE_TO( 0.000, 0.000 ), SYMBOL_LINE_TO( 1.000, 0.000 ),
                                                               SYMBOL_LINE_TO( -0.500, 1.000 ), SYMBOL_CLOSE_PATH() };
 SYMBOL( arrowup, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
 
 static const cairo_path_data_t symbol_arrowdown_path_data[] = { SYMBOL_MOVE_TO( 0.000, 1.000 ), SYMBOL_LINE_TO( 1.000, 0.000 ),
-                                                              SYMBOL_LINE_TO( -0.500, -1.000 ), SYMBOL_CLOSE_PATH() };
+                                                                SYMBOL_LINE_TO( -0.500, -1.000 ), SYMBOL_CLOSE_PATH() };
 SYMBOL( arrowdown, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
 
 static const cairo_path_data_t symbol_arrowleft_path_data[] = { SYMBOL_MOVE_TO( 1.000, 0.000 ), SYMBOL_LINE_TO( 0.000, 1.000 ),
-                                                              SYMBOL_LINE_TO( -1.000, -0.500 ), SYMBOL_CLOSE_PATH() };
+                                                                SYMBOL_LINE_TO( -1.000, -0.500 ), SYMBOL_CLOSE_PATH() };
 SYMBOL( arrowleft, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
 
 static const cairo_path_data_t symbol_arrowright_path_data[] = { SYMBOL_MOVE_TO( 0.000, 0.000 ), SYMBOL_LINE_TO( 0.000, 1.000 ),
-                                                              SYMBOL_LINE_TO( 1.000, -0.500 ), SYMBOL_CLOSE_PATH() };
+                                                                 SYMBOL_LINE_TO( 1.000, -0.500 ), SYMBOL_CLOSE_PATH() };
 SYMBOL( arrowright, 1.0, 0.0, 0.1, 0.0, 0.9, 0.693 );
-
 
 CONTROL( beginsuperscript, 0.0, 0.5, 1.0, 0.8 );
 CONTROL( endsuperscript, 0.0, 0.5, 1.25, 1.0 );
@@ -146,9 +144,9 @@ static const symbol_name_t symbol_names[] = {
     {"kern-7",           &symbol_kern_m7         },
     {"kern-8",           &symbol_kern_m8         },
     {"kern-9",           &symbol_kern_m9         },
-    {"arrowup",       &symbol_arrowup      },
-    {"arrowdown",       &symbol_arrowdown      },
-    {"arrowleft",       &symbol_arrowleft      },
+    {"arrowup",          &symbol_arrowup         },
+    {"arrowdown",        &symbol_arrowdown       },
+    {"arrowleft",        &symbol_arrowleft       },
     {"arrowright",       &symbol_arrowright      },
 
     {NULL,               NULL                    }
