@@ -101,7 +101,6 @@ struct __x49gp_ui_s__ {
     x49gp_ui_calculator_t calculator;
 
     x49gp_ui_button_t* buttons;
-    unsigned int nr_buttons;
     unsigned int buttons_down;
 
     char* name;

@@ -1836,7 +1836,7 @@ static void ui_release_all_buttons( x49gp_t* x49gp, x49gp_ui_button_t* cause )
     x49gp_ui_button_t* button;
     x49gp_ui_t* ui = x49gp->ui;
 
-    for ( int i = 0; i < ui->nr_buttons; i++ ) {
+    for ( int i = 0; i < NB_KEYS; i++ ) {
         button = &ui->buttons[ i ];
 
         if ( !button->down )
@@ -2537,7 +2537,7 @@ static int callback_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event,
 
     cairo_destroy( cr );
 
-    for ( int i = 0; i < ui->nr_buttons; i++ ) {
+    for ( int i = 0; i < NB_KEYS; i++ ) {
         key = ui->buttons[ i ].key;
 
         if ( key->left ) {
@@ -2638,14 +2638,13 @@ static int ui_init( x49gp_module_t* module )
     }
     memset( ui, 0, sizeof( x49gp_ui_t ) );
 
-    ui->nr_buttons = NB_KEYS;
-    ui->buttons = malloc( ui->nr_buttons * sizeof( x49gp_ui_button_t ) );
+    ui->buttons = malloc( NB_KEYS * sizeof( x49gp_ui_button_t ) );
     if ( NULL == ui->buttons ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", x49gp->progname, __FUNCTION__, __LINE__ );
         free( ui );
         return -ENOMEM;
     }
-    memset( ui->buttons, 0, ui->nr_buttons * sizeof( x49gp_ui_button_t ) );
+    memset( ui->buttons, 0, NB_KEYS * sizeof( x49gp_ui_button_t ) );
 
     module->user_data = ui;
     x49gp->ui = ui;
@@ -2816,9 +2815,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             ui_keys[ 46 ].below = NULL;
 
             ui_keys[ 50 ].left = NULL;
-        }
+        } // end of newRPL'ization of ui_keys[]
 
-        for ( int i = 0; i < ui->nr_buttons; i++ ) {
+        for ( int i = 0; i < NB_KEYS; i++ ) {
             button = &ui->buttons[ i ];
 
             button->x49gp = x49gp;
