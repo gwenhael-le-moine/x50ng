@@ -55,7 +55,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 0,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -75,7 +74,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -95,7 +93,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -115,7 +112,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 3 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -135,7 +131,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -155,7 +150,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 5 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -176,7 +170,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
      .x = 0,
      .y = KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -196,7 +189,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
      .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -216,7 +208,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
      .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -236,7 +227,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
      .x = 0,
      .y = 2 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -256,7 +246,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
      .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -276,7 +265,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
      .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -297,7 +285,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0.75 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -317,7 +304,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 3.25 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 1.25 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -337,7 +323,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 1.75 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -357,7 +342,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 10.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4.78 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 1.25 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -378,7 +362,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 0,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -398,7 +381,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -418,7 +400,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -438,7 +419,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -458,7 +438,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -479,7 +458,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 0,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -499,7 +477,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -519,7 +496,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -539,7 +515,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -559,7 +534,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -580,7 +554,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 0,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -600,7 +573,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -620,7 +592,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -640,7 +611,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -660,7 +630,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT_NO_SPACE,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -681,7 +650,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 0,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -701,7 +669,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -721,7 +688,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -741,7 +707,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -761,7 +726,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -782,7 +746,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 0,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -802,7 +765,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -822,7 +784,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -842,7 +803,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -862,7 +822,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -883,7 +842,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 0,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -903,7 +861,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -923,7 +880,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -943,7 +899,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -963,7 +918,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -984,7 +938,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 0,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -1004,7 +957,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -1024,7 +976,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 19.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -1044,7 +995,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -1064,7 +1014,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_size = 12.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
-     .layout = 0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -1323,8 +1272,8 @@ static void _regular_font_vtext_path( cairo_t* cr, double size, double x, double
     free( ucs4 );
 }
 
-static void regular_font_measure_text( cairo_t* cr, double size, double* x_bearing, double* y_bearing, double* width,
-                                       double* height, double* ascent, double* descent, ... )
+static void regular_font_measure_text( cairo_t* cr, double size, double* x_bearing, double* y_bearing, double* width, double* height,
+                                       double* ascent, double* descent, ... )
 {
     va_list ap0, ap1;
     cairo_font_extents_t font_extents;
@@ -1377,8 +1326,7 @@ static void regular_font_measure_text( cairo_t* cr, double size, double* x_beari
     va_end( ap1 );
 }
 
-static void regular_font_draw_text( cairo_t* cr, GdkColor* color, double size, double line_width, int xoffset,
-                                    int yoffset, ... )
+static void regular_font_draw_text( cairo_t* cr, GdkColor* color, double size, double line_width, int xoffset, int yoffset, ... )
 {
     va_list ap;
 
@@ -2299,32 +2247,6 @@ static void handler_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_close_path( cr );
     cairo_fill( cr );
 
-    if ( key->letter ) {
-        regular_font_measure_text( cr, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent,
-                                   CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
-
-        switch ( key->layout ) {
-            case UI_LAYOUT_LEFT:
-            default:
-                x = ( int )floor( w - 1.0 - width - xoff + 0.5 );
-                y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
-                w -= width;
-                break;
-            case UI_LAYOUT_LEFT_NO_SPACE:
-                x = ( int )floor( w - 1.0 - width - xoff + 0.5 );
-                y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
-                break;
-            case UI_LAYOUT_BELOW:
-                x = ( int )floor( ( w - 1.0 - width ) / 2.0 - xoff + 0.5 );
-                y = ( int )h - 1.0;
-                h -= ascent;
-                break;
-        }
-
-        regular_font_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], key->letter_size, 0.0, x + xoffset, y + yoffset,
-                                CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
-    }
-
     regular_font_measure_text( cr, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, CAIRO_FONT_SLANT_NORMAL,
                                key->font_weight, key->label );
 
@@ -2436,6 +2358,8 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
     gdk_cairo_set_source_pixbuf( cr, ui->bg_pixbuf, 0, 0 );
     cairo_paint( cr );
 
+    cairo_destroy( cr );
+
     switch ( ui->calculator ) {
         case UI_CALCULATOR_HP49GP:
         case UI_CALCULATOR_HP49GP_NEWRPL:
@@ -2456,8 +2380,6 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
             break;
     }
 
-    cairo_destroy( cr );
-
     for ( int i = 0; i < NB_KEYS; i++ ) {
         key = ui->buttons[ i ].key;
 
@@ -2465,8 +2387,8 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
             tiny_font_measure_text( key->left, &wl, &hl, &a, &dl );
             if ( !key->right ) {
                 xl = key->x + ( key->width - wl ) / 2;
-                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl,
-                                       ui->kb_y_offset + key->y - hl + dl + 1, key->left );
+                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
+                                     key->left );
             }
         }
 
@@ -2475,7 +2397,7 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
             if ( !key->left ) {
                 xr = key->x + ( key->width - wr ) / 2;
                 tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
-                                       ui->kb_y_offset + key->y - hr + dr + 1, key->right );
+                                     ui->kb_y_offset + key->y - hr + dr + 1, key->right );
             }
         }
 
@@ -2488,11 +2410,20 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
                 xr -= ( key->width - 4 - ( wl + wr ) ) / 2;
             }
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl,
-                                   ui->kb_y_offset + key->y - hl + dl + 1, key->left );
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
+                                 key->left );
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
-                                   ui->kb_y_offset + key->y - hr + dr + 1, key->right );
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr, ui->kb_y_offset + key->y - hr + dr + 1,
+                                 key->right );
+        }
+
+        if ( key->letter ) {
+            cr = gdk_cairo_create( ui->bg_pixmap );
+
+            regular_font_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], key->letter_size, 0.0, ui->kb_x_offset + key->x + key->width,
+                                    ui->kb_y_offset + key->y + key->height, CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
+
+            cairo_destroy( cr );
         }
 
         if ( key->below ) {
@@ -2500,7 +2431,7 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
             xl = key->x + ( key->width - wl ) / 2;
 
             tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl,
-                                   ui->kb_y_offset + key->y + key->height + 2, key->below );
+                                 ui->kb_y_offset + key->y + key->height + 2, key->below );
         }
 
 #if DEBUG_LAYOUT /* Debug Button Layout */
@@ -2791,7 +2722,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_event_box_set_above_child( GTK_EVENT_BOX( screen_box ), false );
         gtk_container_add( GTK_CONTAINER( screen_box ), ui->lcd_canvas );
         _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width,
-                               ui->lcd_height );
+                                        ui->lcd_height );
     }
 
     // keyboard
@@ -2829,7 +2760,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
             _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
-                                   ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
+                                            ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
 
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( handler_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( handler_button_release ), button );

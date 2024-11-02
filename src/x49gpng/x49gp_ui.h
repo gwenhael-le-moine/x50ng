@@ -42,8 +42,6 @@ typedef enum {
     UI_COLOR_MAX,
 } x49gp_ui_color_t;
 
-typedef enum { UI_LAYOUT_LEFT = 0, UI_LAYOUT_LEFT_NO_SPACE, UI_LAYOUT_BELOW, UI_LAYOUT_MAX } x49gp_ui_layout_t;
-
 typedef enum {
     UI_CALCULATOR_HP49GP = 0,
     UI_CALCULATOR_HP49GP_NEWRPL,
@@ -61,7 +59,6 @@ typedef struct {
     double font_size;
     cairo_font_weight_t font_weight;
     double letter_size;
-    x49gp_ui_layout_t layout;
     int x;
     int y;
     int width;
