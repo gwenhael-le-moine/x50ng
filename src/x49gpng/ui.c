@@ -33,7 +33,11 @@
 
 #define NB_KEYS 51
 
-static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
+#define KB_LINE_HEIGHT 48
+#define KB_COLUMN_WIDTH_6_KEYS 50
+#define KB_COLUMN_WIDTH_5_KEYS 60
+
+static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = "F1",
      .letter = "A",
      .left = "Y=",
@@ -64,7 +68,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 50,
+     .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = 36,
      .height = 22,
@@ -84,7 +88,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 99,
+     .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = 36,
      .height = 22,
@@ -104,7 +108,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 149,
+     .x = 3 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = 36,
      .height = 22,
@@ -124,7 +128,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 198,
+     .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = 36,
      .height = 22,
@@ -144,7 +148,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 247,
+     .x = 5 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = 36,
      .height = 22,
@@ -154,6 +158,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6,
      .bg_color = UI_COLOR_GRAYSCALE_5},
+
     {.label = "APPS",
      .letter = "G",
      .left = "FILES",
@@ -165,7 +170,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 10.0,
      .layout = UI_LAYOUT_BELOW,
      .x = 0,
-     .y = 44,
+     .y = KB_LINE_HEIGHT,
      .width = 36,
      .height = 28,
      .column = 5,
@@ -184,8 +189,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
      .layout = UI_LAYOUT_BELOW,
-     .x = 50,
-     .y = 44,
+     .x = KB_COLUMN_WIDTH_6_KEYS,
+     .y = KB_LINE_HEIGHT,
      .width = 36,
      .height = 28,
      .column = 6,
@@ -204,8 +209,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
      .layout = UI_LAYOUT_BELOW,
-     .x = 99,
-     .y = 44,
+     .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
+     .y = KB_LINE_HEIGHT,
      .width = 36,
      .height = 28,
      .column = 6,
@@ -225,7 +230,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 10.0,
      .layout = UI_LAYOUT_BELOW,
      .x = 0,
-     .y = 92,
+     .y = 2 * KB_LINE_HEIGHT,
      .width = 36,
      .height = 28,
      .column = 6,
@@ -244,8 +249,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
      .layout = UI_LAYOUT_BELOW,
-     .x = 50,
-     .y = 92,
+     .x = KB_COLUMN_WIDTH_6_KEYS,
+     .y = 2 * KB_LINE_HEIGHT,
      .width = 36,
      .height = 28,
      .column = 7,
@@ -264,8 +269,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 10.0,
      .layout = UI_LAYOUT_BELOW,
-     .x = 99,
-     .y = 92,
+     .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
+     .y = 2 * KB_LINE_HEIGHT,
      .width = 36,
      .height = 28,
      .column = 7,
@@ -274,6 +279,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "\\arrowup",
      .letter = NULL,
      .left = NULL,
@@ -354,86 +360,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4,
      .bg_color = UI_COLOR_GRAYSCALE_5},
-    /* {.label = NULL, */
-    /*  .letter = NULL, */
-    /*  .left = NULL, */
-    /*  .right = NULL, */
-    /*  .below = NULL, */
-    /*  .color = UI_COLOR_BLACK, */
-    /*  .font_size = 0.0, */
-    /*  .font_weight = 0, */
-    /*  .letter_size = 0.0, */
-    /*  .layout = 0, */
-    /*  .x = 200, */
-    /*  .y = 38, */
-    /*  .width = 33, */
-    /*  .height = 33, */
-    /*  .column = 6, */
-    /*  .row = 1, */
-    /*  .columnbit = ( 1 << 6 ), */
-    /*  .rowbit = ( 1 << 1 ), */
-    /*  .eint = 1, */
-    /*  .bg_color = UI_COLOR_SILVER     }, */
-    /* {.label = NULL, */
-    /*  .letter = NULL, */
-    /*  .left = NULL, */
-    /*  .right = NULL, */
-    /*  .below = NULL, */
-    /*  .color = UI_COLOR_BLACK, */
-    /*  .font_size = 0.0, */
-    /*  .font_weight = 0, */
-    /*  .letter_size = 0.0, */
-    /*  .layout = 0, */
-    /*  .x = 164, */
-    /*  .y = 66, */
-    /*  .width = 33, */
-    /*  .height = 33, */
-    /*  .column = 6, */
-    /*  .row = 2, */
-    /*  .columnbit = ( 1 << 6 ), */
-    /*  .rowbit = ( 1 << 2 ), */
-    /*  .eint = 2, */
-    /*  .bg_color = UI_COLOR_SILVER     }, */
-    /* {.label = NULL, */
-    /*  .letter = NULL, */
-    /*  .left = NULL, */
-    /*  .right = NULL, */
-    /*  .below = NULL, */
-    /*  .color = UI_COLOR_BLACK, */
-    /*  .font_size = 0.0, */
-    /*  .font_weight = 0, */
-    /*  .letter_size = 0.0, */
-    /*  .layout = 0, */
-    /*  .x = 200, */
-    /*  .y = 94, */
-    /*  .width = 33, */
-    /*  .height = 33, */
-    /*  .column = 6, */
-    /*  .row = 3, */
-    /*  .columnbit = ( 1 << 6 ), */
-    /*  .rowbit = ( 1 << 3 ), */
-    /*  .eint = 3, */
-    /*  .bg_color = UI_COLOR_SILVER     }, */
-    /* {.label = NULL, */
-    /*  .letter = NULL, */
-    /*  .left = NULL, */
-    /*  .right = NULL, */
-    /*  .below = NULL, */
-    /*  .color = UI_COLOR_BLACK, */
-    /*  .font_size = 0.0, */
-    /*  .font_weight = 0, */
-    /*  .letter_size = 0.0, */
-    /*  .layout = 0, */
-    /*  .x = 236, */
-    /*  .y = 66, */
-    /*  .width = 33, */
-    /*  .height = 33, */
-    /*  .column = 6, */
-    /*  .row = 4, */
-    /*  .columnbit = ( 1 << 6 ), */
-    /*  .rowbit = ( 1 << 4 ), */
-    /*  .eint = 4, */
-    /*  .bg_color = UI_COLOR_SILVER     }, */
+
     {.label = "HIST",
      .letter = "M",
      .left = "CMD",
@@ -445,7 +372,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
      .x = 0,
-     .y = 141,
+     .y = 3 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 4,
@@ -464,8 +391,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 59,
-     .y = 141,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 3 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 3,
@@ -484,8 +411,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 119,
-     .y = 141,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 3 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 2,
@@ -504,8 +431,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 179,
-     .y = 141,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 3 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 1,
@@ -524,8 +451,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 238,
-     .y = 141,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 3 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 0,
@@ -534,6 +461,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "Y\\super x\\/super",
      .letter = "Q",
      .left = "\\math_e\\xsuperior",
@@ -545,7 +473,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
      .x = 0,
-     .y = 183,
+     .y = 4 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 4,
@@ -564,8 +492,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 59,
-     .y = 183,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 4 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 3,
@@ -584,8 +512,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 119,
-     .y = 183,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 4 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 2,
@@ -604,8 +532,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 179,
-     .y = 183,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 4 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 1,
@@ -624,8 +552,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 238,
-     .y = 183,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 4 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 0,
@@ -634,6 +562,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "EEX",
      .letter = "V",
      .left = "10\\xsuperior",
@@ -645,7 +574,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
      .x = 0,
-     .y = 225,
+     .y = 5 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 4,
@@ -664,8 +593,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 59,
-     .y = 225,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 5 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 3,
@@ -684,8 +613,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 119,
-     .y = 225,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 5 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 2,
@@ -704,8 +633,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT,
-     .x = 179,
-     .y = 225,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 5 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 1,
@@ -724,8 +653,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 12.0,
      .layout = UI_LAYOUT_LEFT_NO_SPACE,
-     .x = 238,
-     .y = 225,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 5 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 28,
      .column = 0,
@@ -734,6 +663,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 3 ),
      .eint = 3,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "ALPHA",
      .letter = NULL,
      .left = "USER",
@@ -745,7 +675,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 0.0,
      .layout = 0,
      .x = 0,
-     .y = 267,
+     .y = 6 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -764,8 +694,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 59,
-     .y = 267,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 6 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 3,
@@ -784,8 +714,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 119,
-     .y = 267,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 6 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 2,
@@ -804,8 +734,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 179,
-     .y = 267,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 6 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 1,
@@ -824,8 +754,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 238,
-     .y = 267,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 6 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -834,6 +764,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "\\uparrowleft",
      .letter = NULL,
      .left = NULL,
@@ -845,7 +776,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 0.0,
      .layout = 0,
      .x = 0,
-     .y = 313,
+     .y = 7 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -864,8 +795,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 59,
-     .y = 313,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 7 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 3,
@@ -884,8 +815,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 119,
-     .y = 313,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 7 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 2,
@@ -904,8 +835,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 179,
-     .y = 313,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 7 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 1,
@@ -924,8 +855,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 238,
-     .y = 313,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 7 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -934,6 +865,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "\\uparrowright",
      .letter = NULL,
      .left = NULL,
@@ -945,7 +877,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 0.0,
      .layout = 0,
      .x = 0,
-     .y = 359,
+     .y = 8 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -964,8 +896,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 59,
-     .y = 359,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 8 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 3,
@@ -984,8 +916,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 119,
-     .y = 359,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 8 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 2,
@@ -1004,8 +936,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 179,
-     .y = 359,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 8 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 1,
@@ -1024,8 +956,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 238,
-     .y = 359,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 8 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -1034,6 +966,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6,
      .bg_color = UI_COLOR_BLACK      },
+
     {.label = "ON",
      .letter = NULL,
      .left = "CONT",
@@ -1045,7 +978,7 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter_size = 0.0,
      .layout = 0,
      .x = 0,
-     .y = 405,
+     .y = 9 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -1064,8 +997,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 59,
-     .y = 405,
+     .x = KB_COLUMN_WIDTH_5_KEYS,
+     .y = 9 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 3,
@@ -1084,8 +1017,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 119,
-     .y = 405,
+     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 9 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 2,
@@ -1104,8 +1037,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 179,
-     .y = 405,
+     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 9 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 1,
@@ -1124,1031 +1057,8 @@ static const x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .layout = 0,
-     .x = 238,
-     .y = 405,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 7,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-};
-
-static const x49gp_ui_key_t ui_newrpl_keys[ NB_KEYS ] = {
-    {.label = "F1",
-     .letter = "A",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 0,
-     .y = 0,
-     .width = 36,
-     .height = 22,
-     .column = 5,
-     .row = 1,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F2",
-     .letter = "B",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 50,
-     .y = 0,
-     .width = 36,
-     .height = 22,
-     .column = 5,
-     .row = 2,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F3",
-     .letter = "C",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 99,
-     .y = 0,
-     .width = 36,
-     .height = 22,
-     .column = 5,
-     .row = 3,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F4",
-     .letter = "D",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 149,
-     .y = 0,
-     .width = 36,
-     .height = 22,
-     .column = 5,
-     .row = 4,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F5",
-     .letter = "E",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 198,
-     .y = 0,
-     .width = 36,
-     .height = 22,
-     .column = 5,
-     .row = 5,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F6",
-     .letter = "F",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 247,
-     .y = 0,
-     .width = 36,
-     .height = 22,
-     .column = 5,
-     .row = 6,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "",
-     .letter = "G",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
-     .x = 0,
-     .y = 44,
-     .width = 36,
-     .height = 28,
-     .column = 5,
-     .row = 7,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "",
-     .letter = "H",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
-     .x = 50,
-     .y = 44,
-     .width = 36,
-     .height = 28,
-     .column = 6,
-     .row = 5,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "",
-     .letter = "I",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
-     .x = 99,
-     .y = 44,
-     .width = 36,
-     .height = 28,
-     .column = 6,
-     .row = 6,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "",
-     .letter = "J",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
-     .x = 0,
-     .y = 92,
-     .width = 36,
-     .height = 28,
-     .column = 6,
-     .row = 7,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "",
-     .letter = "K",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
-     .x = 50,
-     .y = 92,
-     .width = 36,
-     .height = 28,
-     .column = 7,
-     .row = 1,
-     .columnbit = ( 1 << 7 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "",
-     .letter = "L",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
-     .layout = UI_LAYOUT_BELOW,
-     .x = 99,
-     .y = 92,
-     .width = 36,
-     .height = 28,
-     .column = 7,
-     .row = 2,
-     .columnbit = ( 1 << 7 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\arrowup",
-     .letter = "",
-     .left = "UPDIR",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 200,
-     .y = 38,
-     .width = 33,
-     .height = 33,
-     .column = 6,
-     .row = 1,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_SILVER     },
-    {.label = "\\arrowleft",
-     .letter = "",
-     .left = "BEG COPY",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 164,
-     .y = 66,
-     .width = 33,
-     .height = 33,
-     .column = 6,
-     .row = 2,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_SILVER     },
-    {.label = "\\arrowdown",
-     .letter = "",
-     .left = "CUT",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 200,
-     .y = 94,
-     .width = 33,
-     .height = 33,
-     .column = 6,
-     .row = 3,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_SILVER     },
-    {.label = "\\arrowright",
-     .letter = "",
-     .left = "END PASTE",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 236,
-     .y = 66,
-     .width = 33,
-     .height = 33,
-     .column = 6,
-     .row = 4,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_SILVER     },
-    {.label = "S\\kern-1 T\\kern-1 O\\kern-1\\triangleright",
-     .letter = "M",
-     .left = "RCL",
-     .right = "PREV.M",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 0,
-     .y = 141,
-     .width = 46,
-     .height = 28,
-     .column = 4,
-     .row = 1,
-     .columnbit = ( 1 << 4 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "EV\\kern-1 AL",
-     .letter = "N",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 59,
-     .y = 141,
-     .width = 46,
-     .height = 28,
-     .column = 3,
-     .row = 1,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\tick",
-     .letter = "O",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 119,
-     .y = 141,
-     .width = 46,
-     .height = 28,
-     .column = 2,
-     .row = 1,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "M\\kern-1 E\\kern-1 N\\kern-1 U",
-     .letter = "P",
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 179,
-     .y = 141,
-     .width = 46,
-     .height = 28,
-     .column = 1,
-     .row = 1,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\arrowleftdblfull",
-     .letter = NULL,
-     .left = NULL,
-     .right = "CLEAR",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 238,
-     .y = 141,
-     .width = 46,
-     .height = 28,
-     .column = 0,
-     .row = 1,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "Y\\super x\\/super",
-     .letter = "Q",
-     .left = "\\math_e\\xsuperior",
-     .right = "LN",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 0,
-     .y = 183,
-     .width = 46,
-     .height = 28,
-     .column = 4,
-     .row = 2,
-     .columnbit = ( 1 << 4 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\radical\\overscore\\kern-7 X",
-     .letter = "R",
-     .left = "\\math_x\\twosuperior",
-     .right = "\\xsuperior\\kern-4\\math_radical\\overscore\\kern-5\\math_y",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 59,
-     .y = 183,
-     .width = 46,
-     .height = 28,
-     .column = 3,
-     .row = 2,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "SIN",
-     .letter = "S",
-     .left = "ASIN",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 119,
-     .y = 183,
-     .width = 46,
-     .height = 28,
-     .column = 2,
-     .row = 2,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "COS",
-     .letter = "T",
-     .left = "ACOS",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 179,
-     .y = 183,
-     .width = 46,
-     .height = 28,
-     .column = 1,
-     .row = 2,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "TAN",
-     .letter = "U",
-     .left = "ATAN",
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 238,
-     .y = 183,
-     .width = 46,
-     .height = 28,
-     .column = 0,
-     .row = 2,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "EEX",
-     .letter = "V",
-     .left = "10\\xsuperior",
-     .right = "LOG",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 0,
-     .y = 225,
-     .width = 46,
-     .height = 28,
-     .column = 4,
-     .row = 3,
-     .columnbit = ( 1 << 4 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "+\\divisionslash\\minus",
-     .letter = "W",
-     .left = "\\math_notequal",
-     .right = "\\math_equal",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 59,
-     .y = 225,
-     .width = 46,
-     .height = 28,
-     .column = 3,
-     .row = 3,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "X",
-     .letter = "X",
-     .left = "\\math_lessequal",
-     .right = "\\math_less",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 119,
-     .y = 225,
-     .width = 46,
-     .height = 28,
-     .column = 2,
-     .row = 3,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "1/X",
-     .letter = "Y",
-     .left = "\\math_greaterequal",
-     .right = "\\math_greater",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT,
-     .x = 179,
-     .y = 225,
-     .width = 46,
-     .height = 28,
-     .column = 1,
-     .row = 3,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\divide",
-     .letter = "Z",
-     .left = "ABS",
-     .right = "ARG",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
-     .layout = UI_LAYOUT_LEFT_NO_SPACE,
-     .x = 238,
-     .y = 225,
-     .width = 46,
-     .height = 28,
-     .column = 0,
-     .row = 3,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "ALPHA",
-     .letter = "",
-     .left = "",
-     .right = "ENTRY",
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 0,
-     .y = 267,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 4,
-     .bg_color = UI_COLOR_YELLOW     },
-    {.label = "7",
-     .letter = "",
-     .left = "",
-     .right = "NUM.SLV",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 59,
-     .y = 267,
-     .width = 46,
-     .height = 32,
-     .column = 3,
-     .row = 4,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "8",
-     .letter = NULL,
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 119,
-     .y = 267,
-     .width = 46,
-     .height = 32,
-     .column = 2,
-     .row = 4,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "9",
-     .letter = "",
-     .left = "",
-     .right = "TIME",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 179,
-     .y = 267,
-     .width = 46,
-     .height = 32,
-     .column = 1,
-     .row = 4,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\multiply",
-     .letter = NULL,
-     .left = "[ ]",
-     .right = "\" \"",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 238,
-     .y = 267,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 4,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\uparrowleft",
-     .letter = NULL,
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 0,
-     .y = 313,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 5,
-     .bg_color = UI_COLOR_WHITE      },
-    {.label = "4",
-     .letter = NULL,
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 59,
-     .y = 313,
-     .width = 46,
-     .height = 32,
-     .column = 3,
-     .row = 5,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "5",
-     .letter = NULL,
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 119,
-     .y = 313,
-     .width = 46,
-     .height = 32,
-     .column = 2,
-     .row = 5,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "6",
-     .letter = NULL,
-     .left = "CONVERT",
-     .right = "UNITS",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 179,
-     .y = 313,
-     .width = 46,
-     .height = 32,
-     .column = 1,
-     .row = 5,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\minus",
-     .letter = NULL,
-     .left = "( )",
-     .right = "_",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 238,
-     .y = 313,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 5,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\uparrowright",
-     .letter = NULL,
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 0,
-     .y = 359,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 6,
-     .bg_color = UI_COLOR_ORANGE     },
-    {.label = "1",
-     .letter = "",
-     .left = "ARITH",
-     .right = "CMPLX",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 59,
-     .y = 359,
-     .width = 46,
-     .height = 32,
-     .column = 3,
-     .row = 6,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "2",
-     .letter = "",
-     .left = "",
-     .right = "LIB",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 119,
-     .y = 359,
-     .width = 46,
-     .height = 32,
-     .column = 2,
-     .row = 6,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "3",
-     .letter = NULL,
-     .left = "\\math_numbersign",
-     .right = "BASE",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 179,
-     .y = 359,
-     .width = 46,
-     .height = 32,
-     .column = 1,
-     .row = 6,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "+",
-     .letter = NULL,
-     .left = "{ }",
-     .right = "\\guillemotleft\\ \\guillemotright",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 238,
-     .y = 359,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 6,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "ON",
-     .letter = NULL,
-     .left = NULL,
-     .right = "OFF",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 0,
-     .y = 405,
-     .width = 46,
-     .height = 32,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 0,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "0",
-     .letter = NULL,
-     .left = "\\math_infinity",
-     .right = "\\math_arrowright",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 59,
-     .y = 405,
-     .width = 46,
-     .height = 32,
-     .column = 3,
-     .row = 7,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "\\bullet",
-     .letter = NULL,
-     .left = ": :",
-     .right = "\\math_downarrowleft",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 119,
-     .y = 405,
-     .width = 46,
-     .height = 32,
-     .column = 2,
-     .row = 7,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "SPC",
-     .letter = NULL,
-     .left = "\\math_pi",
-     .right = "\\large_comma",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 179,
-     .y = 405,
-     .width = 46,
-     .height = 32,
-     .column = 1,
-     .row = 7,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "ENTER",
-     .letter = NULL,
-     .left = NULL,
-     .right = "\\arrowright NUM",
-     .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
-     .layout = 0,
-     .x = 238,
-     .y = 405,
+     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
+     .y = 9 * KB_LINE_HEIGHT,
      .width = 46,
      .height = 32,
      .column = 0,
@@ -2262,22 +1172,22 @@ static void x49gp_ui_symbol_path( cairo_t* cr, double size, double xoffset, doub
     }
 }
 
-static void x49gp_ui_draw_symbol( cairo_t* cr, GdkColor* color, double size, double line_width, gboolean fill, double xoffset,
-                                  double yoffset, const x49gp_symbol_t* symbol )
-{
-    cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
-    cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER );
-    cairo_set_line_width( cr, line_width );
-    cairo_set_source_rgb( cr, ( ( double )color->red ) / 65535.0, ( ( double )color->green ) / 65535.0,
-                          ( ( double )color->blue ) / 65535.0 );
+/* static void x49gp_ui_draw_symbol( cairo_t* cr, GdkColor* color, double size, double line_width, gboolean fill, double xoffset, */
+/*                                   double yoffset, const x49gp_symbol_t* symbol ) */
+/* { */
+/*     cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT ); */
+/*     cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER ); */
+/*     cairo_set_line_width( cr, line_width ); */
+/*     cairo_set_source_rgb( cr, ( ( double )color->red ) / 65535.0, ( ( double )color->green ) / 65535.0, */
+/*                           ( ( double )color->blue ) / 65535.0 ); */
 
-    x49gp_ui_symbol_path( cr, size, xoffset, yoffset, symbol );
+/*     x49gp_ui_symbol_path( cr, size, xoffset, yoffset, symbol ); */
 
-    if ( fill )
-        cairo_fill( cr );
-    else
-        cairo_stroke( cr );
-}
+/*     if ( fill ) */
+/*         cairo_fill( cr ); */
+/*     else */
+/*         cairo_stroke( cr ); */
+/* } */
 
 static bool x49gp_ui_lookup_glyph( const char* name, int namelen, gunichar* glyph )
 {
@@ -3420,6 +2330,7 @@ static gboolean x49gp_ui_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     return true;
 }
 
+/* Draw button's pixmap onto window */
 static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -3439,6 +2350,7 @@ static int x49gp_button_expose_event( GtkWidget* widget, GdkEventExpose* event, 
     return false;
 }
 
+/* Prepare button's pixmap */
 static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -3650,15 +2562,15 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
     switch ( ui->calculator ) {
         case UI_CALCULATOR_HP49GP:
         case UI_CALCULATOR_HP49GP_NEWRPL:
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 15.0, 0.0, 14 /* 38 */, 20 /* 42 */, 2,
-                                CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "hp", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL,
-                                " 49g+" );
+            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 15.0, 0.0, 14 /\* 38 *\/, 20 /\* 42 *\/, 2, */
+            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "hp", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, */
+            /*                     " 49g+" ); */
 
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
-                                CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "graphing calculator" );
+            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 13.0, 0.0, 14 /\* 38 *\/, 34 /\* 56 *\/, 1, */
+            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "graphing calculator" ); */
 
-            x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->black, 10.0, 0.0, true, 114 /* 138 */, 8 /* 25 */,
-                                  symbol_get_by_name( "triangleup" ) );
+            /* x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->black, 10.0, 0.0, true, 114 /\* 138 *\/, 8 /\* 25 *\/, */
+            /*                       symbol_get_by_name( "triangleup" ) ); */
 
             left_color = UI_COLOR_GREEN;
             right_color = UI_COLOR_RED;
@@ -3671,15 +2583,15 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
 
         case UI_CALCULATOR_HP50G:
         case UI_CALCULATOR_HP50G_NEWRPL:
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 15.0, 0.0, 14 /* 38 */, 20 /* 42 */, 2,
-                                CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "HP", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL,
-                                " 50g" );
+            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 15.0, 0.0, 14 /\* 38 *\/, 20 /\* 42 *\/, 2, */
+            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "HP", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, */
+            /*                     " 50g" ); */
 
-            x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 13.0, 0.0, 14 /* 38 */, 34 /* 56 */, 1,
-                                CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "Graphing Calculator" );
+            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 13.0, 0.0, 14 /\* 38 *\/, 34 /\* 56 *\/, 1, */
+            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "Graphing Calculator" ); */
 
-            x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->white, 10.0, 0.0, true, 134 /* 168 */, 8 /* 25 */,
-                                  symbol_get_by_name( "triangleup" ) );
+            /* x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->white, 10.0, 0.0, true, 134 /\* 168 *\/, 8 /\* 25 *\/, */
+            /*                       symbol_get_by_name( "triangleup" ) ); */
 
             left_color = UI_COLOR_WHITE;
             right_color = UI_COLOR_ORANGE;
@@ -3840,21 +2752,6 @@ static void init_colors( x49gp_ui_t* ui )
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_FACEPLATE_50G ], 0x27, 0x27, 0x27 ); /* #272727 */
 }
 
-static void setup_faceplate( x49gp_ui_t* ui )
-{
-    ui->width = 302;
-    ui->height = 728;
-
-    /* set coordinates of LCD and keyboard */
-    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
-    ui->lcd_annunciators_height = 16;
-    ui->lcd_height = ( 80 * LCD_PIXEL_SCALE ) + ui->lcd_annunciators_height;
-    ui->lcd_x_offset = ( ui->width - ui->lcd_width ) / 2;
-    ui->lcd_y_offset = 48; // 69;
-
-    ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
-}
-
 static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
@@ -3884,10 +2781,20 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             break;
     }
 
-    setup_faceplate( ui );
+    /* set coordinates of LCD and keyboard */
+    ui->lcd_annunciators_height = 16;
+    ui->lcd_width = 131 * LCD_PIXEL_SCALE;
+    ui->lcd_height = ( 80 * LCD_PIXEL_SCALE ) + ui->lcd_annunciators_height;
+    ui->lcd_x_offset = 20;
+    ui->lcd_y_offset = ui->lcd_x_offset;
 
-    ui->kb_x_offset = 10;                                     // 36;
+    ui->kb_x_offset = 10;
     ui->kb_y_offset = ui->lcd_y_offset + ui->lcd_height + 16; // 280; // 301;
+
+    ui->width = ui->lcd_width + ( 2 * ui->lcd_x_offset );
+    ui->height = ui->kb_y_offset + ui_keys[ NB_KEYS - 1 ].y + KB_LINE_HEIGHT;
+
+    ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
 
     ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     gtk_widget_set( ui->window, "can-focus", true, NULL );
@@ -3921,26 +2828,75 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     {
         x49gp_ui_button_t* button;
-        const x49gp_ui_key_t* keys;
 
-        if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
-            keys = ui_newrpl_keys;
-        else
-            keys = ui_keys;
+        if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL ) {
+            // modify keys' labeling for newRPL
+            for ( int i = 0; i < 6; i++ )
+                ui_keys[ i ].left = NULL;
+
+            for ( int i = 6; i < 12; i++ ) {
+                ui_keys[ i ].label = "";
+                ui_keys[ i ].left = NULL;
+                ui_keys[ i ].right = NULL;
+            }
+
+            ui_keys[ 12 ].left = "UPDIR";
+
+            ui_keys[ 13 ].left = "BEG";
+            ui_keys[ 13 ].right = "COPY";
+
+            ui_keys[ 14 ].left = "CUT";
+
+            ui_keys[ 15 ].left = "END";
+            ui_keys[ 15 ].right = "PASTE";
+
+            ui_keys[ 16 ].label = "S\\kern-1 T\\kern-1 O\\kern-1\\triangleright";
+            ui_keys[ 16 ].left = "RCL";
+            ui_keys[ 16 ].right = "PREV.M";
+
+            for ( int i = 17; i < 20; i++ ) {
+                ui_keys[ i ].left = NULL;
+                ui_keys[ i ].right = NULL;
+            }
+
+            ui_keys[ 19 ].label = "M\\kern-1 E\\kern-1 N\\kern-1 U";
+
+            ui_keys[ 20 ].left = NULL;
+
+            for ( int i = 23; i < 26; i++ )
+                ui_keys[ i ].right = NULL;
+
+            for ( int i = 31; i < 35; i++ )
+                ui_keys[ i ].left = NULL;
+
+            ui_keys[ 33 ].right = NULL;
+
+            for ( int i = 37; i < 39; i++ ) {
+                ui_keys[ i ].left = NULL;
+                ui_keys[ i ].right = NULL;
+            }
+
+            ui_keys[ 43 ].left = NULL;
+
+            ui_keys[ 46 ].left = NULL;
+            ui_keys[ 46 ].below = NULL;
+
+            ui_keys[ 50 ].left = NULL;
+        }
 
         for ( int i = 0; i < ui->nr_buttons; i++ ) {
             button = &ui->buttons[ i ];
 
             button->x49gp = x49gp;
-            button->key = &keys[ i ];
+            button->key = &ui_keys[ i ];
 
             button->button = gtk_button_new();
-            gtk_widget_set_size_request( button->button, keys[ i ].width, keys[ i ].height );
+            gtk_widget_set_size_request( button->button, ui_keys[ i ].width, ui_keys[ i ].height );
             gtk_widget_set( button->button, "can-focus", false, NULL );
 
-            x49gp_ui_button_pixmaps_init( x49gp, button, keys[ i ].color );
+            x49gp_ui_button_pixmaps_init( x49gp, button, ui_keys[ i ].color );
 
-            if ( keys[ i ].label ) {
+            if ( ui_keys[ i ].label ) {
                 button->label = gtk_label_new( "" );
                 gtk_widget_set_style( button->label, gtk_widget_get_style( button->button ) );
                 gtk_container_add( GTK_CONTAINER( button->button ), button->label );
@@ -3955,8 +2911,8 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-            x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + keys[ i ].x, ui->kb_y_offset + keys[ i ].y,
-                               keys[ i ].width, keys[ i ].height );
+            x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x, ui->kb_y_offset + ui_keys[ i ].y,
+                               ui_keys[ i ].width, ui_keys[ i ].height );
 
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( x49gp_ui_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( x49gp_ui_button_release ), button );
