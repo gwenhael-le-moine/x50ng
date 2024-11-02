@@ -53,7 +53,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"49gp",         no_argument,       NULL, 496},
         {"49gp-newrpl",  no_argument,       NULL, 497},
         {"name",         required_argument, NULL, 'n'},
-        {"scale",         required_argument, NULL, 's'},
+        {"scale",        required_argument, NULL, 's'},
 
         {"font",         required_argument, NULL, 't'},
 
