@@ -509,8 +509,8 @@ retry:
                                      "recovery tools\n" );
                 } else {
                     gui_show_error( x49gp, "Could not open "
-                                                "selected "
-                                                "firmware!" );
+                                           "selected "
+                                           "firmware!" );
                     goto retry;
                 }
             } else {
@@ -529,9 +529,9 @@ retry:
                                          "tools\n" );
                     } else {
                         gui_show_error( x49gp, "Could not "
-                                                    "read "
-                                                    "selected "
-                                                    "firmware!" );
+                                               "read "
+                                               "selected "
+                                               "firmware!" );
                         goto retry;
                     }
                 } else if ( bytes_read < 16 || memcmp( phys_ram_base + flash->offset + BOOT_SIZE, "KINPOUPDATEIMAGE", 16 ) != 0 ) {
@@ -545,9 +545,9 @@ retry:
                                          "tools\n" );
                     } else {
                         gui_show_error( x49gp, "Selected "
-                                                    "firmware "
-                                                    "is "
-                                                    "invalid!" );
+                                               "firmware "
+                                               "is "
+                                               "invalid!" );
                         goto retry;
                     }
                     /* The firmware may be shorter than
@@ -568,9 +568,9 @@ retry:
                                          "tools\n" );
                     } else {
                         gui_show_error( x49gp, "Could not "
-                                                    "read "
-                                                    "selected "
-                                                    "firmware!" );
+                                               "read "
+                                               "selected "
+                                               "firmware!" );
                         goto retry;
                     }
                 } else {
