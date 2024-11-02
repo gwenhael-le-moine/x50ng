@@ -196,10 +196,8 @@ static void arm_sighnd( int sig )
 
 void x49gp_gtk_timer( void* data )
 {
-    while ( gtk_events_pending() ) {
-        // printf("%s: gtk_main_iteration_do()\n", __FUNCTION__);
+    while ( gtk_events_pending() )
         gtk_main_iteration_do( false );
-    }
 
     x49gp_mod_timer( x49gp->gtk_timer, x49gp_get_clock() + X49GP_GTK_REFRESH_INTERVAL );
 }
@@ -209,14 +207,12 @@ void x49gp_lcd_timer( void* data )
     x49gp_t* x49gp = data;
     int64_t now, expires;
 
-    // printf("%s: lcd_update\n", __FUNCTION__);
     x49gp_lcd_update( x49gp );
     gdk_flush();
 
     now = x49gp_get_clock();
     expires = now + X49GP_LCD_REFRESH_INTERVAL;
 
-    // printf("%s: now: %lld, next update: %lld\n", __FUNCTION__, now, expires);
     x49gp_mod_timer( x49gp->lcd_timer, expires );
 }
 
@@ -275,7 +271,7 @@ int main( int argc, char** argv )
     x49gp->gtk_timer = x49gp_new_timer( X49GP_TIMER_REALTIME, x49gp_gtk_timer, x49gp );
     x49gp->lcd_timer = x49gp_new_timer( X49GP_TIMER_VIRTUAL, x49gp_lcd_timer, x49gp );
 
-    x49gp_ui_init( x49gp );
+    gui_init( x49gp );
 
     x49gp_s3c2410_arm_init( x49gp );
     x49gp_flash_init( x49gp );

@@ -491,11 +491,11 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
 
 retry:
         filename = NULL;
-        if ( x49gp->firmware != NULL ) {
+        if ( x49gp->firmware != NULL )
             filename = g_strdup( x49gp->firmware );
-        } else {
-            x49gp_ui_open_firmware( x49gp, &filename );
-        }
+        else
+            gui_open_firmware( x49gp, &filename );
+
         if ( filename != NULL ) {
             fwfd = open( filename, O_RDONLY );
             if ( fwfd < 0 ) {
@@ -508,7 +508,7 @@ retry:
                                      "falling back to bootloader "
                                      "recovery tools\n" );
                 } else {
-                    x49gp_ui_show_error( x49gp, "Could not open "
+                    gui_show_error( x49gp, "Could not open "
                                                 "selected "
                                                 "firmware!" );
                     goto retry;
@@ -528,7 +528,7 @@ retry:
                                          "bootloader recovery "
                                          "tools\n" );
                     } else {
-                        x49gp_ui_show_error( x49gp, "Could not "
+                        gui_show_error( x49gp, "Could not "
                                                     "read "
                                                     "selected "
                                                     "firmware!" );
@@ -544,7 +544,7 @@ retry:
                                          "bootloader recovery "
                                          "tools\n" );
                     } else {
-                        x49gp_ui_show_error( x49gp, "Selected "
+                        gui_show_error( x49gp, "Selected "
                                                     "firmware "
                                                     "is "
                                                     "invalid!" );
@@ -567,7 +567,7 @@ retry:
                                          "bootloader recovery "
                                          "tools\n" );
                     } else {
-                        x49gp_ui_show_error( x49gp, "Could not "
+                        gui_show_error( x49gp, "Could not "
                                                     "read "
                                                     "selected "
                                                     "firmware!" );

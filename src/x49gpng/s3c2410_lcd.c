@@ -292,7 +292,7 @@ static void _draw_pixel( GdkPixmap* target, int x, int y, int w, int h, GdkColor
     cairo_destroy( cr );
 }
 
-void _draw_annunciator( GdkPixmap* target, cairo_surface_t* surface, int x, int y, int w, int h, GdkColor* color )
+static inline void _draw_annunciator( GdkPixmap* target, cairo_surface_t* surface, int x, int y, int w, int h, GdkColor* color )
 {
     cairo_t* cr = gdk_cairo_create( target );
 
