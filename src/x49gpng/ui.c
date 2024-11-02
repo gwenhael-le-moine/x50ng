@@ -1077,15 +1077,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
 };
 
-typedef struct {
-    uint32_t magic;
-    uint32_t length;
-    uint32_t pixdata_type;
-    uint32_t rowstride;
-    uint32_t width;
-    uint32_t height;
-} pixbuf_inline_data_t;
-
 /*************/
 /* functions */
 /*************/
