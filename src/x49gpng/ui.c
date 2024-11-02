@@ -1259,7 +1259,7 @@ static int _regular_font_text_to_ucs4( const char* text, gunichar** ucs4p )
     return n;
 }
 
-static void _regular_font_vtext_path( cairo_t* cr, const char* family, double size, double x, double y, va_list ap )
+static void _regular_font_vtext_path( cairo_t* cr, double size, double x, double y, va_list ap )
 {
     cairo_text_extents_t extents;
     cairo_font_weight_t weight;
@@ -1275,7 +1275,7 @@ static void _regular_font_vtext_path( cairo_t* cr, const char* family, double si
     weight = va_arg( ap, cairo_font_weight_t );
     text = va_arg( ap, const char* );
 
-    cairo_select_font_face( cr, family, slant, weight );
+    cairo_select_font_face( cr, opt.font, slant, weight );
     cairo_set_font_size( cr, size );
 
     ucs4 = NULL;
@@ -1323,7 +1323,7 @@ static void _regular_font_vtext_path( cairo_t* cr, const char* family, double si
     free( ucs4 );
 }
 
-static void regular_font_measure_text( cairo_t* cr, const char* family, double size, double* x_bearing, double* y_bearing, double* width,
+static void regular_font_measure_text( cairo_t* cr, double size, double* x_bearing, double* y_bearing, double* width,
                                        double* height, double* ascent, double* descent, ... )
 {
     va_list ap0, ap1;
@@ -1336,7 +1336,7 @@ static void regular_font_measure_text( cairo_t* cr, const char* family, double s
     va_start( ap0, descent );
     va_copy( ap1, ap0 );
 
-    _regular_font_vtext_path( cr, family, size, 0.0, 0.0, ap0 );
+    _regular_font_vtext_path( cr, size, 0.0, 0.0, ap0 );
 
     va_end( ap0 );
 
@@ -1353,7 +1353,7 @@ static void regular_font_measure_text( cairo_t* cr, const char* family, double s
     text = va_arg( ap1, const char* );
     ( void )text;
 
-    cairo_select_font_face( cr, family, slant, weight );
+    cairo_select_font_face( cr, opt.font, slant, weight );
     cairo_set_font_size( cr, size );
 
     cairo_font_extents( cr, &font_extents );
@@ -1377,7 +1377,7 @@ static void regular_font_measure_text( cairo_t* cr, const char* family, double s
     va_end( ap1 );
 }
 
-static void regular_font_draw_text( cairo_t* cr, GdkColor* color, const char* family, double size, double line_width, int xoffset,
+static void regular_font_draw_text( cairo_t* cr, GdkColor* color, double size, double line_width, int xoffset,
                                     int yoffset, ... )
 {
     va_list ap;
@@ -1388,7 +1388,7 @@ static void regular_font_draw_text( cairo_t* cr, GdkColor* color, const char* fa
     cairo_set_source_rgb( cr, ( ( double )color->red ) / 65535.0, ( ( double )color->green ) / 65535.0,
                           ( ( double )color->blue ) / 65535.0 );
 
-    _regular_font_vtext_path( cr, family, size, xoffset, yoffset, ap );
+    _regular_font_vtext_path( cr, size, xoffset, yoffset, ap );
 
     if ( line_width == 0.0 )
         cairo_fill( cr );
@@ -1398,16 +1398,16 @@ static void regular_font_draw_text( cairo_t* cr, GdkColor* color, const char* fa
     va_end( ap );
 }
 
-static unsigned char _tiny_font_lookup_glyph( const tiny_font_t* font, const char* name, int namelen )
+static unsigned char _tiny_font_lookup_glyph( const char* name, int namelen )
 {
-    for ( int i = 0; font->glyphs[ i ].name; i++ )
-        if ( ( strlen( font->glyphs[ i ].name ) == namelen ) && !strncmp( font->glyphs[ i ].name, name, namelen ) )
+    for ( int i = 0; tiny_font.glyphs[ i ].name; i++ )
+        if ( ( strlen( tiny_font.glyphs[ i ].name ) == namelen ) && !strncmp( tiny_font.glyphs[ i ].name, name, namelen ) )
             return i;
 
     return 0;
 }
 
-static unsigned char _tiny_font_lookup_ascii( const tiny_font_t* font, char c )
+static unsigned char _tiny_font_lookup_ascii( char c )
 {
     int namelen = 0;
     char* name;
@@ -1548,7 +1548,7 @@ static unsigned char _tiny_font_lookup_ascii( const tiny_font_t* font, char c )
     if ( 0 == namelen )
         namelen = strlen( name );
 
-    return _tiny_font_lookup_glyph( font, name, namelen );
+    return _tiny_font_lookup_glyph( name, namelen );
 }
 
 static inline int _tiny_font_strlen( const char* text )
@@ -1585,7 +1585,7 @@ static inline int _tiny_font_strlen( const char* text )
     return n;
 }
 
-static int _tiny_font_text_to_glyphs( const tiny_font_t* font, const char* text, unsigned char** glyphp )
+static int _tiny_font_text_to_glyphs( const char* text, unsigned char** glyphp )
 {
     unsigned char* glyphs;
     const char *p, *q;
@@ -1609,7 +1609,7 @@ static int _tiny_font_text_to_glyphs( const tiny_font_t* font, const char* text,
         }
 
         if ( c != '\\' ) {
-            glyphs[ i++ ] = _tiny_font_lookup_ascii( font, c );
+            glyphs[ i++ ] = _tiny_font_lookup_ascii( c );
             continue;
         }
 
@@ -1620,14 +1620,14 @@ static int _tiny_font_text_to_glyphs( const tiny_font_t* font, const char* text,
             q++;
         }
         if ( q == p ) {
-            glyphs[ i++ ] = _tiny_font_lookup_ascii( font, *p++ );
+            glyphs[ i++ ] = _tiny_font_lookup_ascii( *p++ );
             continue;
         }
         namelen = q - p;
         if ( *q == ' ' )
             q++;
 
-        glyphs[ i++ ] = _tiny_font_lookup_glyph( font, p, namelen );
+        glyphs[ i++ ] = _tiny_font_lookup_glyph( p, namelen );
         p = q;
     }
 
@@ -1635,7 +1635,7 @@ static int _tiny_font_text_to_glyphs( const tiny_font_t* font, const char* text,
     return n;
 }
 
-static void tiny_font_measure_text( const tiny_font_t* font, const char* text, int* width, int* height, int* ascent, int* descent )
+static void tiny_font_measure_text( const char* text, int* width, int* height, int* ascent, int* descent )
 {
     const tiny_glyph_t* glyph;
     unsigned char* glyphs;
@@ -1645,10 +1645,10 @@ static void tiny_font_measure_text( const tiny_font_t* font, const char* text, i
     a = 0;
     d = 0;
 
-    n = _tiny_font_text_to_glyphs( font, text, &glyphs );
+    n = _tiny_font_text_to_glyphs( text, &glyphs );
 
     for ( int i = 0; i < n; i++ ) {
-        glyph = &font->glyphs[ glyphs[ i ] ];
+        glyph = &tiny_font.glyphs[ glyphs[ i ] ];
 
         w += glyph->width;
 
@@ -1659,7 +1659,7 @@ static void tiny_font_measure_text( const tiny_font_t* font, const char* text, i
     }
 
     *width = w - 1;
-    *height = font->ascent - font->descent;
+    *height = tiny_font.ascent - tiny_font.descent;
     *ascent = a;
     *descent = d;
 
@@ -1667,7 +1667,7 @@ static void tiny_font_measure_text( const tiny_font_t* font, const char* text, i
         free( glyphs );
 }
 
-static void tiny_font_draw_text( GdkDrawable* drawable, GdkColor* color, const tiny_font_t* font, int x, int y, const char* text )
+static void tiny_font_draw_text( GdkDrawable* drawable, GdkColor* color, int x, int y, const char* text )
 {
     const tiny_glyph_t* glyph;
     unsigned char* glyphs;
@@ -1678,10 +1678,10 @@ static void tiny_font_draw_text( GdkDrawable* drawable, GdkColor* color, const t
     gc = gdk_gc_new( drawable );
     gdk_gc_set_rgb_fg_color( gc, color );
 
-    n = _tiny_font_text_to_glyphs( font, text, &glyphs );
+    n = _tiny_font_text_to_glyphs( text, &glyphs );
 
     for ( int i = 0; i < n; i++ ) {
-        glyph = &font->glyphs[ glyphs[ i ] ];
+        glyph = &tiny_font.glyphs[ glyphs[ i ] ];
 
         w = glyph->width - glyph->kern;
         h = glyph->ascent - glyph->descent;
@@ -1693,11 +1693,11 @@ static void tiny_font_draw_text( GdkDrawable* drawable, GdkColor* color, const t
 
         bitmap = gdk_bitmap_create_from_data( NULL, ( char* )glyph->bits, w, h );
 
-        gdk_gc_set_ts_origin( gc, x + glyph->kern, y + font->ascent - glyph->ascent );
+        gdk_gc_set_ts_origin( gc, x + glyph->kern, y + tiny_font.ascent - glyph->ascent );
         gdk_gc_set_stipple( gc, bitmap );
         gdk_gc_set_fill( gc, GDK_STIPPLED );
 
-        gdk_draw_rectangle( drawable, gc, true, x + glyph->kern, y + font->ascent - glyph->ascent, w, h );
+        gdk_draw_rectangle( drawable, gc, true, x + glyph->kern, y + tiny_font.ascent - glyph->ascent, w, h );
 
         g_object_unref( bitmap );
 
@@ -2300,7 +2300,7 @@ static void handler_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_fill( cr );
 
     if ( key->letter ) {
-        regular_font_measure_text( cr, opt.font, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent,
+        regular_font_measure_text( cr, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent,
                                    CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
 
         switch ( key->layout ) {
@@ -2321,17 +2321,17 @@ static void handler_button_realize( GtkWidget* widget, gpointer user_data )
                 break;
         }
 
-        regular_font_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], opt.font, key->letter_size, 0.0, x + xoffset, y + yoffset,
+        regular_font_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], key->letter_size, 0.0, x + xoffset, y + yoffset,
                                 CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
     }
 
-    regular_font_measure_text( cr, opt.font, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, CAIRO_FONT_SLANT_NORMAL,
+    regular_font_measure_text( cr, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, CAIRO_FONT_SLANT_NORMAL,
                                key->font_weight, key->label );
 
     x = ( int )floor( ( w - 1.0 - width ) / 2.0 - xoff + 0.5 );
     y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
 
-    regular_font_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], opt.font, key->font_size, 0.0, x + xoffset, y + yoffset,
+    regular_font_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], key->font_size, 0.0, x + xoffset, y + yoffset,
                             CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
 
     cairo_destroy( cr );
@@ -2462,19 +2462,19 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
         key = ui->buttons[ i ].key;
 
         if ( key->left ) {
-            tiny_font_measure_text( &tiny_font, key->left, &wl, &hl, &a, &dl );
+            tiny_font_measure_text( key->left, &wl, &hl, &a, &dl );
             if ( !key->right ) {
                 xl = key->x + ( key->width - wl ) / 2;
-                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], &tiny_font, ui->kb_x_offset + xl,
+                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl,
                                        ui->kb_y_offset + key->y - hl + dl + 1, key->left );
             }
         }
 
         if ( key->right ) {
-            tiny_font_measure_text( &tiny_font, key->right, &wr, &hr, &a, &dr );
+            tiny_font_measure_text( key->right, &wr, &hr, &a, &dr );
             if ( !key->left ) {
                 xr = key->x + ( key->width - wr ) / 2;
-                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], &tiny_font, ui->kb_x_offset + xr,
+                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
                                        ui->kb_y_offset + key->y - hr + dr + 1, key->right );
             }
         }
@@ -2488,18 +2488,18 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
                 xr -= ( key->width - 4 - ( wl + wr ) ) / 2;
             }
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], &tiny_font, ui->kb_x_offset + xl,
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl,
                                    ui->kb_y_offset + key->y - hl + dl + 1, key->left );
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], &tiny_font, ui->kb_x_offset + xr,
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
                                    ui->kb_y_offset + key->y - hr + dr + 1, key->right );
         }
 
         if ( key->below ) {
-            tiny_font_measure_text( &tiny_font, key->below, &wl, &hl, &a, &dl );
+            tiny_font_measure_text( key->below, &wl, &hl, &a, &dl );
             xl = key->x + ( key->width - wl ) / 2;
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ below_color ], &tiny_font, ui->kb_x_offset + xl,
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl,
                                    ui->kb_y_offset + key->y + key->height + 2, key->below );
         }
 
