@@ -1328,7 +1328,7 @@ static int _text_to_ucs4( const char* text, gunichar** ucs4p )
     return n;
 }
 
-static void x49gp_ui_vtext_path( cairo_t* cr, const char* family, double size, double x, double y, int n, va_list ap )
+static void x49gp_ui_vtext_path( cairo_t* cr, const char* family, double size, double x, double y, va_list ap )
 {
     cairo_text_extents_t extents;
     cairo_font_weight_t weight;
@@ -1340,62 +1340,60 @@ static void x49gp_ui_vtext_path( cairo_t* cr, const char* family, double size, d
     int bytes;
     int len;
 
-    for ( int i = 0; i < n; i++ ) {
-        slant = va_arg( ap, cairo_font_slant_t );
-        weight = va_arg( ap, cairo_font_weight_t );
-        text = va_arg( ap, const char* );
+    slant = va_arg( ap, cairo_font_slant_t );
+    weight = va_arg( ap, cairo_font_weight_t );
+    text = va_arg( ap, const char* );
 
-        cairo_select_font_face( cr, family, slant, weight );
-        cairo_set_font_size( cr, size );
+    cairo_select_font_face( cr, family, slant, weight );
+    cairo_set_font_size( cr, size );
 
-        ucs4 = NULL;
-        len = _text_to_ucs4( text, &ucs4 );
-        if ( len <= 0 )
+    ucs4 = NULL;
+    len = _text_to_ucs4( text, &ucs4 );
+    if ( len <= 0 )
+        return;
+
+    for ( int j = 0; j < len; j++ ) {
+        if ( g_unichar_type( ucs4[ j ] ) == G_UNICODE_PRIVATE_USE ) {
+            /*
+             * Draw Symbol, Increment x...
+             */
+            symbol = symbol_get_by_glyph( ucs4[ j ] );
+            if ( NULL == symbol )
+                symbol = symbol_get_by_glyph( 0xe000 );
+
+            size *= symbol->prescale;
+
+            x49gp_ui_symbol_path( cr, size, x, y, symbol );
+
+            x += size * symbol->x_advance;
+            y -= size * symbol->y_advance;
+
+            size *= symbol->postscale;
+
+            if ( symbol->prescale * symbol->postscale != 1. )
+                cairo_set_font_size( cr, size );
+
             continue;
-
-        for ( int j = 0; j < len; j++ ) {
-            if ( g_unichar_type( ucs4[ j ] ) == G_UNICODE_PRIVATE_USE ) {
-                /*
-                 * Draw Symbol, Increment x...
-                 */
-                symbol = symbol_get_by_glyph( ucs4[ j ] );
-                if ( NULL == symbol )
-                    symbol = symbol_get_by_glyph( 0xe000 );
-
-                size *= symbol->prescale;
-
-                x49gp_ui_symbol_path( cr, size, x, y, symbol );
-
-                x += size * symbol->x_advance;
-                y -= size * symbol->y_advance;
-
-                size *= symbol->postscale;
-
-                if ( symbol->prescale * symbol->postscale != 1. )
-                    cairo_set_font_size( cr, size );
-
-                continue;
-            }
-
-            bytes = g_unichar_to_utf8( ucs4[ j ], out );
-            out[ bytes ] = '\0';
-
-            cairo_text_extents( cr, out, &extents );
-
-            cairo_move_to( cr, x, y );
-
-            cairo_text_path( cr, out );
-
-            x += extents.x_advance;
-            y += extents.y_advance;
         }
 
-        free( ucs4 );
+        bytes = g_unichar_to_utf8( ucs4[ j ], out );
+        out[ bytes ] = '\0';
+
+        cairo_text_extents( cr, out, &extents );
+
+        cairo_move_to( cr, x, y );
+
+        cairo_text_path( cr, out );
+
+        x += extents.x_advance;
+        y += extents.y_advance;
     }
+
+    free( ucs4 );
 }
 
 static void x49gp_ui_text_size( cairo_t* cr, const char* family, double size, double* x_bearing, double* y_bearing, double* width,
-                                double* height, double* ascent, double* descent, int n, ... )
+                                double* height, double* ascent, double* descent, ... )
 {
     va_list ap0, ap1;
     cairo_font_extents_t font_extents;
@@ -1404,13 +1402,10 @@ static void x49gp_ui_text_size( cairo_t* cr, const char* family, double size, do
     double x1, y1, x2, y2, a, d;
     const char* text;
 
-    if ( n < 1 )
-        return;
-
-    va_start( ap0, n );
+    va_start( ap0, descent );
     va_copy( ap1, ap0 );
 
-    x49gp_ui_vtext_path( cr, family, size, 0.0, 0.0, n, ap0 );
+    x49gp_ui_vtext_path( cr, family, size, 0.0, 0.0, ap0 );
 
     va_end( ap0 );
 
@@ -1422,26 +1417,24 @@ static void x49gp_ui_text_size( cairo_t* cr, const char* family, double size, do
     a = 0.0;
     d = 0.0;
 
-    for ( int i = 0; i < n; i++ ) {
-        slant = va_arg( ap1, cairo_font_slant_t );
-        weight = va_arg( ap1, cairo_font_weight_t );
-        text = va_arg( ap1, const char* );
-        ( void )text;
+    slant = va_arg( ap1, cairo_font_slant_t );
+    weight = va_arg( ap1, cairo_font_weight_t );
+    text = va_arg( ap1, const char* );
+    ( void )text;
 
-        cairo_select_font_face( cr, family, slant, weight );
-        cairo_set_font_size( cr, size );
+    cairo_select_font_face( cr, family, slant, weight );
+    cairo_set_font_size( cr, size );
 
-        cairo_font_extents( cr, &font_extents );
+    cairo_font_extents( cr, &font_extents );
 
-        /*
-         * Cairo seems to return overall height in ascent,
-         * so fix this by calculating ascent = height - descent.
-         */
-        if ( font_extents.ascent - font_extents.descent > a )
-            a = font_extents.ascent - font_extents.descent;
-        if ( font_extents.descent > -d )
-            d = -font_extents.descent;
-    }
+    /*
+     * Cairo seems to return overall height in ascent,
+     * so fix this by calculating ascent = height - descent.
+     */
+    if ( font_extents.ascent - font_extents.descent > a )
+        a = font_extents.ascent - font_extents.descent;
+    if ( font_extents.descent > -d )
+        d = -font_extents.descent;
 
     *x_bearing = x1;
     *y_bearing = y2;
@@ -1454,20 +1447,17 @@ static void x49gp_ui_text_size( cairo_t* cr, const char* family, double size, do
 }
 
 static void x49gp_ui_draw_text( cairo_t* cr, GdkColor* color, const char* family, double size, double line_width, int xoffset, int yoffset,
-                                int n, ... )
+                                ... )
 {
     va_list ap;
 
-    if ( n < 1 )
-        return;
-
-    va_start( ap, n );
+    va_start( ap, yoffset );
 
     cairo_set_line_width( cr, line_width );
     cairo_set_source_rgb( cr, ( ( double )color->red ) / 65535.0, ( ( double )color->green ) / 65535.0,
                           ( ( double )color->blue ) / 65535.0 );
 
-    x49gp_ui_vtext_path( cr, family, size, xoffset, yoffset, n, ap );
+    x49gp_ui_vtext_path( cr, family, size, xoffset, yoffset, ap );
 
     if ( line_width == 0.0 )
         cairo_fill( cr );
@@ -2409,7 +2399,7 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_fill( cr );
 
     if ( key->letter ) {
-        x49gp_ui_text_size( cr, opt.font, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1, CAIRO_FONT_SLANT_NORMAL,
+        x49gp_ui_text_size( cr, opt.font, key->letter_size, &xoff, &yoff, &width, &height, &ascent, &descent, CAIRO_FONT_SLANT_NORMAL,
                             key->font_weight, key->letter );
 
         switch ( key->layout ) {
@@ -2430,17 +2420,17 @@ static void x49gp_button_realize( GtkWidget* widget, gpointer user_data )
                 break;
         }
 
-        x49gp_ui_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], opt.font, key->letter_size, 0.0, x + xoffset, y + yoffset, 1,
+        x49gp_ui_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], opt.font, key->letter_size, 0.0, x + xoffset, y + yoffset,
                             CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
     }
 
-    x49gp_ui_text_size( cr, opt.font, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, 1, CAIRO_FONT_SLANT_NORMAL,
+    x49gp_ui_text_size( cr, opt.font, key->font_size, &xoff, &yoff, &width, &height, &ascent, &descent, CAIRO_FONT_SLANT_NORMAL,
                         key->font_weight, key->label );
 
     x = ( int )floor( ( w - 1.0 - width ) / 2.0 - xoff + 0.5 );
     y = ( int )floor( ( h - 1.0 + ascent ) / 2.0 + 0.5 );
 
-    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], opt.font, key->font_size, 0.0, x + xoffset, y + yoffset, 1,
+    x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->text[ 0 ], opt.font, key->font_size, 0.0, x + xoffset, y + yoffset,
                         CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->label );
 
     cairo_destroy( cr );
@@ -2495,18 +2485,13 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
 
     const cairo_format_t cairo_fmt = CAIRO_FORMAT_A1;
     int stride = cairo_format_stride_for_width( cairo_fmt, 12 );
-    ui->ann_left_surface = cairo_image_surface_create_for_data( ann_left_bits, cairo_fmt, ann_left_width, ann_left_height,
-                                                                stride );
-    ui->ann_right_surface = cairo_image_surface_create_for_data( ann_right_bits, cairo_fmt, ann_right_width, ann_right_height,
-                                                                 stride );
-    ui->ann_alpha_surface = cairo_image_surface_create_for_data( ann_alpha_bits, cairo_fmt, ann_alpha_width, ann_alpha_height,
-                                                                 stride );
-    ui->ann_battery_surface = cairo_image_surface_create_for_data( ann_battery_bits, cairo_fmt, ann_battery_width, ann_battery_height,
-                                                                   stride );
-    ui->ann_busy_surface = cairo_image_surface_create_for_data( ann_busy_bits, cairo_fmt, ann_busy_width, ann_busy_height,
-                                                                stride );
-    ui->ann_io_surface = cairo_image_surface_create_for_data( ann_io_bits, cairo_fmt, ann_io_width, ann_io_height,
-                                                              stride );
+    ui->ann_left_surface = cairo_image_surface_create_for_data( ann_left_bits, cairo_fmt, ann_left_width, ann_left_height, stride );
+    ui->ann_right_surface = cairo_image_surface_create_for_data( ann_right_bits, cairo_fmt, ann_right_width, ann_right_height, stride );
+    ui->ann_alpha_surface = cairo_image_surface_create_for_data( ann_alpha_bits, cairo_fmt, ann_alpha_width, ann_alpha_height, stride );
+    ui->ann_battery_surface =
+        cairo_image_surface_create_for_data( ann_battery_bits, cairo_fmt, ann_battery_width, ann_battery_height, stride );
+    ui->ann_busy_surface = cairo_image_surface_create_for_data( ann_busy_bits, cairo_fmt, ann_busy_width, ann_busy_height, stride );
+    ui->ann_io_surface = cairo_image_surface_create_for_data( ann_io_bits, cairo_fmt, ann_io_width, ann_io_height, stride );
 
     ui->lcd_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height, -1 );
 
@@ -2569,16 +2554,6 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
     switch ( ui->calculator ) {
         case UI_CALCULATOR_HP49GP:
         case UI_CALCULATOR_HP49GP_NEWRPL:
-            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 15.0, 0.0, 14 /\* 38 *\/, 20 /\* 42 *\/, 2, */
-            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD, "hp", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, */
-            /*                     " 49g+" ); */
-
-            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->black, opt.font, 13.0, 0.0, 14 /\* 38 *\/, 34 /\* 56 *\/, 1, */
-            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "graphing calculator" ); */
-
-            /* x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->black, 10.0, 0.0, true, 114 /\* 138 *\/, 8 /\* 25 *\/, */
-            /*                       symbol_get_by_name( "triangleup" ) ); */
-
             left_color = UI_COLOR_GREEN;
             right_color = UI_COLOR_RED;
             below_color = UI_COLOR_BLACK;
@@ -2590,16 +2565,6 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
 
         case UI_CALCULATOR_HP50G:
         case UI_CALCULATOR_HP50G_NEWRPL:
-            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 15.0, 0.0, 14 /\* 38 *\/, 20 /\* 42 *\/, 2, */
-            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "HP", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, */
-            /*                     " 50g" ); */
-
-            /* x49gp_ui_draw_text( cr, &gtk_widget_get_style( widget )->white, opt.font, 13.0, 0.0, 14 /\* 38 *\/, 34 /\* 56 *\/, 1, */
-            /*                     CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, "Graphing Calculator" ); */
-
-            /* x49gp_ui_draw_symbol( cr, &gtk_widget_get_style( widget )->white, 10.0, 0.0, true, 134 /\* 168 *\/, 8 /\* 25 *\/, */
-            /*                       symbol_get_by_name( "triangleup" ) ); */
-
             left_color = UI_COLOR_WHITE;
             right_color = UI_COLOR_ORANGE;
             below_color = UI_COLOR_BLUE;
@@ -2756,7 +2721,7 @@ static void init_colors( x49gp_ui_t* ui )
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 ); /* #000000 */
 
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_FACEPLATE_49GP ], 0xf5, 0xde, 0xb3 ); /* #f5deb3 */
-    x49gp_ui_color_init( &ui->colors[ UI_COLOR_FACEPLATE_50G ], 0x27, 0x27, 0x27 ); /* #272727 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_FACEPLATE_50G ], 0x27, 0x27, 0x27 );  /* #272727 */
 }
 
 static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
@@ -2796,7 +2761,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     ui->lcd_y_offset = ui->lcd_x_offset;
 
     ui->kb_x_offset = 10;
-    ui->kb_y_offset = ui->lcd_height + ( 2 * ui->lcd_y_offset);
+    ui->kb_y_offset = ui->lcd_height + ( 2 * ui->lcd_y_offset );
 
     ui->width = ui->lcd_width + ( 2 * ui->lcd_x_offset );
     ui->height = ui->kb_y_offset + ui_keys[ NB_KEYS - 1 ].y + KB_LINE_HEIGHT;
@@ -2923,8 +2888,8 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-            x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x, ui->kb_y_offset + ui_keys[ i ].y,
-                               ui_keys[ i ].width, ui_keys[ i ].height );
+            x49gp_ui_place_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
+                               ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
 
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( x49gp_ui_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( x49gp_ui_button_release ), button );
