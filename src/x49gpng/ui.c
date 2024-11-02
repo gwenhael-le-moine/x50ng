@@ -2171,6 +2171,11 @@ typedef struct {
 /*************/
 /* functions */
 /*************/
+static inline unsigned color2rgb( x49gp_ui_t* ui, int color )
+{
+    return 0x000000 | ( ui->colors[ color ].red << 8 ) | ( ui->colors[ color ].green << 16 ) | ( ui->colors[ color ].blue );
+}
+
 static void x49gp_ui_color_init( GdkColor* color, u8 red, u8 green, u8 blue )
 {
     color->red = ( red << 8 ) | red;
@@ -3540,6 +3545,27 @@ static int x49gp_lcd_expose_event( GtkWidget* widget, GdkEventExpose* event, gpo
     return false;
 }
 
+/* static void draw_xbm(cairo_t *cr, GdkRectangle *rect, int width, int height, unsigned char *bits) */
+/* { */
+/*         double			  sz	= rect->width < rect->height ? rect->width : rect->height; */
+/*         cairo_surface_t	* icon	= cairo_image_surface_create_for_data( */
+/*                                                                         bits, */
+/*                                                                         CAIRO_FORMAT_A1, */
+/*                                                                         width,height, */
+/*                                                                         cairo_format_stride_for_width(CAIRO_FORMAT_A1,width)); */
+
+/*         cairo_save(cr); */
+
+/*         cairo_scale(cr,	sz / ((double) width), */
+/*                                         sz / ((double) height)); */
+
+/*         cairo_mask_surface(cr,icon,(rect->width-sz)/2,(rect->height-sz)/2); */
+
+/*         cairo_surface_destroy(icon); */
+
+/*         cairo_restore(cr); */
+/* } */
+
 static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
@@ -3548,23 +3574,29 @@ static int x49gp_lcd_configure_event( GtkWidget* widget, GdkEventConfigure* even
     if ( NULL != ui->lcd_pixmap )
         return false;
 
-    ui->ann_left_surface = cairo_image_surface_create_for_data( ann_left_bits, CAIRO_FORMAT_A1, ann_left_width, ann_left_height,
-                                                                cairo_format_stride_for_width( CAIRO_FORMAT_A1, ann_left_width ) );
-    ui->ann_right_surface = cairo_image_surface_create_for_data( ann_right_bits, CAIRO_FORMAT_A1, ann_right_width, ann_right_height,
-                                                                 cairo_format_stride_for_width( CAIRO_FORMAT_A1, ann_right_width ) );
-    ui->ann_alpha_surface = cairo_image_surface_create_for_data( ann_alpha_bits, CAIRO_FORMAT_A1, ann_alpha_width, ann_alpha_height,
-                                                                 cairo_format_stride_for_width( CAIRO_FORMAT_A1, ann_alpha_width ) );
-    ui->ann_battery_surface = cairo_image_surface_create_for_data( ann_battery_bits, CAIRO_FORMAT_A1, ann_battery_width, ann_battery_height,
-                                                                   cairo_format_stride_for_width( CAIRO_FORMAT_A1, ann_battery_width ) );
-    ui->ann_busy_surface = cairo_image_surface_create_for_data( ann_busy_bits, CAIRO_FORMAT_A1, ann_busy_width, ann_busy_height,
-                                                                cairo_format_stride_for_width( CAIRO_FORMAT_A1, ann_busy_width ) );
-    ui->ann_io_surface = cairo_image_surface_create_for_data( ann_io_bits, CAIRO_FORMAT_A1, ann_io_width, ann_io_height,
-                                                              cairo_format_stride_for_width( CAIRO_FORMAT_A1, ann_io_width ) );
+    const cairo_format_t cairo_fmt = CAIRO_FORMAT_A1;
+    int stride = cairo_format_stride_for_width( cairo_fmt, 12 );
+    ui->ann_left_surface = cairo_image_surface_create_for_data( ann_left_bits, cairo_fmt, ann_left_width, ann_left_height,
+                                                                stride );
+    ui->ann_right_surface = cairo_image_surface_create_for_data( ann_right_bits, cairo_fmt, ann_right_width, ann_right_height,
+                                                                 stride );
+    ui->ann_alpha_surface = cairo_image_surface_create_for_data( ann_alpha_bits, cairo_fmt, ann_alpha_width, ann_alpha_height,
+                                                                 stride );
+    ui->ann_battery_surface = cairo_image_surface_create_for_data( ann_battery_bits, cairo_fmt, ann_battery_width, ann_battery_height,
+                                                                   stride );
+    ui->ann_busy_surface = cairo_image_surface_create_for_data( ann_busy_bits, cairo_fmt, ann_busy_width, ann_busy_height,
+                                                                stride );
+    ui->ann_io_surface = cairo_image_surface_create_for_data( ann_io_bits, cairo_fmt, ann_io_width, ann_io_height,
+                                                              stride );
 
     ui->lcd_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height, -1 );
 
-    gdk_draw_drawable( ui->lcd_pixmap, gtk_widget_get_style( widget )->black_gc, ui->bg_pixmap, ui->lcd_x_offset, ui->lcd_y_offset, 0, 0,
-                       ui->lcd_width, ui->lcd_height );
+    cairo_t* cr = gdk_cairo_create( ui->lcd_pixmap );
+    GdkColor color = ui->colors[ UI_COLOR_GRAYSCALE_0 ];
+    cairo_set_source_rgb( cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0 );
+    cairo_rectangle( cr, 0, 0, ui->lcd_width, ui->lcd_height );
+    cairo_fill( cr );
+    cairo_destroy( cr );
 
     return false;
 }
@@ -3582,9 +3614,32 @@ static int x49gp_window_configure_event( GtkWidget* widget, GdkEventConfigure* e
     int wl = 0, wr = 0;
     int hl = 0, hr = 0;
     int dl = 0, dr = 0;
+    int faceplate_color;
 
     if ( NULL != ui->bg_pixmap )
         return false;
+
+    if ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
+        faceplate_color = UI_COLOR_FACEPLATE_49GP;
+    else
+        faceplate_color = UI_COLOR_FACEPLATE_50G;
+
+    gdk_pixbuf_fill( ui->bg_pixbuf, color2rgb( ui, faceplate_color ) );
+
+    /* cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, ui->width, ui->height); */
+    /* cr = cairo_create( surface ); */
+    /* /\* Draw the pixbuf *\/ */
+    /* gdk_cairo_set_source_pixbuf (cr, ui->bg_pixbuf, 0, 0); */
+    /* cairo_paint (cr); */
+    /* /\* Draw a red rectangle *\/ */
+
+    /* GdkColor color = ui->colors[ UI_COLOR_GRAYSCALE_0 ]; */
+    /* cairo_set_source_rgb( cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0 ); */
+    /* cairo_rectangle (cr, ui->lcd_x_offset - 2, ui->lcd_y_offset - 2, ui->lcd_width + 4, ui->lcd_height + 4 ); */
+    /* cairo_fill (cr); */
+
+    /* cairo_surface_destroy( surface ); */
+    /* cairo_destroy( cr ); */
 
     ui->bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( widget ), ui->width, ui->height, -1 );
 
@@ -3780,32 +3835,13 @@ static void init_colors( x49gp_ui_t* ui )
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_13 ], 0x17, 0x1c, 0x18 ); /* #171c18 */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_14 ], 0x0b, 0x03, 0x0c ); /* #0b030c */
     x49gp_ui_color_init( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 ); /* #000000 */
-}
 
-static inline unsigned color2rgba( x49gp_ui_t* ui, int color )
-{
-    return 0x000000ff | ( ui->colors[ color ].red ) | ( ui->colors[ color ].green << 8 ) | ( ui->colors[ color ].blue << 16 );
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_FACEPLATE_49GP ], 0xf5, 0xde, 0xb3 ); /* #f5deb3 */
+    x49gp_ui_color_init( &ui->colors[ UI_COLOR_FACEPLATE_50G ], 0x27, 0x27, 0x27 ); /* #272727 */
 }
 
 static void setup_faceplate( x49gp_ui_t* ui )
 {
-    /* Load faceplate base texture */
-    /* gerror* gerror = NULL; */
-    /* char* faceplate_texture_data; */
-    /* int fd = x49gp_module_open_rodata( module, */
-    /*                                    ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL */
-    /*                                        ? "hp49g+-cropped.png" */
-    /*                                        : "blank.png" /\* "hp50g-cropped.png" *\/, */
-    /*                                    &faceplate_texture_data ); */
-    /* if ( fd < 0 ) */
-    /*     return fd; */
-
-    /* ui->bg_pixbuf = gdk_pixbuf_new_from_file( faceplate_texture_data, &gerror ); */
-
-    /* /\* set ui->width and ui->height based on faceplate_texture_data dimensions *\/ */
-    /* gdk_pixbuf_get_file_info( faceplate_texture_data, &ui->width, &ui->height ); */
-    /* close( fd ); */
-
     ui->width = 302;
     ui->height = 728;
 
@@ -3817,23 +3853,6 @@ static void setup_faceplate( x49gp_ui_t* ui )
     ui->lcd_y_offset = 48; // 69;
 
     ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
-
-    gdk_pixbuf_fill( ui->bg_pixbuf, color2rgba( ui, UI_COLOR_GRAYSCALE_12 ) );
-
-    /* cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, ui->width, ui->height); */
-    /* cairo_t* cr = cairo_create( surface ); */
-    /* /\* Draw the pixbuf *\/ */
-    /* gdk_cairo_set_source_pixbuf (cr, ui->bg_pixbuf, 0, 0); */
-    /* cairo_paint (cr); */
-    /* /\* Draw a red rectangle *\/ */
-
-    /* GdkColor color = ui->colors[ UI_COLOR_GRAYSCALE_0 ]; */
-    /* cairo_set_source_rgb( cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0 ); */
-    /* cairo_rectangle (cr, ui->lcd_x_offset - 2, ui->lcd_y_offset - 2, ui->lcd_width + 4, ui->lcd_height + 4 ); */
-    /* cairo_fill (cr); */
-
-    /* cairo_surface_destroy( surface ); */
-    /* cairo_destroy( cr ); */
 }
 
 static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
@@ -3868,7 +3887,7 @@ static int gui_load( x49gp_module_t* module, GKeyFile* keyfile )
     setup_faceplate( ui );
 
     ui->kb_x_offset = 10;                                     // 36;
-    ui->kb_y_offset = ui->lcd_y_offset + ui->lcd_height + 56; // 280; // 301;
+    ui->kb_y_offset = ui->lcd_y_offset + ui->lcd_height + 16; // 280; // 301;
 
     ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     gtk_widget_set( ui->window, "can-focus", true, NULL );
