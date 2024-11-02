@@ -23,7 +23,7 @@
 #include "x49gp_ui.h"
 #include "s3c2410.h"
 #include "bitmaps.h"
-#include "bitmap_font.h"
+#include "tiny_font.h"
 #include "symbol.h"
 #include "glyphname.h"
 
@@ -1398,7 +1398,7 @@ static void regular_font_draw_text( cairo_t* cr, GdkColor* color, const char* fa
     va_end( ap );
 }
 
-static unsigned char _bitmap_font_lookup_glyph( const bitmap_font_t* font, const char* name, int namelen )
+static unsigned char _tiny_font_lookup_glyph( const tiny_font_t* font, const char* name, int namelen )
 {
     for ( int i = 0; font->glyphs[ i ].name; i++ )
         if ( ( strlen( font->glyphs[ i ].name ) == namelen ) && !strncmp( font->glyphs[ i ].name, name, namelen ) )
@@ -1407,7 +1407,7 @@ static unsigned char _bitmap_font_lookup_glyph( const bitmap_font_t* font, const
     return 0;
 }
 
-static unsigned char _bitmap_font_lookup_ascii( const bitmap_font_t* font, char c )
+static unsigned char _tiny_font_lookup_ascii( const tiny_font_t* font, char c )
 {
     int namelen = 0;
     char* name;
@@ -1548,10 +1548,10 @@ static unsigned char _bitmap_font_lookup_ascii( const bitmap_font_t* font, char 
     if ( 0 == namelen )
         namelen = strlen( name );
 
-    return _bitmap_font_lookup_glyph( font, name, namelen );
+    return _tiny_font_lookup_glyph( font, name, namelen );
 }
 
-static inline int _bitmap_font_strlen( const char* text )
+static inline int _tiny_font_strlen( const char* text )
 {
     const char *p, *q;
     char c;
@@ -1585,7 +1585,7 @@ static inline int _bitmap_font_strlen( const char* text )
     return n;
 }
 
-static int _bitmap_font_text_to_glyphs( const bitmap_font_t* font, const char* text, unsigned char** glyphp )
+static int _tiny_font_text_to_glyphs( const tiny_font_t* font, const char* text, unsigned char** glyphp )
 {
     unsigned char* glyphs;
     const char *p, *q;
@@ -1593,7 +1593,7 @@ static int _bitmap_font_text_to_glyphs( const bitmap_font_t* font, const char* t
     int namelen;
     int i, n;
 
-    n = _bitmap_font_strlen( text );
+    n = _tiny_font_strlen( text );
     if ( n <= 0 )
         return n;
 
@@ -1609,7 +1609,7 @@ static int _bitmap_font_text_to_glyphs( const bitmap_font_t* font, const char* t
         }
 
         if ( c != '\\' ) {
-            glyphs[ i++ ] = _bitmap_font_lookup_ascii( font, c );
+            glyphs[ i++ ] = _tiny_font_lookup_ascii( font, c );
             continue;
         }
 
@@ -1620,14 +1620,14 @@ static int _bitmap_font_text_to_glyphs( const bitmap_font_t* font, const char* t
             q++;
         }
         if ( q == p ) {
-            glyphs[ i++ ] = _bitmap_font_lookup_ascii( font, *p++ );
+            glyphs[ i++ ] = _tiny_font_lookup_ascii( font, *p++ );
             continue;
         }
         namelen = q - p;
         if ( *q == ' ' )
             q++;
 
-        glyphs[ i++ ] = _bitmap_font_lookup_glyph( font, p, namelen );
+        glyphs[ i++ ] = _tiny_font_lookup_glyph( font, p, namelen );
         p = q;
     }
 
@@ -1635,9 +1635,9 @@ static int _bitmap_font_text_to_glyphs( const bitmap_font_t* font, const char* t
     return n;
 }
 
-static void bitmap_font_measure_text( const bitmap_font_t* font, const char* text, int* width, int* height, int* ascent, int* descent )
+static void tiny_font_measure_text( const tiny_font_t* font, const char* text, int* width, int* height, int* ascent, int* descent )
 {
-    const bitmap_glyph_t* glyph;
+    const tiny_glyph_t* glyph;
     unsigned char* glyphs;
     int n, w, a, d;
 
@@ -1645,7 +1645,7 @@ static void bitmap_font_measure_text( const bitmap_font_t* font, const char* tex
     a = 0;
     d = 0;
 
-    n = _bitmap_font_text_to_glyphs( font, text, &glyphs );
+    n = _tiny_font_text_to_glyphs( font, text, &glyphs );
 
     for ( int i = 0; i < n; i++ ) {
         glyph = &font->glyphs[ glyphs[ i ] ];
@@ -1667,9 +1667,9 @@ static void bitmap_font_measure_text( const bitmap_font_t* font, const char* tex
         free( glyphs );
 }
 
-static void bitmap_font_draw_text( GdkDrawable* drawable, GdkColor* color, const bitmap_font_t* font, int x, int y, const char* text )
+static void tiny_font_draw_text( GdkDrawable* drawable, GdkColor* color, const tiny_font_t* font, int x, int y, const char* text )
 {
-    const bitmap_glyph_t* glyph;
+    const tiny_glyph_t* glyph;
     unsigned char* glyphs;
     GdkBitmap* bitmap;
     GdkGC* gc;
@@ -1678,7 +1678,7 @@ static void bitmap_font_draw_text( GdkDrawable* drawable, GdkColor* color, const
     gc = gdk_gc_new( drawable );
     gdk_gc_set_rgb_fg_color( gc, color );
 
-    n = _bitmap_font_text_to_glyphs( font, text, &glyphs );
+    n = _tiny_font_text_to_glyphs( font, text, &glyphs );
 
     for ( int i = 0; i < n; i++ ) {
         glyph = &font->glyphs[ glyphs[ i ] ];
@@ -1710,7 +1710,7 @@ static void bitmap_font_draw_text( GdkDrawable* drawable, GdkColor* color, const
         free( glyphs );
 }
 
-static gboolean callback_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean handler_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
@@ -1794,7 +1794,7 @@ static void ui_release_all_buttons( x49gp_t* x49gp, x49gp_ui_button_t* cause )
     }
 }
 
-static gboolean callback_button_release( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean handler_button_release( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     x49gp_t* x49gp = button->x49gp;
@@ -1838,7 +1838,7 @@ static gboolean do_show_context_menu( GtkWidget* widget, GdkEventButton* event, 
     return false;
 }
 
-static gboolean callback_button_leave( GtkWidget* widget, GdkEventCrossing* event, gpointer user_data )
+static gboolean handler_button_leave( GtkWidget* widget, GdkEventCrossing* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
 
@@ -1851,7 +1851,7 @@ static gboolean callback_button_leave( GtkWidget* widget, GdkEventCrossing* even
     return true;
 }
 
-static gboolean callback_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpointer user_data )
+static gboolean handler_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1923,7 +1923,7 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
     x49gp_set_idle( x49gp, 0 );
 }
 
-static gboolean callback_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
+static gboolean handler_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -2211,7 +2211,7 @@ static gboolean callback_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     switch ( event->type ) {
         case GDK_KEY_PRESS:
             bev.type = GDK_BUTTON_PRESS;
-            callback_button_press( button->button, &bev, button );
+            handler_button_press( button->button, &bev, button );
             /* GTK_BUTTON( button->button )->in_button = true; */
             gtk_button_pressed( GTK_BUTTON( button->button ) );
             /* GTK_BUTTON( button->button )->in_button = save_in; */
@@ -2221,7 +2221,7 @@ static gboolean callback_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
             /* GTK_BUTTON( button->button )->in_button = true; */
             gtk_button_released( GTK_BUTTON( button->button ) );
             /* GTK_BUTTON( button->button )->in_button = save_in; */
-            callback_button_release( button->button, &bev, button );
+            handler_button_release( button->button, &bev, button );
             break;
         default:
             return false;
@@ -2231,7 +2231,7 @@ static gboolean callback_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 }
 
 /* Draw button's pixmap onto window */
-static int callback_button_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
+static int handler_button_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     GtkAllocation widget_allocation;
@@ -2251,7 +2251,7 @@ static int callback_button_expose( GtkWidget* widget, GdkEventExpose* event, gpo
 }
 
 /* Prepare button's pixmap */
-static void callback_button_realize( GtkWidget* widget, gpointer user_data )
+static void handler_button_realize( GtkWidget* widget, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     x49gp_ui_t* ui = button->x49gp->ui;
@@ -2337,7 +2337,7 @@ static void callback_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_destroy( cr );
 }
 
-static int callback_lcd_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
+static int handler_lcd_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -2355,28 +2355,7 @@ static int callback_lcd_expose( GtkWidget* widget, GdkEventExpose* event, gpoint
     return false;
 }
 
-/* static void draw_xbm(cairo_t *cr, GdkRectangle *rect, int width, int height, unsigned char *bits) */
-/* { */
-/*         double			  sz	= rect->width < rect->height ? rect->width : rect->height; */
-/*         cairo_surface_t	* icon	= cairo_image_surface_create_for_data( */
-/*                                                                         bits, */
-/*                                                                         CAIRO_FORMAT_A1, */
-/*                                                                         width,height, */
-/*                                                                         cairo_format_stride_for_width(CAIRO_FORMAT_A1,width)); */
-
-/*         cairo_save(cr); */
-
-/*         cairo_scale(cr,	sz / ((double) width), */
-/*                                         sz / ((double) height)); */
-
-/*         cairo_mask_surface(cr,icon,(rect->width-sz)/2,(rect->height-sz)/2); */
-
-/*         cairo_surface_destroy(icon); */
-
-/*         cairo_restore(cr); */
-/* } */
-
-static int callback_lcd_draw( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
+static int handler_lcd_draw( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -2411,7 +2390,7 @@ static inline unsigned color2rgb( x49gp_ui_t* ui, int color )
     return 0x000000 | ( ui->colors[ color ].red << 8 ) | ( ui->colors[ color ].green << 16 ) | ( ui->colors[ color ].blue );
 }
 
-static int callback_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
+static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -2483,19 +2462,19 @@ static int callback_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event,
         key = ui->buttons[ i ].key;
 
         if ( key->left ) {
-            bitmap_font_measure_text( &tiny_font, key->left, &wl, &hl, &a, &dl );
+            tiny_font_measure_text( &tiny_font, key->left, &wl, &hl, &a, &dl );
             if ( !key->right ) {
                 xl = key->x + ( key->width - wl ) / 2;
-                bitmap_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], &tiny_font, ui->kb_x_offset + xl,
+                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], &tiny_font, ui->kb_x_offset + xl,
                                        ui->kb_y_offset + key->y - hl + dl + 1, key->left );
             }
         }
 
         if ( key->right ) {
-            bitmap_font_measure_text( &tiny_font, key->right, &wr, &hr, &a, &dr );
+            tiny_font_measure_text( &tiny_font, key->right, &wr, &hr, &a, &dr );
             if ( !key->left ) {
                 xr = key->x + ( key->width - wr ) / 2;
-                bitmap_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], &tiny_font, ui->kb_x_offset + xr,
+                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], &tiny_font, ui->kb_x_offset + xr,
                                        ui->kb_y_offset + key->y - hr + dr + 1, key->right );
             }
         }
@@ -2509,18 +2488,18 @@ static int callback_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event,
                 xr -= ( key->width - 4 - ( wl + wr ) ) / 2;
             }
 
-            bitmap_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], &tiny_font, ui->kb_x_offset + xl,
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], &tiny_font, ui->kb_x_offset + xl,
                                    ui->kb_y_offset + key->y - hl + dl + 1, key->left );
 
-            bitmap_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], &tiny_font, ui->kb_x_offset + xr,
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], &tiny_font, ui->kb_x_offset + xr,
                                    ui->kb_y_offset + key->y - hr + dr + 1, key->right );
         }
 
         if ( key->below ) {
-            bitmap_font_measure_text( &tiny_font, key->below, &wl, &hl, &a, &dl );
+            tiny_font_measure_text( &tiny_font, key->below, &wl, &hl, &a, &dl );
             xl = key->x + ( key->width - wl ) / 2;
 
-            bitmap_font_draw_text( ui->bg_pixmap, &ui->colors[ below_color ], &tiny_font, ui->kb_x_offset + xl,
+            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ below_color ], &tiny_font, ui->kb_x_offset + xl,
                                    ui->kb_y_offset + key->y + key->height + 2, key->below );
         }
 
@@ -2535,7 +2514,7 @@ static int callback_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event,
     return false;
 }
 
-static gboolean callback_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean handler_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
 #ifdef DEBUG_X49GP_UI
     fprintf( stderr, "%s:%u: type %u, button %u\n", __FUNCTION__, __LINE__, event->type, event->button );
@@ -2560,12 +2539,6 @@ static void do_quit( gpointer user_data, GtkWidget* widget, GdkEvent* event )
     x49gp_t* x49gp = user_data;
 
     x49gp->arm_exit++;
-}
-
-static void _gui_place_element_at( x49gp_t* x49gp, GtkFixed* fixed, GtkWidget* widget, gint x, gint y, gint width, gint height )
-{
-    gtk_widget_set_size_request( widget, width, height );
-    gtk_fixed_put( fixed, widget, x, y );
 }
 
 static int ui_init( x49gp_module_t* module )
@@ -2701,6 +2674,12 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 50 ].left = NULL;
 }
 
+static void _ui_load___place_ui_element_at( x49gp_t* x49gp, GtkFixed* fixed, GtkWidget* widget, gint x, gint y, gint width, gint height )
+{
+    gtk_widget_set_size_request( widget, width, height );
+    gtk_fixed_put( fixed, widget, x, y );
+}
+
 static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
@@ -2802,7 +2781,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
         ui->background = gtk_drawing_area_new();
         gtk_drawing_area_size( GTK_DRAWING_AREA( ui->background ), ui->width, ui->height );
-        _gui_place_element_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
+        _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
 
         ui->lcd_canvas = gtk_drawing_area_new();
         gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
@@ -2811,7 +2790,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_event_box_set_visible_window( GTK_EVENT_BOX( screen_box ), true );
         gtk_event_box_set_above_child( GTK_EVENT_BOX( screen_box ), false );
         gtk_container_add( GTK_CONTAINER( screen_box ), ui->lcd_canvas );
-        _gui_place_element_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width,
+        _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width,
                                ui->lcd_height );
     }
 
@@ -2839,9 +2818,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_widget_set_style( button->label, gtk_widget_get_style( button->button ) );
                 gtk_container_add( GTK_CONTAINER( button->button ), button->label );
 
-                g_signal_connect( G_OBJECT( button->label ), "expose-event", G_CALLBACK( callback_button_expose ), button );
+                g_signal_connect( G_OBJECT( button->label ), "expose-event", G_CALLBACK( handler_button_expose ), button );
 
-                g_signal_connect_after( G_OBJECT( button->label ), "realize", G_CALLBACK( callback_button_realize ), button );
+                g_signal_connect_after( G_OBJECT( button->label ), "realize", G_CALLBACK( handler_button_realize ), button );
             }
 
             button->box = gtk_event_box_new();
@@ -2849,12 +2828,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-            _gui_place_element_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
+            _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
                                    ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
 
-            g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( callback_button_press ), button );
-            g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( callback_button_release ), button );
-            g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( callback_button_leave ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( handler_button_press ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( handler_button_release ), button );
+            g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( handler_button_leave ), button );
 
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
         }
@@ -2904,15 +2883,16 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     {
         g_signal_connect( G_OBJECT( screen_box ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
 
-        g_signal_connect( G_OBJECT( ui->background ), "configure-event", G_CALLBACK( callback_faceplate_draw ), x49gp );
+        g_signal_connect( G_OBJECT( ui->background ), "configure-event", G_CALLBACK( handler_faceplate_draw ), x49gp );
 
-        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( callback_lcd_expose ), x49gp );
-        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( callback_lcd_draw ), x49gp );
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( handler_lcd_expose ), x49gp );
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( handler_lcd_draw ), x49gp );
 
-        g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( callback_focus_lost ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( callback_key_event ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( callback_key_event ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( callback_window_click ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( handler_focus_lost ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( handler_key_event ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( handler_key_event ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( handler_window_click ), x49gp );
+
         g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
         g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
 

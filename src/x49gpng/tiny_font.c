@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "bitmap_font.h"
+#include "tiny_font.h"
 
 #include "bitmaps/tiny_notdef.xbm"
 
@@ -94,7 +94,7 @@
 
 #include "bitmaps/tiny__i.xbm"
 
-const bitmap_font_t tiny_font = {
+const tiny_font_t tiny_font = {
     7,
     -3,
     { GLYPH( tiny, notdef ),
