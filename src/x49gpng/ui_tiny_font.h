@@ -31,4 +31,7 @@ typedef struct {
 
 extern const tiny_font_t tiny_font;
 
+void tiny_font_measure_text( const char* text, int* width, int* height, int* ascent, int* descent );
+void tiny_font_draw_text( GdkDrawable* drawable, GdkColor* color, int x, int y, const char* text );
+
 #endif /* !(_X49GP_TINY_FONT_H) */

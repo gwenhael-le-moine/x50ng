@@ -123,7 +123,8 @@ SRCS = ./src/x49gpng/main.c \
 	./src/x49gpng/s3c2410_arm.c \
 	./src/x49gpng/ui.c \
 	./src/x49gpng/timer.c \
-	./src/x49gpng/tiny_font.c \
+	./src/x49gpng/ui_tiny_font.c \
+	./src/x49gpng/ui_regular_font.c \
 	./src/x49gpng/symbol.c \
 	./src/x49gpng/gdbstub.c \
 	./src/x49gpng/block.c \
