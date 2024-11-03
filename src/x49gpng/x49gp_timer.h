@@ -1,6 +1,3 @@
-/* $Id: x49gp_timer.h,v 1.3 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef _X49GP_TIMER_H
 #define _X49GP_TIMER_H 1
 

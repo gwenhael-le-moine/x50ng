@@ -1,6 +1,3 @@
-/* $Id: s3c2410.h,v 1.18 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef _X49GP_S3C2410_H
 #define _X49GP_S3C2410_H 1
 

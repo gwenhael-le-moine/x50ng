@@ -1,6 +1,3 @@
-/* $Id: saturn.h,v 1.1 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef SATURN_H
 #define SATURN_H 1
 

@@ -1,6 +1,3 @@
-/* $Id: s3c2410_power.c,v 1.5 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>

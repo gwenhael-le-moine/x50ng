@@ -1,6 +1,3 @@
-/* $Id: s3c2410_power.h,v 1.3 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef _S3C2410_POWER_H
 #define _S3C2410_POWER_H 1
 

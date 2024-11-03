@@ -1,6 +1,3 @@
-/* $Id: tiny_font.c,v 1.6 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>

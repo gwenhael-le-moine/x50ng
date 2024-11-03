@@ -1,6 +1,3 @@
-/* $Id: s3c2410.c,v 1.38 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/times.h>

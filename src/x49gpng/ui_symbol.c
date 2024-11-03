@@ -1,6 +1,3 @@
-/* $Id: symbol.c,v 1.4 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <stdlib.h>
 #include <string.h>
 

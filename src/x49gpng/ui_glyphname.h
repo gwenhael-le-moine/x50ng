@@ -1,6 +1,3 @@
-/* $Id: glyphname.h,v 1.3 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef _X49GP_GLYPHNAME_H
 #define _X49GP_GLYPHNAME_H 1
 

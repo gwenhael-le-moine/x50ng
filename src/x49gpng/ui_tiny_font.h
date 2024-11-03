@@ -1,6 +1,3 @@
-/* $Id: bitmap_font.h,v 1.5 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef _X49GP_TINY_FONT_H
 #define _X49GP_TINY_FONT_H 1
 

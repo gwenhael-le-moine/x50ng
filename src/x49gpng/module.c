@@ -1,6 +1,3 @@
-/* $Id: module.c,v 1.5 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

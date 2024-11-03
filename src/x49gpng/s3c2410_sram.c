@@ -1,6 +1,3 @@
-/* $Id: s3c2410_sram.c,v 1.8 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>

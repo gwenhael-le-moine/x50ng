@@ -1,6 +1,3 @@
-/* $Id: block.h,v 1.1 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef BLOCK_H
 #define BLOCK_H 1
 

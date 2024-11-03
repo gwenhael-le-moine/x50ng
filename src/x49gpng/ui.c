@@ -1,6 +1,3 @@
-/* $Id: ui.c,v 1.34 2008/12/11 12:18:17 ecd Exp $
- */
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -22,7 +19,7 @@
 #include "x49gp.h"
 #include "x49gp_ui.h"
 #include "s3c2410.h"
-#include "bitmaps.h"
+#include "ui_bitmaps.h"
 #include "ui_tiny_font.h"
 #include "ui_regular_font.h"
 

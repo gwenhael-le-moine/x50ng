@@ -1,6 +1,3 @@
-/* $Id: x49gp.h,v 1.15 2008/12/11 12:18:17 ecd Exp $
- */
-
 #ifndef _X49GP_H
 #define _X49GP_H
 
