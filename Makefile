@@ -125,7 +125,7 @@ SRCS = ./src/x49gpng/main.c \
 	./src/x49gpng/timer.c \
 	./src/x49gpng/ui_tiny_font.c \
 	./src/x49gpng/ui_regular_font.c \
-	./src/x49gpng/symbol.c \
+	./src/x49gpng/ui_symbol.c \
 	./src/x49gpng/gdbstub.c \
 	./src/x49gpng/block.c \
 	./src/x49gpng/options.c

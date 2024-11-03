@@ -5,8 +5,8 @@
 #include <cairo.h>
 
 #include "options.h"
-#include "symbol.h"
-#include "glyphname.h"
+#include "ui_symbol.h"
+#include "ui_glyphname.h"
 #include "ui_regular_font.h"
 
 static void _regular_font_symbol_path( cairo_t* cr, double size, double xoffset, double yoffset, const x49gp_symbol_t* symbol )

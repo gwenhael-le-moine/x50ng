@@ -25,8 +25,6 @@
 #include "bitmaps.h"
 #include "ui_tiny_font.h"
 #include "ui_regular_font.h"
-#include "symbol.h"
-#include "glyphname.h"
 
 #include "gdbstub.h"
 

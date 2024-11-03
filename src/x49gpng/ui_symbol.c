@@ -7,7 +7,7 @@
 #include <glib.h>
 #include <cairo.h>
 
-#include "symbol.h"
+#include "ui_symbol.h"
 
 static const cairo_path_data_t symbol_square_path_data[] = { SYMBOL_MOVE_TO( 0.100, 0.100 ), SYMBOL_LINE_TO( 0.500, 0.000 ),
                                                              SYMBOL_LINE_TO( 0.000, 0.500 ), SYMBOL_LINE_TO( -0.500, 0.000 ),
