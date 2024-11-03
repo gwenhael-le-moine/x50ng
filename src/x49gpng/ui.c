@@ -1198,7 +1198,7 @@ static gboolean handler_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpo
     return false;
 }
 
-static void gui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
+static void ui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
 {
     GtkWidget* dialog;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1222,7 +1222,7 @@ static void do_select_and_mount_sd_folder( GtkMenuItem* menuitem, gpointer user_
     x49gp_t* x49gp = user_data;
     char* filename;
 
-    gui_open_file_dialog( x49gp, "Choose SD folder ...", GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, &filename );
+    ui_open_file_dialog( x49gp, "Choose SD folder ...", GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, &filename );
     if ( filename != NULL )
         s3c2410_sdi_mount( x49gp, filename );
 }
@@ -1232,7 +1232,7 @@ static void do_select_and_mount_sd_image( GtkMenuItem* menuitem, gpointer user_d
     x49gp_t* x49gp = user_data;
     char* filename;
 
-    gui_open_file_dialog( x49gp, "Choose SD image ...", GTK_FILE_CHOOSER_ACTION_OPEN, &filename );
+    ui_open_file_dialog( x49gp, "Choose SD image ...", GTK_FILE_CHOOSER_ACTION_OPEN, &filename );
     if ( filename != NULL )
         s3c2410_sdi_mount( x49gp, filename );
 }
@@ -2243,7 +2243,7 @@ void gui_show_error( x49gp_t* x49gp, const char* text )
 
 void gui_open_firmware( x49gp_t* x49gp, char** filename )
 {
-    gui_open_file_dialog( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
+    ui_open_file_dialog( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
 }
 
 int gui_init( x49gp_t* x49gp )
