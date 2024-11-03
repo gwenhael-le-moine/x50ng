@@ -10,7 +10,7 @@
 #include <gtk/gtk.h>
 
 #include "x49gp.h"
-#include "x49gp_ui.h"
+#include "ui.h"
 #include "s3c2410.h"
 
 typedef struct {

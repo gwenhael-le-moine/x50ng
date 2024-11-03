@@ -9,7 +9,7 @@
 #include <memory.h>
 
 #include "x49gp.h"
-#include "x49gp_ui.h"
+#include "ui.h"
 
 #define FLASH_STATE_NORMAL 0
 

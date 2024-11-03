@@ -17,7 +17,7 @@
 
 #include "options.h"
 #include "x49gp.h"
-#include "x49gp_ui.h"
+#include "ui.h"
 #include "s3c2410.h"
 #include "ui_bitmaps.h"
 #include "ui_tiny_font.h"
