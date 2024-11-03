@@ -236,7 +236,7 @@ static void _regular_font_vtext_path( cairo_t* cr, double size, double x, double
 }
 
 void regular_font_measure_text( cairo_t* cr, double size, double* x_bearing, double* y_bearing, double* width, double* height,
-                                       double* ascent, double* descent, ... )
+                                double* ascent, double* descent, ... )
 {
     va_list ap0, ap1;
     cairo_font_extents_t font_extents;

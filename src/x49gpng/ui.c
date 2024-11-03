@@ -1043,7 +1043,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 /*         cairo_stroke( cr ); */
 /* } */
 
-static gboolean handler_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
@@ -1127,7 +1127,7 @@ static void ui_release_all_buttons( x49gp_t* x49gp, x49gp_ui_button_t* cause )
     }
 }
 
-static gboolean handler_button_release( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean react_to_button_release( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     x49gp_t* x49gp = button->x49gp;
@@ -1171,7 +1171,7 @@ static gboolean do_show_context_menu( GtkWidget* widget, GdkEventButton* event, 
     return false;
 }
 
-static gboolean handler_button_leave( GtkWidget* widget, GdkEventCrossing* event, gpointer user_data )
+static gboolean react_to_button_leave( GtkWidget* widget, GdkEventCrossing* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
 
@@ -1184,7 +1184,7 @@ static gboolean handler_button_leave( GtkWidget* widget, GdkEventCrossing* event
     return true;
 }
 
-static gboolean handler_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpointer user_data )
+static gboolean react_to_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1256,7 +1256,7 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
     x49gp_set_idle( x49gp, 0 );
 }
 
-static gboolean handler_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
+static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1544,7 +1544,7 @@ static gboolean handler_key_event( GtkWidget* widget, GdkEventKey* event, gpoint
     switch ( event->type ) {
         case GDK_KEY_PRESS:
             bev.type = GDK_BUTTON_PRESS;
-            handler_button_press( button->button, &bev, button );
+            react_to_button_press( button->button, &bev, button );
             /* GTK_BUTTON( button->button )->in_button = true; */
             gtk_button_pressed( GTK_BUTTON( button->button ) );
             /* GTK_BUTTON( button->button )->in_button = save_in; */
@@ -1554,7 +1554,7 @@ static gboolean handler_key_event( GtkWidget* widget, GdkEventKey* event, gpoint
             /* GTK_BUTTON( button->button )->in_button = true; */
             gtk_button_released( GTK_BUTTON( button->button ) );
             /* GTK_BUTTON( button->button )->in_button = save_in; */
-            handler_button_release( button->button, &bev, button );
+            react_to_button_release( button->button, &bev, button );
             break;
         default:
             return false;
@@ -1564,7 +1564,7 @@ static gboolean handler_key_event( GtkWidget* widget, GdkEventKey* event, gpoint
 }
 
 /* Draw button's pixmap onto window */
-static int handler_button_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
+static int react_to_button_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     GtkAllocation widget_allocation;
@@ -1584,7 +1584,7 @@ static int handler_button_expose( GtkWidget* widget, GdkEventExpose* event, gpoi
 }
 
 /* Prepare button's pixmap */
-static void handler_button_realize( GtkWidget* widget, gpointer user_data )
+static void react_to_button_realize( GtkWidget* widget, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     x49gp_ui_t* ui = button->x49gp->ui;
@@ -1644,7 +1644,7 @@ static void handler_button_realize( GtkWidget* widget, gpointer user_data )
     cairo_destroy( cr );
 }
 
-static int handler_lcd_expose( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
+static int redraw_lcd( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1662,7 +1662,7 @@ static int handler_lcd_expose( GtkWidget* widget, GdkEventExpose* event, gpointe
     return false;
 }
 
-static int handler_lcd_draw( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
+static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1697,7 +1697,7 @@ static inline unsigned color2rgb( x49gp_ui_t* ui, int color )
     return 0x000000 | ( ui->colors[ color ].red << 8 ) | ( ui->colors[ color ].green << 16 ) | ( ui->colors[ color ].blue );
 }
 
-static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
+static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1720,7 +1720,8 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
     else
         faceplate_color = UI_COLOR_FACEPLATE_50G;
 
-    gdk_pixbuf_fill( ui->bg_pixbuf, color2rgb( ui, faceplate_color ) );
+    GdkPixbuf* bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
+    gdk_pixbuf_fill( bg_pixbuf, color2rgb( ui, faceplate_color ) );
 
     /* cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, ui->width, ui->height); */
     /* cr = cairo_create( surface ); */
@@ -1737,10 +1738,10 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
     /* cairo_surface_destroy( surface ); */
     /* cairo_destroy( cr ); */
 
-    ui->bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( widget ), ui->width, ui->height, -1 );
+    ui->bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui_background ), ui->width, ui->height, -1 );
 
     cr = gdk_cairo_create( ui->bg_pixmap );
-    gdk_cairo_set_source_pixbuf( cr, ui->bg_pixbuf, 0, 0 );
+    gdk_cairo_set_source_pixbuf( cr, bg_pixbuf, 0, 0 );
     cairo_paint( cr );
 
     cairo_destroy( cr );
@@ -1825,12 +1826,12 @@ static int handler_faceplate_draw( GtkWidget* widget, GdkEventConfigure* event, 
 #endif
     }
 
-    gdk_window_set_back_pixmap( gtk_widget_get_window( widget ), ui->bg_pixmap, false );
+    gdk_window_set_back_pixmap( gtk_widget_get_window( ui_background ), ui->bg_pixmap, false );
 
     return false;
 }
 
-static gboolean handler_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
 #ifdef DEBUG_X49GP_UI
     fprintf( stderr, "%s:%u: type %u, button %u\n", __FUNCTION__, __LINE__, event->type, event->button );
@@ -1919,7 +1920,7 @@ static int _ui_load__init_button_style_and_pixmap( x49gp_t* x49gp, x49gp_ui_butt
         if ( i == GTK_STATE_ACTIVE )
             y += 1;
 
-        src = gdk_pixbuf_new_subpixbuf( ui->bg_pixbuf, ui->kb_x_offset + button->key->x, y, button->key->width, button->key->height );
+        src = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, button->key->width, button->key->height );
 
         cr = gdk_cairo_create( style->bg_pixmap[ i ] );
         gdk_cairo_set_source_pixbuf( cr, src, 0, 0 );
@@ -1990,7 +1991,7 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 50 ].left = NULL;
 }
 
-static void _ui_load___place_ui_element_at( x49gp_t* x49gp, GtkFixed* fixed, GtkWidget* widget, gint x, gint y, gint width, gint height )
+static void _ui_load__place_ui_element_at( x49gp_t* x49gp, GtkFixed* fixed, GtkWidget* widget, gint x, gint y, gint width, gint height )
 {
     gtk_widget_set_size_request( widget, width, height );
     gtk_fixed_put( fixed, widget, x, y );
@@ -2074,21 +2075,19 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // create window and widgets/stuff
-    GtkWidget* screen_box;
+    GtkWidget* lcd_canvas_container;
     {
-        ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
+        //ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
 
         ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-        gtk_widget_set( ui->window, "can-focus", true, NULL );
-        gtk_widget_set( ui->window, "accept-focus", true, NULL );
-        gtk_widget_set( ui->window, "focus-on-map", true, NULL );
-        gtk_widget_set( ui->window, "resizable", false, NULL );
+        gtk_window_set_default_size( GTK_WINDOW( ui->window ), ui->width, ui->height );
+        gtk_window_set_accept_focus( GTK_WINDOW( ui->window ), true );
+        gtk_window_set_focus_on_map( GTK_WINDOW( ui->window ), true );
         gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
+        gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
 
         gtk_widget_set_name( ui->window, ui->name );
         gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
-
-        //	gtk_window_set_icon(GTK_WINDOW(ui->window), ui->bg_pixbuf);
 
         gtk_widget_realize( ui->window );
 
@@ -2096,18 +2095,18 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_container_add( GTK_CONTAINER( ui->window ), ui->fixed );
 
         ui->background = gtk_drawing_area_new();
-        gtk_drawing_area_size( GTK_DRAWING_AREA( ui->background ), ui->width, ui->height );
-        _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
+        gtk_widget_set_size_request (ui->background, ui->width, ui->height);
+        _ui_load__place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
 
         ui->lcd_canvas = gtk_drawing_area_new();
         gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
 
-        screen_box = gtk_event_box_new();
-        gtk_event_box_set_visible_window( GTK_EVENT_BOX( screen_box ), true );
-        gtk_event_box_set_above_child( GTK_EVENT_BOX( screen_box ), false );
-        gtk_container_add( GTK_CONTAINER( screen_box ), ui->lcd_canvas );
-        _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), screen_box, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width,
-                                        ui->lcd_height );
+        lcd_canvas_container = gtk_event_box_new();
+        gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_canvas_container ), true );
+        gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_canvas_container ), false );
+        gtk_container_add( GTK_CONTAINER( lcd_canvas_container ), ui->lcd_canvas );
+        _ui_load__place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), lcd_canvas_container, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width,
+                                       ui->lcd_height );
     }
 
     // keyboard
@@ -2136,9 +2135,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
                 /* gtk_label_set_markup( GTK_LABEL( button->label ), ui_keys[ i ].label ); */
 
-                g_signal_connect( G_OBJECT( button->label ), "expose-event", G_CALLBACK( handler_button_expose ), button );
+                g_signal_connect( G_OBJECT( button->label ), "expose-event", G_CALLBACK( react_to_button_expose ), button );
 
-                g_signal_connect_after( G_OBJECT( button->label ), "realize", G_CALLBACK( handler_button_realize ), button );
+                g_signal_connect_after( G_OBJECT( button->label ), "realize", G_CALLBACK( react_to_button_realize ), button );
             }
 
             button->box = gtk_event_box_new();
@@ -2146,12 +2145,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-            _ui_load___place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
-                                            ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
+            _ui_load__place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
+                                           ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
 
-            g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( handler_button_press ), button );
-            g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( handler_button_release ), button );
-            g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( handler_button_leave ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
+            g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
 
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
         }
@@ -2199,18 +2198,17 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // setup signals and events
     {
-        g_signal_connect( G_OBJECT( screen_box ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
+        g_signal_connect( G_OBJECT( ui->background ), "configure-event", G_CALLBACK( draw_faceplate ), x49gp );
 
-        g_signal_connect( G_OBJECT( ui->background ), "configure-event", G_CALLBACK( handler_faceplate_draw ), x49gp );
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( redraw_lcd ), x49gp );
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
-        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( handler_lcd_expose ), x49gp );
-        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( handler_lcd_draw ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( react_to_window_click ), x49gp );
 
-        g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( handler_focus_lost ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( handler_key_event ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( handler_key_event ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( handler_window_click ), x49gp );
-
+        g_signal_connect( G_OBJECT( lcd_canvas_container ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
         g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
         g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
 

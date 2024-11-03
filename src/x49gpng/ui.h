@@ -86,7 +86,6 @@ struct __x49gp_ui_s__ {
     GtkWidget* menu_unmount;
     GtkWidget* menu_debug;
 
-    GdkPixbuf* bg_pixbuf;
     GdkPixmap* bg_pixmap;
     GtkWidget* background;
 

@@ -7,7 +7,7 @@
 #include <cairo.h>
 
 void regular_font_measure_text( cairo_t* cr, double size, double* x_bearing, double* y_bearing, double* width, double* height,
-                               double* ascent, double* descent, ... );
+                                double* ascent, double* descent, ... );
 void regular_font_draw_text( cairo_t* cr, GdkColor* color, double size, double line_width, int xoffset, int yoffset, ... );
 
 #endif /* !(_REGULAR_FONT_H) */
