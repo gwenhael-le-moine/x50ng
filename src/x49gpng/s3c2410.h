@@ -11,6 +11,32 @@ typedef struct {
 	uint32_t	*datap;
 } s3c2410_offset_t;
 
+typedef struct {
+    uint32_t lcdcon1;
+    uint32_t lcdcon2;
+    uint32_t lcdcon3;
+    uint32_t lcdcon4;
+    uint32_t lcdcon5;
+    uint32_t lcdsaddr1;
+    uint32_t lcdsaddr2;
+    uint32_t lcdsaddr3;
+    uint32_t redlut;
+    uint32_t greenlut;
+    uint32_t bluelut;
+    uint32_t dithmode;
+    uint32_t tpal;
+    uint32_t lcdintpnd;
+    uint32_t lcdsrcpnd;
+    uint32_t lcdintmsk;
+    uint32_t lpcsel;
+    uint32_t __unknown_68;
+
+    unsigned int nr_regs;
+    s3c2410_offset_t* regs;
+
+    x49gp_t* x49gp;
+} s3c2410_lcd_t;
+
 #define S3C2410_OFFSET(module, name, reset, data) \
 	[S3C2410_ ## module ## _ ## name >> 2] = { #name, reset, &(data) }
 
@@ -338,8 +364,9 @@ extern int x49gp_s3c2410_sdi_init(x49gp_t *x49gp);
 extern void s3c2410_io_port_g_update(x49gp_t *x49gp, int column, int row, unsigned char columnbit, unsigned char rowbit, uint32_t new_state);
 extern void s3c2410_io_port_f_set_bit(x49gp_t *x49gp, int n, uint32_t set);
 
-extern void x49gp_schedule_lcd_update(x49gp_t *x49gp);
-extern void x49gp_lcd_update(x49gp_t *x49gp);
+extern void s3c2410_schedule_lcd_update(x49gp_t *x49gp);
+
+extern int x49gp_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
 
 extern unsigned long s3c2410_timer_next_interrupt(x49gp_t *x49gp);
 extern unsigned long s3c2410_watchdog_next_interrupt(x49gp_t *x49gp);

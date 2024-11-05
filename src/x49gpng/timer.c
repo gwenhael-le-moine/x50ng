@@ -10,11 +10,9 @@
 #include <signal.h>
 #include <poll.h>
 
-#include <glib.h>
-
 #include "x49gp.h"
 #include "x49gp_timer.h"
-#include "s3c2410.h"
+#include "ui.h"
 
 #include "gdbstub.h"
 
@@ -229,7 +227,7 @@ int x49gp_main_loop( x49gp_t* x49gp )
 
             if ( x49gp->arm_idle != prev_idle ) {
                 if ( x49gp->arm_idle == X49GP_ARM_OFF ) {
-                    x49gp_lcd_update( x49gp );
+                    gui_update_lcd( x49gp );
                     cpu_reset( x49gp->env );
                 }
             }

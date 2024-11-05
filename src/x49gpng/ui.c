@@ -2196,9 +2196,71 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
 static int ui_save( x49gp_module_t* module, GKeyFile* keyfile ) { return 0; }
 
+static void _draw_pixel( GdkPixmap* target, int x, int y, int w, int h, GdkColor* color )
+{
+    cairo_t* cr = gdk_cairo_create( target );
+
+    cairo_set_source_rgb( cr, color->red / 65535.0, color->green / 65535.0, color->blue / 65535.0 );
+    cairo_rectangle( cr, x, y, w, h );
+    cairo_fill( cr );
+
+    cairo_destroy( cr );
+}
+
+static inline void _draw_annunciator( GdkPixmap* target, cairo_surface_t* surface, int x, int y, int w, int h, GdkColor* color )
+{
+    cairo_t* cr = gdk_cairo_create( target );
+
+    cairo_set_source_rgb( cr, color->red / 65535.0, color->green / 65535.0, color->blue / 65535.0 );
+    cairo_mask_surface( cr, surface, x, y );
+
+    cairo_destroy( cr );
+}
+
 /********************/
 /* Public functions */
 /********************/
+
+void gui_update_lcd( x49gp_t* x49gp )
+{
+    x49gp_ui_t* ui = x49gp->ui;
+    s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
+
+    if ( lcd->lcdcon1 & 1 ) {
+        GdkColor color;
+
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 1 ) ];
+        _draw_annunciator( ui->lcd_pixmap, ui->ann_left_surface, 11, 0, 15, 12, &color );
+
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 2 ) ];
+        _draw_annunciator( ui->lcd_pixmap, ui->ann_right_surface, 56, 0, 15, 12, &color );
+
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 3 ) ];
+        _draw_annunciator( ui->lcd_pixmap, ui->ann_alpha_surface, 101, 0, 15, 12, &color );
+
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 4 ) ];
+        _draw_annunciator( ui->lcd_pixmap, ui->ann_battery_surface, 146, 0, 15, 12, &color );
+
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 5 ) ];
+        _draw_annunciator( ui->lcd_pixmap, ui->ann_busy_surface, 191, 0, 15, 12, &color );
+
+        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 0 ) ];
+        _draw_annunciator( ui->lcd_pixmap, ui->ann_io_surface, 236, 0, 15, 12, &color );
+
+        for ( int y = 0; y < ( ( ui->lcd_height - ui->lcd_annunciators_height ) / LCD_PIXEL_SCALE ); y++ )
+            for ( int x = 0; x < ( ui->lcd_width / LCD_PIXEL_SCALE ); x++ )
+                _draw_pixel( ui->lcd_pixmap, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height, LCD_PIXEL_SCALE,
+                             LCD_PIXEL_SCALE, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
+    }
+
+    GdkRectangle rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = ui->lcd_width;
+    rect.height = ui->lcd_height;
+
+    gdk_window_invalidate_rect( gtk_widget_get_window( ui->lcd_canvas ), &rect, false );
+}
 
 void gui_show_error( x49gp_t* x49gp, const char* text )
 {

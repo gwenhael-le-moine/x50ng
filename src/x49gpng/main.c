@@ -204,7 +204,7 @@ void x49gp_lcd_timer( void* data )
     x49gp_t* x49gp = data;
     int64_t now, expires;
 
-    x49gp_lcd_update( x49gp );
+    gui_update_lcd( x49gp );
     gdk_flush();
 
     now = x49gp_get_clock();
