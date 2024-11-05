@@ -443,8 +443,9 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
             memset( phys_ram_base + flash->offset, 0xff, flash->size - st.st_size );
 
         bootfd = x49gp_module_open_rodata( module,
-                                           ui->calculator == UI_CALCULATOR_HP49GP || calc == UI_CALCULATOR_HP49GP_NEWRPL ? "firmware/boot-49g+.bin"
-                                                                                                               : "firmware/boot-50g.bin",
+                                           ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL
+                                               ? "firmware/boot-49g+.bin"
+                                               : "firmware/boot-50g.bin",
                                            &bootfile );
 
         if ( bootfd < 0 ) {
