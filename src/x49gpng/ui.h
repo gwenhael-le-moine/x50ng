@@ -74,7 +74,6 @@ typedef struct {
     GtkWidget* button;
     GtkWidget* label;
     GtkWidget* box;
-    GdkPixmap* pixmap; /* FIXME */
     gboolean down;
     gboolean hold;
 } x49gp_ui_button_t;
