@@ -1652,10 +1652,9 @@ static int redraw_lcd( GtkWidget* widget, GdkEventExpose* event, gpointer user_d
     int n;
 
     gdk_region_get_rectangles( event->region, &rects, &n );
-    for ( int i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ )
         gdk_draw_drawable( gtk_widget_get_window( widget ), gtk_widget_get_style( widget )->black_gc, ui->lcd_pixmap, rects[ i ].x,
                            rects[ i ].y, rects[ i ].x, rects[ i ].y, rects[ i ].width, rects[ i ].height );
-    }
 
     g_free( rects );
 
