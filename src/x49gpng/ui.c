@@ -1569,6 +1569,7 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
     if ( NULL != ui->lcd_pixmap )
         return false;
 
+    /* FIXME: render this using unicode labels too */
     const cairo_format_t cairo_fmt = CAIRO_FORMAT_A1;
     int stride = cairo_format_stride_for_width( cairo_fmt, 12 );
     ui->ann_left_surface = cairo_image_surface_create_for_data( ann_left_bits, cairo_fmt, ann_left_width, ann_left_height, stride );
