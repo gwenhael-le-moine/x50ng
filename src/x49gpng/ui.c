@@ -447,7 +447,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
     {.label = "Y<sup>x</sup>",
      .letter = "Q",
-     .left = "\\math_e\\xsuperior",
+     .left = "𝑒<sup>x</sup>",
      .right = "LN",
      .below = NULL,
      .color = UI_COLOR_WHITE,
@@ -466,8 +466,8 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "√X",
      .letter = "R",
-     .left = "\\math_x\\twosuperior",
-     .right = "\\xsuperior\\kern-4\\math_radical\\overscore\\kern-5\\math_y",
+     .left = "x<sup>2</sup>",
+     .right = "<sup>x</sup>√y",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -486,7 +486,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = "SIN",
      .letter = "S",
      .left = "ASIN",
-     .right = "\\math_summation",
+     .right = "∑",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -505,7 +505,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = "COS",
      .letter = "T",
      .left = "ACOS",
-     .right = "\\math_partialdiff",
+     .right = "∂",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -524,7 +524,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = "TAN",
      .letter = "U",
      .left = "ATAN",
-     .right = "\\math_integral",
+     .right = "∫",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -543,7 +543,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
     {.label = "EEX",
      .letter = "V",
-     .left = "10\\xsuperior",
+     .left = "10<sup>x</sup>",
      .right = "LOG",
      .below = NULL,
      .color = UI_COLOR_WHITE,
@@ -562,8 +562,8 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "+/-",
      .letter = "W",
-     .left = "\\math_notequal",
-     .right = "\\math_equal",
+     .left = "≠",
+     .right = "=",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -581,8 +581,8 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "X",
      .letter = "X",
-     .left = "\\math_lessequal",
-     .right = "\\math_less",
+     .left = "≤",
+     .right = "<",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -600,8 +600,8 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "1/X",
      .letter = "Y",
-     .left = "\\math_greaterequal",
-     .right = "\\math_greater",
+     .left = "≥",
+     .right = ">",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -643,7 +643,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .right = "ENTRY",
      .below = NULL,
      .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
+     .font_size = 11.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .x = 0,
@@ -888,7 +888,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "3",
      .letter = NULL,
-     .left = "\\math_numbersign",
+     .left = "#",
      .right = "BASE",
      .below = NULL,
      .color = UI_COLOR_WHITE,
@@ -908,7 +908,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = "+",
      .letter = NULL,
      .left = "{ }",
-     .right = "\\guillemotleft\\ \\guillemotright",
+     .right = "« »",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 19.0,
@@ -946,8 +946,8 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "0",
      .letter = NULL,
-     .left = "\\math_infinity",
-     .right = "\\math_arrowright",
+     .left = "∞",
+     .right = "→",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 19.0,
@@ -966,7 +966,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = ".",
      .letter = NULL,
      .left = ": :",
-     .right = "\\math_downarrowleft",
+     .right = "↲",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 19.0,
@@ -984,8 +984,8 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
     {.label = "SPC",
      .letter = NULL,
-     .left = "\\math_pi",
-     .right = "\\large_comma",
+     .left = "𝚷",
+     .right = ",",
      .below = NULL,
      .color = UI_COLOR_WHITE,
      .font_size = 12.0,
@@ -1004,10 +1004,10 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.label = "ENTER",
      .letter = NULL,
      .left = "ANS",
-     .right = "\\arrowright NUM",
+     .right = "→NUM",
      .below = NULL,
      .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
+     .font_size = 11.0,
      .font_weight = CAIRO_FONT_WEIGHT_BOLD,
      .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
@@ -1025,23 +1025,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 /*************/
 /* functions */
 /*************/
-
-/* static void x49gp_ui_draw_symbol( cairo_t* cr, GdkColor* color, double size, double line_width, gboolean fill, double xoffset, */
-/*                                   double yoffset, const x49gp_symbol_t* symbol ) */
-/* { */
-/*     cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT ); */
-/*     cairo_set_line_join( cr, CAIRO_LINE_JOIN_MITER ); */
-/*     cairo_set_line_width( cr, line_width ); */
-/*     cairo_set_source_rgb( cr, ( ( double )color->red ) / 65535.0, ( ( double )color->green ) / 65535.0, */
-/*                           ( ( double )color->blue ) / 65535.0 ); */
-
-/*     _regular_font_symbol_path( cr, size, xoffset, yoffset, symbol ); */
-
-/*     if ( fill ) */
-/*         cairo_fill( cr ); */
-/*     else */
-/*         cairo_stroke( cr ); */
-/* } */
 
 static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
@@ -1615,124 +1598,6 @@ static inline unsigned color2rgb( x49gp_ui_t* ui, int color )
     return 0x000000 | ( ui->colors[ color ].red << 8 ) | ( ui->colors[ color ].green << 16 ) | ( ui->colors[ color ].blue );
 }
 
-static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, gpointer user_data )
-{
-    x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
-    const x49gp_ui_key_t* key;
-    cairo_t* cr;
-    int left_color;
-    int right_color;
-    int below_color;
-    int xl, xr, a;
-    int wl = 0, wr = 0;
-    int hl = 0, hr = 0;
-    int dl = 0, dr = 0;
-    int faceplate_color;
-
-    GdkPixmap* bg_pixmap; /* FIXME */
-
-    if ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
-        faceplate_color = UI_COLOR_FACEPLATE_49GP;
-    else
-        faceplate_color = UI_COLOR_FACEPLATE_50G;
-
-    GdkPixbuf* bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
-    gdk_pixbuf_fill( bg_pixbuf, color2rgb( ui, faceplate_color ) );
-
-    bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui_background ), ui->width, ui->height, -1 );
-
-    cr = gdk_cairo_create( bg_pixmap );
-    gdk_cairo_set_source_pixbuf( cr, bg_pixbuf, 0, 0 );
-    cairo_paint( cr );
-
-    cairo_destroy( cr );
-
-    switch ( ui->calculator ) {
-        case UI_CALCULATOR_HP49GP:
-        case UI_CALCULATOR_HP49GP_NEWRPL:
-            left_color = UI_COLOR_GREEN;
-            right_color = UI_COLOR_RED;
-            below_color = UI_COLOR_BLACK;
-            break;
-
-        default:
-            ui->calculator = UI_CALCULATOR_HP50G;
-            /* fall through */
-
-        case UI_CALCULATOR_HP50G:
-        case UI_CALCULATOR_HP50G_NEWRPL:
-            left_color = UI_COLOR_WHITE;
-            right_color = UI_COLOR_ORANGE;
-            below_color = UI_COLOR_BLUE;
-            break;
-    }
-
-    for ( int i = 0; i < NB_KEYS; i++ ) {
-        key = ui->buttons[ i ].key;
-
-        if ( key->left ) {
-            tiny_font_measure_text( key->left, &wl, &hl, &a, &dl );
-            if ( !key->right ) {
-                xl = key->x + ( key->width - wl ) / 2;
-                tiny_font_draw_text( bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
-                                     key->left );
-            }
-        }
-
-        if ( key->right ) {
-            tiny_font_measure_text( key->right, &wr, &hr, &a, &dr );
-            if ( !key->left ) {
-                xr = key->x + ( key->width - wr ) / 2;
-                tiny_font_draw_text( bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr, ui->kb_y_offset + key->y - hr + dr + 1,
-                                     key->right );
-            }
-        }
-
-        if ( key->left && key->right ) {
-            xl = key->x;
-            xr = key->x + key->width - 1 - wr;
-
-            if ( wl + wr > key->width - 4 ) {
-                xl += ( key->width - 4 - ( wl + wr ) ) / 2;
-                xr -= ( key->width - 4 - ( wl + wr ) ) / 2;
-            }
-
-            tiny_font_draw_text( bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
-                                 key->left );
-
-            tiny_font_draw_text( bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr, ui->kb_y_offset + key->y - hr + dr + 1,
-                                 key->right );
-        }
-
-        if ( key->letter ) {
-            cr = gdk_cairo_create( bg_pixmap );
-
-            regular_font_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], key->letter_size, 0.0, ui->kb_x_offset + key->x + key->width,
-                                    ui->kb_y_offset + key->y + key->height, CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
-
-            cairo_destroy( cr );
-        }
-
-        if ( key->below ) {
-            tiny_font_measure_text( key->below, &wl, &hl, &a, &dl );
-            xl = key->x + ( key->width - wl ) / 2;
-
-            tiny_font_draw_text( bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y + key->height + 2,
-                                 key->below );
-        }
-
-#if DEBUG_LAYOUT /* Debug Button Layout */
-        gdk_draw_rectangle( bg_pixmap, gtk_widget_get_style( ui->window )->white_gc, false, ui->kb_x_offset + key->x,
-                            ui->kb_y_offset + key->y, key->width, key->height );
-#endif
-    }
-
-    gdk_window_set_back_pixmap( gtk_widget_get_window( ui_background ), bg_pixmap, false );
-
-    return false;
-}
-
 static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
 #ifdef DEBUG_X49GP_UI
@@ -1797,46 +1662,6 @@ static void _ui_load__init_color( GdkColor* color, u8 red, u8 green, u8 blue )
     color->blue = ( blue << 8 ) | blue;
 }
 
-static int _ui_load__init_button_style_and_pixmap( x49gp_t* x49gp, x49gp_ui_button_t* button, x49gp_ui_color_t color )
-{
-    x49gp_ui_t* ui = x49gp->ui;
-    GdkPixbuf* src;
-    cairo_t* cr;
-    GtkStyle* style = gtk_style_new();
-    int y;
-
-    style->xthickness = 0;
-    style->ythickness = 0;
-
-    for ( int i = 0; i < 5; i++ ) {
-        style->fg[ i ] = ui->colors[ button->key->color ];
-        style->bg[ i ] = ui->colors[ UI_COLOR_BLACK ];
-
-        style->text[ i ] = style->fg[ i ];
-        style->base[ i ] = style->bg[ i ];
-
-        style->bg_pixmap[ i ] = gdk_pixmap_new( gtk_widget_get_window( ui->window ), button->key->width, button->key->height, -1 );
-
-        y = ui->kb_y_offset + button->key->y;
-
-        if ( i == GTK_STATE_ACTIVE )
-            y += 1;
-
-        src = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, button->key->width, button->key->height );
-
-        cr = gdk_cairo_create( style->bg_pixmap[ i ] );
-        gdk_cairo_set_source_pixbuf( cr, src, 0, 0 );
-        cairo_paint( cr );
-        cairo_destroy( cr );
-
-        g_object_unref( src );
-    }
-
-    gtk_widget_set_style( button->button, style );
-
-    return 0;
-}
-
 static inline void _ui_load__newrplify_ui_keys()
 {
     // modify keys' labeling for newRPL
@@ -1859,7 +1684,7 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 15 ].left = "END";
     ui_keys[ 15 ].right = "PASTE";
 
-    ui_keys[ 16 ].label = "S\\kern-1 T\\kern-1 O\\kern-1\\triangleright";
+    ui_keys[ 16 ].label = "STO⏵";
     ui_keys[ 16 ].left = "RCL";
     ui_keys[ 16 ].right = "PREV.M";
 
@@ -1868,7 +1693,7 @@ static inline void _ui_load__newrplify_ui_keys()
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ 19 ].label = "M\\kern-1 E\\kern-1 N\\kern-1 U";
+    ui_keys[ 19 ].label = "MENU";
 
     ui_keys[ 20 ].left = NULL;
 
@@ -1973,8 +1798,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     // create window and widgets/stuff
     GtkWidget* lcd_canvas_container = gtk_event_box_new();
     GtkWidget* fixed_widgets_container = gtk_fixed_new();
-    GtkWidget* faceplate = gtk_drawing_area_new();
     {
+        int faceplate_color = ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
+                                  ? UI_COLOR_FACEPLATE_49GP
+                                  : UI_COLOR_FACEPLATE_50G;
+
         ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
         gtk_window_set_default_size( GTK_WINDOW( ui->window ), ui->width, ui->height );
         gtk_window_set_accept_focus( GTK_WINDOW( ui->window ), true );
@@ -1984,11 +1812,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
         gtk_widget_set_name( ui->window, ui->name );
         gtk_widget_realize( ui->window );
-
+        gtk_widget_modify_bg( ui->window, GTK_STATE_NORMAL, &( ui->colors[ faceplate_color ] ) );
         gtk_container_add( GTK_CONTAINER( ui->window ), fixed_widgets_container );
-
-        gtk_widget_set_size_request( faceplate, ui->width, ui->height );
-        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), faceplate, 0, 0 );
 
         ui->lcd_canvas = gtk_drawing_area_new();
         gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
@@ -2002,10 +1827,41 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // keyboard
     {
+        double tiny_font_size = 8.0;
         x49gp_ui_button_t* button;
         PangoAttrList* pango_attributes;
         GdkColor* fgcolor;
-        GdkColor* bgcolor;
+        GtkWidget* ui_label;
+        GtkWidget* ui_left;
+        GtkWidget* ui_right;
+        GtkWidget* ui_letter;
+        GtkWidget* ui_below;
+
+        int left_color;
+        int right_color;
+        int below_color;
+        GtkRequisition widget_size, widget2_size;
+        int x, y, x2, y2;
+
+        switch ( ui->calculator ) {
+            case UI_CALCULATOR_HP49GP:
+            case UI_CALCULATOR_HP49GP_NEWRPL:
+                left_color = UI_COLOR_GREEN;
+                right_color = UI_COLOR_RED;
+                below_color = UI_COLOR_BLACK;
+                break;
+
+            default:
+                ui->calculator = UI_CALCULATOR_HP50G;
+                /* fall through */
+
+            case UI_CALCULATOR_HP50G:
+            case UI_CALCULATOR_HP50G_NEWRPL:
+                left_color = UI_COLOR_WHITE;
+                right_color = UI_COLOR_ORANGE;
+                below_color = UI_COLOR_BLUE;
+                break;
+        }
 
         if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
             _ui_load__newrplify_ui_keys();
@@ -2019,27 +1875,114 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->button = gtk_button_new();
             gtk_widget_set_size_request( button->button, ui_keys[ i ].width, ui_keys[ i ].height );
             gtk_widget_set( button->button, "can-focus", false, NULL );
-
-            _ui_load__init_button_style_and_pixmap( x49gp, button, ui_keys[ i ].color );
+            gtk_widget_modify_bg( button->button, GTK_STATE_NORMAL, &( ui->colors[ ui_keys[ i ].bg_color ] ) );
 
             if ( ui_keys[ i ].label ) {
-                button->label = gtk_label_new( NULL );
-                gtk_container_add( GTK_CONTAINER( button->button ), button->label );
+                ui_label = gtk_label_new( NULL );
 
                 pango_attributes = pango_attr_list_new();
                 pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( ui_keys[ i ].font_size / 1.8 ) * PANGO_SCALE ) );
                 pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
-                fgcolor = &(ui->colors[ ui_keys[ i ].color ]);
-                pango_attr_list_insert( pango_attributes,
-                                        pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
-                bgcolor = &(ui->colors[ ui_keys[ i ].bg_color ]);
-                pango_attr_list_insert( pango_attributes,
-                                        pango_attr_background_new( bgcolor->red, bgcolor->green, bgcolor->blue ) );
+                fgcolor = &( ui->colors[ ui_keys[ i ].color ] );
+                pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
 
-                gtk_label_set_attributes( GTK_LABEL( button->label ), pango_attributes );
+                gtk_label_set_attributes( GTK_LABEL( ui_label ), pango_attributes );
 
-                gtk_label_set_use_markup( GTK_LABEL( button->label ), true );
-                gtk_label_set_markup( GTK_LABEL( button->label ), ui_keys[ i ].label );
+                gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_label ), ui_keys[ i ].label );
+
+                gtk_container_add( GTK_CONTAINER( button->button ), ui_label );
+            }
+            if ( ui_keys[ i ].left ) {
+                ui_left = gtk_label_new( NULL );
+
+                pango_attributes = pango_attr_list_new();
+                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( tiny_font_size / 1.8 ) * PANGO_SCALE ) );
+                pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+                fgcolor = &( ui->colors[ left_color ] );
+                pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
+
+                gtk_label_set_attributes( GTK_LABEL( ui_left ), pango_attributes );
+
+                gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_left ), ui_keys[ i ].left );
+
+                if ( ui_keys[ i ].right ) {
+                    ui_right = gtk_label_new( NULL );
+
+                    pango_attributes = pango_attr_list_new();
+                    pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( tiny_font_size / 1.8 ) * PANGO_SCALE ) );
+                    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+                    fgcolor = &( ui->colors[ right_color ] );
+                    pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
+
+                    gtk_label_set_attributes( GTK_LABEL( ui_right ), pango_attributes );
+
+                    gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
+                    gtk_label_set_markup( GTK_LABEL( ui_right ), ui_keys[ i ].right );
+                }
+                if ( ui_keys[ i ].right ) {
+                    gtk_widget_size_request( ui_left, &widget_size );
+                    gtk_widget_size_request( ui_right, &widget2_size );
+
+                    x = ui->kb_x_offset + ui_keys[ i ].x;
+                    y = ui->kb_y_offset + ui_keys[ i ].y - widget_size.height - 2;
+
+                    x2 = ui->kb_x_offset + ui_keys[ i ].x + ui_keys[ i ].width - widget2_size.width;
+                    y2 = ui->kb_y_offset + ui_keys[ i ].y - widget2_size.height - 2;
+
+                    if ( widget_size.width + widget2_size.width > ui_keys[ i ].width ) {
+                        x -= ( ( widget_size.width + widget2_size.width ) - ui_keys[ i ].width ) / 2;
+                        x2 += ( ( widget_size.width + widget2_size.width ) - ui_keys[ i ].width ) / 2;
+                    }
+
+                    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
+                    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_right, x2, y2 );
+                } else {
+                    gtk_widget_size_request( ui_left, &widget_size );
+                    x = ui->kb_x_offset + ui_keys[ i ].x + ( ( ui_keys[ i ].width - widget_size.width ) / 2 );
+                    y = ui->kb_y_offset + ui_keys[ i ].y - widget_size.height - 2;
+                    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
+                }
+            }
+            if ( ui_keys[ i ].letter ) {
+                ui_letter = gtk_label_new( NULL );
+
+                pango_attributes = pango_attr_list_new();
+                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( ui_keys[ i ].letter_size / 1.8 ) * PANGO_SCALE ) );
+                pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+                fgcolor = &( ui->colors[ UI_COLOR_YELLOW ] );
+                pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
+
+                gtk_label_set_attributes( GTK_LABEL( ui_letter ), pango_attributes );
+
+                gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_letter ), ui_keys[ i ].letter );
+
+                gtk_widget_size_request( ui_letter, &widget_size );
+
+                x = ui->kb_x_offset + ui_keys[ i ].x + ui_keys[ i ].width;
+                y = ui->kb_y_offset + ui_keys[ i ].y + ui_keys[ i ].height - ( widget_size.height / 2 );
+                gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_letter, x, y );
+            }
+            if ( ui_keys[ i ].below ) {
+                ui_below = gtk_label_new( NULL );
+
+                pango_attributes = pango_attr_list_new();
+                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( tiny_font_size / 1.8 ) * PANGO_SCALE ) );
+                pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+                fgcolor = &( ui->colors[ below_color ] );
+                pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
+
+                gtk_label_set_attributes( GTK_LABEL( ui_below ), pango_attributes );
+
+                gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_below ), ui_keys[ i ].below );
+
+                gtk_widget_size_request( ui_below, &widget_size );
+                x = ui->kb_x_offset + ui_keys[ i ].x + ( ( ui_keys[ i ].width - widget_size.width ) / 2 );
+                y = ui->kb_y_offset + ui_keys[ i ].y + ui_keys[ i ].height + 2;
+                gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_below, x, y );
             }
 
             button->box = gtk_event_box_new();
@@ -2047,15 +1990,15 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-            gtk_widget_set_size_request( button->box, ui_keys[ i ].width, ui_keys[ i ].height );
-            gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
-                           ui->kb_y_offset + ui_keys[ i ].y );
-
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
             g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
 
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
+
+            gtk_widget_set_size_request( button->box, ui_keys[ i ].width, ui_keys[ i ].height );
+            gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
+                           ui->kb_y_offset + ui_keys[ i ].y );
         }
     }
 
@@ -2101,8 +2044,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // setup signals and events
     {
-        g_signal_connect( G_OBJECT( faceplate ), "configure-event", G_CALLBACK( draw_faceplate ), x49gp );
-
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( redraw_lcd ), x49gp );
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
