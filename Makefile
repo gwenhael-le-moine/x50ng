@@ -194,7 +194,7 @@ mrproper: distclean
 
 # auto-format code
 pretty-code:
-	clang-format -i ./src/x49gpng/*.c ./src/x49gpng/*.h
+	clang-format -i ./src/x49gpng/*.c $(shell ls ./src/x49gpng/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
 
 # Populate dist/firmware/ from hpcalc.org
 pull-firmware:

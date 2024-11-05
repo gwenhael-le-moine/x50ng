@@ -1,4 +1,3 @@
-﻿---
 Language: Cpp
 ColumnLimit: 140
 IndentWidth: 4
@@ -56,4 +55,3 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
-...

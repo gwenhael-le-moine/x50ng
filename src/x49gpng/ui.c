@@ -1711,7 +1711,7 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
     int dl = 0, dr = 0;
     int faceplate_color;
 
-    GdkPixmap* bg_pixmap;       /* FIXME */
+    GdkPixmap* bg_pixmap; /* FIXME */
 
     if ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
         faceplate_color = UI_COLOR_FACEPLATE_49GP;
@@ -1765,8 +1765,8 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
             tiny_font_measure_text( key->right, &wr, &hr, &a, &dr );
             if ( !key->left ) {
                 xr = key->x + ( key->width - wr ) / 2;
-                tiny_font_draw_text( bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
-                                     ui->kb_y_offset + key->y - hr + dr + 1, key->right );
+                tiny_font_draw_text( bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr, ui->kb_y_offset + key->y - hr + dr + 1,
+                                     key->right );
             }
         }
 
@@ -1799,8 +1799,8 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
             tiny_font_measure_text( key->below, &wl, &hl, &a, &dl );
             xl = key->x + ( key->width - wl ) / 2;
 
-            tiny_font_draw_text( bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl,
-                                 ui->kb_y_offset + key->y + key->height + 2, key->below );
+            tiny_font_draw_text( bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y + key->height + 2,
+                                 key->below );
         }
 
 #if DEBUG_LAYOUT /* Debug Button Layout */
@@ -2117,9 +2117,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-    gtk_widget_set_size_request( button->box, ui_keys[ i ].width, ui_keys[ i ].height );
-    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
-                                           ui->kb_y_offset + ui_keys[ i ].y );
+            gtk_widget_set_size_request( button->box, ui_keys[ i ].width, ui_keys[ i ].height );
+            gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
+                           ui->kb_y_offset + ui_keys[ i ].y );
 
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );

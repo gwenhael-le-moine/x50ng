@@ -117,7 +117,7 @@ struct __x49gp_ui_s__ {
     gint lcd_annunciators_height;
 };
 
-void gui_update_lcd(x49gp_t *x49gp);
+void gui_update_lcd( x49gp_t* x49gp );
 
 int gui_init( x49gp_t* x49gp );
 void gui_show_error( x49gp_t* x49gp, const char* text );
