@@ -1,6 +1,0 @@
-#define tiny_math_e_width 6
-#define tiny_math_e_height 6
-#define tiny_math_e_x_hot 0
-#define tiny_math_e_y_hot 5
-static unsigned char tiny_math_e_bits[] = {
-   0x0c, 0x12, 0x09, 0x07, 0x11, 0x0e};

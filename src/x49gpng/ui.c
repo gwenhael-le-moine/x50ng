@@ -20,8 +20,6 @@
 #include "ui.h"
 #include "s3c2410.h"
 #include "ui_bitmaps.h"
-#include "ui_tiny_font.h"
-#include "ui_regular_font.h"
 
 #include "gdbstub.h"
 

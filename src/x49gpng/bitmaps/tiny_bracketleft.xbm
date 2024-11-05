@@ -1,6 +1,0 @@
-#define tiny_bracketleft_width 4
-#define tiny_bracketleft_height 9
-#define tiny_bracketleft_x_hot 0
-#define tiny_bracketleft_y_hot 7
-static unsigned char tiny_bracketleft_bits[] = {
-   0x07, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x07};

@@ -1,6 +1,0 @@
-#define tiny_guillemotright_width 11
-#define tiny_guillemotright_height 6
-#define tiny_guillemotright_x_hot 0
-#define tiny_guillemotright_y_hot 5
-static unsigned char tiny_guillemotright_bits[] = {
-   0x63, 0x00, 0x8c, 0x01, 0x10, 0x02, 0x8c, 0x01, 0x63, 0x00, 0x00, 0x00};

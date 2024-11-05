@@ -1,6 +1,0 @@
-#define tiny_T_width 5
-#define tiny_T_height 7
-#define tiny_T_x_hot 1
-#define tiny_T_y_hot 6
-static unsigned char tiny_T_bits[] = {
-   0x1f, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04};

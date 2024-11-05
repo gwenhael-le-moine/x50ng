@@ -1,6 +1,0 @@
-#define tiny_comma_width 4
-#define tiny_comma_height 3
-#define tiny_comma_x_hot 0
-#define tiny_comma_y_hot 1
-static unsigned char tiny_comma_bits[] = {
-   0x06, 0x06, 0x03};

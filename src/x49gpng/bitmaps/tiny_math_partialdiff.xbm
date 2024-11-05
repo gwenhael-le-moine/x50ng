@@ -1,6 +1,0 @@
-#define tiny_math_partialdiff_width 6
-#define tiny_math_partialdiff_height 8
-#define tiny_math_partialdiff_x_hot 0
-#define tiny_math_partialdiff_y_hot 7
-static unsigned char tiny_math_partialdiff_bits[] = {
-   0x04, 0x08, 0x08, 0x1e, 0x11, 0x11, 0x11, 0x0e};

@@ -1,6 +1,0 @@
-#define tiny_one_width 3
-#define tiny_one_height 7
-#define tiny_one_x_hot 0
-#define tiny_one_y_hot 6
-static unsigned char tiny_one_bits[] = {
-   0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02};

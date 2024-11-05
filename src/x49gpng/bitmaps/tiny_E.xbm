@@ -1,6 +1,0 @@
-#define tiny_E_width 4
-#define tiny_E_height 7
-#define tiny_E_x_hot 0
-#define tiny_E_y_hot 6
-static unsigned char tiny_E_bits[] = {
-   0x17, 0x01, 0x01, 0x03, 0x01, 0x01, 0x17};

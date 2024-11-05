@@ -1,7 +1,0 @@
-#define tiny_math_arrowright_width 12
-#define tiny_math_arrowright_height 6
-#define tiny_math_arrowright_x_hot 0
-#define tiny_math_arrowright_y_hot 5
-static unsigned char tiny_math_arrowright_bits[] = {
- 0x40, 0x00, 0xc0, 0x01, 0xff, 0x07, 0xc0, 0x01, 0x40, 0x00, 0x00, 0x00
- };

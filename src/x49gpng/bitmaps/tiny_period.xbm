@@ -1,6 +1,0 @@
-#define tiny_period_width 3
-#define tiny_period_height 2
-#define tiny_period_x_hot 0
-#define tiny_period_y_hot 1
-static unsigned char tiny_period_bits[] = {
-   0x03, 0x03};

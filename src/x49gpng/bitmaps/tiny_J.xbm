@@ -1,6 +1,0 @@
-#define tiny_J_width 5
-#define tiny_J_height 7
-#define tiny_J_x_hot 0
-#define tiny_J_y_hot 6
-static unsigned char tiny_J_bits[] = {
-   0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x06};

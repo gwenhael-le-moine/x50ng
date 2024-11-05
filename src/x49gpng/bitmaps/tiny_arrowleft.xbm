@@ -1,6 +1,0 @@
-#define tiny_arrowleft_width 7
-#define tiny_arrowleft_height 5
-#define tiny_arrowleft_x_hot 0
-#define tiny_arrowleft_y_hot 4
-static unsigned char tiny_arrowleft_bits[] = {
- 0x02, 0x3f, 0x02, 0x00, 0x00 };

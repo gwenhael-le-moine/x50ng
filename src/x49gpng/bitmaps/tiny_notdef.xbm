@@ -1,6 +1,0 @@
-#define tiny_notdef_width 4
-#define tiny_notdef_height 5
-#define tiny_notdef_x_hot 0
-#define tiny_notdef_y_hot 4
-static unsigned char tiny_notdef_bits[] = {
-   0x07, 0x07, 0x07, 0x00, 0x00};

@@ -1,6 +1,0 @@
-#define tiny_math_summation_width 6
-#define tiny_math_summation_height 9
-#define tiny_math_summation_x_hot 0
-#define tiny_math_summation_y_hot 7
-static unsigned char tiny_math_summation_bits[] = {
-   0x1f, 0x11, 0x02, 0x04, 0x08, 0x04, 0x02, 0x11, 0x1f};

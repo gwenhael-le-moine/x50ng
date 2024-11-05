@@ -1,6 +1,0 @@
-#define tiny_math_infinity_width 13
-#define tiny_math_infinity_height 5
-#define tiny_math_infinity_x_hot 0
-#define tiny_math_infinity_y_hot 4
-static unsigned char tiny_math_infinity_bits[] = {
- 0x9e, 0x07, 0x61, 0x08, 0x61, 0x08, 0x9e, 0x07, 0x00, 0x00 };

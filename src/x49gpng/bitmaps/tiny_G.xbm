@@ -1,6 +1,0 @@
-#define tiny_G_width 6
-#define tiny_G_height 7
-#define tiny_G_x_hot 0
-#define tiny_G_y_hot 6
-static unsigned char tiny_G_bits[] = {
-   0x0e, 0x11, 0x01, 0x01, 0x19, 0x11, 0x0e};

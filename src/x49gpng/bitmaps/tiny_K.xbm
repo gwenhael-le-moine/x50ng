@@ -1,6 +1,0 @@
-#define tiny_K_width 5
-#define tiny_K_height 7
-#define tiny_K_x_hot 0
-#define tiny_K_y_hot 6
-static unsigned char tiny_K_bits[] = {
-   0x09, 0x05, 0x05, 0x03, 0x05, 0x05, 0x09};

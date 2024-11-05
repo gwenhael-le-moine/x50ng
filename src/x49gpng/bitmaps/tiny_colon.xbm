@@ -1,6 +1,0 @@
-#define tiny_colon_width 3
-#define tiny_colon_height 6
-#define tiny_colon_x_hot 0
-#define tiny_colon_y_hot 5
-static unsigned char tiny_colon_bits[] = {
- 0x03, 0x03, 0x00, 0x00, 0x03, 0x03 };

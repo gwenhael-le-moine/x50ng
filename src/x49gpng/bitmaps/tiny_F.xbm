@@ -1,6 +1,0 @@
-#define tiny_F_width 4
-#define tiny_F_height 7
-#define tiny_F_x_hot 0
-#define tiny_F_y_hot 6
-static unsigned char tiny_F_bits[] = {
-   0x07, 0x01, 0x01, 0x03, 0x01, 0x01, 0x01};

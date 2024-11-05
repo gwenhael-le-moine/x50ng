@@ -1,6 +1,0 @@
-#define tiny_hyphen_width 5
-#define tiny_hyphen_height 4
-#define tiny_hyphen_x_hot 0
-#define tiny_hyphen_y_hot 3
-static unsigned char tiny_hyphen_bits[] = {
-   0x0f, 0x00, 0x00, 0x00};

@@ -1,6 +1,0 @@
-#define tiny_math_greater_width 6
-#define tiny_math_greater_height 7
-#define tiny_math_greater_x_hot 0
-#define tiny_math_greater_y_hot 6
-static unsigned char tiny_math_greater_bits[] = {
-   0x03, 0x0c, 0x10, 0x0c, 0x03, 0x00, 0x00};

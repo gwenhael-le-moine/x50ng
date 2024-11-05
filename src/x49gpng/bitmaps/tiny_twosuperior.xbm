@@ -1,6 +1,0 @@
-#define tiny_twosuperior_width 5
-#define tiny_twosuperior_height 9
-#define tiny_twosuperior_x_hot 0
-#define tiny_twosuperior_y_hot 8
-static unsigned char tiny_twosuperior_bits[] = {
-   0x02, 0x05, 0x04, 0x02, 0x07, 0x00, 0x00, 0x00, 0x00};

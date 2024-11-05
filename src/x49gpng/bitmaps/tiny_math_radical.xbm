@@ -1,6 +1,0 @@
-#define tiny_math_radical_width 8
-#define tiny_math_radical_height 11
-#define tiny_math_radical_x_hot 0
-#define tiny_math_radical_y_hot 8
-static unsigned char tiny_math_radical_bits[] = {
-   0x40, 0x40, 0x40, 0x20, 0x20, 0x20, 0x17, 0x14, 0x1c, 0x08, 0x08};

@@ -1,6 +1,0 @@
-#define tiny_R_width 5
-#define tiny_R_height 7
-#define tiny_R_x_hot 0
-#define tiny_R_y_hot 6
-static unsigned char tiny_R_bits[] = {
-   0x07, 0x09, 0x09, 0x07, 0x05, 0x09, 0x09};

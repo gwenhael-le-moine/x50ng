@@ -1,6 +1,0 @@
-#define tiny_V_width 5
-#define tiny_V_height 7
-#define tiny_V_x_hot 0
-#define tiny_V_y_hot 6
-static unsigned char tiny_V_bits[] = {
-   0x09, 0x09, 0x09, 0x09, 0x09, 0x06, 0x06};

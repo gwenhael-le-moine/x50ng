@@ -1,6 +1,0 @@
-#define tiny_L_width 4
-#define tiny_L_height 7
-#define tiny_L_x_hot 0
-#define tiny_L_y_hot 6
-static unsigned char tiny_L_bits[] = {
-   0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x07};

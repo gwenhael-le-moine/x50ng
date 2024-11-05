@@ -1,6 +1,0 @@
-#define tiny_underscore_width 6
-#define tiny_underscore_height 3
-#define tiny_underscore_x_hot 1
-#define tiny_underscore_y_hot 0
-static unsigned char tiny_underscore_bits[] = {
-   0x00, 0x00, 0x3f};

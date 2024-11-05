@@ -1,7 +1,0 @@
-#define tiny_math_pi_width 9
-#define tiny_math_pi_height 6
-#define tiny_math_pi_x_hot 0
-#define tiny_math_pi_y_hot 5
-static unsigned char tiny_math_pi_bits[] = {
- 0xfe, 0x00, 0x25, 0x00, 0x24, 0x00, 0x24, 0x00, 0xa4, 0x00, 0x42, 0x00
- };

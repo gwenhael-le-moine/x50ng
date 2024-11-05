@@ -1,6 +1,0 @@
-#define tiny_braceright_width 4
-#define tiny_braceright_height 9
-#define tiny_braceright_x_hot 0
-#define tiny_braceright_y_hot 7
-static unsigned char tiny_braceright_bits[] = {
-   0x01, 0x02, 0x02, 0x02, 0x04, 0x02, 0x02, 0x02, 0x01};

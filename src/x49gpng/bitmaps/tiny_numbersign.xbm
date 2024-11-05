@@ -1,6 +1,0 @@
-#define tiny_numbersign_width 6
-#define tiny_numbersign_height 6
-#define tiny_numbersign_x_hot 0
-#define tiny_numbersign_y_hot 5
-static unsigned char tiny_numbersign_bits[] = {
-   0x0a, 0x1f, 0x0a, 0x0a, 0x1f, 0x0a};
