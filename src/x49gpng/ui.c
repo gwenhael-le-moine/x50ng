@@ -1602,7 +1602,7 @@ static void react_to_button_realize( GtkWidget* widget, gpointer user_data )
     w = widget_allocation.width;
     h = widget_allocation.height;
 
-    button->pixmap = gdk_pixmap_new( gtk_widget_get_style( widget )->bg_pixmap[ 0 ], w, h, -1 );
+    button->pixmap = gdk_pixmap_new( gtk_widget_get_window( ui->window ), w, h, -1 );
 
     xoffset += 2;
     yoffset += 2;
@@ -1711,8 +1711,7 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
     int dl = 0, dr = 0;
     int faceplate_color;
 
-    if ( NULL != ui->bg_pixmap )
-        return false;
+    GdkPixmap* bg_pixmap;       /* FIXME */
 
     if ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
         faceplate_color = UI_COLOR_FACEPLATE_49GP;
@@ -1722,24 +1721,9 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
     GdkPixbuf* bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
     gdk_pixbuf_fill( bg_pixbuf, color2rgb( ui, faceplate_color ) );
 
-    /* cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, ui->width, ui->height); */
-    /* cr = cairo_create( surface ); */
-    /* /\* Draw the pixbuf *\/ */
-    /* gdk_cairo_set_source_pixbuf (cr, ui->bg_pixbuf, 0, 0); */
-    /* cairo_paint (cr); */
-    /* /\* Draw a red rectangle *\/ */
+    bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui_background ), ui->width, ui->height, -1 );
 
-    /* GdkColor color = ui->colors[ UI_COLOR_GRAYSCALE_0 ]; */
-    /* cairo_set_source_rgb( cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0 ); */
-    /* cairo_rectangle (cr, ui->lcd_x_offset - 2, ui->lcd_y_offset - 2, ui->lcd_width + 4, ui->lcd_height + 4 ); */
-    /* cairo_fill (cr); */
-
-    /* cairo_surface_destroy( surface ); */
-    /* cairo_destroy( cr ); */
-
-    ui->bg_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui_background ), ui->width, ui->height, -1 );
-
-    cr = gdk_cairo_create( ui->bg_pixmap );
+    cr = gdk_cairo_create( bg_pixmap );
     gdk_cairo_set_source_pixbuf( cr, bg_pixbuf, 0, 0 );
     cairo_paint( cr );
 
@@ -1772,7 +1756,7 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
             tiny_font_measure_text( key->left, &wl, &hl, &a, &dl );
             if ( !key->right ) {
                 xl = key->x + ( key->width - wl ) / 2;
-                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
+                tiny_font_draw_text( bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
                                      key->left );
             }
         }
@@ -1781,7 +1765,7 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
             tiny_font_measure_text( key->right, &wr, &hr, &a, &dr );
             if ( !key->left ) {
                 xr = key->x + ( key->width - wr ) / 2;
-                tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
+                tiny_font_draw_text( bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr,
                                      ui->kb_y_offset + key->y - hr + dr + 1, key->right );
             }
         }
@@ -1795,15 +1779,15 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
                 xr -= ( key->width - 4 - ( wl + wr ) ) / 2;
             }
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
+            tiny_font_draw_text( bg_pixmap, &ui->colors[ left_color ], ui->kb_x_offset + xl, ui->kb_y_offset + key->y - hl + dl + 1,
                                  key->left );
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr, ui->kb_y_offset + key->y - hr + dr + 1,
+            tiny_font_draw_text( bg_pixmap, &ui->colors[ right_color ], ui->kb_x_offset + xr, ui->kb_y_offset + key->y - hr + dr + 1,
                                  key->right );
         }
 
         if ( key->letter ) {
-            cr = gdk_cairo_create( ui->bg_pixmap );
+            cr = gdk_cairo_create( bg_pixmap );
 
             regular_font_draw_text( cr, &ui->colors[ UI_COLOR_YELLOW ], key->letter_size, 0.0, ui->kb_x_offset + key->x + key->width,
                                     ui->kb_y_offset + key->y + key->height, CAIRO_FONT_SLANT_NORMAL, key->font_weight, key->letter );
@@ -1815,17 +1799,17 @@ static int draw_faceplate( GtkWidget* ui_background, GdkEventConfigure* event, g
             tiny_font_measure_text( key->below, &wl, &hl, &a, &dl );
             xl = key->x + ( key->width - wl ) / 2;
 
-            tiny_font_draw_text( ui->bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl,
+            tiny_font_draw_text( bg_pixmap, &ui->colors[ below_color ], ui->kb_x_offset + xl,
                                  ui->kb_y_offset + key->y + key->height + 2, key->below );
         }
 
 #if DEBUG_LAYOUT /* Debug Button Layout */
-        gdk_draw_rectangle( ui->bg_pixmap, gtk_widget_get_style( ui->window )->white_gc, false, ui->kb_x_offset + key->x,
+        gdk_draw_rectangle( bg_pixmap, gtk_widget_get_style( ui->window )->white_gc, false, ui->kb_x_offset + key->x,
                             ui->kb_y_offset + key->y, key->width, key->height );
 #endif
     }
 
-    gdk_window_set_back_pixmap( gtk_widget_get_window( ui_background ), ui->bg_pixmap, false );
+    gdk_window_set_back_pixmap( gtk_widget_get_window( ui_background ), bg_pixmap, false );
 
     return false;
 }
@@ -1990,12 +1974,6 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 50 ].left = NULL;
 }
 
-static void _ui_load__place_ui_element_at( x49gp_t* x49gp, GtkFixed* fixed, GtkWidget* widget, gint x, gint y, gint width, gint height )
-{
-    gtk_widget_set_size_request( widget, width, height );
-    gtk_fixed_put( fixed, widget, x, y );
-}
-
 static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
@@ -2074,38 +2052,33 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // create window and widgets/stuff
-    GtkWidget* lcd_canvas_container;
+    GtkWidget* lcd_canvas_container = gtk_event_box_new();
+    GtkWidget* fixed_widgets_container = gtk_fixed_new();
+    GtkWidget* faceplate = gtk_drawing_area_new();
     {
-        //ui->bg_pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, ui->width, ui->height );
-
         ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
         gtk_window_set_default_size( GTK_WINDOW( ui->window ), ui->width, ui->height );
         gtk_window_set_accept_focus( GTK_WINDOW( ui->window ), true );
         gtk_window_set_focus_on_map( GTK_WINDOW( ui->window ), true );
         gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
         gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
-
-        gtk_widget_set_name( ui->window, ui->name );
         gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
-
+        gtk_widget_set_name( ui->window, ui->name );
         gtk_widget_realize( ui->window );
 
-        ui->fixed = gtk_fixed_new();
-        gtk_container_add( GTK_CONTAINER( ui->window ), ui->fixed );
+        gtk_container_add( GTK_CONTAINER( ui->window ), fixed_widgets_container );
 
-        ui->background = gtk_drawing_area_new();
-        gtk_widget_set_size_request (ui->background, ui->width, ui->height);
-        _ui_load__place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), ui->background, 0, 0, ui->width, ui->height );
+        gtk_widget_set_size_request( faceplate, ui->width, ui->height );
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), faceplate, 0, 0 );
 
         ui->lcd_canvas = gtk_drawing_area_new();
         gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
 
-        lcd_canvas_container = gtk_event_box_new();
         gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_canvas_container ), true );
         gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_canvas_container ), false );
         gtk_container_add( GTK_CONTAINER( lcd_canvas_container ), ui->lcd_canvas );
-        _ui_load__place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), lcd_canvas_container, ui->lcd_x_offset, ui->lcd_y_offset, ui->lcd_width,
-                                       ui->lcd_height );
+        gtk_widget_set_size_request( lcd_canvas_container, ui->lcd_width, ui->lcd_height );
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_canvas_container, ui->lcd_x_offset, ui->lcd_y_offset );
     }
 
     // keyboard
@@ -2144,8 +2117,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
             gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-            _ui_load__place_ui_element_at( x49gp, GTK_FIXED( ui->fixed ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
-                                           ui->kb_y_offset + ui_keys[ i ].y, ui_keys[ i ].width, ui_keys[ i ].height );
+    gtk_widget_set_size_request( button->box, ui_keys[ i ].width, ui_keys[ i ].height );
+    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
+                                           ui->kb_y_offset + ui_keys[ i ].y );
 
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
@@ -2197,7 +2171,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // setup signals and events
     {
-        g_signal_connect( G_OBJECT( ui->background ), "configure-event", G_CALLBACK( draw_faceplate ), x49gp );
+        g_signal_connect( G_OBJECT( faceplate ), "configure-event", G_CALLBACK( draw_faceplate ), x49gp );
 
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( redraw_lcd ), x49gp );
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );

@@ -74,20 +74,16 @@ typedef struct {
     GtkWidget* button;
     GtkWidget* label;
     GtkWidget* box;
-    GdkPixmap* pixmap;          /* FIXME */
+    GdkPixmap* pixmap; /* FIXME */
     gboolean down;
     gboolean hold;
 } x49gp_ui_button_t;
 
 struct __x49gp_ui_s__ {
     GtkWidget* window;
-    GtkWidget* fixed;
     GtkWidget* menu;
     GtkWidget* menu_unmount;
     GtkWidget* menu_debug;
-
-    GdkPixmap* bg_pixmap;       /* FIXME */
-    GtkWidget* background;
 
     GdkColor colors[ UI_COLOR_MAX ];
 
@@ -99,7 +95,7 @@ struct __x49gp_ui_s__ {
     char* name;
 
     GtkWidget* lcd_canvas;
-    GdkPixmap* lcd_pixmap;      /* FIXME */
+    GdkPixmap* lcd_pixmap; /* FIXME */
 
     cairo_surface_t* ann_left_surface;
     cairo_surface_t* ann_right_surface;
