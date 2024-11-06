@@ -19,7 +19,6 @@
 #include "x49gp.h"
 #include "ui.h"
 #include "s3c2410.h"
-#include "ui_bitmaps.h"
 
 #include "gdbstub.h"
 
@@ -1571,24 +1570,6 @@ static int redraw_lcd( GtkWidget* widget, GdkEventExpose* event, gpointer user_d
     return false;
 }
 
-static GtkWidget* create_annunciator_widget( x49gp_ui_t* ui, const char* label )
-{
-    GtkWidget* ui_ann = gtk_label_new( NULL );
-
-    PangoAttrList* pango_attributes = ui_load__pango_attrs_common_new();
-    pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( 12.0 / 1.8 ) * PANGO_SCALE ) );
-    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
-    GdkColor* fgcolor = &( ui->colors[ UI_COLOR_BLACK ] );
-    pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
-
-    gtk_label_set_attributes( GTK_LABEL( ui_ann ), pango_attributes );
-
-    gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
-    gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
-
-    return ui_ann;
-}
-
 static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
@@ -1596,24 +1577,6 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
 
     if ( NULL != ui->lcd_pixmap )
         return false;
-
-    /* FIXME: render this using unicode labels too */
-    const cairo_format_t cairo_fmt = CAIRO_FORMAT_A1;
-    int stride = cairo_format_stride_for_width( cairo_fmt, 12 );
-    ui->ann_left_surface = cairo_image_surface_create_for_data( ann_left_bits, cairo_fmt, ann_left_width, ann_left_height, stride );
-    ui->ann_right_surface = cairo_image_surface_create_for_data( ann_right_bits, cairo_fmt, ann_right_width, ann_right_height, stride );
-    ui->ann_alpha_surface = cairo_image_surface_create_for_data( ann_alpha_bits, cairo_fmt, ann_alpha_width, ann_alpha_height, stride );
-    ui->ann_battery_surface =
-        cairo_image_surface_create_for_data( ann_battery_bits, cairo_fmt, ann_battery_width, ann_battery_height, stride );
-    ui->ann_busy_surface = cairo_image_surface_create_for_data( ann_busy_bits, cairo_fmt, ann_busy_width, ann_busy_height, stride );
-    ui->ann_io_surface = cairo_image_surface_create_for_data( ann_io_bits, cairo_fmt, ann_io_width, ann_io_height, stride );
-
-    ui->ui_ann_left = create_annunciator_widget( ui, "⮢" );
-    ui->ui_ann_right = create_annunciator_widget( ui, "⮣" );
-    ui->ui_ann_alpha = create_annunciator_widget( ui, "α" );
-    ui->ui_ann_battery = create_annunciator_widget( ui, "🪫" );
-    ui->ui_ann_busy = create_annunciator_widget( ui, "⌛" );
-    ui->ui_ann_io = create_annunciator_widget( ui, "⇄" );
 
     ui->lcd_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height, -1 );
 
@@ -1770,6 +1733,24 @@ static void ui_load__style_button( x49gp_ui_t* ui, x49gp_ui_button_t* button )
     gtk_widget_set_style( button->button, style );
 }
 
+static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const char* label )
+{
+    GtkWidget* ui_ann = gtk_label_new( NULL );
+
+    PangoAttrList* pango_attributes = ui_load__pango_attrs_common_new();
+    pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( 12.0 / 1.8 ) * PANGO_SCALE ) );
+    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+    GdkColor* fgcolor = &( ui->colors[ UI_COLOR_GRAYSCALE_0 ] );
+    pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
+
+    gtk_label_set_attributes( GTK_LABEL( ui_ann ), pango_attributes );
+
+    gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
+    gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
+
+    return ui_ann;
+}
+
 static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
@@ -1829,22 +1810,26 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     /* set coordinates of LCD and keyboard */
+    int annunciator_height = 16;
     {
-        ui->lcd_annunciators_height = 16;
         ui->lcd_width = 131 * LCD_PIXEL_SCALE;
-        ui->lcd_height = ( 80 * LCD_PIXEL_SCALE ) + ui->lcd_annunciators_height;
-        ui->lcd_x_offset = ui->lcd_y_offset = 20;
+        ui->lcd_height = 80 * LCD_PIXEL_SCALE;
+        ui->lcd_x_offset = ui->annunciators_x_offset = ui->annunciators_y_offset = 20;
 
         ui->kb_x_offset = 10;
-        ui->kb_y_offset = ui->lcd_height + ( 3 * ui->lcd_y_offset );
 
-        ui->width = ui->lcd_width + ( 2 * ui->lcd_x_offset );
-        ui->height = ui->kb_y_offset + ui_keys[ NB_KEYS - 1 ].y + KB_LINE_HEIGHT;
         int kb_width = ( ui->kb_x_offset ) + ( 5 * KB_COLUMN_WIDTH_5_KEYS );
         if ( ui->width < kb_width ) {
             ui->width = kb_width;
-            ui->lcd_x_offset = ui->lcd_y_offset = ( ui->width - ui->lcd_width ) / 2;
+            ui->lcd_x_offset = ui->annunciators_x_offset = ui->annunciators_y_offset = ( ui->width - ui->lcd_width ) / 2;
         }
+
+        ui->lcd_y_offset = ui->annunciators_y_offset + annunciator_height;
+
+        ui->kb_y_offset = ui->lcd_height + ( 2 * ui->lcd_y_offset );
+
+        ui->width = ui->lcd_width + ( 2 * ui->lcd_x_offset );
+        ui->height = ui->kb_y_offset + ui_keys[ NB_KEYS - 1 ].y + KB_LINE_HEIGHT;
     }
 
     // create window and widgets/stuff
@@ -1867,22 +1852,56 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_widget_modify_bg( ui->window, GTK_STATE_NORMAL, &( ui->colors[ faceplate_color ] ) );
         gtk_container_add( GTK_CONTAINER( ui->window ), fixed_widgets_container );
 
+        g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
+        g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( react_to_window_click ), x49gp );
+        g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
+        g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
+        gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
+
         ui->lcd_canvas = gtk_drawing_area_new();
-        gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
-
-        GtkStyle* lcd_canvas_style = gtk_style_new();
-
-        for ( int i = 0; i < 5; i++ ) {
-            lcd_canvas_style->bg[ i ] = ui->colors[ UI_COLOR_GRAYSCALE_0 ];
-        }
-
-        gtk_widget_set_style( ui->lcd_canvas, lcd_canvas_style );
+        gtk_widget_set_size_request( ui->lcd_canvas, ui->lcd_width, ui->lcd_height );
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( redraw_lcd ), x49gp );
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
         gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_canvas_container ), true );
         gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_canvas_container ), false );
         gtk_container_add( GTK_CONTAINER( lcd_canvas_container ), ui->lcd_canvas );
         gtk_widget_set_size_request( lcd_canvas_container, ui->lcd_width, ui->lcd_height );
         gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_canvas_container, ui->lcd_x_offset, ui->lcd_y_offset );
+        g_signal_connect( G_OBJECT( lcd_canvas_container ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
+
+        ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
+        ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
+        ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
+        ui->ui_ann_battery = _ui_load__create_annunciator_widget( ui, "🪫" );
+        ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
+        ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
+
+        GtkWidget* fixed_annunciators_container = gtk_fixed_new();
+        gtk_widget_modify_bg( fixed_annunciators_container, GTK_STATE_NORMAL, &( ui->colors[ UI_COLOR_GRAYSCALE_0 ] ) );
+        gtk_widget_set_size_request( fixed_annunciators_container, ui->lcd_width, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), fixed_annunciators_container, ui->annunciators_x_offset,
+                       ui->annunciators_y_offset );
+
+        gtk_widget_set_size_request( ui->ui_ann_left, 15, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_left, 11, 0 );
+
+        gtk_widget_set_size_request( ui->ui_ann_right, 15, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_right, 56, 0 );
+
+        gtk_widget_set_size_request( ui->ui_ann_alpha, 15, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_alpha, 101, 0 );
+
+        gtk_widget_set_size_request( ui->ui_ann_battery, 15, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_battery, 146, 0 );
+
+        gtk_widget_set_size_request( ui->ui_ann_busy, 15, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_busy, 191, 0 );
+
+        gtk_widget_set_size_request( ui->ui_ann_io, 15, annunciator_height );
+        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_io, 236, 0 );
     }
 
     // keyboard
@@ -2103,23 +2122,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_widget_show_all( ui->menu );
     }
 
-    // setup signals and events
-    {
-        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( redraw_lcd ), x49gp );
-        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
-
-        g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
-        g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( react_to_window_click ), x49gp );
-
-        g_signal_connect( G_OBJECT( lcd_canvas_container ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
-        g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
-        g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
-
-        gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
-    }
-
     // finally show the window
     gtk_widget_show_all( ui->window );
 
@@ -2139,16 +2141,6 @@ static void _draw_pixel( GdkPixmap* target, int x, int y, int w, int h, GdkColor
     cairo_destroy( cr );
 }
 
-static inline void _draw_annunciator( GdkPixmap* target, cairo_surface_t* surface, int x, int y, int w, int h, GdkColor* color )
-{
-    cairo_t* cr = gdk_cairo_create( target );
-
-    cairo_set_source_rgb( cr, color->red / 65535.0, color->green / 65535.0, color->blue / 65535.0 );
-    cairo_mask_surface( cr, surface, x, y );
-
-    cairo_destroy( cr );
-}
-
 /********************/
 /* Public functions */
 /********************/
@@ -2159,29 +2151,16 @@ void gui_update_lcd( x49gp_t* x49gp )
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
 
     if ( lcd->lcdcon1 & 1 ) {
-        GdkColor color;
+        gtk_widget_set_visible( ui->ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) > 0 );
+        gtk_widget_set_visible( ui->ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) > 0 );
+        gtk_widget_set_visible( ui->ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) > 0 );
+        gtk_widget_set_visible( ui->ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) > 0 );
+        gtk_widget_set_visible( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) > 0 );
+        gtk_widget_set_visible( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) > 0 );
 
-        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 1 ) ];
-        _draw_annunciator( ui->lcd_pixmap, ui->ann_left_surface, 11, 0, 15, 12, &color );
-
-        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 2 ) ];
-        _draw_annunciator( ui->lcd_pixmap, ui->ann_right_surface, 56, 0, 15, 12, &color );
-
-        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 3 ) ];
-        _draw_annunciator( ui->lcd_pixmap, ui->ann_alpha_surface, 101, 0, 15, 12, &color );
-
-        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 4 ) ];
-        _draw_annunciator( ui->lcd_pixmap, ui->ann_battery_surface, 146, 0, 15, 12, &color );
-
-        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 5 ) ];
-        _draw_annunciator( ui->lcd_pixmap, ui->ann_busy_surface, 191, 0, 15, 12, &color );
-
-        color = ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, 131, 0 ) ];
-        _draw_annunciator( ui->lcd_pixmap, ui->ann_io_surface, 236, 0, 15, 12, &color );
-
-        for ( int y = 0; y < ( ( ui->lcd_height - ui->lcd_annunciators_height ) / LCD_PIXEL_SCALE ); y++ )
+        for ( int y = 0; y < ( ui->lcd_height / LCD_PIXEL_SCALE ); y++ )
             for ( int x = 0; x < ( ui->lcd_width / LCD_PIXEL_SCALE ); x++ )
-                _draw_pixel( ui->lcd_pixmap, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y + ui->lcd_annunciators_height, LCD_PIXEL_SCALE,
+                _draw_pixel( ui->lcd_pixmap, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y, LCD_PIXEL_SCALE,
                              LCD_PIXEL_SCALE, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
     }
 

@@ -94,13 +94,7 @@ struct __x49gp_ui_s__ {
 
     GtkWidget* lcd_canvas;
     GdkPixmap* lcd_pixmap; /* FIXME */
-
-    cairo_surface_t* ann_left_surface;
-    cairo_surface_t* ann_right_surface;
-    cairo_surface_t* ann_alpha_surface;
-    cairo_surface_t* ann_battery_surface;
-    cairo_surface_t* ann_busy_surface;
-    cairo_surface_t* ann_io_surface;
+    cairo_surface_t* lcd_surface;
 
     GtkWidget* ui_ann_left;
     GtkWidget* ui_ann_right;
@@ -115,11 +109,13 @@ struct __x49gp_ui_s__ {
     gint kb_x_offset;
     gint kb_y_offset;
 
+    gint annunciators_x_offset;
+    gint annunciators_y_offset;
+
     gint lcd_x_offset;
     gint lcd_y_offset;
     gint lcd_width;
     gint lcd_height;
-    gint lcd_annunciators_height;
 };
 
 void gui_update_lcd( x49gp_t* x49gp );
