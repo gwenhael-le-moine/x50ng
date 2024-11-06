@@ -191,6 +191,8 @@ Known Limitations:
 
 Post fork todo-list:
 
-* [DOING] first port `gtk+-2` code to `gtk+-3`
-  - in progress, starting https://docs.gtk.org/gtk3/migrating-2to3.html#use-cairo-for-drawing
-* then port `gtk+-3` code to `gtk4`
+* [DONE] first port `gtk+-2` code to `gtk+-3`
+  - https://docs.gtk.org/gtk3/migrating-2to3.html
+* [TODO] make it nicer in `gtk+-3`
+* [TODO] then port `gtk+-3` code to `gtk4`
+  - https://docs.gtk.org/gtk4/migrating-3to4.html
