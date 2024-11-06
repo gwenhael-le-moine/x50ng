@@ -1858,7 +1858,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
         ui->lcd_canvas = gtk_drawing_area_new();
         gtk_widget_set_size_request( ui->lcd_canvas, ui->lcd_width, ui->lcd_height );
+#if GTK_MAJOR_VERSION == 2
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "expose-event", G_CALLBACK( redraw_lcd ), x49gp );
+#elif GTK_MAJOR_VERSION == 3
+        g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
+#endif
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
         gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_canvas_container ), true );
