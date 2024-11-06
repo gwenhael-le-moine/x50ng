@@ -1459,7 +1459,7 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
         case GDK_KEY_period:
         case GDK_KEY_comma:
         case GDK_KEY_KP_Decimal:
-        case GDK_KP_Separator:
+        case GDK_KEY_KP_Separator:
             index = 48;
             break;
         case GDK_KEY_space:
@@ -1949,7 +1949,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             button->button = gtk_button_new();
             gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
-            gtk_widget_set( button->button, "can-focus", false, NULL );
+            gtk_widget_set_can_focus( button->button, false );
 
             ui_load__style_button( ui, button );
 
