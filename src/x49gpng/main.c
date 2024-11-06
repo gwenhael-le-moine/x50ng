@@ -135,7 +135,7 @@ uint32_t do_arm_semihosting( CPUState* env )
                     printf( "%s: BEEP: frequency %u, time %u, override %u\n", __FUNCTION__, env->regs[ 1 ], env->regs[ 2 ],
                             env->regs[ 3 ] );
 
-                    gdk_beep();
+                    gdk_display_beep( gdk_display_get_default() );
                     env->regs[ 0 ] = 0;
                     return 1;
 
@@ -205,7 +205,7 @@ void x49gp_lcd_timer( void* data )
     int64_t now, expires;
 
     gui_update_lcd( x49gp );
-    gdk_flush();
+    gdk_display_flush( gdk_display_get_default() );
 
     now = x49gp_get_clock();
     expires = now + X49GP_LCD_REFRESH_INTERVAL;
