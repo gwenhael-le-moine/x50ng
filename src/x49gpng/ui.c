@@ -1717,6 +1717,34 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 50 ].left = NULL;
 }
 
+static void ui_load__style_button( x49gp_ui_t* ui, x49gp_ui_button_t* button )
+{
+    GtkStyle* style = gtk_style_new();
+
+    /* style->xthickness = 0; */
+    /* style->ythickness = 0; */
+
+    for ( int i = 0; i < 5; i++ ) {
+        style->fg[ i ] = ui->colors[ button->key->color ];
+        style->bg[ i ] = ui->colors[ button->key->bg_color ];
+
+        style->text[ i ] = style->fg[ i ];
+        style->base[ i ] = style->bg[ i ];
+    }
+
+    gtk_widget_set_style( button->button, style );
+}
+
+static PangoAttrList* ui_load__pango_attrs_common_new( void )
+{
+    PangoAttrList* pango_attributes = pango_attr_list_new();
+
+    pango_attr_list_insert( pango_attributes, pango_attr_family_new( opt.font ) );
+    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+
+    return pango_attributes;
+}
+
 static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
@@ -1783,7 +1811,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         ui->lcd_x_offset = ui->lcd_y_offset = 20;
 
         ui->kb_x_offset = 10;
-        ui->kb_y_offset = ui->lcd_height + ( 2 * ui->lcd_y_offset );
+        ui->kb_y_offset = ui->lcd_height + ( 3 * ui->lcd_y_offset );
 
         ui->width = ui->lcd_width + ( 2 * ui->lcd_x_offset );
         ui->height = ui->kb_y_offset + ui_keys[ NB_KEYS - 1 ].y + KB_LINE_HEIGHT;
@@ -1872,30 +1900,31 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->key = &ui_keys[ i ];
 
             button->button = gtk_button_new();
-            gtk_widget_set_size_request( button->button, ui_keys[ i ].width, ui_keys[ i ].height );
+            gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
             gtk_widget_set( button->button, "can-focus", false, NULL );
-            gtk_widget_modify_bg( button->button, GTK_STATE_NORMAL, &( ui->colors[ ui_keys[ i ].bg_color ] ) );
 
-            if ( ui_keys[ i ].label ) {
+            ui_load__style_button( ui, button );
+
+            if ( button->key->label ) {
                 ui_label = gtk_label_new( NULL );
 
-                pango_attributes = pango_attr_list_new();
-                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( ui_keys[ i ].font_size / 1.8 ) * PANGO_SCALE ) );
+                pango_attributes = ui_load__pango_attrs_common_new();
+                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( button->key->font_size / 1.8 ) * PANGO_SCALE ) );
                 pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
-                fgcolor = &( ui->colors[ ui_keys[ i ].color ] );
+                fgcolor = &( ui->colors[ button->key->color ] );
                 pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
 
                 gtk_label_set_attributes( GTK_LABEL( ui_label ), pango_attributes );
 
                 gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_label ), ui_keys[ i ].label );
+                gtk_label_set_markup( GTK_LABEL( ui_label ), button->key->label );
 
                 gtk_container_add( GTK_CONTAINER( button->button ), ui_label );
             }
-            if ( ui_keys[ i ].left ) {
+            if ( button->key->left ) {
                 ui_left = gtk_label_new( NULL );
 
-                pango_attributes = pango_attr_list_new();
+                pango_attributes = ui_load__pango_attrs_common_new();
                 pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( tiny_font_size / 1.8 ) * PANGO_SCALE ) );
                 pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
                 fgcolor = &( ui->colors[ left_color ] );
@@ -1904,12 +1933,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_label_set_attributes( GTK_LABEL( ui_left ), pango_attributes );
 
                 gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_left ), ui_keys[ i ].left );
+                gtk_label_set_markup( GTK_LABEL( ui_left ), button->key->left );
 
-                if ( ui_keys[ i ].right ) {
+                if ( button->key->right ) {
                     ui_right = gtk_label_new( NULL );
 
-                    pango_attributes = pango_attr_list_new();
+                    pango_attributes = ui_load__pango_attrs_common_new();
                     pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( tiny_font_size / 1.8 ) * PANGO_SCALE ) );
                     pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
                     fgcolor = &( ui->colors[ right_color ] );
@@ -1918,37 +1947,37 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                     gtk_label_set_attributes( GTK_LABEL( ui_right ), pango_attributes );
 
                     gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
-                    gtk_label_set_markup( GTK_LABEL( ui_right ), ui_keys[ i ].right );
+                    gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
                 }
-                if ( ui_keys[ i ].right ) {
+                if ( button->key->right ) {
                     gtk_widget_size_request( ui_left, &widget_size );
                     gtk_widget_size_request( ui_right, &widget2_size );
 
-                    x = ui->kb_x_offset + ui_keys[ i ].x;
-                    y = ui->kb_y_offset + ui_keys[ i ].y - widget_size.height - 2;
+                    x = ui->kb_x_offset + button->key->x;
+                    y = ui->kb_y_offset + button->key->y - widget_size.height - 2;
 
-                    x2 = ui->kb_x_offset + ui_keys[ i ].x + ui_keys[ i ].width - widget2_size.width;
-                    y2 = ui->kb_y_offset + ui_keys[ i ].y - widget2_size.height - 2;
+                    x2 = ui->kb_x_offset + button->key->x + button->key->width - widget2_size.width;
+                    y2 = ui->kb_y_offset + button->key->y - widget2_size.height - 2;
 
-                    if ( widget_size.width + widget2_size.width > ui_keys[ i ].width ) {
-                        x -= ( ( widget_size.width + widget2_size.width ) - ui_keys[ i ].width ) / 2;
-                        x2 += ( ( widget_size.width + widget2_size.width ) - ui_keys[ i ].width ) / 2;
+                    if ( widget_size.width + widget2_size.width > button->key->width ) {
+                        x -= ( ( widget_size.width + widget2_size.width ) - button->key->width ) / 2;
+                        x2 += ( ( widget_size.width + widget2_size.width ) - button->key->width ) / 2;
                     }
 
                     gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
                     gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_right, x2, y2 );
                 } else {
                     gtk_widget_size_request( ui_left, &widget_size );
-                    x = ui->kb_x_offset + ui_keys[ i ].x + ( ( ui_keys[ i ].width - widget_size.width ) / 2 );
-                    y = ui->kb_y_offset + ui_keys[ i ].y - widget_size.height - 2;
+                    x = ui->kb_x_offset + button->key->x + ( ( button->key->width - widget_size.width ) / 2 );
+                    y = ui->kb_y_offset + button->key->y - widget_size.height - 2;
                     gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
                 }
             }
-            if ( ui_keys[ i ].letter ) {
+            if ( button->key->letter ) {
                 ui_letter = gtk_label_new( NULL );
 
-                pango_attributes = pango_attr_list_new();
-                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( ui_keys[ i ].letter_size / 1.8 ) * PANGO_SCALE ) );
+                pango_attributes = ui_load__pango_attrs_common_new();
+                pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( button->key->letter_size / 1.8 ) * PANGO_SCALE ) );
                 pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
                 fgcolor = &( ui->colors[ UI_COLOR_YELLOW ] );
                 pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
@@ -1956,18 +1985,18 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_label_set_attributes( GTK_LABEL( ui_letter ), pango_attributes );
 
                 gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_letter ), ui_keys[ i ].letter );
+                gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
                 gtk_widget_size_request( ui_letter, &widget_size );
 
-                x = ui->kb_x_offset + ui_keys[ i ].x + ui_keys[ i ].width;
-                y = ui->kb_y_offset + ui_keys[ i ].y + ui_keys[ i ].height - ( widget_size.height / 2 );
+                x = ui->kb_x_offset + button->key->x + button->key->width;
+                y = ui->kb_y_offset + button->key->y + button->key->height - ( widget_size.height / 2 );
                 gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_letter, x, y );
             }
-            if ( ui_keys[ i ].below ) {
+            if ( button->key->below ) {
                 ui_below = gtk_label_new( NULL );
 
-                pango_attributes = pango_attr_list_new();
+                pango_attributes = ui_load__pango_attrs_common_new();
                 pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( tiny_font_size / 1.8 ) * PANGO_SCALE ) );
                 pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
                 fgcolor = &( ui->colors[ below_color ] );
@@ -1976,11 +2005,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_label_set_attributes( GTK_LABEL( ui_below ), pango_attributes );
 
                 gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_below ), ui_keys[ i ].below );
+                gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
 
                 gtk_widget_size_request( ui_below, &widget_size );
-                x = ui->kb_x_offset + ui_keys[ i ].x + ( ( ui_keys[ i ].width - widget_size.width ) / 2 );
-                y = ui->kb_y_offset + ui_keys[ i ].y + ui_keys[ i ].height + 2;
+                x = ui->kb_x_offset + button->key->x + ( ( button->key->width - widget_size.width ) / 2 );
+                y = ui->kb_y_offset + button->key->y + button->key->height + 2;
                 gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_below, x, y );
             }
 
@@ -1995,9 +2024,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
 
-            gtk_widget_set_size_request( button->box, ui_keys[ i ].width, ui_keys[ i ].height );
-            gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + ui_keys[ i ].x,
-                           ui->kb_y_offset + ui_keys[ i ].y );
+            gtk_widget_set_size_request( button->box, button->key->width, button->key->height );
+            gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + button->key->x,
+                           ui->kb_y_offset + button->key->y );
         }
     }
 
