@@ -102,6 +102,13 @@ struct __x49gp_ui_s__ {
     cairo_surface_t* ann_busy_surface;
     cairo_surface_t* ann_io_surface;
 
+    GtkWidget* ui_ann_left;
+    GtkWidget* ui_ann_right;
+    GtkWidget* ui_ann_alpha;
+    GtkWidget* ui_ann_battery;
+    GtkWidget* ui_ann_busy;
+    GtkWidget* ui_ann_io;
+
     gint width;
     gint height;
 

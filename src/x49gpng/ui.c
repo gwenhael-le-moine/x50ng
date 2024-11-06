@@ -1024,6 +1024,16 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 /* functions */
 /*************/
 
+static PangoAttrList* ui_load__pango_attrs_common_new( void )
+{
+    PangoAttrList* pango_attributes = pango_attr_list_new();
+
+    pango_attr_list_insert( pango_attributes, pango_attr_family_new( opt.font ) );
+    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+
+    return pango_attributes;
+}
+
 static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -1561,6 +1571,24 @@ static int redraw_lcd( GtkWidget* widget, GdkEventExpose* event, gpointer user_d
     return false;
 }
 
+static GtkWidget* create_annunciator_widget( x49gp_ui_t* ui, const char* label )
+{
+    GtkWidget* ui_ann = gtk_label_new( NULL );
+
+    PangoAttrList* pango_attributes = ui_load__pango_attrs_common_new();
+    pango_attr_list_insert( pango_attributes, pango_attr_size_new( ( 12.0 / 1.8 ) * PANGO_SCALE ) );
+    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
+    GdkColor* fgcolor = &( ui->colors[ UI_COLOR_BLACK ] );
+    pango_attr_list_insert( pango_attributes, pango_attr_foreground_new( fgcolor->red, fgcolor->green, fgcolor->blue ) );
+
+    gtk_label_set_attributes( GTK_LABEL( ui_ann ), pango_attributes );
+
+    gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
+    gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
+
+    return ui_ann;
+}
+
 static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
@@ -1579,6 +1607,13 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
         cairo_image_surface_create_for_data( ann_battery_bits, cairo_fmt, ann_battery_width, ann_battery_height, stride );
     ui->ann_busy_surface = cairo_image_surface_create_for_data( ann_busy_bits, cairo_fmt, ann_busy_width, ann_busy_height, stride );
     ui->ann_io_surface = cairo_image_surface_create_for_data( ann_io_bits, cairo_fmt, ann_io_width, ann_io_height, stride );
+
+    ui->ui_ann_left = create_annunciator_widget( ui, "⮢" );
+    ui->ui_ann_right = create_annunciator_widget( ui, "⮣" );
+    ui->ui_ann_alpha = create_annunciator_widget( ui, "α" );
+    ui->ui_ann_battery = create_annunciator_widget( ui, "🪫" );
+    ui->ui_ann_busy = create_annunciator_widget( ui, "⌛" );
+    ui->ui_ann_io = create_annunciator_widget( ui, "⇄" );
 
     ui->lcd_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height, -1 );
 
@@ -1735,16 +1770,6 @@ static void ui_load__style_button( x49gp_ui_t* ui, x49gp_ui_button_t* button )
     gtk_widget_set_style( button->button, style );
 }
 
-static PangoAttrList* ui_load__pango_attrs_common_new( void )
-{
-    PangoAttrList* pango_attributes = pango_attr_list_new();
-
-    pango_attr_list_insert( pango_attributes, pango_attr_family_new( opt.font ) );
-    pango_attr_list_insert( pango_attributes, pango_attr_weight_new( PANGO_WEIGHT_BOLD ) );
-
-    return pango_attributes;
-}
-
 static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
@@ -1844,6 +1869,14 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
         ui->lcd_canvas = gtk_drawing_area_new();
         gtk_drawing_area_size( GTK_DRAWING_AREA( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height );
+
+        GtkStyle* lcd_canvas_style = gtk_style_new();
+
+        for ( int i = 0; i < 5; i++ ) {
+            lcd_canvas_style->bg[ i ] = ui->colors[ UI_COLOR_GRAYSCALE_0 ];
+        }
+
+        gtk_widget_set_style( ui->lcd_canvas, lcd_canvas_style );
 
         gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_canvas_container ), true );
         gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_canvas_container ), false );
