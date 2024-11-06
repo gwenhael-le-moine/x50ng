@@ -93,7 +93,6 @@ struct __x49gp_ui_s__ {
     char* name;
 
     GtkWidget* lcd_canvas;
-    GdkPixmap* lcd_pixmap; /* FIXME */
     cairo_surface_t* lcd_surface;
 
     GtkWidget* ui_ann_left;

@@ -1557,15 +1557,11 @@ static int redraw_lcd( GtkWidget* widget, GdkEventExpose* event, gpointer user_d
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
-    GdkRectangle* rects;
-    int n;
 
-    gdk_region_get_rectangles( event->region, &rects, &n );
-    for ( int i = 0; i < n; i++ )
-        gdk_draw_drawable( gtk_widget_get_window( widget ), gtk_widget_get_style( widget )->black_gc, ui->lcd_pixmap, rects[ i ].x,
-                           rects[ i ].y, rects[ i ].x, rects[ i ].y, rects[ i ].width, rects[ i ].height );
-
-    g_free( rects );
+    cairo_t* cr = gdk_cairo_create( gtk_widget_get_window( widget ) );
+    cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
+    cairo_paint( cr );
+    cairo_destroy( cr );
 
     return false;
 }
@@ -1575,12 +1571,12 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
-    if ( NULL != ui->lcd_pixmap )
+    if ( NULL != ui->lcd_surface )
         return false;
 
-    ui->lcd_pixmap = gdk_pixmap_new( gtk_widget_get_window( ui->lcd_canvas ), ui->lcd_width, ui->lcd_height, -1 );
+    ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, ui->lcd_width, ui->lcd_height );
 
-    cairo_t* cr = gdk_cairo_create( ui->lcd_pixmap );
+    cairo_t* cr = cairo_create( ui->lcd_surface );
     GdkColor color = ui->colors[ UI_COLOR_GRAYSCALE_0 ];
     cairo_set_source_rgb( cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0 );
     cairo_rectangle( cr, 0, 0, ui->lcd_width, ui->lcd_height );
@@ -2130,9 +2126,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
 static int ui_save( x49gp_module_t* module, GKeyFile* keyfile ) { return 0; }
 
-static void _draw_pixel( GdkPixmap* target, int x, int y, int w, int h, GdkColor* color )
+static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, GdkColor* color )
 {
-    cairo_t* cr = gdk_cairo_create( target );
+    cairo_t* cr = cairo_create( target );
 
     cairo_set_source_rgb( cr, color->red / 65535.0, color->green / 65535.0, color->blue / 65535.0 );
     cairo_rectangle( cr, x, y, w, h );
@@ -2160,8 +2156,8 @@ void gui_update_lcd( x49gp_t* x49gp )
 
         for ( int y = 0; y < ( ui->lcd_height / LCD_PIXEL_SCALE ); y++ )
             for ( int x = 0; x < ( ui->lcd_width / LCD_PIXEL_SCALE ); x++ )
-                _draw_pixel( ui->lcd_pixmap, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y, LCD_PIXEL_SCALE,
-                             LCD_PIXEL_SCALE, &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
+                _draw_pixel( ui->lcd_surface, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y, LCD_PIXEL_SCALE, LCD_PIXEL_SCALE,
+                             &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
     }
 
     GdkRectangle rect;
