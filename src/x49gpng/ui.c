@@ -1035,10 +1035,7 @@ static void _apply_css_to_widget( char* css, GtkWidget* widget )
     g_object_unref( style_provider );
 }
 
-static inline int _tiny_text_width( const char* text )
-{
-    return strlen( text ) * 5;
-}
+static inline int _tiny_text_width( const char* text ) { return strlen( text ) * 5; }
 
 static int _tiny_text_height = 10;
 
@@ -1723,7 +1720,7 @@ static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const cha
         gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "x49gpng-annunciator" );
         char* css;
         if ( asprintf( &css, ".x49gpng-annunciator { font-size: 12px; font-weight: bold; color: %s; }\n",
-                      gdk_rgba_to_string( &( ui->colors[ UI_COLOR_GRAYSCALE_0 ] ) ) ) >= 0 )
+                       gdk_rgba_to_string( &( ui->colors[ UI_COLOR_GRAYSCALE_0 ] ) ) ) >= 0 )
             _apply_css_to_widget( css, ui_ann );
     }
 
@@ -1944,12 +1941,17 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "x49gpng-button" );
                 char* css;
                 if ( asprintf( &css,
-                               ".x49gpng-button { all: unset; "
-                               "padding: 0px; "
-                               "border-width: 0px; "
-                               "color : %s; "
-                               "background-image: none; "
-                               "background-color : %s; }",
+                               /* "button.x49gpng-button:active {" */
+                               /* "  border: 1px solid yellow;" */
+                               /* "} " */
+                               "button.x49gpng-button {"
+                               /* "  all: unset;" */
+                               /* "  padding: 0px;" */
+                               /* "  border-width: 0px;" */
+                               "  color : %s;"
+                               "  background-image: none;"
+                               "  background-color : %s;"
+                               "}",
                                gdk_rgba_to_string( &( ui->colors[ button->key->color ] ) ),
                                gdk_rgba_to_string( &( ui->colors[ button->key->bg_color ] ) ) ) >= 0 )
                     _apply_css_to_widget( css, button->button );
@@ -2010,8 +2012,10 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                     y2 = ui->kb_y_offset + button->key->y - _tiny_text_height - 2;
 
                     if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
-                        x -= ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
-                        x2 += ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
+                        x -=
+                            ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
+                        x2 +=
+                            ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
                     }
 
                     gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
