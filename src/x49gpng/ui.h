@@ -83,11 +83,7 @@ struct __x49gp_ui_s__ {
     GtkWidget* menu_unmount;
     GtkWidget* menu_debug;
 
-#if GTK_MAJOR_VERSION == 2
-    GdkColor colors[ UI_COLOR_MAX ];
-#elif GTK_MAJOR_VERSION == 3
     GdkRGBA colors[ UI_COLOR_MAX ];
-#endif
 
     x49gp_ui_calculator_t calculator;
 

@@ -10,7 +10,7 @@ DEBUG_CFLAGS = -g # -pg
 OPTIM = 2
 
 # GTK
-GTK_VERSION = "+-2.0"
+GTK_VERSION = "+-3.0"
 GTK_CFLAGS = $(shell pkg-config --cflags gtk$(GTK_VERSION)) -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE
 GTK_LDLIBS = $(shell pkg-config --libs gtk$(GTK_VERSION)) -lz -lm
 
