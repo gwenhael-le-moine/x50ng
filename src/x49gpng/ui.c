@@ -1019,6 +1019,65 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .bg_color = UI_COLOR_BLACK      },
 };
 
+char* css_global_49gp = ".x49gpng-main-window {"
+                        "  background-color: rgb(39,39,39);"
+                        "}"
+                        ".x49gpng-annunciator {"
+                        "  font-size: 12px;"
+                        "  font-weight: bold;"
+                        "  color: rgb(171,210,180);"
+                        "}"
+                        ".x49gpng-button:hover {"
+                        "  border: 1px solid yellow;"
+                        "}"
+                        ".x49gpng-button {"
+                        "  color: rgb(255,255,255);"
+                        "  background-image: none;"
+                        "  background-color: rgb(0,0,0);"
+                        "}"
+                        ".x49gpng-button-label {"
+                        "  font-size: 12px;"
+                        "  font-weight: bold;"
+                        "  color: rgb(255,255,255);"
+                        "}"
+                        ".x49gpng-button-label-left { font-size: 8px; font-weight: bold; color: rgb(255,255,255); }"
+                        ".x49gpng-button-label-right { font-size: 8px; font-weight: bold; color: rgb(192,110,96); }"
+                        ".x49gpng-button-label-below { font-size: 8px; font-weight: bold; color: rgb(64,96,164); }"
+                        ".x49gpng-button-label-letter {"
+                        "  font-size: 8px;"
+                        "  font-weight: bold;"
+                        "  color: rgb(250,232,44);"
+                        "}";
+
+char* css_global_50g = ".x49gpng-main-window {"
+                       "  background-color: rgb(39,39,39);"
+                       "}"
+                       ".x49gpng-annunciator {"
+                       "  font-size: 12px;"
+                       "  font-weight: bold;"
+                       "  color: rgb(171,210,180);"
+                       "}"
+                       ".x49gpng-button:hover {"
+                       "  border: 1px solid yellow;"
+                       "}"
+                       ".x49gpng-button {"
+                       "  background-image: none;"
+                       "  background-color: rgb(0,0,0);"
+                       "}"
+                       ".x49gpng-button-label {"
+                       "  font-size: 12px;"
+                       "  font-weight: bold;"
+                       "  color: rgb(255,255,255);"
+                       "}"
+                       ".x49gpng-button-label-left { font-size: 8px; font-weight: bold; color: rgb(255,255,255); }"
+                       ".x49gpng-button-label-right { font-size: 8px; font-weight: bold; color: rgb(192,110,96); }"
+                       ".x49gpng-button-label-below { font-size: 8px; font-weight: bold; color: rgb(64,96,164); }"
+                       ".x49gpng-button-label-letter {"
+                       "  font-size: 8px;"
+                       "  font-weight: bold;"
+                       "  color: rgb(250,232,44);"
+                       "}";
+
 /*************/
 /* functions */
 /*************/
@@ -1715,15 +1774,7 @@ static inline void _ui_load__newrplify_ui_keys()
 static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const char* label )
 {
     GtkWidget* ui_ann = gtk_label_new( NULL );
-    // add CSS style
-    {
-        gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "x49gpng-annunciator" );
-        char* css;
-        if ( asprintf( &css, ".x49gpng-annunciator { font-size: 12px; font-weight: bold; color: %s; }\n",
-                       gdk_rgba_to_string( &( ui->colors[ UI_COLOR_GRAYSCALE_0 ] ) ) ) >= 0 )
-            _apply_css_to_widget( css, ui_ann );
-    }
-
+    gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "x49gpng-annunciator" );
     gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
     gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
 
@@ -1823,18 +1874,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
         gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
         gtk_widget_realize( ui->window );
-        int faceplate_color = ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
-                                  ? UI_COLOR_FACEPLATE_49GP
-                                  : UI_COLOR_FACEPLATE_50G;
-        // add CSS style
-        {
-            gtk_style_context_add_class( gtk_widget_get_style_context( ui->window ), "x49gpng-main-window" );
-            char* css;
-            if ( asprintf( &css, ".x49gpng-main-window { background-color: %s; }\n",
-                           gdk_rgba_to_string( &( ui->colors[ faceplate_color ] ) ) ) >= 0 )
-                _apply_css_to_widget( css, ui->window );
-        }
         gtk_container_add( GTK_CONTAINER( ui->window ), fixed_widgets_container );
+        gtk_style_context_add_class( gtk_widget_get_style_context( ui->window ), "x49gpng-main-window" );
 
         g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
         g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
@@ -1891,38 +1932,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // keyboard
     {
-        double tiny_font_size = 8.0;
         x49gp_ui_button_t* button;
         GtkWidget* ui_label;
         GtkWidget* ui_left;
         GtkWidget* ui_right;
         GtkWidget* ui_letter;
         GtkWidget* ui_below;
-
-        int left_color;
-        int right_color;
-        int below_color;
         int x, y, x2, y2;
-
-        switch ( ui->calculator ) {
-            case UI_CALCULATOR_HP49GP:
-            case UI_CALCULATOR_HP49GP_NEWRPL:
-                left_color = UI_COLOR_GREEN;
-                right_color = UI_COLOR_RED;
-                below_color = UI_COLOR_BLACK;
-                break;
-
-            default:
-                ui->calculator = UI_CALCULATOR_HP50G;
-                /* fall through */
-
-            case UI_CALCULATOR_HP50G:
-            case UI_CALCULATOR_HP50G_NEWRPL:
-                left_color = UI_COLOR_WHITE;
-                right_color = UI_COLOR_ORANGE;
-                below_color = UI_COLOR_BLUE;
-                break;
-        }
 
         if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
             _ui_load__newrplify_ui_keys();
@@ -1941,18 +1957,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "x49gpng-button" );
                 char* css;
                 if ( asprintf( &css,
-                               /* "button.x49gpng-button:active {" */
-                               /* "  border: 1px solid yellow;" */
-                               /* "} " */
                                "button.x49gpng-button {"
-                               /* "  all: unset;" */
-                               /* "  padding: 0px;" */
-                               /* "  border-width: 0px;" */
-                               "  color : %s;"
-                               "  background-image: none;"
                                "  background-color : %s;"
                                "}",
-                               gdk_rgba_to_string( &( ui->colors[ button->key->color ] ) ),
                                gdk_rgba_to_string( &( ui->colors[ button->key->bg_color ] ) ) ) >= 0 )
                     _apply_css_to_widget( css, button->button );
             }
@@ -1976,31 +1983,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->left ) {
                 ui_left = gtk_label_new( NULL );
-
-                // add CSS style
-                {
-                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "x49gpng-button-label-left" );
-                    char* css;
-                    if ( asprintf( &css, ".x49gpng-button-label-left { font-size: %fpx; font-weight: bold; color: %s; }\n", tiny_font_size,
-                                   gdk_rgba_to_string( &( ui->colors[ left_color ] ) ) ) >= 0 )
-                        _apply_css_to_widget( css, ui_left );
-                }
-
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "x49gpng-button-label-left" );
                 gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_left ), button->key->left );
 
                 if ( button->key->right ) {
                     ui_right = gtk_label_new( NULL );
-
-                    // add CSS style
-                    {
-                        gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "x49gpng-button-label-right" );
-                        char* css;
-                        if ( asprintf( &css, ".x49gpng-button-label-right { font-size: %fpx; font-weight: bold; color: %s; }\n",
-                                       tiny_font_size, gdk_rgba_to_string( &( ui->colors[ right_color ] ) ) ) >= 0 )
-                            _apply_css_to_widget( css, ui_right );
-                    }
-
+                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "x49gpng-button-label-right" );
                     gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
                     gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
                 }
@@ -2028,16 +2017,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->letter ) {
                 ui_letter = gtk_label_new( NULL );
-
-                // add CSS style
-                {
-                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "x49gpng-button-label-letter" );
-                    char* css;
-                    if ( asprintf( &css, ".x49gpng-button-label-letter { font-size: %fpx; font-weight: bold; color: %s; }\n",
-                                   tiny_font_size, gdk_rgba_to_string( &( ui->colors[ UI_COLOR_YELLOW ] ) ) ) >= 0 )
-                        _apply_css_to_widget( css, ui_letter );
-                }
-
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "x49gpng-button-label-letter" );
                 gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
@@ -2047,16 +2027,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->below ) {
                 ui_below = gtk_label_new( NULL );
-
-                // add CSS style
-                {
-                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "x49gpng-button-label-below" );
-                    char* css;
-                    if ( asprintf( &css, ".x49gpng-button-label-below { font-size: %fpx; font-weight: bold; color: %s; }\n", tiny_font_size,
-                                   gdk_rgba_to_string( &( ui->colors[ below_color ] ) ) ) >= 0 )
-                        _apply_css_to_widget( css, ui_below );
-                }
-
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "x49gpng-button-label-below" );
                 gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
 
@@ -2120,6 +2091,20 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         g_signal_connect_swapped( G_OBJECT( menu_quit ), "activate", G_CALLBACK( do_quit ), x49gp );
 
         gtk_widget_show_all( ui->menu );
+    }
+
+    {
+        GtkCssProvider* style_provider = gtk_css_provider_new();
+
+        gtk_css_provider_load_from_data( style_provider,
+            ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
+                                  ? css_global_49gp
+                                  : css_global_50g, -1, NULL );
+
+        gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
+                                                  GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
+
+        g_object_unref( style_provider );
     }
 
     // finally show the window
