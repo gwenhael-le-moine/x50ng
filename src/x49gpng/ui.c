@@ -1586,11 +1586,6 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
     return false;
 }
 
-static inline unsigned color2rgb( x49gp_ui_t* ui, int color )
-{
-    return 0x000000 | ( ui->colors[ color ].red << 8 ) | ( ui->colors[ color ].green << 16 ) | ( ui->colors[ color ].blue );
-}
-
 static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
 #ifdef DEBUG_X49GP_UI
