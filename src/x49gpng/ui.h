@@ -7,8 +7,6 @@
 
 #include "x49gp_types.h"
 
-#define LCD_PIXEL_SCALE 2
-
 typedef enum {
     UI_COLOR_BLACK = 0,
     UI_COLOR_WHITE,
@@ -47,25 +45,23 @@ typedef enum {
 } x49gp_ui_calculator_t;
 
 typedef struct {
+    const char* css_class;
     const char* label;
     const char* letter;
     const char* left;
     const char* right;
     const char* below;
-    x49gp_ui_color_t color;
-    double font_size;
-    cairo_font_weight_t font_weight;
-    double letter_size;
+
     int x;
     int y;
     int width;
     int height;
+
     int column;
     int row;
     unsigned char columnbit;
     unsigned char rowbit;
     int eint;
-    x49gp_ui_color_t bg_color;
 } x49gp_ui_key_t;
 
 typedef struct {

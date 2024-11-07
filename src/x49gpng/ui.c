@@ -38,16 +38,15 @@
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
 
+#define LCD_PIXEL_SCALE 2
+
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
-    {.label = "F1",
+    {.css_class = "button-menu",
+     .label = "F1",
      .letter = "A",
      .left = "Y=",
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 0,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -56,17 +55,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F2",
+     .eint = 1},
+    {.css_class = "button-menu",
+     .label = "F2",
      .letter = "B",
      .left = "WIN",
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -75,17 +70,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F3",
+     .eint = 2},
+    {.css_class = "button-menu",
+     .label = "F3",
      .letter = "C",
      .left = "GRAPH",
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -94,17 +85,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F4",
+     .eint = 3},
+    {.css_class = "button-menu",
+     .label = "F4",
      .letter = "D",
      .left = "2D/3D",
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 3 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -113,17 +100,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 4,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F5",
+     .eint = 4},
+    {.css_class = "button-menu",
+     .label = "F5",
      .letter = "E",
      .left = "TBLSET",
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -132,17 +115,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 5,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "F6",
+     .eint = 5},
+    {.css_class = "button-menu",
+     .label = "F6",
      .letter = "F",
      .left = "TABLE",
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 5 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
      .width = KB_WIDTH_6_KEYS,
@@ -151,18 +130,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 6,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
+     .eint = 6},
 
-    {.label = "APPS",
+    {.css_class = "button-function",
+     .label = "APPS",
      .letter = "G",
      .left = "FILES",
      .right = "BEGIN",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
      .x = 0,
      .y = KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -171,17 +146,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 7,
      .columnbit = ( 1 << 5 ),
      .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "MODE",
+     .eint = 7},
+    {.css_class = "button-function",
+     .label = "MODE",
      .letter = "H",
      .left = "CUSTOM",
      .right = "END",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
      .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -190,17 +161,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 5,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "TOOL",
+     .eint = 5},
+    {.css_class = "button-function",
+     .label = "TOOL",
      .letter = "I",
      .left = "i",
      .right = "I",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
      .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -209,17 +176,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 6,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "VAR",
+     .eint = 6},
+    {.css_class = "button-function",
+     .label = "VAR",
      .letter = "J",
      .left = "UPDIR",
      .right = "COPY",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
      .x = 0,
      .y = 2 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -228,17 +191,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 7,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "STO⏵",
+     .eint = 7},
+    {.css_class = "button-function",
+     .label = "STO⏵",
      .letter = "K",
      .left = "RCL",
      .right = "CUT",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
      .x = KB_COLUMN_WIDTH_6_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -247,17 +206,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 7 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "NXT",
+     .eint = 1},
+    {.css_class = "button-function",
+     .label = "NXT",
      .letter = "L",
      .left = "PREV",
      .right = "PASTE",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 10.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 10.0,
      .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -266,18 +221,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 7 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 2},
 
-    {.label = "▲",
+    {.css_class = "button-arrow",
+     .label = "▲",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 20.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0.75 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -286,17 +237,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "◀",
+     .eint = 1},
+    {.css_class = "button-arrow",
+     .label = "◀",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 20.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 3.25 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 1.25 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -305,17 +252,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "▼",
+     .eint = 2},
+    {.css_class = "button-arrow",
+     .label = "▼",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 20.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 1.75 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -324,17 +267,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
-    {.label = "▶",
+     .eint = 3},
+    {.css_class = "button-arrow",
+     .label = "▶",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 20.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4.78 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 1.25 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_6_KEYS,
@@ -343,18 +282,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 4,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_GRAYSCALE_5},
+     .eint = 4},
 
-    {.label = "HIST",
+    {.css_class = "button-function",
+     .label = "HIST",
      .letter = "M",
      .left = "CMD",
      .right = "UNDO",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 0,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -363,17 +298,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 4 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "EVAL",
+     .eint = 1},
+    {.css_class = "button-function",
+     .label = "EVAL",
      .letter = "N",
      .left = "PRG",
      .right = "CHARS",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -382,17 +313,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "'",
+     .eint = 1},
+    {.css_class = "button-function",
+     .label = "'",
      .letter = "O",
      .left = "MTRW",
      .right = "EQW",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -401,17 +328,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "SYMB",
+     .eint = 1},
+    {.css_class = "button-function",
+     .label = "SYMB",
      .letter = "P",
      .left = "MTH",
      .right = "CAT",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -420,17 +343,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "⬅",
+     .eint = 1},
+    {.css_class = "button-function",
+     .label = "⬅",
      .letter = NULL,
      .left = "DEL",
      .right = "CLEAR",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -439,18 +358,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 1,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 1 ),
-     .eint = 1,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 1},
 
-    {.label = "Y<sup>x</sup>",
+    {.css_class = "button-function",
+     .label = "Y<sup>x</sup>",
      .letter = "Q",
      .left = "𝑒<sup>x</sup>",
      .right = "LN",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 0,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -459,17 +374,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 4 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "√𝔁",
+     .eint = 2},
+    {.css_class = "button-function",
+     .label = "√𝔁",
      .letter = "R",
      .left = "𝔁<sup>2</sup>",
      .right = "<sup>x</sup>√y",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -478,17 +389,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "SIN",
+     .eint = 2},
+    {.css_class = "button-function",
+     .label = "SIN",
      .letter = "S",
      .left = "ASIN",
      .right = "∑",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -497,17 +404,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "COS",
+     .eint = 2},
+    {.css_class = "button-function",
+     .label = "COS",
      .letter = "T",
      .left = "ACOS",
      .right = "∂",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -516,17 +419,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "TAN",
+     .eint = 2},
+    {.css_class = "button-function",
+     .label = "TAN",
      .letter = "U",
      .left = "ATAN",
      .right = "∫",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -535,18 +434,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 2,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 2 ),
-     .eint = 2,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 2},
 
-    {.label = "EEX",
+    {.css_class = "button-function",
+     .label = "EEX",
      .letter = "V",
      .left = "10<sup>𝔁</sup>",
      .right = "LOG",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 0,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -555,17 +450,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 4 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "+/-",
+     .eint = 3},
+    {.css_class = "button-function",
+     .label = "+/-",
      .letter = "W",
      .left = "≠",
      .right = "=",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -574,17 +465,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "𝔁",
+     .eint = 3},
+    {.css_class = "button-function",
+     .label = "𝔁",
      .letter = "X",
      .left = "≤",
      .right = "&gt;",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -593,17 +480,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "1/𝔁",
+     .eint = 3},
+    {.css_class = "button-function",
+     .label = "1/𝔁",
      .letter = "Y",
      .left = "≥",
      .right = ">",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -612,17 +495,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "÷",
+     .eint = 3},
+    {.css_class = "button-core-number",
+     .label = "÷",
      .letter = "Z",
      .left = "ABS",
      .right = "ARG",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 12.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -631,18 +510,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 3,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 3 ),
-     .eint = 3,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 3},
 
-    {.label = "ALPHA",
+    {.css_class = "button-alpha",
+     .label = "ALPHA",
      .letter = NULL,
      .left = "USER",
      .right = "ENTRY",
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 11.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 0,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -651,17 +526,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 0,
      .columnbit = 0,
      .rowbit = 0,
-     .eint = 4,
-     .bg_color = UI_COLOR_YELLOW     },
-    {.label = "7",
+     .eint = 4},
+    {.css_class = "button-core-number",
+     .label = "7",
      .letter = NULL,
      .left = "S.SLV",
      .right = "NUM.SLV",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -670,17 +541,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 4,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "8",
+     .eint = 4},
+    {.css_class = "button-core-number",
+     .label = "8",
      .letter = NULL,
      .left = "EXP&amp;LN",
      .right = "TRIG",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -689,17 +556,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 4,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "9",
+     .eint = 4},
+    {.css_class = "button-core-number",
+     .label = "9",
      .letter = NULL,
      .left = "FINANCE",
      .right = "TIME",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -708,17 +571,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 4,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "×",
+     .eint = 4},
+    {.css_class = "button-core-number",
+     .label = "×",
      .letter = NULL,
      .left = "[ ]",
      .right = "\" \"",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -727,18 +586,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 4,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 4 ),
-     .eint = 4,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 4},
 
-    {.label = "⮢",
+    {.css_class = "button-shift-left",
+     .label = "⮢",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 0,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -747,17 +602,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 0,
      .columnbit = 0,
      .rowbit = 0,
-     .eint = 5,
-     .bg_color = UI_COLOR_WHITE      },
-    {.label = "4",
+     .eint = 5},
+    {.css_class = "button-core-number",
+     .label = "4",
      .letter = NULL,
      .left = "CALC",
      .right = "ALG",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -766,17 +617,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 5,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "5",
+     .eint = 5},
+    {.css_class = "button-core-number",
+     .label = "5",
      .letter = NULL,
      .left = "MATRICES",
      .right = "STAT",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -785,17 +632,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 5,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "6",
+     .eint = 5},
+    {.css_class = "button-core-number",
+     .label = "6",
      .letter = NULL,
      .left = "CONVERT",
      .right = "UNITS",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -804,17 +647,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 5,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "-",
+     .eint = 5},
+    {.css_class = "button-core-number",
+     .label = "-",
      .letter = NULL,
      .left = "( )",
      .right = "_",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -823,18 +662,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 5,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 5 ),
-     .eint = 5,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 5},
 
-    {.label = "⮣",
+    {.css_class = "button-shift-right",
+     .label = "⮣",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .color = UI_COLOR_BLACK,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 0,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -843,17 +678,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 0,
      .columnbit = 0,
      .rowbit = 0,
-     .eint = 6,
-     .bg_color = UI_COLOR_ORANGE     },
-    {.label = "1",
+     .eint = 6},
+    {.css_class = "button-core-number",
+     .label = "1",
      .letter = NULL,
      .left = "ARITH",
      .right = "CMPLX",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -862,17 +693,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 6,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "2",
+     .eint = 6},
+    {.css_class = "button-core-number",
+     .label = "2",
      .letter = NULL,
      .left = "DEF",
      .right = "LIB",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -881,17 +708,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 6,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "3",
+     .eint = 6},
+    {.css_class = "button-core-number",
+     .label = "3",
      .letter = NULL,
      .left = "#",
      .right = "BASE",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -900,17 +723,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 6,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "+",
+     .eint = 6},
+    {.css_class = "button-core-number",
+     .label = "+",
      .letter = NULL,
      .left = "{ }",
      .right = "« »",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -919,18 +738,14 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 6,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 6 ),
-     .eint = 6,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 6},
 
-    {.label = "ON",
+    {.css_class = "button-core",
+     .label = "ON",
      .letter = NULL,
      .left = "CONT",
      .right = "OFF",
      .below = "CANCEL",
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 0,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -939,17 +754,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 0,
      .columnbit = 0,
      .rowbit = 0,
-     .eint = 0,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "0",
+     .eint = 0},
+    {.css_class = "button-core-number",
+     .label = "0",
      .letter = NULL,
      .left = "∞",
      .right = "→",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -958,17 +769,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 7,
      .columnbit = ( 1 << 3 ),
      .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = ".",
+     .eint = 7},
+    {.css_class = "button-core",
+     .label = ".",
      .letter = NULL,
      .left = ": :",
      .right = "↲",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 19.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -977,17 +784,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 7,
      .columnbit = ( 1 << 2 ),
      .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "SPC",
+     .eint = 7},
+    {.css_class = "button-core",
+     .label = "SPC",
      .letter = NULL,
      .left = "𝚷",
      .right = ",",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 12.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -996,17 +799,13 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 7,
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
-    {.label = "ENTER",
+     .eint = 7},
+    {.css_class = "button-core",
+     .label = "ENTER",
      .letter = NULL,
      .left = "ANS",
      .right = "→NUM",
      .below = NULL,
-     .color = UI_COLOR_WHITE,
-     .font_size = 11.0,
-     .font_weight = CAIRO_FONT_WEIGHT_BOLD,
-     .letter_size = 0.0,
      .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
      .width = KB_WIDTH_5_KEYS,
@@ -1015,86 +814,172 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .row = 7,
      .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 7 ),
-     .eint = 7,
-     .bg_color = UI_COLOR_BLACK      },
+     .eint = 7},
 };
 
-char* css_global_49gp = ".x49gpng-main-window {"
-                        "  background-color: rgb(39,39,39);"
-                        "}"
-                        ".x49gpng-annunciator {"
-                        "  font-size: 12px;"
-                        "  font-weight: bold;"
-                        "  color: rgb(171,210,180);"
-                        "}"
-                        ".x49gpng-button:hover {"
-                        "  border: 1px solid yellow;"
-                        "}"
-                        ".x49gpng-button {"
-                        "  color: rgb(255,255,255);"
-                        "  background-image: none;"
-                        "  background-color: rgb(0,0,0);"
-                        "}"
-                        ".x49gpng-button-label {"
-                        "  font-size: 12px;"
-                        "  font-weight: bold;"
-                        "  color: rgb(255,255,255);"
-                        "}"
-                        ".x49gpng-button-label-left { font-size: 8px; font-weight: bold; color: rgb(255,255,255); }"
-                        ".x49gpng-button-label-right { font-size: 8px; font-weight: bold; color: rgb(192,110,96); }"
-                        ".x49gpng-button-label-below { font-size: 8px; font-weight: bold; color: rgb(64,96,164); }"
-                        ".x49gpng-button-label-letter {"
-                        "  font-size: 8px;"
-                        "  font-weight: bold;"
-                        "  color: rgb(250,232,44);"
-                        "}";
-
-char* css_global_50g = ".x49gpng-main-window {"
-                       "  background-color: rgb(39,39,39);"
-                       "}"
-                       ".x49gpng-annunciator {"
-                       "  font-size: 12px;"
+char* css_global_49gp = ".main-window {"
                        "  font-weight: bold;"
-                       "  color: rgb(171,210,180);"
                        "}"
-                       ".x49gpng-button:hover {"
+                       "window {"
+                       "  background-color: #f0e68c;"
+                       "}"
+                       ".annunciator {"
+                       "  padding: 0px;"
+                       "  font-size: 12px;"
+                       "  color: #080808;"
+                       "}"
+                       ".annunciators-container {"
+                       "  background-color: #abd2b4;"
+                       "}"
+                       "button {"
+                       "  background-image: none;"
+                       "  padding: 0px;"
+                       "}"
+                       "button:hover {"
                        "  border: 1px solid yellow;"
                        "}"
-                       ".x49gpng-button {"
-                       "  background-image: none;"
-                       "  background-color: rgb(0,0,0);"
+                       ".button-menu {"
+                       "  background-color: #a9a9a9;"
                        "}"
-                       ".x49gpng-button-label {"
+                       ".button-function {"
+                       "  background-color: #696969;"
+                       "}"
+                       ".button-arrow {"
+                       "  background-color: #e0e0e0;"
+                       "}"
+                       ".button-alpha {"
+                       "  background-color: #fae82c;"
+                       "}"
+                       ".button-arrow .label, .button-alpha .label {"
+                       "  color: #080808;"
+                       "}"
+                       ".button-arrow .label {"
+                       "  font-size: 24px;"
+                       "}"
+                       ".button-shift-left {"
+                       "  background-color: #4060a4;"
+                       "}"
+                       ".button-shift-right {"
+                       "  background-color: #8e2518;"
+                       "}"
+                       ".button-shift-left .label, .button-shift-right .label {"
+                       "  font-size: 28px;"
+                       "  color: #f5f5f5;"
+                       "}"
+                       ".button-core, .button-core-number {"
+                       "  background-color: #080808;"
+                       "}"
+                       ".button-core-number .label {"
+                       "  font-size: 20px;"
+                       "}"
+                       ".label {"
                        "  font-size: 12px;"
-                       "  font-weight: bold;"
-                       "  color: rgb(255,255,255);"
+                       "  color: #ffffff;"
                        "}"
-                       ".x49gpng-button-label-left { font-size: 8px; font-weight: bold; color: rgb(255,255,255); }"
-                       ".x49gpng-button-label-right { font-size: 8px; font-weight: bold; color: rgb(192,110,96); }"
-                       ".x49gpng-button-label-below { font-size: 8px; font-weight: bold; color: rgb(64,96,164); }"
-                       ".x49gpng-button-label-letter {"
+                       ".label-left {"
                        "  font-size: 8px;"
+                       "  color: #4060a4;"
+                       "}"
+                       ".label-right {"
+                       "  font-size: 8px;"
+                       "  color: #c06e60;"
+                       "}"
+                       ".label-below {"
+                       "  font-size: 8px;"
+                       "  color: #4060a4;"
+                       "}"
+                       ".label-letter {"
+                       "  font-size: 8px;"
+                       "  color: #fae82c;"
+                        "}";
+
+char* css_global_50g = "* {"
                        "  font-weight: bold;"
-                       "  color: rgb(250,232,44);"
+                       "}"
+                       "window {"
+                       "  background-color: #272727;"
+                       "}"
+                       ".annunciator {"
+                       "  padding: 0px;"
+                       "  font-size: 12px;"
+                       "  color: #080808;"
+                       "}"
+                       ".annunciators-container {"
+                       "  background-color: #abd2b4;"
+                       "}"
+                       "button {"
+                       "  background-image: none;"
+                       "  padding: 0px;"
+                       "}"
+                       "button:hover {"
+                       "  border: 1px solid yellow;"
+                       "}"
+                       ".button-menu {"
+                       "  background-color: #a9a9a9;"
+                       "}"
+                       ".button-function {"
+                       "  background-color: #696969;"
+                       "}"
+                       ".button-arrow {"
+                       "  background-color: #e0e0e0;"
+                       "}"
+                       ".button-alpha {"
+                       "  background-color: #fae82c;"
+                       "}"
+                       ".button-arrow .label, .button-alpha .label {"
+                       "  color: #080808;"
+                       "}"
+                       ".button-arrow .label {"
+                       "  font-size: 24px;"
+                       "}"
+                       ".button-shift-left {"
+                       "  background-color: #f5f5f5;"
+                       "}"
+                       ".button-shift-right {"
+                       "  background-color: #8e2518;"
+                       "}"
+                       ".button-shift-left .label, .button-shift-right .label {"
+                       "  font-size: 28px;"
+                       "  color: #080808;"
+                       "}"
+                       ".button-core, .button-core-number {"
+                       "  background-color: #080808;"
+                       "}"
+                       ".button-core-number .label {"
+                       "  font-size: 20px;"
+                       "}"
+                       ".label {"
+                       "  font-size: 12px;"
+                       "  color: #ffffff;"
+                       "}"
+                       ".label-left {"
+                       "  font-size: 8px;"
+                       "  color: #f5f5f5;"
+                       "}"
+                       ".label-right {"
+                       "  font-size: 8px;"
+                       "  color: #c06e60;"
+                       "}"
+                       ".label-below {"
+                       "  font-size: 8px;"
+                       "  color: #4060a4;"
+                       "}"
+                       ".label-letter {"
+                       "  font-size: 8px;"
+                       "  color: #fae82c;"
                        "}";
 
 /*************/
 /* functions */
 /*************/
 
-static void _apply_css_to_widget( char* css, GtkWidget* widget )
+static inline int _tiny_text_width( const char* text )
 {
-    GtkCssProvider* style_provider = gtk_css_provider_new();
+    char* stripped_text;
+    pango_parse_markup( text, -1, 0, NULL, &stripped_text, NULL, NULL );
 
-    gtk_css_provider_load_from_data( style_provider, css, -1, NULL );
-
-    gtk_style_context_add_provider( gtk_widget_get_style_context( widget ), GTK_STYLE_PROVIDER( style_provider ),
-                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
-
-    g_object_unref( style_provider );
+    return strlen( stripped_text ) * 5;
 }
-
-static inline int _tiny_text_width( const char* text ) { return strlen( text ) * 5; }
 
 static int _tiny_text_height = 10;
 
@@ -1640,13 +1525,6 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
 
     ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, ui->lcd_width, ui->lcd_height );
 
-    cairo_t* cr = cairo_create( ui->lcd_surface );
-    GdkRGBA color = ui->colors[ UI_COLOR_GRAYSCALE_0 ];
-    cairo_set_source_rgb( cr, color.red, color.green, color.blue );
-    cairo_rectangle( cr, 0, 0, ui->lcd_width, ui->lcd_height );
-    cairo_fill( cr );
-    cairo_destroy( cr );
-
     return false;
 }
 
@@ -1771,12 +1649,16 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 50 ].left = NULL;
 }
 
+#define ANN_WIDTH 16
+#define ANN_HEIGHT 16
+
 static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const char* label )
 {
     GtkWidget* ui_ann = gtk_label_new( NULL );
-    gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "x49gpng-annunciator" );
+    gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "annunciator" );
     gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
     gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
+    gtk_widget_set_size_request( ui_ann, ANN_WIDTH, ANN_HEIGHT );
 
     return ui_ann;
 }
@@ -1840,7 +1722,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     /* set coordinates of LCD and keyboard */
-    int annunciator_height = 16;
     {
         ui->lcd_width = 131 * LCD_PIXEL_SCALE;
         ui->lcd_height = 80 * LCD_PIXEL_SCALE;
@@ -1854,7 +1735,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             ui->lcd_x_offset = ui->annunciators_x_offset = ui->annunciators_y_offset = ( ui->width - ui->lcd_width ) / 2;
         }
 
-        ui->lcd_y_offset = ui->annunciators_y_offset + annunciator_height;
+        ui->lcd_y_offset = ui->annunciators_y_offset + ANN_HEIGHT;
 
         ui->kb_y_offset = ui->lcd_height + ( 2 * ui->lcd_y_offset );
 
@@ -1863,7 +1744,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // create window and widgets/stuff
-    GtkWidget* lcd_canvas_container = gtk_event_box_new();
     GtkWidget* fixed_widgets_container = gtk_fixed_new();
     {
         ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
@@ -1875,7 +1755,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
         gtk_widget_realize( ui->window );
         gtk_container_add( GTK_CONTAINER( ui->window ), fixed_widgets_container );
-        gtk_style_context_add_class( gtk_widget_get_style_context( ui->window ), "x49gpng-main-window" );
+        gtk_style_context_add_class( gtk_widget_get_style_context( ui->window ), "main-window" );
 
         g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
         g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
@@ -1886,17 +1766,16 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 
         ui->lcd_canvas = gtk_drawing_area_new();
-        gtk_widget_set_name( ui->lcd_canvas, "lcd" );
+        gtk_style_context_add_class( gtk_widget_get_style_context( ui->lcd_canvas ), "lcd" );
         gtk_widget_set_size_request( ui->lcd_canvas, ui->lcd_width, ui->lcd_height );
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
         g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
-        gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_canvas_container ), true );
-        gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_canvas_container ), false );
-        gtk_container_add( GTK_CONTAINER( lcd_canvas_container ), ui->lcd_canvas );
-        gtk_widget_set_size_request( lcd_canvas_container, ui->lcd_width, ui->lcd_height );
-        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_canvas_container, ui->lcd_x_offset, ui->lcd_y_offset );
-        g_signal_connect( G_OBJECT( lcd_canvas_container ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
+        GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, ( ui->lcd_width - ( 6 * ANN_WIDTH ) ) / 5 );
+        gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
+        gtk_widget_set_size_request( annunciators_container, ui->lcd_width, ANN_HEIGHT );
+        gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "annunciators-container" );
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), annunciators_container, ui->annunciators_x_offset, ui->annunciators_y_offset );
 
         ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
         ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
@@ -1905,29 +1784,25 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
         ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
 
-        GtkWidget* fixed_annunciators_container = gtk_fixed_new();
-        gtk_widget_set_name( fixed_annunciators_container, "annunciators-container" );
-        gtk_widget_set_size_request( fixed_annunciators_container, ui->lcd_width, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), fixed_annunciators_container, ui->annunciators_x_offset,
-                       ui->annunciators_y_offset );
+        gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_left );
+        gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_right );
+        gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_alpha );
+        gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_battery );
+        gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_busy );
+        gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_io );
 
-        gtk_widget_set_size_request( ui->ui_ann_left, 15, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_left, 11, 0 );
+        GtkWidget* lcd_event_box = gtk_event_box_new();
+        gtk_style_context_add_class( gtk_widget_get_style_context( lcd_event_box ), "lcd-box" );
+        gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_event_box ), true );
+        gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_event_box ), false );
+        gtk_widget_set_size_request( lcd_event_box, ui->lcd_width, ui->lcd_height + ANN_HEIGHT );
+        g_signal_connect( G_OBJECT( lcd_event_box ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
+        /* gtk_container_add( GTK_CONTAINER( lcd_event_box ), annunciators_container ); */
+        gtk_container_add( GTK_CONTAINER( lcd_event_box ), ui->lcd_canvas );
 
-        gtk_widget_set_size_request( ui->ui_ann_right, 15, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_right, 56, 0 );
-
-        gtk_widget_set_size_request( ui->ui_ann_alpha, 15, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_alpha, 101, 0 );
-
-        gtk_widget_set_size_request( ui->ui_ann_battery, 15, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_battery, 146, 0 );
-
-        gtk_widget_set_size_request( ui->ui_ann_busy, 15, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_busy, 191, 0 );
-
-        gtk_widget_set_size_request( ui->ui_ann_io, 15, annunciator_height );
-        gtk_fixed_put( GTK_FIXED( fixed_annunciators_container ), ui->ui_ann_io, 236, 0 );
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), annunciators_container, ui->annunciators_x_offset, ui->annunciators_y_offset );
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_event_box, ui->lcd_x_offset, ui->lcd_y_offset );
+        /* gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui->lcd_canvas, ui->lcd_x_offset, ui->lcd_y_offset ); */
     }
 
     // keyboard
@@ -1952,29 +1827,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->button = gtk_button_new();
             gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
             gtk_widget_set_can_focus( button->button, false );
-
-            {
-                gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "x49gpng-button" );
-                char* css;
-                if ( asprintf( &css,
-                               "button.x49gpng-button {"
-                               "  background-color : %s;"
-                               "}",
-                               gdk_rgba_to_string( &( ui->colors[ button->key->bg_color ] ) ) ) >= 0 )
-                    _apply_css_to_widget( css, button->button );
-            }
+            gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
 
             if ( button->key->label ) {
                 ui_label = gtk_label_new( NULL );
-
-                // add CSS style
-                {
-                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "x49gpng-button-label" );
-                    char* css;
-                    if ( asprintf( &css, ".x49gpng-button-label { font-size: %fpx; font-weight: bold; color: %s; }\n",
-                                   button->key->font_size, gdk_rgba_to_string( &( ui->colors[ button->key->color ] ) ) ) >= 0 )
-                        _apply_css_to_widget( css, ui_label );
-                }
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "label" );
 
                 gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_label ), button->key->label );
@@ -1983,13 +1840,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->left ) {
                 ui_left = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "x49gpng-button-label-left" );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "label-left" );
                 gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_left ), button->key->left );
 
                 if ( button->key->right ) {
                     ui_right = gtk_label_new( NULL );
-                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "x49gpng-button-label-right" );
+                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "label-right" );
                     gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
                     gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
                 }
@@ -2017,7 +1874,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->letter ) {
                 ui_letter = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "x49gpng-button-label-letter" );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "label-letter" );
                 gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
@@ -2027,7 +1884,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->below ) {
                 ui_below = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "x49gpng-button-label-below" );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "label-below" );
                 gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
 
@@ -2096,13 +1953,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     {
         GtkCssProvider* style_provider = gtk_css_provider_new();
 
-        gtk_css_provider_load_from_data( style_provider,
-            ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL )
-                                  ? css_global_49gp
-                                  : css_global_50g, -1, NULL );
+        gtk_css_provider_load_from_data(
+            style_provider,
+            ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL ) ? css_global_49gp : css_global_50g,
+            -1, NULL );
 
         gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
-                                                  GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
+                                                   GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
 
         g_object_unref( style_provider );
     }
@@ -2115,11 +1972,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
 static int ui_save( x49gp_module_t* module, GKeyFile* keyfile ) { return 0; }
 
-#if GTK_MAJOR_VERSION == 2
-static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, GdkColor* color )
-#elif GTK_MAJOR_VERSION == 3
 static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, GdkRGBA* color )
-#endif
 {
     cairo_t* cr = cairo_create( target );
 
@@ -2140,12 +1993,12 @@ void gui_update_lcd( x49gp_t* x49gp )
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
 
     if ( lcd->lcdcon1 & 1 ) {
-        gtk_widget_set_visible( ui->ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) > 0 );
-        gtk_widget_set_visible( ui->ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) > 0 );
-        gtk_widget_set_visible( ui->ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) > 0 );
-        gtk_widget_set_visible( ui->ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) > 0 );
-        gtk_widget_set_visible( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) > 0 );
-        gtk_widget_set_visible( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) > 0 );
+        gtk_widget_set_opacity( ui->ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) > 0 ? 1 : 0 );
+        gtk_widget_set_opacity( ui->ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) > 0 ? 1 : 0 );
+        gtk_widget_set_opacity( ui->ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) > 0 ? 1 : 0 );
+        gtk_widget_set_opacity( ui->ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) > 0 ? 1 : 0 );
+        gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) > 0 ? 1 : 0 );
+        gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) > 0 ? 1 : 0 );
 
         for ( int y = 0; y < ( ui->lcd_height / LCD_PIXEL_SCALE ); y++ )
             for ( int x = 0; x < ( ui->lcd_width / LCD_PIXEL_SCALE ); x++ )
