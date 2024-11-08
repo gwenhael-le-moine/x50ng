@@ -1452,7 +1452,7 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
             if ( ui->menu_debug )
                 gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() );
 
-            gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->lcd_canvas, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL );
+            gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->window, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL );
             return false;
 
         default:
@@ -1544,7 +1544,7 @@ static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event,
             fprintf( stderr, "clipboard: %s\n", text );
             break;
         case 3: // right click
-            gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->lcd_canvas, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL );
+            gtk_menu_popup_at_pointer( GTK_MENU( ui->menu ), NULL );
             return true;
         default:
             break;
