@@ -1741,6 +1741,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     // create window and widgets/stuff
     GtkWidget* fixed_widgets_container = gtk_fixed_new();
     {
+        ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
+        ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
+        ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
+        ui->ui_ann_battery = _ui_load__create_annunciator_widget( ui, "🪫" );
+        ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
+        ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
+
         ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
         gtk_window_set_default_size( GTK_WINDOW( ui->window ), ui->width, ui->height );
         gtk_window_set_accept_focus( GTK_WINDOW( ui->window ), true );
@@ -1770,15 +1777,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
         gtk_widget_set_size_request( annunciators_container, ui->lcd_width, ANN_HEIGHT );
         gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "annunciators-container" );
-        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), annunciators_container, ui->annunciators_x_offset, ui->annunciators_y_offset );
-
-        ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
-        ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
-        ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
-        ui->ui_ann_battery = _ui_load__create_annunciator_widget( ui, "🪫" );
-        ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
-        ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
-
         gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_left );
         gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_right );
         gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_alpha );
