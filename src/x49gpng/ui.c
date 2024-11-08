@@ -818,79 +818,79 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 };
 
 char* css_global_49gp = ".main-window {"
-                       "  font-weight: bold;"
-                       "}"
-                       "window {"
-                       "  background-color: #f0e68c;"
-                       "}"
-                       ".annunciator {"
-                       "  padding: 0px;"
-                       "  font-size: 12px;"
-                       "  color: #080808;"
-                       "}"
-                       ".annunciators-container {"
-                       "  background-color: #abd2b4;"
-                       "}"
-                       "button {"
-                       "  background-image: none;"
-                       "  padding: 0px;"
-                       "}"
-                       "button:hover {"
-                       "  border: 1px solid yellow;"
-                       "}"
-                       ".button-menu {"
-                       "  background-color: #a9a9a9;"
-                       "}"
-                       ".button-function {"
-                       "  background-color: #696969;"
-                       "}"
-                       ".button-arrow {"
-                       "  background-color: #e0e0e0;"
-                       "}"
-                       ".button-alpha {"
-                       "  background-color: #fae82c;"
-                       "}"
-                       ".button-arrow .label, .button-alpha .label {"
-                       "  color: #080808;"
-                       "}"
-                       ".button-arrow .label {"
-                       "  font-size: 24px;"
-                       "}"
-                       ".button-shift-left {"
-                       "  background-color: #4060a4;"
-                       "}"
-                       ".button-shift-right {"
-                       "  background-color: #8e2518;"
-                       "}"
-                       ".button-shift-left .label, .button-shift-right .label {"
-                       "  font-size: 28px;"
-                       "  color: #f5f5f5;"
-                       "}"
-                       ".button-core, .button-core-number {"
-                       "  background-color: #080808;"
-                       "}"
-                       ".button-core-number .label {"
-                       "  font-size: 20px;"
-                       "}"
-                       ".label {"
-                       "  font-size: 12px;"
-                       "  color: #ffffff;"
-                       "}"
-                       ".label-left {"
-                       "  font-size: 8px;"
-                       "  color: #4060a4;"
-                       "}"
-                       ".label-right {"
-                       "  font-size: 8px;"
-                       "  color: #c06e60;"
-                       "}"
-                       ".label-below {"
-                       "  font-size: 8px;"
-                       "  color: #4060a4;"
-                       "}"
-                       ".label-letter {"
-                       "  font-size: 8px;"
-                       "  color: #fae82c;"
+                        "  font-weight: bold;"
+                        "}"
+                        "window {"
+                        "  background-color: #f0e68c;"
+                        "}"
+                        ".annunciator {"
+                        "  padding: 0px;"
+                        "  font-size: 12px;"
+                        "  color: #080808;"
+                        "}"
+                        ".annunciators-container {"
+                        "  background-color: #abd2b4;"
+                        "}"
+                        "button {"
+                        "  background-image: none;"
+                        "  padding: 0px;"
+                        "}"
+                        "button:hover {"
+                        "  border: 1px solid yellow;"
+                        "}"
+                        ".button-menu {"
+                        "  background-color: #a9a9a9;"
+                        "}"
+                        ".button-function {"
+                        "  background-color: #696969;"
+                        "}"
+                        ".button-arrow {"
+                        "  background-color: #e0e0e0;"
+                        "}"
+                        ".button-alpha {"
+                        "  background-color: #fae82c;"
+                        "}"
+                        ".button-arrow .label, .button-alpha .label {"
+                        "  color: #080808;"
+                        "}"
+                        ".button-arrow .label {"
+                        "  font-size: 24px;"
+                        "}"
+                        ".button-shift-left {"
+                        "  background-color: #4060a4;"
+                        "}"
+                        ".button-shift-right {"
+                        "  background-color: #8e2518;"
+                        "}"
+                        ".button-shift-left .label, .button-shift-right .label {"
+                        "  font-size: 28px;"
+                        "  color: #f5f5f5;"
+                        "}"
+                        ".button-core, .button-core-number {"
+                        "  background-color: #080808;"
+                        "}"
+                        ".button-core-number .label {"
+                        "  font-size: 20px;"
+                        "}"
+                        ".label {"
+                        "  font-size: 12px;"
+                        "  color: #ffffff;"
+                        "}"
+                        ".label-left {"
+                        "  font-size: 8px;"
+                        "  color: #4060a4;"
+                        "}"
+                        ".label-right {"
+                        "  font-size: 8px;"
+                        "  color: #c06e60;"
+                        "}"
+                        ".label-below {"
+                        "  font-size: 8px;"
+                        "  color: #4060a4;"
+                        "}"
+                        ".label-letter {"
+                        "  font-size: 8px;"
+                        "  color: #fae82c;"
                         "}";
 
 char* css_global_50g = "* {"
@@ -983,6 +983,14 @@ static inline int _tiny_text_width( const char* text )
 
 static int _tiny_text_height = 10;
 
+static void key_to_button( GtkWidget* button, bool is_press )
+{
+    GdkEventButton event = { .type = GDK_BUTTON_PRESS, .state = 0 };
+    static gboolean unused_but_needed_return_value;
+    g_signal_emit_by_name( GTK_BUTTON( button ), is_press ? "button-press-event" : "button-release-event", &event,
+                           &unused_but_needed_return_value );
+}
+
 static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -1008,7 +1016,7 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
             button->hold = true;
             if ( button->down )
                 return false;
-            gtk_button_pressed( GTK_BUTTON( button->button ) );
+            key_to_button( button->button, true );
             button->down = true;
             break;
         default:
@@ -1032,7 +1040,7 @@ static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cau
 {
     x49gp_t* x49gp = button->x49gp;
     const x49gp_ui_key_t* key = button->key;
-    GtkButton* gtkbutton = GTK_BUTTON( button->button );
+    /* GtkButton* gtkbutton = GTK_BUTTON( button->button ); */
 
     /* #ifdef DEBUG_X49GP_UI */
     /*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
@@ -1044,7 +1052,7 @@ static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cau
 
     /* if ( button != cause ) */
     /*     gtkbutton->in_button = false; */
-    gtk_button_released( gtkbutton );
+    key_to_button( button->button, false );
 
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 0 );
@@ -1485,13 +1493,13 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
             bev.type = GDK_BUTTON_PRESS;
             react_to_button_press( button->button, &bev, button );
             /* GTK_BUTTON( button->button )->in_button = true; */
-            gtk_button_pressed( GTK_BUTTON( button->button ) );
+            key_to_button( button->button, true );
             /* GTK_BUTTON( button->button )->in_button = save_in; */
             break;
         case GDK_KEY_RELEASE:
             bev.type = GDK_BUTTON_RELEASE;
             /* GTK_BUTTON( button->button )->in_button = true; */
-            gtk_button_released( GTK_BUTTON( button->button ) );
+            key_to_button( button->button, false );
             /* GTK_BUTTON( button->button )->in_button = save_in; */
             react_to_button_release( button->button, &bev, button );
             break;
