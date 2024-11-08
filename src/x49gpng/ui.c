@@ -821,7 +821,7 @@ char* css_global_49gp = ".main-window {"
                         "  font-weight: bold;"
                         "}"
                         "window {"
-                        "  background-color: #f0e68c;"
+                        "  background-color: #f5deb3;"
                         "}"
                         ".annunciator {"
                         "  padding: 0px;"
@@ -1674,14 +1674,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // create all colors
     {
-        _ui_load__init_color( &ui->colors[ UI_COLOR_BLACK ], 0x00, 0x00, 0x00 );          /* #000000 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_WHITE ], 0xff, 0xff, 0xff );          /* #ffffff */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_YELLOW ], 0xfa, 0xe8, 0x2c );         /* #fae82c */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_RED ], 0x8e, 0x25, 0x18 );            /* #8e2518 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_GREEN ], 0x14, 0x4d, 0x49 );          /* #144d49 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_SILVER ], 0xe0, 0xe0, 0xe0 );         /* #e0e0e0 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_ORANGE ], 0xc0, 0x6e, 0x60 );         /* #c06e60 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_BLUE ], 0x40, 0x60, 0xa4 );           /* #4060a4 */
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_0 ], 0xab, 0xd2, 0xb4 );    /* #abd2b4 */
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_1 ], 0xa0, 0xc4, 0xa8 );    /* #a0c4a8 */
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_2 ], 0x94, 0xb6, 0x9c );    /* #94b69c */
@@ -1698,8 +1690,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_13 ], 0x17, 0x1c, 0x18 );   /* #171c18 */
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_14 ], 0x0b, 0x03, 0x0c );   /* #0b030c */
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_15 ], 0x00, 0x00, 0x00 );   /* #000000 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_FACEPLATE_49GP ], 0xf5, 0xde, 0xb3 ); /* #f5deb3 */
-        _ui_load__init_color( &ui->colors[ UI_COLOR_FACEPLATE_50G ], 0x27, 0x27, 0x27 );  /* #272727 */
     }
 
     /* set calculator type and name */
