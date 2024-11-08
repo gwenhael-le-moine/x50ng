@@ -1102,23 +1102,6 @@ static gboolean react_to_button_release( GtkWidget* widget, GdkEventButton* even
     return false;
 }
 
-static gboolean do_show_context_menu( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
-{
-    x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) );
-    if ( ui->menu_debug )
-        gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() );
-
-    if ( event->type == GDK_BUTTON_PRESS && event->button == 3 ) {
-        gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->lcd_canvas, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL );
-        return true;
-    }
-
-    return false;
-}
-
 static gboolean react_to_button_leave( GtkWidget* widget, GdkEventCrossing* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -1541,13 +1524,31 @@ static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event,
     gdk_window_focus( gtk_widget_get_window( widget ), event->time );
     gdk_window_raise( gtk_widget_get_window( widget ) );
 
+    x49gp_t* x49gp = user_data;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) );
+    if ( ui->menu_debug )
+        gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() );
+
     if ( event->type != GDK_BUTTON_PRESS )
         return false;
 
-    if ( event->button != 1 )
-        return false;
-
-    gdk_window_begin_move_drag( gtk_widget_get_window( widget ), event->button, event->x_root, event->y_root, event->time );
+    switch ( event->button ) {
+    case 1: // left click
+        gdk_window_begin_move_drag( gtk_widget_get_window( widget ), event->button, event->x_root, event->y_root, event->time );
+        break;
+    case 2: // middle click
+        GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD );
+        gchar* text = gtk_clipboard_wait_for_text( clip );
+        fprintf( stderr, "clipboard: %s\n", text );
+        break;
+    case 3: // right click
+        gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->lcd_canvas, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL );
+        return true;
+    default:
+        break;
+    }
 
     return false;
 }
@@ -1785,18 +1786,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_busy );
         gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_io );
 
-        GtkWidget* lcd_event_box = gtk_event_box_new();
-        gtk_style_context_add_class( gtk_widget_get_style_context( lcd_event_box ), "lcd-box" );
-        gtk_event_box_set_visible_window( GTK_EVENT_BOX( lcd_event_box ), true );
-        gtk_event_box_set_above_child( GTK_EVENT_BOX( lcd_event_box ), false );
-        gtk_widget_set_size_request( lcd_event_box, ui->lcd_width, ui->lcd_height + ANN_HEIGHT );
-        g_signal_connect( G_OBJECT( lcd_event_box ), "button-press-event", G_CALLBACK( do_show_context_menu ), x49gp );
-        /* gtk_container_add( GTK_CONTAINER( lcd_event_box ), annunciators_container ); */
-        gtk_container_add( GTK_CONTAINER( lcd_event_box ), ui->lcd_canvas );
-
         gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), annunciators_container, ui->annunciators_x_offset, ui->annunciators_y_offset );
-        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_event_box, ui->lcd_x_offset, ui->lcd_y_offset );
-        /* gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui->lcd_canvas, ui->lcd_x_offset, ui->lcd_y_offset ); */
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui->lcd_canvas, ui->lcd_x_offset, ui->lcd_y_offset );
     }
 
     // keyboard
