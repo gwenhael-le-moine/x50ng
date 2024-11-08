@@ -1148,11 +1148,9 @@ static gboolean react_to_focus_lost( GtkWidget* widget, GdkEventFocus* event, gp
 
 static void ui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
 {
-    GtkWidget* dialog;
     x49gp_ui_t* ui = x49gp->ui;
-
-    dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN,
-                                          GTK_RESPONSE_ACCEPT, NULL );
+    GtkWidget* dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, "_Cancel", GTK_RESPONSE_CANCEL, "_Open",
+                                                     GTK_RESPONSE_ACCEPT, NULL );
 
     gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true );
     gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
@@ -1510,15 +1508,13 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     return true;
 }
 
-static int redraw_lcd( GtkWidget* widget, GdkEventExpose* event, gpointer user_data )
+static int redraw_lcd( GtkWidget* widget, cairo_t* cr, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
-    cairo_t* cr = gdk_cairo_create( gtk_widget_get_window( widget ) );
     cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
     cairo_paint( cr );
-    cairo_destroy( cr );
 
     return false;
 }
