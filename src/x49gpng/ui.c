@@ -53,13 +53,13 @@
 #define KEYBOARD_PADDING ( _tiny_text_height + 2 )
 #define KEYBOARD_WIDTH ( ui_keys[ NB_KEYS - 1 ].x + ui_keys[ NB_KEYS - 1 ].width )
 #define KEYBOARD_HEIGHT ( ui_keys[ NB_KEYS - 1 ].y + ui_keys[ NB_KEYS - 1 ].height )
-#define KEYBOARD_X_OFFSET KEYBOARD_PADDING
+#define KEYBOARD_X_OFFSET 0
 #define KEYBOARD_Y_OFFSET ( LCD_Y_OFFSET + LCD_HEIGHT + KEYBOARD_PADDING )
 
 #define WINDOW_WIDTH ( ( 2 * KEYBOARD_PADDING ) + KEYBOARD_WIDTH )
 #define WINDOW_HEIGHT ( HEADER_HEIGHT + LCD_HEIGHT + KEYBOARD_HEIGHT + ( 2 * KEYBOARD_PADDING ) )
 
-#define LCD_X_OFFSET ( ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 ) + KEYBOARD_PADDING )
+#define LCD_X_OFFSET ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
 #define ANNUNCIATORS_X_OFFSET LCD_X_OFFSET
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
