@@ -29,16 +29,16 @@
 #define KB_WIDTH_6_KEYS 36
 #define KB_WIDTH_5_KEYS 46
 
+#define TINY_TEXT_HEIGHT 10
+
 #define KB_HEIGHT_MENU_KEYS 22
 #define KB_HEIGHT_SMALL_KEYS 28
 #define KB_HEIGHT_BIG_KEYS 32
 
-#define KB_LINE_HEIGHT 48
+#define KB_LINE_HEIGHT ( 4 * ( TINY_TEXT_HEIGHT + 2 ) )
 #define KB_SPACING_KEYS 14
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
-
-#define HEADER_HEIGHT 10
 
 #define ANNUNCIATOR_WIDTH 16
 #define ANNUNCIATOR_HEIGHT 16
@@ -47,15 +47,11 @@
 #define LCD_PIXEL_SCALE 2
 #define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
 #define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
-#define LCD_Y_OFFSET HEADER_HEIGHT
 
-#define KEYBOARD_PADDING ( _tiny_text_height + 2 )
+#define KEYBOARD_PADDING ( TINY_TEXT_HEIGHT + 2 )
 #define KEYBOARD_WIDTH ( ui_keys[ NB_KEYS - 1 ].x + ui_keys[ NB_KEYS - 1 ].width )
-#define KEYBOARD_HEIGHT ( ui_keys[ NB_KEYS - 1 ].y + ui_keys[ NB_KEYS - 1 ].height )
-#define KEYBOARD_Y_OFFSET ( HEADER_HEIGHT + LCD_HEIGHT + ( 2 * LCD_PADDING ) )
 
 #define WINDOW_WIDTH ( ( 2 * KEYBOARD_PADDING ) + KEYBOARD_WIDTH )
-#define WINDOW_HEIGHT ( KEYBOARD_Y_OFFSET + KEYBOARD_HEIGHT + KEYBOARD_PADDING )
 
 #define LCD_PADDING ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
 
@@ -847,7 +843,7 @@ char* css_global_49gp = "window * {"
                         "  font-size: 12px;"
                         "  color: #080808;"
                         "}"
-                        ".annunciators-container {"
+                        ".lcd-container, .annunciators-container {"
                         "  background-color: #abd2b4;"
                         "}"
                         "button {"
@@ -923,15 +919,12 @@ char* css_global_50g = "window * {"
                        "  font-size: 12px;"
                        "  color: #080808;"
                        "}"
-                       ".annunciators-container {"
+                       ".lcd-container, .annunciators-container {"
                        "  background-color: #abd2b4;"
                        "}"
                        "button {"
                        "  background-image: none;"
                        "  padding: 0px;"
-                       "}"
-                       "button:hover {"
-                       "  border: 1px solid yellow;"
                        "}"
                        ".button-menu {"
                        "  background-color: #a9a9a9;"
@@ -999,8 +992,6 @@ static inline int _tiny_text_width( const char* text )
 
     return strlen( stripped_text ) * 5;
 }
-
-static int _tiny_text_height = 10;
 
 static void key_to_button( GtkWidget* button, bool is_press )
 {
@@ -1729,7 +1720,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // create window and widgets/stuff
-    GtkWidget* fixed_widgets_container = gtk_fixed_new();
+    GtkWidget* window_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
     ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
     ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
@@ -1738,14 +1729,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
 
     ui->window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-    gtk_window_set_default_size( GTK_WINDOW( ui->window ), WINDOW_WIDTH, WINDOW_HEIGHT );
     gtk_window_set_accept_focus( GTK_WINDOW( ui->window ), true );
     gtk_window_set_focus_on_map( GTK_WINDOW( ui->window ), true );
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
     gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
     gtk_widget_realize( ui->window );
-    gtk_container_add( GTK_CONTAINER( ui->window ), fixed_widgets_container );
+    gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
     gtk_style_context_add_class( gtk_widget_get_style_context( ui->window ), "main-window" );
 
     g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
@@ -1762,9 +1752,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
+    GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    gtk_style_context_add_class( gtk_widget_get_style_context( lcd_container ), "lcd-container" );
+    gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
+    gtk_widget_set_margin_bottom( lcd_container, 3 );
+    gtk_box_set_center_widget( GTK_BOX( lcd_container ), ui->lcd_canvas );
+
     GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, ( LCD_WIDTH - ( 6 * ANNUNCIATOR_WIDTH ) ) / 5 );
-    gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
-    gtk_widget_set_size_request( annunciators_container, LCD_WIDTH, ANNUNCIATOR_HEIGHT );
     gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "annunciators-container" );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_left );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_right );
@@ -1773,25 +1767,26 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_busy );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_io );
 
-    GtkWidget* lcd_container = gtk_fixed_new();
-    gtk_widget_set_margin_top( lcd_container, LCD_PADDING );
-    gtk_widget_set_margin_bottom( lcd_container, LCD_PADDING );
-    gtk_widget_set_margin_start( lcd_container, LCD_PADDING );
-    gtk_widget_set_margin_end( lcd_container, LCD_PADDING );
+    GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "display-container" );
+    gtk_widget_set_margin_top( display_container, LCD_PADDING );
+    gtk_widget_set_margin_bottom( display_container, LCD_PADDING );
+    gtk_widget_set_margin_start( display_container, LCD_PADDING );
+    gtk_widget_set_margin_end( display_container, WINDOW_WIDTH - ( LCD_PADDING + LCD_WIDTH ) );
+    gtk_container_add( GTK_CONTAINER( display_container ), annunciators_container );
+    gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
 
-    gtk_fixed_put( GTK_FIXED( lcd_container ), annunciators_container, 0, 0 );
-    gtk_fixed_put( GTK_FIXED( lcd_container ), ui->lcd_canvas, 0, ANNUNCIATOR_HEIGHT );
-
-    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_container, 0, LCD_Y_OFFSET );
+    gtk_container_add( GTK_CONTAINER( window_container ), display_container );
 
     // keyboard
     GtkWidget* keyboard_container = gtk_fixed_new();
+    gtk_style_context_add_class( gtk_widget_get_style_context( keyboard_container ), "keyboard-container" );
     gtk_widget_set_margin_top( keyboard_container, KEYBOARD_PADDING );
     gtk_widget_set_margin_bottom( keyboard_container, KEYBOARD_PADDING );
     gtk_widget_set_margin_start( keyboard_container, KEYBOARD_PADDING );
     gtk_widget_set_margin_end( keyboard_container, KEYBOARD_PADDING );
 
-    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), keyboard_container, 0, KEYBOARD_Y_OFFSET );
+    gtk_container_add( GTK_CONTAINER( window_container ), keyboard_container );
 
     x49gp_ui_button_t* button;
     GtkWidget* ui_label;
@@ -1852,10 +1847,10 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             }
             if ( button->key->right ) {
                 x = button->key->x;
-                y = button->key->y - _tiny_text_height - 2;
+                y = button->key->y - TINY_TEXT_HEIGHT - 2;
 
                 x2 = button->key->x + button->key->width - _tiny_text_width( button->key->right );
-                y2 = button->key->y - _tiny_text_height - 2;
+                y2 = button->key->y - TINY_TEXT_HEIGHT - 2;
 
                 if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
                     x -= ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
@@ -1866,7 +1861,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_right, x2, KEYBOARD_PADDING + y2 );
             } else {
                 x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
-                y = button->key->y - _tiny_text_height - 2;
+                y = button->key->y - TINY_TEXT_HEIGHT - 2;
                 gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
             }
         }
@@ -1877,7 +1872,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
             x = button->key->x + button->key->width;
-            y = button->key->y + button->key->height - ( _tiny_text_height / 2 );
+            y = button->key->y + button->key->height - ( TINY_TEXT_HEIGHT / 2 );
             gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_letter, x, KEYBOARD_PADDING + y );
         }
         if ( button->key->below ) {
