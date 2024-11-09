@@ -87,21 +87,6 @@ struct __x49gp_ui_s__ {
     GtkWidget* ui_ann_battery;
     GtkWidget* ui_ann_busy;
     GtkWidget* ui_ann_io;
-
-    gint width;
-    gint height;
-
-    gint kb_x_offset;
-    gint kb_y_offset;
-    gint kb_padding;
-
-    gint annunciators_x_offset;
-    gint annunciators_y_offset;
-
-    gint lcd_x_offset;
-    gint lcd_y_offset;
-    gint lcd_width;
-    gint lcd_height;
 };
 
 void gui_update_lcd( x49gp_t* x49gp );
