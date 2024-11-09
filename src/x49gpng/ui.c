@@ -1722,9 +1722,10 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         ui->lcd_height = 80 * LCD_PIXEL_SCALE;
         ui->lcd_x_offset = ui->annunciators_x_offset = ui->annunciators_y_offset = 20;
 
-        ui->kb_x_offset = 10;
+        ui->kb_x_offset = 0;
+        ui->kb_padding = 10;
 
-        int kb_width = ( ui->kb_x_offset ) + ( 5 * KB_COLUMN_WIDTH_5_KEYS );
+        int kb_width = ( ui->kb_padding ) + ( 5 * KB_COLUMN_WIDTH_5_KEYS );
         if ( ui->width < kb_width ) {
             ui->width = kb_width;
             ui->lcd_x_offset = ui->annunciators_x_offset = ui->annunciators_y_offset = ( ui->width - ui->lcd_width ) / 2;
@@ -1789,7 +1790,10 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // keyboard
+    GtkWidget* keyboard_container = gtk_fixed_new();
     {
+        gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), keyboard_container, ui->kb_x_offset, ui->kb_y_offset );
+
         x49gp_ui_button_t* button;
         GtkWidget* ui_label;
         GtkWidget* ui_left;
@@ -1834,11 +1838,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                     gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
                 }
                 if ( button->key->right ) {
-                    x = ui->kb_x_offset + button->key->x;
-                    y = ui->kb_y_offset + button->key->y - _tiny_text_height - 2;
+                    x = ui->kb_padding + button->key->x;
+                    y = button->key->y - _tiny_text_height - 2;
 
-                    x2 = ui->kb_x_offset + button->key->x + button->key->width - _tiny_text_width( button->key->right );
-                    y2 = ui->kb_y_offset + button->key->y - _tiny_text_height - 2;
+                    x2 = ui->kb_padding + button->key->x + button->key->width - _tiny_text_width( button->key->right );
+                    y2 = button->key->y - _tiny_text_height - 2;
 
                     if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
                         x -=
@@ -1847,12 +1851,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                             ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
                     }
 
-                    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
-                    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_right, x2, y2 );
+                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, y );
+                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_right, x2, y2 );
                 } else {
-                    x = ui->kb_x_offset + button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
-                    y = ui->kb_y_offset + button->key->y - _tiny_text_height - 2;
-                    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_left, x, y );
+                    x = ui->kb_padding + button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
+                    y = button->key->y - _tiny_text_height - 2;
+                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, y );
                 }
             }
             if ( button->key->letter ) {
@@ -1861,9 +1865,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
-                x = ui->kb_x_offset + button->key->x + button->key->width;
-                y = ui->kb_y_offset + button->key->y + button->key->height - ( _tiny_text_height / 2 );
-                gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_letter, x, y );
+                x = ui->kb_padding + button->key->x + button->key->width;
+                y = button->key->y + button->key->height - ( _tiny_text_height / 2 );
+                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_letter, x, y );
             }
             if ( button->key->below ) {
                 ui_below = gtk_label_new( NULL );
@@ -1871,9 +1875,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
 
-                x = ui->kb_x_offset + button->key->x + ( ( button->key->width - _tiny_text_width( button->key->below ) ) / 2 );
-                y = ui->kb_y_offset + button->key->y + button->key->height + 2;
-                gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui_below, x, y );
+                x = ui->kb_padding + button->key->x + ( ( button->key->width - _tiny_text_width( button->key->below ) ) / 2 );
+                y = button->key->y + button->key->height + 2;
+                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_below, x, y );
             }
 
             button->box = gtk_event_box_new();
@@ -1888,8 +1892,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
 
             gtk_widget_set_size_request( button->box, button->key->width, button->key->height );
-            gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), button->box, ui->kb_x_offset + button->key->x,
-                           ui->kb_y_offset + button->key->y );
+            gtk_fixed_put( GTK_FIXED( keyboard_container ), button->box, ui->kb_padding + button->key->x,
+                           button->key->y );
         }
     }
 

@@ -93,6 +93,7 @@ struct __x49gp_ui_s__ {
 
     gint kb_x_offset;
     gint kb_y_offset;
+    gint kb_padding;
 
     gint annunciators_x_offset;
     gint annunciators_y_offset;
