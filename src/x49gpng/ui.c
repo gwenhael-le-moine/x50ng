@@ -38,29 +38,26 @@
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
 
-#define HEADER_HEIGHT 20
+#define HEADER_HEIGHT 10
 
 #define ANNUNCIATOR_WIDTH 16
 #define ANNUNCIATOR_HEIGHT 16
 #define ANNUNCIATORS_HEIGHT ANNUNCIATOR_HEIGHT
-#define ANNUNCIATORS_Y_OFFSET LCD_X_OFFSET
 
 #define LCD_PIXEL_SCALE 2
 #define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
 #define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
-#define LCD_Y_OFFSET ( ANNUNCIATORS_Y_OFFSET + ANNUNCIATORS_HEIGHT )
+#define LCD_Y_OFFSET HEADER_HEIGHT
 
 #define KEYBOARD_PADDING ( _tiny_text_height + 2 )
 #define KEYBOARD_WIDTH ( ui_keys[ NB_KEYS - 1 ].x + ui_keys[ NB_KEYS - 1 ].width )
 #define KEYBOARD_HEIGHT ( ui_keys[ NB_KEYS - 1 ].y + ui_keys[ NB_KEYS - 1 ].height )
-#define KEYBOARD_X_OFFSET 0
-#define KEYBOARD_Y_OFFSET ( LCD_Y_OFFSET + LCD_HEIGHT + KEYBOARD_PADDING )
+#define KEYBOARD_Y_OFFSET ( HEADER_HEIGHT + LCD_HEIGHT + ( 2 * LCD_PADDING ) )
 
 #define WINDOW_WIDTH ( ( 2 * KEYBOARD_PADDING ) + KEYBOARD_WIDTH )
-#define WINDOW_HEIGHT ( HEADER_HEIGHT + LCD_HEIGHT + KEYBOARD_HEIGHT + ( 2 * KEYBOARD_PADDING ) )
+#define WINDOW_HEIGHT ( KEYBOARD_Y_OFFSET + KEYBOARD_HEIGHT + KEYBOARD_PADDING )
 
-#define LCD_X_OFFSET ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
-#define ANNUNCIATORS_X_OFFSET LCD_X_OFFSET
+#define LCD_PADDING ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "button-menu",
@@ -1776,8 +1773,16 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_busy );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_io );
 
-    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), annunciators_container, ANNUNCIATORS_X_OFFSET, ANNUNCIATORS_Y_OFFSET );
-    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), ui->lcd_canvas, LCD_X_OFFSET, LCD_Y_OFFSET );
+    GtkWidget* lcd_container = gtk_fixed_new();
+    gtk_widget_set_margin_top( lcd_container, LCD_PADDING );
+    gtk_widget_set_margin_bottom( lcd_container, LCD_PADDING );
+    gtk_widget_set_margin_start( lcd_container, LCD_PADDING );
+    gtk_widget_set_margin_end( lcd_container, LCD_PADDING );
+
+    gtk_fixed_put( GTK_FIXED( lcd_container ), annunciators_container, 0, 0 );
+    gtk_fixed_put( GTK_FIXED( lcd_container ), ui->lcd_canvas, 0, ANNUNCIATOR_HEIGHT );
+
+    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), lcd_container, 0, LCD_Y_OFFSET );
 
     // keyboard
     GtkWidget* keyboard_container = gtk_fixed_new();
@@ -1786,7 +1791,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_set_margin_start( keyboard_container, KEYBOARD_PADDING );
     gtk_widget_set_margin_end( keyboard_container, KEYBOARD_PADDING );
 
-    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), keyboard_container, KEYBOARD_X_OFFSET, KEYBOARD_Y_OFFSET );
+    gtk_fixed_put( GTK_FIXED( fixed_widgets_container ), keyboard_container, 0, KEYBOARD_Y_OFFSET );
 
     x49gp_ui_button_t* button;
     GtkWidget* ui_label;
