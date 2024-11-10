@@ -1424,30 +1424,6 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     return true;
 }
 
-static int redraw_lcd( GtkWidget* widget, cairo_t* cr, gpointer user_data )
-{
-    x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
-    cairo_paint( cr );
-
-    return false;
-}
-
-static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
-{
-    x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    if ( NULL != ui->lcd_surface )
-        return false;
-
-    ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, LCD_WIDTH, LCD_HEIGHT );
-
-    return false;
-}
-
 static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
 #ifdef DEBUG_X49GP_UI
@@ -1482,6 +1458,30 @@ static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event,
         default:
             break;
     }
+
+    return false;
+}
+
+static int redraw_lcd( GtkWidget* widget, cairo_t* cr, gpointer user_data )
+{
+    x49gp_t* x49gp = user_data;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
+    cairo_paint( cr );
+
+    return false;
+}
+
+static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
+{
+    x49gp_t* x49gp = user_data;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    if ( NULL != ui->lcd_surface )
+        return false;
+
+    ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, LCD_WIDTH, LCD_HEIGHT );
 
     return false;
 }
