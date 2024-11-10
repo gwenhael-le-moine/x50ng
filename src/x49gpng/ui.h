@@ -34,6 +34,69 @@ typedef enum {
     UI_CALCULATOR_HP50G_NEWRPL
 } x49gp_ui_calculator_t;
 
+typedef enum {
+    HPKEY_A = 0,
+    HPKEY_B,
+    HPKEY_C,
+    HPKEY_D,
+    HPKEY_E,
+    HPKEY_F,
+
+    HPKEY_G,
+    HPKEY_H,
+    HPKEY_I,
+    HPKEY_UP,
+    HPKEY_J, /* 10 */
+
+    HPKEY_K,
+    HPKEY_L,
+    HPKEY_LEFT,
+    HPKEY_DOWN,
+    HPKEY_RIGHT,
+
+    HPKEY_M,
+    HPKEY_N,
+    HPKEY_O,
+    HPKEY_P,
+    HPKEY_BACKSPACE, /* 20 */
+
+    HPKEY_Q,
+    HPKEY_R,
+    HPKEY_S,
+    HPKEY_T,
+    HPKEY_U,
+
+    HPKEY_V,
+    HPKEY_W,
+    HPKEY_X,
+    HPKEY_Y,
+    HPKEY_Z, /* 30 */
+
+    HPKEY_ALPHA,
+    HPKEY_7,
+    HPKEY_8,
+    HPKEY_9,
+    HPKEY_MULTIPLY,
+
+    HPKEY_SHIFT_LEFT,
+    HPKEY_4,
+    HPKEY_5,
+    HPKEY_6,
+    HPKEY_MINUS, /* 40 */
+
+    HPKEY_SHIFT_RIGHT,
+    HPKEY_1,
+    HPKEY_2,
+    HPKEY_3,
+    HPKEY_PLUS,
+
+    HPKEY_ON,
+    HPKEY_0,
+    HPKEY_PERIOD,
+    HPKEY_SPACE,
+    HPKEY_ENTER, /* 50 */
+} x49gp_ui_hpkey_t;
+
 typedef struct {
     const char* css_class;
     const char* label;

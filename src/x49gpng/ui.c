@@ -943,219 +943,217 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     switch ( keyval ) {
         case GDK_KEY_a:
         case GDK_KEY_F1:
-            index = 0;
+            index = HPKEY_A;
             break;
         case GDK_KEY_b:
         case GDK_KEY_F2:
-            index = 1;
+            index = HPKEY_B;
             break;
         case GDK_KEY_c:
         case GDK_KEY_F3:
-            index = 2;
+            index = HPKEY_C;
             break;
         case GDK_KEY_d:
         case GDK_KEY_F4:
-            index = 3;
+            index = HPKEY_D;
             break;
         case GDK_KEY_e:
         case GDK_KEY_F5:
-            index = 4;
+            index = HPKEY_E;
             break;
         case GDK_KEY_f:
         case GDK_KEY_F6:
-            index = 5;
+            index = HPKEY_F;
             break;
         case GDK_KEY_g:
-            index = 6;
+            index = HPKEY_G;
             break;
         case GDK_KEY_h:
-            index = 7;
+            index = HPKEY_H;
             break;
         case GDK_KEY_i:
-            index = 8;
+            index = HPKEY_I;
             break;
         case GDK_KEY_j:
-            index = 9;
+            index = HPKEY_J;
             break;
         case GDK_KEY_k:
-            index = 10;
+            index = HPKEY_K;
             break;
         case GDK_KEY_l:
-            index = 11;
+            index = HPKEY_L;
             break;
         case GDK_KEY_Up:
         case GDK_KEY_KP_Up:
-            index = 12;
+            index = HPKEY_UP;
             break;
         case GDK_KEY_Left:
         case GDK_KEY_KP_Left:
-            index = 13;
+            index = HPKEY_LEFT;
             break;
         case GDK_KEY_Down:
         case GDK_KEY_KP_Down:
-            index = 14;
+            index = HPKEY_DOWN;
             break;
         case GDK_KEY_Right:
         case GDK_KEY_KP_Right:
-            index = 15;
+            index = HPKEY_RIGHT;
             break;
         case GDK_KEY_m:
-            index = 16;
+            index = HPKEY_M;
             break;
         case GDK_KEY_n:
-            index = 17;
+            index = HPKEY_N;
             break;
         case GDK_KEY_o:
         case GDK_KEY_apostrophe:
-            index = 18;
+            index = HPKEY_O;
             break;
         case GDK_KEY_p:
-            index = 19;
+            index = HPKEY_P;
             break;
         case GDK_KEY_BackSpace:
         case GDK_KEY_Delete:
         case GDK_KEY_KP_Delete:
-            index = 20;
+            index = HPKEY_BACKSPACE;
             break;
         case GDK_KEY_dead_circumflex:
         case GDK_KEY_asciicircum:
         case GDK_KEY_q:
         case GDK_KEY_caret:
-            index = 21;
+            index = HPKEY_Q;
             break;
         case GDK_KEY_r:
-            index = 22;
+            index = HPKEY_R;
             break;
         case GDK_KEY_s:
-            index = 23;
+            index = HPKEY_S;
             break;
         case GDK_KEY_t:
-            index = 24;
+            index = HPKEY_T;
             break;
         case GDK_KEY_u:
-            index = 25;
+            index = HPKEY_U;
             break;
         case GDK_KEY_v:
-            index = 26;
+            index = HPKEY_V;
             break;
         case GDK_KEY_w:
-            index = 27;
+            index = HPKEY_W;
             break;
         case GDK_KEY_x:
-            index = 28;
+            index = HPKEY_X;
             break;
         case GDK_KEY_y:
-            index = 29;
+            index = HPKEY_Y;
             break;
         case GDK_KEY_z:
         case GDK_KEY_slash:
         case GDK_KEY_KP_Divide:
-            index = 30;
+            index = HPKEY_Z;
             break;
         case GDK_KEY_Tab:
-            index = 31;
-            break;
 #ifndef __APPLE__
         case GDK_KEY_Alt_L:
         case GDK_KEY_Alt_R:
         case GDK_KEY_Meta_L:
         case GDK_KEY_Meta_R:
         case GDK_KEY_Mode_switch:
-            index = 31;
-            break;
 #endif
+            index = HPKEY_ALPHA;
+            break;
         case GDK_KEY_7:
         case GDK_KEY_KP_7:
-            index = 32;
+            index = HPKEY_7;
             break;
         case GDK_KEY_8:
         case GDK_KEY_KP_8:
-            index = 33;
+            index = HPKEY_8;
             break;
         case GDK_KEY_9:
         case GDK_KEY_KP_9:
-            index = 34;
+            index = HPKEY_9;
             break;
         case GDK_KEY_multiply:
         case GDK_KEY_KP_Multiply:
-            index = 35;
+            index = HPKEY_MULTIPLY;
             break;
         case GDK_KEY_Shift_L:
         case GDK_KEY_Shift_R:
-            index = 36;
+            index = HPKEY_SHIFT_LEFT;
             break;
         case GDK_KEY_4:
         case GDK_KEY_KP_4:
-            index = 37;
+            index = HPKEY_4;
             break;
         case GDK_KEY_5:
         case GDK_KEY_KP_5:
-            index = 38;
+            index = HPKEY_5;
             break;
         case GDK_KEY_6:
         case GDK_KEY_KP_6:
-            index = 39;
+            index = HPKEY_6;
             break;
         case GDK_KEY_minus:
         case GDK_KEY_KP_Subtract:
-            index = 40;
+            index = HPKEY_MINUS;
             break;
         case GDK_KEY_Control_L:
         case GDK_KEY_Control_R:
-            index = 41;
+            index = HPKEY_SHIFT_RIGHT;
             break;
         case GDK_KEY_1:
         case GDK_KEY_KP_1:
-            index = 42;
+            index = HPKEY_1;
             break;
         case GDK_KEY_2:
         case GDK_KEY_KP_2:
-            index = 43;
+            index = HPKEY_2;
             break;
         case GDK_KEY_3:
         case GDK_KEY_KP_3:
-            index = 44;
+            index = HPKEY_3;
             break;
         case GDK_KEY_plus:
         case GDK_KEY_KP_Add:
-            index = 45;
+            index = HPKEY_PLUS;
             break;
         case GDK_KEY_Escape:
-            index = 46;
+            index = HPKEY_ON;
             break;
         case GDK_KEY_0:
         case GDK_KEY_KP_0:
-            index = 47;
+            index = HPKEY_0;
             break;
         case GDK_KEY_period:
         case GDK_KEY_comma:
         case GDK_KEY_KP_Decimal:
         case GDK_KEY_KP_Separator:
-            index = 48;
+            index = HPKEY_PERIOD;
             break;
         case GDK_KEY_space:
         case GDK_KEY_KP_Space:
-            index = 49;
+            index = HPKEY_SPACE;
             break;
         case GDK_KEY_Return:
         case GDK_KEY_KP_Enter:
-            index = 50;
+            index = HPKEY_ENTER;
             break;
 
         /* QWERTY compat: US English, UK English, International English */
         case GDK_KEY_backslash:
-            index = 35;
+            index = HPKEY_MULTIPLY;
             break;
         case GDK_KEY_equal:
-            index = 45;
+            index = HPKEY_PLUS;
             break;
 
         /* QWERTZ compat: German */
         case GDK_KEY_ssharp:
-            index = 30;
+            index = HPKEY_Z;
             break;
         case GDK_KEY_numbersign:
-            index = 35;
+            index = HPKEY_MULTIPLY;
             break;
 
         case GDK_KEY_F7:
