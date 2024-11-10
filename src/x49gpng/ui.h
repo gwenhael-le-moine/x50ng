@@ -42,11 +42,6 @@ typedef struct {
     const char* right;
     const char* below;
 
-    int x;
-    int y;
-    int width;
-    int height;
-
     int column;
     int row;
     unsigned char columnbit;

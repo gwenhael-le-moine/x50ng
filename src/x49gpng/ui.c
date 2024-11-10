@@ -27,10 +27,14 @@
 #define FONT_SIZE_SYMBOL 28
 #define FONT_SIZE_NUMBER 20
 #define FONT_SIZE_KEY 12
-#define FONT_SIZE_TINY 8
+#define FONT_SIZE_TINY 10
 
 #define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
 #define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
+
+#define KB_NB_ROWS 10
+#define KB_NB_COLS_MENU 6
+#define KB_NB_COLS 5
 
 #define KB_WIDTH_6_KEYS 36
 #define KB_WIDTH_5_KEYS 46
@@ -48,14 +52,13 @@
 #define ANNUNCIATOR_HEIGHT 16
 #define ANNUNCIATORS_HEIGHT ANNUNCIATOR_HEIGHT
 
-#define LCD_PIXEL_SCALE 2
+#define LCD_PIXEL_SCALE ( (int)( opt.scale + 1 ) )
 #define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
 #define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
 
 #define KEYBOARD_PADDING ( TINY_TEXT_HEIGHT + 2 )
-#define KEYBOARD_WIDTH ( ui_keys[ NB_KEYS - 1 ].x + ui_keys[ NB_KEYS - 1 ].width )
 
-#define WINDOW_WIDTH ( KEYBOARD_WIDTH )
+#define WINDOW_WIDTH ( 300 )
 
 #define LCD_PADDING ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
 
@@ -66,10 +69,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "Y=",
      .right = NULL,
      .below = NULL,
-     .x = 0,
-     .y = 0,
-     .width = KB_WIDTH_6_KEYS,
-     .height = KB_HEIGHT_MENU_KEYS,
      .column = 5,
      .row = 1,
      .columnbit = ( 1 << 5 ),
@@ -81,10 +80,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "WIN",
      .right = NULL,
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_6_KEYS,
-     .y = 0,
-     .width = KB_WIDTH_6_KEYS,
-     .height = KB_HEIGHT_MENU_KEYS,
      .column = 5,
      .row = 2,
      .columnbit = ( 1 << 5 ),
@@ -96,10 +91,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "GRAPH",
      .right = NULL,
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_6_KEYS,
-     .y = 0,
-     .width = KB_WIDTH_6_KEYS,
-     .height = KB_HEIGHT_MENU_KEYS,
      .column = 5,
      .row = 3,
      .columnbit = ( 1 << 5 ),
@@ -111,10 +102,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "2D/3D",
      .right = NULL,
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_6_KEYS,
-     .y = 0,
-     .width = KB_WIDTH_6_KEYS,
-     .height = KB_HEIGHT_MENU_KEYS,
      .column = 5,
      .row = 4,
      .columnbit = ( 1 << 5 ),
@@ -126,10 +113,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "TBLSET",
      .right = NULL,
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_6_KEYS,
-     .y = 0,
-     .width = KB_WIDTH_6_KEYS,
-     .height = KB_HEIGHT_MENU_KEYS,
      .column = 5,
      .row = 5,
      .columnbit = ( 1 << 5 ),
@@ -141,10 +124,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "TABLE",
      .right = NULL,
      .below = NULL,
-     .x = 5 * KB_COLUMN_WIDTH_6_KEYS,
-     .y = 0,
-     .width = KB_WIDTH_6_KEYS,
-     .height = KB_HEIGHT_MENU_KEYS,
      .column = 5,
      .row = 6,
      .columnbit = ( 1 << 5 ),
@@ -157,10 +136,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "FILES",
      .right = "BEGIN",
      .below = NULL,
-     .x = 0,
-     .y = KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 5,
      .row = 7,
      .columnbit = ( 1 << 5 ),
@@ -172,10 +147,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CUSTOM",
      .right = "END",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 6,
      .row = 5,
      .columnbit = ( 1 << 6 ),
@@ -187,25 +158,28 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "i",
      .right = "I",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 6,
      .row = 6,
      .columnbit = ( 1 << 6 ),
      .rowbit = ( 1 << 6 ),
      .eint = 6},
+    {.css_class = "arrow",
+     .label = "⬆",
+     .letter = NULL,
+     .left = NULL,
+     .right = NULL,
+     .below = NULL,
+     .column = 6,
+     .row = 1,
+     .columnbit = ( 1 << 6 ),
+     .rowbit = ( 1 << 1 ),
+     .eint = 1},
     {.css_class = "function",
      .label = "VAR",
      .letter = "J",
      .left = "UPDIR",
      .right = "COPY",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 6,
      .row = 7,
      .columnbit = ( 1 << 6 ),
@@ -217,10 +191,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "RCL",
      .right = "CUT",
      .below = NULL,
-     .x = 0,
-     .y = 2 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 7,
      .row = 1,
      .columnbit = ( 1 << 7 ),
@@ -232,10 +202,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "PREV",
      .right = "PASTE",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 2 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 7,
      .row = 2,
      .columnbit = ( 1 << 7 ),
@@ -243,30 +209,11 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 2},
 
     {.css_class = "arrow",
-     .label = "⬆",
-     .letter = NULL,
-     .left = NULL,
-     .right = NULL,
-     .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
-     .column = 6,
-     .row = 1,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "arrow",
      .label = "⬅",
      .letter = NULL,
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 2 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 6,
      .row = 2,
      .columnbit = ( 1 << 6 ),
@@ -278,10 +225,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 2 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 6,
      .row = 3,
      .columnbit = ( 1 << 6 ),
@@ -293,10 +236,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 2 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 6,
      .row = 4,
      .columnbit = ( 1 << 6 ),
@@ -309,10 +248,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CMD",
      .right = "UNDO",
      .below = NULL,
-     .x = 0,
-     .y = 3 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 4,
      .row = 1,
      .columnbit = ( 1 << 4 ),
@@ -324,10 +259,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "PRG",
      .right = "CHARS",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 3 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 3,
      .row = 1,
      .columnbit = ( 1 << 3 ),
@@ -339,10 +270,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "MTRW",
      .right = "EQW",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 3 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 2,
      .row = 1,
      .columnbit = ( 1 << 2 ),
@@ -354,10 +281,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "MTH",
      .right = "CAT",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 3 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 1,
      .row = 1,
      .columnbit = ( 1 << 1 ),
@@ -369,10 +292,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "DEL",
      .right = "CLEAR",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 3 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 0,
      .row = 1,
      .columnbit = ( 1 << 0 ),
@@ -385,10 +304,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "𝑒<sup>x</sup>",
      .right = "LN",
      .below = NULL,
-     .x = 0,
-     .y = 4 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 4,
      .row = 2,
      .columnbit = ( 1 << 4 ),
@@ -400,10 +315,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "𝓍<sup>2</sup>",
      .right = "<sup>x</sup>√𝓎",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 4 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 3,
      .row = 2,
      .columnbit = ( 1 << 3 ),
@@ -415,10 +326,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ASIN",
      .right = "∑",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 4 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 2,
      .row = 2,
      .columnbit = ( 1 << 2 ),
@@ -430,10 +337,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ACOS",
      .right = "∂",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 4 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 1,
      .row = 2,
      .columnbit = ( 1 << 1 ),
@@ -445,10 +348,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ATAN",
      .right = "∫",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 4 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 0,
      .row = 2,
      .columnbit = ( 1 << 0 ),
@@ -461,10 +360,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "10<sup>𝓍</sup>",
      .right = "LOG",
      .below = NULL,
-     .x = 0,
-     .y = 5 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 4,
      .row = 3,
      .columnbit = ( 1 << 4 ),
@@ -476,10 +371,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "≠",
      .right = "=",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 5 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 3,
      .row = 3,
      .columnbit = ( 1 << 3 ),
@@ -491,10 +382,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "≤",
      .right = "&gt;",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 5 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 2,
      .row = 3,
      .columnbit = ( 1 << 2 ),
@@ -506,10 +393,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "≥",
      .right = ">",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 5 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 1,
      .row = 3,
      .columnbit = ( 1 << 1 ),
@@ -521,10 +404,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ABS",
      .right = "ARG",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 5 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_SMALL_KEYS,
      .column = 0,
      .row = 3,
      .columnbit = ( 1 << 0 ),
@@ -537,10 +416,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "USER",
      .right = "ENTRY",
      .below = NULL,
-     .x = 0,
-     .y = 6 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -552,10 +427,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "S.SLV",
      .right = "NUM.SLV",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 6 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 3,
      .row = 4,
      .columnbit = ( 1 << 3 ),
@@ -567,10 +438,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "EXP&amp;LN",
      .right = "TRIG",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 6 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 2,
      .row = 4,
      .columnbit = ( 1 << 2 ),
@@ -582,10 +449,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "FINANCE",
      .right = "TIME",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 6 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 1,
      .row = 4,
      .columnbit = ( 1 << 1 ),
@@ -597,10 +460,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "[ ]",
      .right = "\" \"",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 6 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 4,
      .columnbit = ( 1 << 0 ),
@@ -613,10 +472,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .x = 0,
-     .y = 7 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -628,10 +483,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CALC",
      .right = "ALG",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 7 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 3,
      .row = 5,
      .columnbit = ( 1 << 3 ),
@@ -643,10 +494,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "MATRICES",
      .right = "STAT",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 7 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 2,
      .row = 5,
      .columnbit = ( 1 << 2 ),
@@ -658,10 +505,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CONVERT",
      .right = "UNITS",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 7 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 1,
      .row = 5,
      .columnbit = ( 1 << 1 ),
@@ -673,10 +516,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "( )",
      .right = "_",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 7 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 5,
      .columnbit = ( 1 << 0 ),
@@ -689,10 +528,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = NULL,
      .right = NULL,
      .below = NULL,
-     .x = 0,
-     .y = 8 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -704,10 +539,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ARITH",
      .right = "CMPLX",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 8 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 3,
      .row = 6,
      .columnbit = ( 1 << 3 ),
@@ -719,10 +550,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "DEF",
      .right = "LIB",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 8 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 2,
      .row = 6,
      .columnbit = ( 1 << 2 ),
@@ -734,10 +561,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "#",
      .right = "BASE",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 8 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 1,
      .row = 6,
      .columnbit = ( 1 << 1 ),
@@ -749,10 +572,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "{ }",
      .right = "« »",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 8 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 6,
      .columnbit = ( 1 << 0 ),
@@ -765,10 +584,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CONT",
      .right = "OFF",
      .below = "CANCEL",
-     .x = 0,
-     .y = 9 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -780,10 +595,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "∞",
      .right = "→",
      .below = NULL,
-     .x = KB_COLUMN_WIDTH_5_KEYS,
-     .y = 9 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 3,
      .row = 7,
      .columnbit = ( 1 << 3 ),
@@ -795,10 +606,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = ": :",
      .right = "↲",
      .below = NULL,
-     .x = 2 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 9 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 2,
      .row = 7,
      .columnbit = ( 1 << 2 ),
@@ -810,10 +617,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "𝚷",
      .right = ",",
      .below = NULL,
-     .x = 3 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 9 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 1,
      .row = 7,
      .columnbit = ( 1 << 1 ),
@@ -825,10 +628,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ANS",
      .right = "→NUM",
      .below = NULL,
-     .x = 4 * KB_COLUMN_WIDTH_5_KEYS,
-     .y = 9 * KB_LINE_HEIGHT,
-     .width = KB_WIDTH_5_KEYS,
-     .height = KB_HEIGHT_BIG_KEYS,
      .column = 0,
      .row = 7,
      .columnbit = ( 1 << 0 ),
@@ -1537,13 +1336,19 @@ static inline void _ui_load__newrplify_ui_keys()
     for ( int i = 0; i < 6; i++ )
         ui_keys[ i ].left = NULL;
 
-    for ( int i = 6; i < 12; i++ ) {
+    for ( int i = 6; i < 9; i++ ) {
         ui_keys[ i ].label = "";
         ui_keys[ i ].left = NULL;
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ 12 ].left = "UPDIR";
+    for ( int i = 10; i < 13; i++ ) {
+        ui_keys[ i ].label = "";
+        ui_keys[ i ].left = NULL;
+        ui_keys[ i ].right = NULL;
+    }
+
+    ui_keys[ 9 ].left = "UPDIR";
 
     ui_keys[ 13 ].left = "BEG";
     ui_keys[ 13 ].right = "COPY";
@@ -1596,6 +1401,16 @@ static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const cha
     gtk_widget_set_size_request( ui_ann, ANNUNCIATOR_WIDTH, ANNUNCIATOR_HEIGHT );
 
     return ui_ann;
+}
+
+static GtkWidget* _ui_load__create_label( const char* css_class, const char* text )
+{
+    GtkWidget* ui_label = gtk_label_new( NULL );
+    gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), css_class );
+    gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
+    gtk_label_set_markup( GTK_LABEL( ui_label ), text );
+
+    return ui_label;
 }
 
 static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
@@ -1702,8 +1517,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( window_container ), display_container );
 
     // keyboard
-    GtkWidget* keyboard_container = gtk_fixed_new();
+    GtkWidget* keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_style_context_add_class( gtk_widget_get_style_context( keyboard_container ), "keyboard-container" );
+    gtk_box_set_homogeneous( GTK_BOX( keyboard_container ), true );
     gtk_widget_set_margin_top( keyboard_container, KEYBOARD_PADDING );
     gtk_widget_set_margin_bottom( keyboard_container, KEYBOARD_PADDING );
     gtk_widget_set_margin_start( keyboard_container, KEYBOARD_PADDING );
@@ -1712,95 +1528,56 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( window_container ), keyboard_container );
 
     x49gp_ui_button_t* button;
-    GtkWidget* ui_label;
-    GtkWidget* ui_left;
-    GtkWidget* ui_right;
-    GtkWidget* ui_letter;
-    GtkWidget* ui_below;
-    int x, y, x2, y2;
 
     if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
         _ui_load__newrplify_ui_keys();
 
+    GtkWidget* rows_containers[ KB_NB_ROWS ];
+    GtkWidget* keys_containers[ NB_KEYS ];
+    GtkWidget* keys_top_labels_containers[ NB_KEYS ];
+
     int key_index = 0;
-    for ( int row = 0; row < 10; row++ ) {
-        for ( int column = 0; column < ( ( row == 0 ) ? 6 : 5 ); column++ ) {
+    for ( int row = 0; row < KB_NB_ROWS; row++ ) {
+        rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, KB_SPACING_KEYS );
+        gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
+        gtk_container_add( GTK_CONTAINER( keyboard_container ), rows_containers[ row ] );
+
+        for ( int column = 0; column < ( ( row == 0 ) ? KB_NB_COLS_MENU : KB_NB_COLS ); column++ ) {
+            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+            gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
+            gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), keys_containers[ key_index ] );
+
             button = &ui->buttons[ key_index ];
             button->x49gp = x49gp;
             button->key = &ui_keys[ key_index ];
 
+            keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+            gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), true );
+
+            gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), keys_top_labels_containers[ key_index ] );
+
+            if ( button->key->left )
+                gtk_container_add( GTK_CONTAINER( keys_top_labels_containers[ key_index ] ), _ui_load__create_label( "label-left", button->key->left ) );
+            if ( button->key->right )
+                gtk_container_add( GTK_CONTAINER( keys_top_labels_containers[ key_index ] ), _ui_load__create_label( "label-right", button->key->right ) );
+
             button->button = gtk_button_new();
             gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
-            gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
             gtk_widget_set_can_focus( button->button, false );
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
             g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
+            if ( button->key->label )
+                gtk_container_add( GTK_CONTAINER( button->button ), _ui_load__create_label( "label-key", button->key->label ) );
 
-            gtk_fixed_put( GTK_FIXED( keyboard_container ), button->button, button->key->x, KEYBOARD_PADDING + button->key->y );
+            gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), button->button );
 
-            if ( button->key->label ) {
-                ui_label = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "label-key" );
+            if ( button->key->letter )
+                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), _ui_load__create_label( "label-letter", button->key->letter ) );
 
-                gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_label ), button->key->label );
-
-                gtk_container_add( GTK_CONTAINER( button->button ), ui_label );
-            }
-            if ( button->key->left ) {
-                ui_left = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "label-left" );
-                gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_left ), button->key->left );
-
-                if ( button->key->right ) {
-                    ui_right = gtk_label_new( NULL );
-                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "label-right" );
-                    gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
-                    gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
-                }
-                y = y2 = button->key->y - ( TINY_TEXT_HEIGHT + 2 );
-                if ( button->key->right ) {
-                    x = button->key->x;
-
-                    x2 = button->key->x + button->key->width - _tiny_text_width( button->key->right );
-
-                    if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
-                        x -=
-                            ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
-                        x2 +=
-                            ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
-                    }
-
-                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
-                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_right, x2, KEYBOARD_PADDING + y2 );
-                } else {
-                    x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
-                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
-                }
-            }
-            if ( button->key->letter ) {
-                ui_letter = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "label-letter" );
-                gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
-
-                x = button->key->x + button->key->width + ( TINY_TEXT_WIDTH / 2 );
-                y = button->key->y + button->key->height - ( TINY_TEXT_HEIGHT / 2 );
-                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_letter, x, KEYBOARD_PADDING + y );
-            }
-            if ( button->key->below ) {
-                ui_below = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "label-below" );
-                gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
-
-                x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->below ) ) / 2 );
-                y = button->key->y + button->key->height + 2;
-                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_below, x, KEYBOARD_PADDING + y );
-            }
+            if ( button->key->below )
+                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), _ui_load__create_label( "label-below", button->key->below ) );
 
             key_index++;
         }
