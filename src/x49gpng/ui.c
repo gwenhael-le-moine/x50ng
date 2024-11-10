@@ -22,21 +22,28 @@
 
 #include "gdbstub.h"
 
-#define DEBUG_LAYOUT false
-
 #define NB_KEYS 51
+
+#define FONT_SIZE_SYMBOL 28
+#define FONT_SIZE_NUMBER 20
+#define FONT_SIZE_KEY 12
+#define FONT_SIZE_TINY 8
+
+#define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
+#define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
 
 #define KB_WIDTH_6_KEYS 36
 #define KB_WIDTH_5_KEYS 46
 
-#define TINY_TEXT_HEIGHT 10
+#define KB_WIDTH_6_KEYS 36
+#define KB_WIDTH_5_KEYS 46
 
 #define KB_HEIGHT_MENU_KEYS 22
 #define KB_HEIGHT_SMALL_KEYS 28
 #define KB_HEIGHT_BIG_KEYS 32
 
-#define KB_LINE_HEIGHT ( 4 * ( TINY_TEXT_HEIGHT + 2 ) )
-#define KB_SPACING_KEYS 14
+#define KB_LINE_HEIGHT ( KB_HEIGHT_BIG_KEYS + ( 1.5 * ( TINY_TEXT_HEIGHT + 2 ) ) )
+#define KB_SPACING_KEYS ( 3 * TINY_TEXT_WIDTH )
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
 
@@ -832,154 +839,73 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 7},
 };
 
-char* css_global_49gp = "window * {"
-                        "  font-weight: bold;"
-                        "}"
-                        "window {"
-                        "  background-color: #f5deb3;"
-                        "}"
-                        ".annunciator {"
-                        "  padding: 0px;"
-                        "  font-size: 12px;"
-                        "  color: #080808;"
-                        "}"
-                        ".lcd-container, .annunciators-container {"
-                        "  background-color: #abd2b4;"
-                        "}"
-                        "button {"
-                        "  background-image: none;"
-                        "  padding: 0px;"
-                        "}"
-                        "button:hover {"
-                        "  border: 1px solid yellow;"
-                        "}"
-                        ".button-menu {"
-                        "  background-color: #a9a9a9;"
-                        "}"
-                        ".button-function {"
-                        "  background-color: #696969;"
-                        "}"
-                        ".button-arrow {"
-                        "  background-color: #e0e0e0;"
-                        "}"
-                        ".button-alpha {"
-                        "  background-color: #fae82c;"
-                        "}"
-                        ".button-arrow .label, .button-alpha .label {"
-                        "  color: #080808;"
-                        "}"
-                        ".button-arrow .label {"
-                        "  font-size: 24px;"
-                        "}"
-                        ".button-shift-left {"
-                        "  background-color: #4060a4;"
-                        "}"
-                        ".button-shift-right {"
-                        "  background-color: #8e2518;"
-                        "}"
-                        ".button-shift-left .label, .button-shift-right .label {"
-                        "  font-size: 28px;"
-                        "  color: #f5f5f5;"
-                        "}"
-                        ".button-core, .button-core-number {"
-                        "  background-color: #080808;"
-                        "}"
-                        ".button-core-number .label {"
-                        "  font-size: 20px;"
-                        "}"
-                        ".label {"
-                        "  font-size: 12px;"
-                        "  color: #ffffff;"
-                        "}"
-                        ".label-left {"
-                        "  font-size: 8px;"
-                        "  color: #4060a4;"
-                        "}"
-                        ".label-right {"
-                        "  font-size: 8px;"
-                        "  color: #c06e60;"
-                        "}"
-                        ".label-below {"
-                        "  font-size: 8px;"
-                        "  color: #4060a4;"
-                        "}"
-                        ".label-letter {"
-                        "  font-size: 8px;"
-                        "  color: #fae82c;"
-                        "}";
-
-char* css_global_50g = "window * {"
-                       "  font-weight: bold;"
-                       "}"
-                       "window {"
-                       "  background-color: #272727;"
-                       "}"
-                       ".annunciator {"
-                       "  padding: 0px;"
-                       "  font-size: 12px;"
-                       "  color: #080808;"
-                       "}"
-                       ".lcd-container, .annunciators-container {"
-                       "  background-color: #abd2b4;"
-                       "}"
-                       "button {"
-                       "  background-image: none;"
-                       "  padding: 0px;"
-                       "}"
-                       ".button-menu {"
-                       "  background-color: #a9a9a9;"
-                       "}"
-                       ".button-function {"
-                       "  background-color: #696969;"
-                       "}"
-                       ".button-arrow {"
-                       "  background-color: #e0e0e0;"
-                       "}"
-                       ".button-alpha {"
-                       "  background-color: #fae82c;"
-                       "}"
-                       ".button-arrow .label, .button-alpha .label {"
-                       "  color: #080808;"
-                       "}"
-                       ".button-arrow .label {"
-                       "  font-size: 24px;"
-                       "}"
-                       ".button-shift-left {"
-                       "  background-color: #f5f5f5;"
-                       "}"
-                       ".button-shift-right {"
-                       "  background-color: #8e2518;"
-                       "}"
-                       ".button-shift-left .label, .button-shift-right .label {"
-                       "  font-size: 28px;"
-                       "  color: #080808;"
-                       "}"
-                       ".button-core, .button-core-number {"
-                       "  background-color: #080808;"
-                       "}"
-                       ".button-core-number .label {"
-                       "  font-size: 20px;"
-                       "}"
-                       ".label {"
-                       "  font-size: 12px;"
-                       "  color: #ffffff;"
-                       "}"
-                       ".label-left {"
-                       "  font-size: 8px;"
-                       "  color: #f5f5f5;"
-                       "}"
-                       ".label-right {"
-                       "  font-size: 8px;"
-                       "  color: #c06e60;"
-                       "}"
-                       ".label-below {"
-                       "  font-size: 8px;"
-                       "  color: #4060a4;"
-                       "}"
-                       ".label-letter {"
-                       "  font-size: 8px;"
-                       "  color: #fae82c;"
-                       "}";
+char* css_global = "window {"
+                   "  background-color: %s;"
+                   "}"
+                   "window * {"
+                   "  font-weight: bold;"
+                   "}"
+                   ".annunciator {"
+                   "  padding: 0px;"
+                   "  color: #080808;"
+                   "}"
+                   ".lcd-container, .annunciators-container {"
+                   "  background-color: #abd2b4;"
+                   "}"
+                   "button {"
+                   "  background-image: none;"
+                   "  padding: 0px;"
+                   "}"
+                   ".button-menu {"
+                   "  background-color: #a9a9a9;"
+                   "}"
+                   ".button-function {"
+                   "  background-color: #696969;"
+                   "}"
+                   ".button-arrow {"
+                   "  background-color: #e0e0e0;"
+                   "}"
+                   ".button-alpha {"
+                   "  background-color: #fae82c;"
+                   "}"
+                   ".button-core, .button-core-number {"
+                   "  background-color: #080808;"
+                   "}"
+                   ".button-alpha .label-key {"
+                   "  color: #080808;"
+                   "}"
+                   ".button-shift-left {"
+                   "  background-color: %s;"
+                   "}"
+                   ".button-shift-right {"
+                   "  background-color: #8e2518;"
+                   "}"
+                   ".button-shift-left .label-key, .button-shift-right .label-key, .button-arrow .label-key {"
+                   "  font-size: %ipx;"
+                   "  color: #080808;"
+                   "}"
+                   ".button-core-number .label-key {"
+                   "  font-size: %ipx;"
+                   "}"
+                   ".label-key {"
+                   "  font-size: %ipx;"
+                   "  color: #ffffff;"
+                   "}"
+                   ".label-left, .label-right, .label-letter, .label-below {"
+                   "  font-size: %ipx;"
+                   "}"
+                   ".label-left {"
+                   "  color: %s;"
+                   "}"
+                   ".label-right {"
+                   "  color: #c06e60;"
+                   "}"
+                   ".label-below {"
+                   "  color: #4060a4;"
+                   "}"
+                   ".label-letter {"
+                   "  color: #fae82c;"
+                   "}";
 
 /*************/
 /* functions */
@@ -990,7 +916,7 @@ static inline int _tiny_text_width( const char* text )
     char* stripped_text;
     pango_parse_markup( text, -1, 0, NULL, &stripped_text, NULL, NULL );
 
-    return strlen( stripped_text ) * 5;
+    return strlen( stripped_text ) * TINY_TEXT_WIDTH;
 }
 
 static void key_to_button( GtkWidget* button, bool is_press )
@@ -1826,7 +1752,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
         if ( button->key->label ) {
             ui_label = gtk_label_new( NULL );
-            gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "label" );
+            gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "label-key" );
 
             gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
             gtk_label_set_markup( GTK_LABEL( ui_label ), button->key->label );
@@ -1845,12 +1771,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
                 gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
             }
+            y = y2 = button->key->y - ( TINY_TEXT_HEIGHT + 2 );
             if ( button->key->right ) {
                 x = button->key->x;
-                y = button->key->y - TINY_TEXT_HEIGHT - 2;
 
                 x2 = button->key->x + button->key->width - _tiny_text_width( button->key->right );
-                y2 = button->key->y - TINY_TEXT_HEIGHT - 2;
 
                 if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
                     x -= ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
@@ -1861,7 +1786,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                 gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_right, x2, KEYBOARD_PADDING + y2 );
             } else {
                 x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
-                y = button->key->y - TINY_TEXT_HEIGHT - 2;
                 gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
             }
         }
@@ -1871,7 +1795,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
             gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
-            x = button->key->x + button->key->width;
+            x = button->key->x + button->key->width + ( TINY_TEXT_WIDTH / 2 );
             y = button->key->y + button->key->height - ( TINY_TEXT_HEIGHT / 2 );
             gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_letter, x, KEYBOARD_PADDING + y );
         }
@@ -1927,11 +1851,17 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // Apply CSS
     GtkCssProvider* style_provider = gtk_css_provider_new();
+    char* color_bg_49gp = "#f5deb3";
+    char* color_bg_50g = "#272727";
+    char* color_shift_left_49gp = "#4060a4";
+    char* color_shift_left_50g = "#f5f5f5";
+    bool is_50g = ( ui->calculator == UI_CALCULATOR_HP50G || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL );
+    char* css;
 
-    gtk_css_provider_load_from_data(
-        style_provider,
-        ( ui->calculator == UI_CALCULATOR_HP49GP || ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL ) ? css_global_49gp : css_global_50g, -1,
-        NULL );
+    asprintf( &css, css_global, is_50g ? color_bg_50g : color_bg_49gp, is_50g ? color_shift_left_50g : color_shift_left_49gp,
+              FONT_SIZE_SYMBOL, FONT_SIZE_NUMBER, FONT_SIZE_KEY, FONT_SIZE_TINY, is_50g ? color_shift_left_50g : color_shift_left_49gp );
+
+    gtk_css_provider_load_from_data( style_provider, css, -1, NULL );
 
     gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
