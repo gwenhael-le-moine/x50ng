@@ -26,7 +26,8 @@ struct options {
     char* name;
 
     char* font;
-    double scale;
+    int display_scale;
+    int text_scale;
 };
 
 extern struct options opt;
