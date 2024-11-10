@@ -24,10 +24,10 @@
 
 #define NB_KEYS 51
 
-#define FONT_SIZE_SYMBOL ( 28 * opt.text_scale )
-#define FONT_SIZE_NUMBER ( 20 * opt.text_scale )
-#define FONT_SIZE_KEY ( 12 * opt.text_scale )
-#define FONT_SIZE_TINY ( 10 * opt.text_scale )
+#define FONT_SIZE_SYMBOL ( 14 * opt.text_scale )
+#define FONT_SIZE_NUMBER ( 10 * opt.text_scale )
+#define FONT_SIZE_KEY ( 7 * opt.text_scale )
+#define FONT_SIZE_TINY ( 6 * opt.text_scale )
 
 #define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
 #define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
@@ -39,9 +39,9 @@
 #define KB_WIDTH_6_KEYS ( 36 * opt.text_scale )
 #define KB_WIDTH_5_KEYS ( 46 * opt.text_scale )
 
-#define KB_HEIGHT_MENU_KEYS ( 22 * opt.text_scale )
-#define KB_HEIGHT_SMALL_KEYS ( 28 * opt.text_scale )
-#define KB_HEIGHT_BIG_KEYS ( 32 * opt.text_scale )
+#define KB_HEIGHT_MENU_KEYS ( 11 * opt.text_scale )
+#define KB_HEIGHT_SMALL_KEYS ( 14 * opt.text_scale )
+#define KB_HEIGHT_BIG_KEYS ( 16 * opt.text_scale )
 
 #define KB_LINE_HEIGHT ( KB_HEIGHT_BIG_KEYS + ( 1.5 * ( TINY_TEXT_HEIGHT + 2 ) ) )
 #define KB_SPACING_KEYS TINY_TEXT_WIDTH
@@ -1439,17 +1439,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     /* set calculator type and name */
     switch ( opt.model ) {
-        case MODEL_50G_NEWRPL:
-            ui->calculator = UI_CALCULATOR_HP50G_NEWRPL;
-            ui->name = opt.name != NULL ? opt.name : "HP 50g / newRPL";
-            break;
         case MODEL_49GP:
             ui->calculator = UI_CALCULATOR_HP49GP;
             ui->name = opt.name != NULL ? opt.name : "HP 49g+";
-            break;
-        case MODEL_49GP_NEWRPL:
-            ui->calculator = UI_CALCULATOR_HP49GP_NEWRPL;
-            ui->name = opt.name != NULL ? opt.name : "HP 49g+ / newRPL";
             break;
         case MODEL_50G:
         default:
@@ -1529,7 +1521,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     x49gp_ui_button_t* button;
 
-    if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
+    if ( opt.newrpl )
         _ui_load__newrplify_ui_keys();
 
     GtkWidget* rows_containers[ KB_NB_ROWS ];
@@ -1635,7 +1627,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     char* color_bg_50g = "#272727";
     char* color_shift_left_49gp = "#4060a4";
     char* color_shift_left_50g = "#f5f5f5";
-    bool is_50g = ( ui->calculator == UI_CALCULATOR_HP50G || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL );
+    bool is_50g = ( ui->calculator == UI_CALCULATOR_HP50G );
     char* css;
 
     asprintf( &css, css_global, is_50g ? color_bg_50g : color_bg_49gp, is_50g ? color_shift_left_50g : color_shift_left_49gp,

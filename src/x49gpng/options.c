@@ -20,8 +20,9 @@ struct options opt = {
     .reinit = X49GP_REINIT_NONE,
     .firmware = NULL,
     .model = MODEL_50G,
+    .newrpl = false,
     .name = NULL,
-    .text_scale = 1,
+    .text_scale = 2,
     .display_scale = 2,
 #if defined( __linux__ )
     .font = "urw gothic l",
@@ -94,24 +95,22 @@ static void print_config( void )
     fprintf( stdout, "-- Configuration file for x49gpng\n" );
     fprintf( stdout, "-- This is a comment\n" );
 
-    fprintf( stdout, "name = \"%s\"\n", opt.name );
+    fprintf( stdout, "name = \"%s\"", opt.name );
+    fprintf( stdout, " -- this customize the title of the window\n" );
 
     fprintf( stdout, "model = \"" );
     switch ( opt.model ) {
         case MODEL_49GP:
             fprintf( stdout, "49gp" );
             break;
-        case MODEL_49GP_NEWRPL:
-            fprintf( stdout, "49gp-newrpl" );
-            break;
+        default:
         case MODEL_50G:
             fprintf( stdout, "50g" );
             break;
-        case MODEL_50G_NEWRPL:
-            fprintf( stdout, "50g-newrpl" );
-            break;
     }
-    fprintf( stdout, "\" -- possible values: \"49gp\", \"50g\", \"49gp-newrpl\", \"50g-newrpl\"\n" );
+    fprintf( stdout, "\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n" );
+    fprintf( stdout, "newrpl_keyboard = %s", opt.newrpl ? "true" : "false" );
+    fprintf( stdout, " -- when true this makes the keyboard labels more suited to newRPL use\n" );
     fprintf( stdout, "font = \"%s\"\n", opt.font );
     fprintf( stdout, "text_scale = %i\n", opt.text_scale );
     fprintf( stdout, "display_scale = %i\n", opt.display_scale );
@@ -134,6 +133,7 @@ void config_init( char* progname, int argc, char* argv[] )
     char* clopt_name = NULL;
     char* clopt_font = NULL;
     int clopt_model = -1;
+    int clopt_newrpl = -1;
     int clopt_text_scale = -1;
     int clopt_display_scale = -1;
 
@@ -155,9 +155,8 @@ void config_init( char* progname, int argc, char* argv[] )
         {"reboot",        no_argument,       NULL,                   'r' },
 
         {"50g",           no_argument,       NULL,                   506 },
-        {"50g-newrpl",    no_argument,       NULL,                   507 },
         {"49gp",          no_argument,       NULL,                   496 },
-        {"49gp-newrpl",   no_argument,       NULL,                   497 },
+        {"newrpl-keyboard",        no_argument,       &clopt_newrpl,          true},
         {"name",          required_argument, NULL,                   'n' },
         {"text-scale",    required_argument, NULL,                   's' },
         {"display-scale", required_argument, NULL,                   'S' },
@@ -177,14 +176,13 @@ void config_init( char* progname, int argc, char* argv[] )
                          "Usage: %s [<options>]\n"
                          "Valid options:\n"
                          " -h --help                    print this message and exit\n"
-                         "    --state[=<filename>]     alternate config file\n"
-                         "    --50g                     show HP 50g faceplate (default)\n"
-                         "    --50g-newrpl              show HP 50g faceplate with newRPL labels\n"
-                         "    --49gp                    show HP 49g+ faceplate\n"
-                         "    --49gp-newrpl             show HP 49g+ faceplate with newRPL labels\n"
+                         "    --state[=<filename>]      alternate config file\n"
+                         "    --50g                     emulate an HP 50g (default)\n"
+                         "    --49gp                    emulate an HP 49g+\n"
+                         "    --newrpl-keyboard         label keyboard for newRPL\n"
                          " -n --name[=<name>]           set alternate UI name\n"
                          " -t --font[=<fontname>]       set alternate UI font\n"
-                         " -s --text-scale[=<X>]        scale text by X (default: 1)\n"
+                         " -s --text-scale[=<X>]        scale text by X (default: 2)\n"
                          " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
                          " -D --enable-debug[=<port>]   enable the debugger interface\n"
                          "                              (default port: %u)\n"
@@ -228,20 +226,10 @@ void config_init( char* progname, int argc, char* argv[] )
                 if ( clopt_name == NULL )
                     clopt_name = "HP 49g+";
                 break;
-            case 497:
-                clopt_model = MODEL_49GP_NEWRPL;
-                if ( clopt_name == NULL )
-                    clopt_name = "HP 49g+ / newRPL";
-                break;
             case 506:
                 clopt_model = MODEL_50G;
                 if ( clopt_name == NULL )
                     clopt_name = "HP 50g";
-                break;
-            case 507:
-                clopt_model = MODEL_50G_NEWRPL;
-                if ( clopt_name == NULL )
-                    clopt_name = "HP 50g / newRPL";
                 break;
             case 'n':
                 clopt_name = strdup( optarg );
@@ -271,31 +259,24 @@ void config_init( char* progname, int argc, char* argv[] )
     /**********************/
     bool haz_config_file = config_read( opt.config_lua_filename );
     if ( haz_config_file ) {
+        lua_getglobal( config_lua_values, "newrpl_keyboard" );
+        opt.newrpl = lua_toboolean( config_lua_values, -1 );
+
         lua_getglobal( config_lua_values, "model" );
         const char* svalue_model = luaL_optstring( config_lua_values, -1, "50g" );
         if ( svalue_model != NULL ) {
             if ( strcmp( svalue_model, "50g" ) == 0 )
                 opt.model = MODEL_50G;
-            if ( strcmp( svalue_model, "50g-newrpl" ) == 0 )
-                opt.model = MODEL_50G_NEWRPL;
             if ( strcmp( svalue_model, "49gp" ) == 0 )
                 opt.model = MODEL_49GP;
-            if ( strcmp( svalue_model, "49gp-newrpl" ) == 0 )
-                opt.model = MODEL_49GP_NEWRPL;
 
             switch ( opt.model ) {
-                case MODEL_50G_NEWRPL:
-                    opt.name = "HP 50g / newRPL";
-                    break;
                 case MODEL_49GP:
-                    opt.name = "HP 49g+";
-                    break;
-                case MODEL_49GP_NEWRPL:
-                    opt.name = "HP 49g+ / newRPL";
+                    opt.name = opt.newrpl ? "HP 49g+ / newRPL" : "HP 49g+";
                     break;
                 case MODEL_50G:
                 default:
-                    opt.name = "HP 50g";
+                    opt.name = opt.newrpl ? "HP 50g / newRPL" : "HP 50g";
                     break;
             }
         }
@@ -322,6 +303,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.font = strdup( clopt_font );
     if ( clopt_model != -1 )
         opt.model = clopt_model;
+    if ( clopt_newrpl != -1 )
+        opt.newrpl = clopt_newrpl;
     if ( clopt_text_scale != -1 )
         opt.text_scale = clopt_text_scale;
     if ( clopt_display_scale != -1 )

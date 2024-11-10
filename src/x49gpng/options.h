@@ -13,7 +13,7 @@
 #  define PATCHLEVEL 0
 #endif
 
-typedef enum { MODEL_49GP = 0, MODEL_49GP_NEWRPL, MODEL_50G, MODEL_50G_NEWRPL } x49gpng_model_t;
+typedef enum { MODEL_49GP = 0, MODEL_50G } x49gpng_model_t;
 
 struct options {
     char* state_filename;
@@ -23,6 +23,7 @@ struct options {
     x49gp_reinit_t reinit;
 
     x49gpng_model_t model;
+    bool newrpl;
     char* name;
 
     char* font;
