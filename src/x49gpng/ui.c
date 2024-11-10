@@ -24,10 +24,10 @@
 
 #define NB_KEYS 51
 
-#define FONT_SIZE_SYMBOL 28
-#define FONT_SIZE_NUMBER 20
-#define FONT_SIZE_KEY 12
-#define FONT_SIZE_TINY 10
+#define FONT_SIZE_SYMBOL ( ( int )( 28 * opt.scale ) )
+#define FONT_SIZE_NUMBER ( ( int )( 20 * opt.scale ) )
+#define FONT_SIZE_KEY ( ( int )( 12 * opt.scale ) )
+#define FONT_SIZE_TINY ( ( int )( 10 * opt.scale ) )
 
 #define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
 #define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
@@ -52,7 +52,7 @@
 #define ANNUNCIATOR_HEIGHT 16
 #define ANNUNCIATORS_HEIGHT ANNUNCIATOR_HEIGHT
 
-#define LCD_PIXEL_SCALE ( (int)( opt.scale + 1 ) )
+#define LCD_PIXEL_SCALE ( ( int )( 2 * opt.scale ) )
 #define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
 #define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
 
@@ -1552,14 +1552,18 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->key = &ui_keys[ key_index ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
-            gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), true );
+            gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), false );
 
             gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), keys_top_labels_containers[ key_index ] );
 
-            if ( button->key->left )
-                gtk_container_add( GTK_CONTAINER( keys_top_labels_containers[ key_index ] ), _ui_load__create_label( "label-left", button->key->left ) );
-            if ( button->key->right )
-                gtk_container_add( GTK_CONTAINER( keys_top_labels_containers[ key_index ] ), _ui_load__create_label( "label-right", button->key->right ) );
+            if ( button->key->right ) {
+                gtk_box_pack_start( GTK_BOX( keys_top_labels_containers[ key_index ] ),
+                                    _ui_load__create_label( "label-left", button->key->left ), true, true, 0 );
+                gtk_box_pack_end( GTK_BOX( keys_top_labels_containers[ key_index ] ),
+                                  _ui_load__create_label( "label-right", button->key->right ), true, true, 0 );
+            } else if ( button->key->left )
+                gtk_box_set_center_widget( GTK_BOX( keys_top_labels_containers[ key_index ] ),
+                                           _ui_load__create_label( "label-left", button->key->left ) );
 
             button->button = gtk_button_new();
             gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
@@ -1574,10 +1578,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), button->button );
 
             if ( button->key->letter )
-                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), _ui_load__create_label( "label-letter", button->key->letter ) );
+                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
+                                   _ui_load__create_label( "label-letter", button->key->letter ) );
 
             if ( button->key->below )
-                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), _ui_load__create_label( "label-below", button->key->below ) );
+                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
+                                   _ui_load__create_label( "label-below", button->key->below ) );
 
             key_index++;
         }
