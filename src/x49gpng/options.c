@@ -21,7 +21,7 @@ void config_init( char* progname, int argc, char* argv[] )
     bool do_reflash = false;
     bool do_reflash_full = false;
 
-    opt.config = NULL;
+    opt.state_filename = NULL;
     opt.debug_port = 0;
     opt.start_debugger = false;
     opt.reinit = X49GP_REINIT_NONE;
@@ -103,7 +103,7 @@ void config_init( char* progname, int argc, char* argv[] )
                     opt.reinit = X49GP_REINIT_REBOOT_ONLY;
                 break;
             case 'c':
-                opt.config = strdup( optarg );
+                opt.state_filename = strdup( optarg );
                 break;
             case 'D':
                 do_enable_debugger = true;
@@ -181,11 +181,11 @@ void config_init( char* progname, int argc, char* argv[] )
             opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
 
-    if ( opt.config == NULL ) {
+    if ( opt.state_filename == NULL ) {
         char config_dir[ strlen( progname ) + 9 ];
 
         const char* home = g_get_home_dir();
         sprintf( config_dir, ".config/%s", progname );
-        opt.config = g_build_filename( home, config_dir, "config", NULL );
+        opt.state_filename = g_build_filename( home, config_dir, "state", NULL );
     }
 }

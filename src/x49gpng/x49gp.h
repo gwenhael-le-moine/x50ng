@@ -83,7 +83,7 @@ struct __x49gp_s__ {
 
     x49gp_ui_t* ui;
 
-    GKeyFile* config;
+    GKeyFile* state_filename;
     const char* progname;
     const char* progpath;
     const char* basename;

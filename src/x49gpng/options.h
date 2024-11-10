@@ -16,7 +16,7 @@
 typedef enum { MODEL_49GP = 0, MODEL_49GP_NEWRPL, MODEL_50G, MODEL_50G_NEWRPL } x49gpng_model_t;
 
 struct options {
-    char* config;
+    char* state_filename;
     int debug_port;
     int start_debugger;
     char* firmware;

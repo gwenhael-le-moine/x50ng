@@ -100,16 +100,16 @@ int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
         return error;
     }
 
-    x49gp->config = g_key_file_new();
-    if ( NULL == x49gp->config ) {
+    x49gp->state_filename = g_key_file_new();
+    if ( NULL == x49gp->state_filename ) {
         fprintf( stderr, "%s:%u: g_key_file_new: Out of memory\n", __FUNCTION__, __LINE__ );
         return -ENOMEM;
     }
 
-    if ( !g_key_file_load_from_file( x49gp->config, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
+    if ( !g_key_file_load_from_file( x49gp->state_filename, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
          !g_error_matches( gerror, G_FILE_ERROR, G_FILE_ERROR_NOENT ) ) {
         fprintf( stderr, "%s:%u: g_key_file_load_from_file: %s\n", __FUNCTION__, __LINE__, gerror->message );
-        g_key_file_free( x49gp->config );
+        g_key_file_free( x49gp->state_filename );
         return -EIO;
     }
 
@@ -117,7 +117,7 @@ int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
 
     list_for_each_entry( module, &x49gp->modules, list )
     {
-        error = module->load( module, x49gp->config );
+        error = module->load( module, x49gp->state_filename );
         if ( error ) {
             if ( error == -EAGAIN )
                 result = -EAGAIN;
@@ -126,15 +126,15 @@ int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
         }
     }
 
+#ifdef DEBUG_X49GP_MODULES
     {
         extern unsigned char* phys_ram_base;
 
-#ifdef DEBUG_X49GP_MODULES
         printf( "%s: phys_ram_base: %p\n", __FUNCTION__, phys_ram_base );
         printf( "\t%02x %02x %02x %02x %02x %02x %02x %02x\n", phys_ram_base[ 0 ], phys_ram_base[ 1 ], phys_ram_base[ 2 ],
                 phys_ram_base[ 3 ], phys_ram_base[ 4 ], phys_ram_base[ 5 ], phys_ram_base[ 6 ], phys_ram_base[ 7 ] );
-#endif
     }
+#endif
 
     return result;
 }
@@ -154,12 +154,12 @@ int x49gp_modules_save( x49gp_t* x49gp, const char* filename )
 
     list_for_each_entry( module, &x49gp->modules, list )
     {
-        error = module->save( module, x49gp->config );
+        error = module->save( module, x49gp->state_filename );
         if ( error )
             return error;
     }
 
-    data = g_key_file_to_data( x49gp->config, &length, &gerror );
+    data = g_key_file_to_data( x49gp->state_filename, &length, &gerror );
     if ( NULL == data ) {
         fprintf( stderr, "%s:%u: g_key_file_to_data: %s\n", __FUNCTION__, __LINE__, gerror->message );
         return -ENOMEM;
