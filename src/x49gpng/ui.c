@@ -52,7 +52,7 @@
 #define ANNUNCIATOR_HEIGHT 16
 #define ANNUNCIATORS_HEIGHT ANNUNCIATOR_HEIGHT
 
-#define LCD_PIXEL_SCALE ( ( int )( 2 * opt.display_scale ) )
+#define LCD_PIXEL_SCALE opt.display_scale
 #define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
 #define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
 

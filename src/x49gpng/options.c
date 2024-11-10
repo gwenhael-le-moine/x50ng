@@ -29,7 +29,7 @@ void config_init( char* progname, int argc, char* argv[] )
     opt.model = MODEL_50G;
     opt.name = NULL;
     opt.text_scale = 1;
-    opt.display_scale = 1;
+    opt.display_scale = 2;
 
 #if defined( __linux__ )
     opt.font = "urw gothic l";
@@ -39,27 +39,27 @@ void config_init( char* progname, int argc, char* argv[] )
 
     const char* optstring = "hrc:D:df:Fn:t:";
     struct option long_options[] = {
-        {"help",         no_argument,       NULL, 'h'},
+        {"help",          no_argument,       NULL, 'h'},
 
-        {"config",       required_argument, NULL, 'c'},
+        {"config",        required_argument, NULL, 'c'},
 
-        {"enable-debug", required_argument, NULL, 'D'},
-        {"debug",        no_argument,       NULL, 'd'},
-        {"reflash",      required_argument, NULL, 'f'},
-        {"reflash-full", no_argument,       NULL, 'F'},
-        {"reboot",       no_argument,       NULL, 'r'},
+        {"enable-debug",  required_argument, NULL, 'D'},
+        {"debug",         no_argument,       NULL, 'd'},
+        {"reflash",       required_argument, NULL, 'f'},
+        {"reflash-full",  no_argument,       NULL, 'F'},
+        {"reboot",        no_argument,       NULL, 'r'},
 
-        {"50g",          no_argument,       NULL, 506},
-        {"50g-newrpl",   no_argument,       NULL, 507},
-        {"49gp",         no_argument,       NULL, 496},
-        {"49gp-newrpl",  no_argument,       NULL, 497},
-        {"name",         required_argument, NULL, 'n'},
-        {"text-scale",        required_argument, NULL, 's'},
-        {"display-scale",        required_argument, NULL, 'S'},
+        {"50g",           no_argument,       NULL, 506},
+        {"50g-newrpl",    no_argument,       NULL, 507},
+        {"49gp",          no_argument,       NULL, 496},
+        {"49gp-newrpl",   no_argument,       NULL, 497},
+        {"name",          required_argument, NULL, 'n'},
+        {"text-scale",    required_argument, NULL, 's'},
+        {"display-scale", required_argument, NULL, 'S'},
 
-        {"font",         required_argument, NULL, 't'},
+        {"font",          required_argument, NULL, 't'},
 
-        {0,              0,                 0,    0  }
+        {0,               0,                 0,    0  }
     };
 
     while ( c != EOF ) {
@@ -79,8 +79,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --49gp-newrpl             show HP 49g+ faceplate with newRPL labels\n"
                          " -n --name[=<name>]           set alternate UI name\n"
                          " -t --font[=<fontname>]       set alternate UI font\n"
-                         " -s --text-scale[=<X>]        scale text by X\n"
-                         " -S --display-scale[=<X>]     scale LCD by X\n"
+                         " -s --text-scale[=<X>]        scale text by X (default: 1)\n"
+                         " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
                          " -D --enable-debug[=<port>]   enable the debugger interface\n"
                          "                              (default port: %u)\n"
                          " -d --debug                   use along -D to also start the debugger immediately\n"
