@@ -24,10 +24,10 @@
 
 #define NB_KEYS 51
 
-#define FONT_SIZE_SYMBOL ( 14 * opt.text_scale )
-#define FONT_SIZE_NUMBER ( 10 * opt.text_scale )
-#define FONT_SIZE_KEY ( 7 * opt.text_scale )
-#define FONT_SIZE_TINY ( 6 * opt.text_scale )
+#define FONT_SIZE_KEY opt.font_size
+#define FONT_SIZE_SYMBOL ( 2 * opt.font_size )
+#define FONT_SIZE_NUMBER ( ( int )( 1.5 * opt.font_size ) )
+#define FONT_SIZE_TINY ( ( int )( 0.75 * opt.font_size ) )
 
 #define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
 #define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
@@ -36,14 +36,13 @@
 #define KB_NB_COLS_MENU 6
 #define KB_NB_COLS 5
 
-#define KB_WIDTH_6_KEYS ( 36 * opt.text_scale )
-#define KB_WIDTH_5_KEYS ( 46 * opt.text_scale )
+#define KB_WIDTH_6_KEYS ( 3 * opt.font_size )
+#define KB_WIDTH_5_KEYS ( 4 * opt.font_size )
 
-#define KB_HEIGHT_MENU_KEYS ( 11 * opt.text_scale )
-#define KB_HEIGHT_SMALL_KEYS ( 14 * opt.text_scale )
-#define KB_HEIGHT_BIG_KEYS ( 16 * opt.text_scale )
+#define KB_HEIGHT_MENU_KEYS ( 2 * opt.font_size )
+#define KB_HEIGHT_SMALL_KEYS ( ( int )( 1.5 * opt.font_size ) )
+#define KB_HEIGHT_BIG_KEYS ( 3 * opt.font_size )
 
-#define KB_LINE_HEIGHT ( KB_HEIGHT_BIG_KEYS + ( 1.5 * ( TINY_TEXT_HEIGHT + 2 ) ) )
 #define KB_SPACING_KEYS TINY_TEXT_WIDTH
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
@@ -58,7 +57,7 @@
 
 #define KEYBOARD_PADDING ( TINY_TEXT_HEIGHT + 2 )
 
-#define WINDOW_WIDTH ( 300 )
+#define WINDOW_WIDTH ( 384 )
 
 #define LCD_PADDING ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
 
@@ -1712,6 +1711,37 @@ void gui_open_firmware( x49gp_t* x49gp, char** filename )
 int gui_init( x49gp_t* x49gp )
 {
     x49gp_module_t* module;
+
+    if ( opt.verbose ) {
+        fprintf( stderr,
+                 " FONT_SIZE_KEY = %i\n"
+                 " FONT_SIZE_SYMBOL = %i\n"
+                 " FONT_SIZE_NUMBER = %i\n"
+                 " FONT_SIZE_TINY = %i\n"
+                 " TINY_TEXT_HEIGHT = %i\n"
+                 " TINY_TEXT_WIDTH = %i\n"
+                 " KB_WIDTH_6_KEYS = %i\n"
+                 " KB_WIDTH_5_KEYS = %i\n"
+                 " KB_HEIGHT_MENU_KEYS = %i\n"
+                 " KB_HEIGHT_SMALL_KEYS = %i\n"
+                 " KB_HEIGHT_BIG_KEYS = %i\n"
+                 " KB_SPACING_KEYS = %i\n"
+                 " KB_COLUMN_WIDTH_6_KEYS = %i\n"
+                 " KB_COLUMN_WIDTH_5_KEYS = %i\n"
+                 " ANNUNCIATOR_WIDTH = %i\n"
+                 " ANNUNCIATOR_HEIGHT = %i\n"
+                 " ANNUNCIATORS_HEIGHT = %i\n"
+                 " LCD_PIXEL_SCALE = %i\n"
+                 " LCD_WIDTH = %i\n"
+                 " LCD_HEIGHT = %i\n"
+                 " KEYBOARD_PADDING = %i\n"
+                 " WINDOW_WIDTH = %i\n"
+                 " LCD_PADDING = %i\n",
+                 FONT_SIZE_KEY, FONT_SIZE_SYMBOL, FONT_SIZE_NUMBER, FONT_SIZE_TINY, TINY_TEXT_HEIGHT, TINY_TEXT_WIDTH, KB_WIDTH_6_KEYS,
+                 KB_WIDTH_5_KEYS, KB_HEIGHT_MENU_KEYS, KB_HEIGHT_SMALL_KEYS, KB_HEIGHT_BIG_KEYS, KB_SPACING_KEYS, KB_COLUMN_WIDTH_6_KEYS,
+                 KB_COLUMN_WIDTH_5_KEYS, ANNUNCIATOR_WIDTH, ANNUNCIATOR_HEIGHT, ANNUNCIATORS_HEIGHT, LCD_PIXEL_SCALE, LCD_WIDTH, LCD_HEIGHT,
+                 KEYBOARD_PADDING, WINDOW_WIDTH, LCD_PADDING );
+    }
 
     if ( x49gp_module_init( x49gp, "gui", ui_init, ui_exit, ui_reset, ui_load, ui_save, NULL, &module ) )
         return -1;

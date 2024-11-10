@@ -28,8 +28,9 @@ struct options {
 
     char* font;
     int display_scale;
-    int text_scale;
+    int font_size;
     char* config_lua_filename;
+    bool verbose;
 };
 
 extern struct options opt;

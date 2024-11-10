@@ -22,7 +22,8 @@ struct options opt = {
     .model = MODEL_50G,
     .newrpl = false,
     .name = NULL,
-    .text_scale = 2,
+    .verbose = false,
+    .font_size = 12,
     .display_scale = 2,
 #if defined( __linux__ )
     .font = "urw gothic l",
@@ -95,6 +96,7 @@ static void print_config( void )
     fprintf( stdout, "-- Configuration file for x49gpng\n" );
     fprintf( stdout, "-- This is a comment\n" );
 
+    fprintf( stdout, "verbose = %s\n\n", opt.verbose ? "true" : "false" );
     fprintf( stdout, "name = \"%s\"", opt.name );
     fprintf( stdout, " -- this customize the title of the window\n" );
 
@@ -112,7 +114,7 @@ static void print_config( void )
     fprintf( stdout, "newrpl_keyboard = %s", opt.newrpl ? "true" : "false" );
     fprintf( stdout, " -- when true this makes the keyboard labels more suited to newRPL use\n" );
     fprintf( stdout, "font = \"%s\"\n", opt.font );
-    fprintf( stdout, "text_scale = %i\n", opt.text_scale );
+    fprintf( stdout, "font_size = %i\n", opt.font_size );
     fprintf( stdout, "display_scale = %i\n", opt.display_scale );
 
     fprintf( stdout, "--- End of saturnng configuration ----------------------------------------------\n" );
@@ -130,40 +132,43 @@ void config_init( char* progname, int argc, char* argv[] )
     bool do_reflash = false;
     bool do_reflash_full = false;
 
+    int clopt_verbose = -1;
+
     char* clopt_name = NULL;
     char* clopt_font = NULL;
     int clopt_model = -1;
     int clopt_newrpl = -1;
-    int clopt_text_scale = -1;
+    int clopt_font_size = -1;
     int clopt_display_scale = -1;
 
     int print_config_and_exit = false;
 
     const char* optstring = "hrc:D:df:Fn:t:";
     struct option long_options[] = {
-        {"help",          no_argument,       NULL,                   'h' },
-        {"print-config",  no_argument,       &print_config_and_exit, true},
+        {"help",            no_argument,       NULL,                   'h' },
+        {"print-config",    no_argument,       &print_config_and_exit, true},
+        {"verbose",         no_argument,       &clopt_verbose,         true},
 
-        {"config",        required_argument, NULL,                   'c' },
+        {"config",          required_argument, NULL,                   'c' },
 
-        {"state",         required_argument, NULL,                   1   },
+        {"state",           required_argument, NULL,                   1   },
 
-        {"enable-debug",  required_argument, NULL,                   'D' },
-        {"debug",         no_argument,       NULL,                   'd' },
-        {"reflash",       required_argument, NULL,                   'f' },
-        {"reflash-full",  no_argument,       NULL,                   'F' },
-        {"reboot",        no_argument,       NULL,                   'r' },
+        {"enable-debug",    required_argument, NULL,                   'D' },
+        {"debug",           no_argument,       NULL,                   'd' },
+        {"reflash",         required_argument, NULL,                   'f' },
+        {"reflash-full",    no_argument,       NULL,                   'F' },
+        {"reboot",          no_argument,       NULL,                   'r' },
 
-        {"50g",           no_argument,       NULL,                   506 },
-        {"49gp",          no_argument,       NULL,                   496 },
-        {"newrpl-keyboard",        no_argument,       &clopt_newrpl,          true},
-        {"name",          required_argument, NULL,                   'n' },
-        {"text-scale",    required_argument, NULL,                   's' },
-        {"display-scale", required_argument, NULL,                   'S' },
+        {"50g",             no_argument,       NULL,                   506 },
+        {"49gp",            no_argument,       NULL,                   496 },
+        {"newrpl-keyboard", no_argument,       &clopt_newrpl,          true},
+        {"name",            required_argument, NULL,                   'n' },
+        {"font-size",       required_argument, NULL,                   's' },
+        {"display-scale",   required_argument, NULL,                   'S' },
 
-        {"font",          required_argument, NULL,                   't' },
+        {"font",            required_argument, NULL,                   't' },
 
-        {0,               0,                 0,                      0   }
+        {0,                 0,                 0,                      0   }
     };
 
     while ( c != EOF ) {
@@ -182,7 +187,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --newrpl-keyboard         label keyboard for newRPL\n"
                          " -n --name[=<name>]           set alternate UI name\n"
                          " -t --font[=<fontname>]       set alternate UI font\n"
-                         " -s --text-scale[=<X>]        scale text by X (default: 2)\n"
+                         " -s --font-size[=<X>]         scale text by X (default: 3)\n"
                          " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
                          " -D --enable-debug[=<port>]   enable the debugger interface\n"
                          "                              (default port: %u)\n"
@@ -235,7 +240,7 @@ void config_init( char* progname, int argc, char* argv[] )
                 clopt_name = strdup( optarg );
                 break;
             case 's':
-                clopt_text_scale = atoi( optarg );
+                clopt_font_size = atoi( optarg );
                 break;
             case 'S':
                 clopt_display_scale = atoi( optarg );
@@ -287,16 +292,18 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "font" );
         opt.font = strdup( luaL_optstring( config_lua_values, -1, opt.font ) );
 
-        lua_getglobal( config_lua_values, "text_scale" );
-        opt.text_scale = luaL_optinteger( config_lua_values, -1, 1 );
+        lua_getglobal( config_lua_values, "font_size" );
+        opt.font_size = luaL_optinteger( config_lua_values, -1, opt.font_size );
 
         lua_getglobal( config_lua_values, "display_scale" );
-        opt.display_scale = luaL_optinteger( config_lua_values, -1, 2 );
+        opt.display_scale = luaL_optinteger( config_lua_values, -1, opt.display_scale );
     }
 
     /****************************************************/
     /* 2. treat command-line params which have priority */
     /****************************************************/
+    if ( clopt_verbose != -1 )
+        opt.verbose = clopt_verbose;
     if ( clopt_name != NULL )
         opt.name = strdup( clopt_name );
     if ( clopt_font != NULL )
@@ -305,15 +312,17 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.model = clopt_model;
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
-    if ( clopt_text_scale != -1 )
-        opt.text_scale = clopt_text_scale;
-    if ( clopt_display_scale != -1 )
+    if ( clopt_font_size > 0 )
+        opt.font_size = clopt_font_size;
+    if ( clopt_display_scale > 0 )
         opt.display_scale = clopt_display_scale;
 
     if ( print_config_and_exit ) {
         print_config();
         exit( EXIT_SUCCESS );
     }
+    if ( opt.verbose )
+        print_config();
 
     if ( !haz_config_file ) {
         fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", opt.config_lua_filename );
