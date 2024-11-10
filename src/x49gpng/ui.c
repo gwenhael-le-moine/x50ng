@@ -1894,12 +1894,12 @@ void gui_update_lcd( x49gp_t* x49gp )
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
 
     if ( lcd->lcdcon1 & 1 ) {
-        gtk_widget_set_opacity( ui->ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) > 0 ? 1 : 0 );
-        gtk_widget_set_opacity( ui->ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) > 0 ? 1 : 0 );
-        gtk_widget_set_opacity( ui->ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) > 0 ? 1 : 0 );
-        gtk_widget_set_opacity( ui->ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) > 0 ? 1 : 0 );
-        gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) > 0 ? 1 : 0 );
-        gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) > 0 ? 1 : 0 );
+        gtk_widget_set_opacity( ui->ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) );
+        gtk_widget_set_opacity( ui->ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) );
+        gtk_widget_set_opacity( ui->ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) );
+        gtk_widget_set_opacity( ui->ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) );
+        gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
+        gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
 
         for ( int y = 0; y < ( LCD_HEIGHT / LCD_PIXEL_SCALE ); y++ )
             for ( int x = 0; x < ( LCD_WIDTH / LCD_PIXEL_SCALE ); x++ )
