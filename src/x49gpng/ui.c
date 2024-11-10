@@ -24,10 +24,10 @@
 
 #define NB_KEYS 51
 
-#define FONT_SIZE_SYMBOL ( ( int )( 28 * opt.text_scale ) )
-#define FONT_SIZE_NUMBER ( ( int )( 20 * opt.text_scale ) )
-#define FONT_SIZE_KEY ( ( int )( 12 * opt.text_scale ) )
-#define FONT_SIZE_TINY ( ( int )( 10 * opt.text_scale ) )
+#define FONT_SIZE_SYMBOL ( 28 * opt.text_scale )
+#define FONT_SIZE_NUMBER ( 20 * opt.text_scale )
+#define FONT_SIZE_KEY ( 12 * opt.text_scale )
+#define FONT_SIZE_TINY ( 10 * opt.text_scale )
 
 #define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
 #define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
@@ -36,15 +36,15 @@
 #define KB_NB_COLS_MENU 6
 #define KB_NB_COLS 5
 
-#define KB_WIDTH_6_KEYS 36
-#define KB_WIDTH_5_KEYS 46
+#define KB_WIDTH_6_KEYS ( 36 * opt.text_scale )
+#define KB_WIDTH_5_KEYS ( 46 * opt.text_scale )
 
-#define KB_HEIGHT_MENU_KEYS 22
-#define KB_HEIGHT_SMALL_KEYS 28
-#define KB_HEIGHT_BIG_KEYS 32
+#define KB_HEIGHT_MENU_KEYS ( 22 * opt.text_scale )
+#define KB_HEIGHT_SMALL_KEYS ( 28 * opt.text_scale )
+#define KB_HEIGHT_BIG_KEYS ( 32 * opt.text_scale )
 
 #define KB_LINE_HEIGHT ( KB_HEIGHT_BIG_KEYS + ( 1.5 * ( TINY_TEXT_HEIGHT + 2 ) ) )
-#define KB_SPACING_KEYS ( 3 * TINY_TEXT_WIDTH )
+#define KB_SPACING_KEYS TINY_TEXT_WIDTH
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
 
@@ -68,7 +68,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "A",
      .left = "Y=",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 1,
      .columnbit = ( 1 << 5 ),
@@ -79,7 +79,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "B",
      .left = "WIN",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 2,
      .columnbit = ( 1 << 5 ),
@@ -90,7 +90,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "C",
      .left = "GRAPH",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 3,
      .columnbit = ( 1 << 5 ),
@@ -101,7 +101,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "D",
      .left = "2D/3D",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 4,
      .columnbit = ( 1 << 5 ),
@@ -112,7 +112,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "E",
      .left = "TBLSET",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 5,
      .columnbit = ( 1 << 5 ),
@@ -123,7 +123,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "F",
      .left = "TABLE",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 6,
      .columnbit = ( 1 << 5 ),
@@ -135,7 +135,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "G",
      .left = "FILES",
      .right = "BEGIN",
-     .below = "",
+     .below = NULL,
      .column = 5,
      .row = 7,
      .columnbit = ( 1 << 5 ),
@@ -146,7 +146,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "H",
      .left = "CUSTOM",
      .right = "END",
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 5,
      .columnbit = ( 1 << 6 ),
@@ -157,7 +157,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "I",
      .left = "i",
      .right = "I",
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 6,
      .columnbit = ( 1 << 6 ),
@@ -168,7 +168,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 1,
      .columnbit = ( 1 << 6 ),
@@ -179,7 +179,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "J",
      .left = "UPDIR",
      .right = "COPY",
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 7,
      .columnbit = ( 1 << 6 ),
@@ -190,7 +190,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "K",
      .left = "RCL",
      .right = "CUT",
-     .below = "",
+     .below = NULL,
      .column = 7,
      .row = 1,
      .columnbit = ( 1 << 7 ),
@@ -201,7 +201,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "L",
      .left = "PREV",
      .right = "PASTE",
-     .below = "",
+     .below = NULL,
      .column = 7,
      .row = 2,
      .columnbit = ( 1 << 7 ),
@@ -213,7 +213,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 2,
      .columnbit = ( 1 << 6 ),
@@ -224,7 +224,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 3,
      .columnbit = ( 1 << 6 ),
@@ -235,7 +235,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 6,
      .row = 4,
      .columnbit = ( 1 << 6 ),
@@ -247,7 +247,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "M",
      .left = "CMD",
      .right = "UNDO",
-     .below = "",
+     .below = NULL,
      .column = 4,
      .row = 1,
      .columnbit = ( 1 << 4 ),
@@ -258,7 +258,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "N",
      .left = "PRG",
      .right = "CHARS",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 1,
      .columnbit = ( 1 << 3 ),
@@ -269,7 +269,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "O",
      .left = "MTRW",
      .right = "EQW",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 1,
      .columnbit = ( 1 << 2 ),
@@ -280,7 +280,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "P",
      .left = "MTH",
      .right = "CAT",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 1,
      .columnbit = ( 1 << 1 ),
@@ -291,7 +291,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "DEL",
      .right = "CLEAR",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 1,
      .columnbit = ( 1 << 0 ),
@@ -303,7 +303,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "Q",
      .left = "𝑒<sup>x</sup>",
      .right = "LN",
-     .below = "",
+     .below = NULL,
      .column = 4,
      .row = 2,
      .columnbit = ( 1 << 4 ),
@@ -314,7 +314,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "R",
      .left = "𝓍<sup>2</sup>",
      .right = "<sup>x</sup>√𝓎",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 2,
      .columnbit = ( 1 << 3 ),
@@ -325,7 +325,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "S",
      .left = "ASIN",
      .right = "∑",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 2,
      .columnbit = ( 1 << 2 ),
@@ -336,7 +336,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "T",
      .left = "ACOS",
      .right = "∂",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 2,
      .columnbit = ( 1 << 1 ),
@@ -347,7 +347,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "U",
      .left = "ATAN",
      .right = "∫",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 2,
      .columnbit = ( 1 << 0 ),
@@ -359,7 +359,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "V",
      .left = "10<sup>𝓍</sup>",
      .right = "LOG",
-     .below = "",
+     .below = NULL,
      .column = 4,
      .row = 3,
      .columnbit = ( 1 << 4 ),
@@ -370,7 +370,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "W",
      .left = "≠",
      .right = "=",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 3,
      .columnbit = ( 1 << 3 ),
@@ -381,7 +381,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "X",
      .left = "≤",
      .right = "&gt;",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 3,
      .columnbit = ( 1 << 2 ),
@@ -392,7 +392,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "Y",
      .left = "≥",
      .right = ">",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 3,
      .columnbit = ( 1 << 1 ),
@@ -403,7 +403,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "Z",
      .left = "ABS",
      .right = "ARG",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 3,
      .columnbit = ( 1 << 0 ),
@@ -415,7 +415,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "USER",
      .right = "ENTRY",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -426,7 +426,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "S.SLV",
      .right = "NUM.SLV",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 4,
      .columnbit = ( 1 << 3 ),
@@ -437,7 +437,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "EXP&amp;LN",
      .right = "TRIG",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 4,
      .columnbit = ( 1 << 2 ),
@@ -448,7 +448,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "FINANCE",
      .right = "TIME",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 4,
      .columnbit = ( 1 << 1 ),
@@ -459,7 +459,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "[ ]",
      .right = "\" \"",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 4,
      .columnbit = ( 1 << 0 ),
@@ -471,7 +471,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -482,7 +482,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "CALC",
      .right = "ALG",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 5,
      .columnbit = ( 1 << 3 ),
@@ -493,7 +493,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "MATRICES",
      .right = "STAT",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 5,
      .columnbit = ( 1 << 2 ),
@@ -504,7 +504,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "CONVERT",
      .right = "UNITS",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 5,
      .columnbit = ( 1 << 1 ),
@@ -515,7 +515,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "( )",
      .right = "_",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 5,
      .columnbit = ( 1 << 0 ),
@@ -527,7 +527,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "",
      .right = NULL,
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 0,
      .columnbit = 0,
@@ -538,7 +538,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "ARITH",
      .right = "CMPLX",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 6,
      .columnbit = ( 1 << 3 ),
@@ -549,7 +549,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "DEF",
      .right = "LIB",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 6,
      .columnbit = ( 1 << 2 ),
@@ -560,7 +560,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "#",
      .right = "BASE",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 6,
      .columnbit = ( 1 << 1 ),
@@ -571,7 +571,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "{ }",
      .right = "« »",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 6,
      .columnbit = ( 1 << 0 ),
@@ -594,7 +594,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "∞",
      .right = "→",
-     .below = "",
+     .below = NULL,
      .column = 3,
      .row = 7,
      .columnbit = ( 1 << 3 ),
@@ -605,7 +605,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = ": :",
      .right = "↲",
-     .below = "",
+     .below = NULL,
      .column = 2,
      .row = 7,
      .columnbit = ( 1 << 2 ),
@@ -616,7 +616,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .letter = "",
      .left = "𝚷",
      .right = ",",
-     .below = "",
+     .below = NULL,
      .column = 1,
      .row = 7,
      .columnbit = ( 1 << 1 ),
@@ -624,10 +624,10 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 7},
     {.css_class = "core",
      .label = "ENTER",
-     .letter = "",
+     .letter = NULL,
      .left = "ANS",
      .right = "→NUM",
-     .below = "",
+     .below = NULL,
      .column = 0,
      .row = 7,
      .columnbit = ( 1 << 0 ),
@@ -651,6 +651,8 @@ char* css_global = "window {"
                    "button {"
                    "  background-image: none;"
                    "  padding: 0px;"
+                   "  margin-left: 5px;"
+                   "  margin-right: 5px;"
                    "}"
                    "button.menu {"
                    "  background-color: #a9a9a9;"
@@ -660,6 +662,7 @@ char* css_global = "window {"
                    "}"
                    "button.arrow {"
                    "  background-color: #e0e0e0;"
+                   "  border-radius: 33%;"
                    "}"
                    "button.alpha {"
                    "  background-color: #fae82c;"
@@ -1385,7 +1388,7 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ 43 ].left = "";
 
     ui_keys[ 46 ].left = "";
-    ui_keys[ 46 ].below = "";
+    ui_keys[ 46 ].below = NULL;
 
     ui_keys[ 50 ].left = "";
 }
@@ -1456,7 +1459,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // create window and widgets/stuff
-    GtkWidget* window_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
     ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
     ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
@@ -1470,9 +1472,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
     gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
-    gtk_widget_realize( ui->window );
+
+    GtkWidget* window_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
-    gtk_style_context_add_class( gtk_widget_get_style_context( ui->window ), "main-window" );
 
     g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
@@ -1541,7 +1543,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_container_add( GTK_CONTAINER( keyboard_container ), rows_containers[ row ] );
 
         for ( int column = 0; column < ( ( row == 0 ) ? KB_NB_COLS_MENU : KB_NB_COLS ); column++ ) {
-            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 3 );
             gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
             gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), keys_containers[ key_index ] );
 
@@ -1565,6 +1567,10 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             button->button = gtk_button_new();
             gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
+            gtk_widget_set_size_request( button->button, ( row == 0 ) ? KB_WIDTH_6_KEYS : KB_WIDTH_5_KEYS,
+                                         ( row == 0 )         ? KB_HEIGHT_MENU_KEYS
+                                         : ( key_index < 40 ) ? KB_HEIGHT_SMALL_KEYS
+                                                              : KB_HEIGHT_BIG_KEYS );
             gtk_widget_set_can_focus( button->button, false );
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
@@ -1575,13 +1581,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), button->button );
 
-            if ( button->key->letter )
-                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
-                                   _ui_load__create_label( "label-letter", button->key->letter ) );
-
             if ( button->key->below )
                 gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
                                    _ui_load__create_label( "label-below", button->key->below ) );
+            if ( button->key->letter )
+                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
+                                   _ui_load__create_label( "label-letter", button->key->letter ) );
 
             key_index++;
         }
@@ -1644,6 +1649,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     g_object_unref( style_provider );
 
     // finally show the window
+    gtk_widget_realize( ui->window );
     gtk_widget_show_all( ui->window );
 
     return 0;
