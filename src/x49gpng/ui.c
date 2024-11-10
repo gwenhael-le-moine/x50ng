@@ -1726,28 +1726,19 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     for ( int row = 0; row < 10; row++ ) {
         for ( int column = 0; column < ( ( row == 0 ) ? 6 : 5 ); column++ ) {
             button = &ui->buttons[ key_index ];
-
             button->x49gp = x49gp;
             button->key = &ui_keys[ key_index ];
 
             button->button = gtk_button_new();
+            gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
             gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
             gtk_widget_set_can_focus( button->button, false );
-            gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
-
-            button->box = gtk_event_box_new();
-            gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), true );
-            gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
-            gtk_container_add( GTK_CONTAINER( button->box ), button->button );
-
+            gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
             g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
 
-            gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
-
-            gtk_widget_set_size_request( button->box, button->key->width, button->key->height );
-            gtk_fixed_put( GTK_FIXED( keyboard_container ), button->box, button->key->x, KEYBOARD_PADDING + button->key->y );
+            gtk_fixed_put( GTK_FIXED( keyboard_container ), button->button, button->key->x, KEYBOARD_PADDING + button->key->y );
 
             if ( button->key->label ) {
                 ui_label = gtk_label_new( NULL );

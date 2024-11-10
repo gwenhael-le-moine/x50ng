@@ -58,7 +58,6 @@ typedef struct {
     x49gp_t* x49gp;
     const x49gp_ui_key_t* key;
     GtkWidget* button;
-    GtkWidget* box;
     gboolean down;
     gboolean hold;
 } x49gp_ui_button_t;
