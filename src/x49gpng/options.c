@@ -282,19 +282,35 @@ void config_init( char* progname, int argc, char* argv[] )
                 opt.model = MODEL_49GP;
             if ( strcmp( svalue_model, "49gp-newrpl" ) == 0 )
                 opt.model = MODEL_49GP_NEWRPL;
+
+            switch ( opt.model ) {
+                case MODEL_50G_NEWRPL:
+                    opt.name = "HP 50g / newRPL";
+                    break;
+                case MODEL_49GP:
+                    opt.name = "HP 49g+";
+                    break;
+                case MODEL_49GP_NEWRPL:
+                    opt.name = "HP 49g+ / newRPL";
+                    break;
+                case MODEL_50G:
+                default:
+                    opt.name = "HP 50g";
+                    break;
+            }
         }
 
         lua_getglobal( config_lua_values, "name" );
-        opt.name = strdup( luaL_optstring( config_lua_values, -1, NULL ) );
+        opt.name = strdup( luaL_optstring( config_lua_values, -1, opt.name ) );
 
         lua_getglobal( config_lua_values, "font" );
-        opt.font = strdup( luaL_optstring( config_lua_values, -1, NULL ) );
+        opt.font = strdup( luaL_optstring( config_lua_values, -1, opt.font ) );
 
         lua_getglobal( config_lua_values, "text_scale" );
-        opt.text_scale = luaL_optinteger( config_lua_values, -1, 1.0 );
+        opt.text_scale = luaL_optinteger( config_lua_values, -1, 1 );
 
         lua_getglobal( config_lua_values, "display_scale" );
-        opt.display_scale = luaL_optinteger( config_lua_values, -1, 1.0 );
+        opt.display_scale = luaL_optinteger( config_lua_values, -1, 2 );
     }
 
     /****************************************************/
@@ -302,22 +318,6 @@ void config_init( char* progname, int argc, char* argv[] )
     /****************************************************/
     if ( clopt_name != NULL )
         opt.name = strdup( clopt_name );
-    else
-        switch ( opt.model ) {
-            case MODEL_50G_NEWRPL:
-                opt.name = "HP 50g / newRPL";
-                break;
-            case MODEL_49GP:
-                opt.name = "HP 49g+";
-                break;
-            case MODEL_49GP_NEWRPL:
-                opt.name = "HP 49g+ / newRPL";
-                break;
-            case MODEL_50G:
-            default:
-                opt.name = "HP 50g";
-                break;
-        }
     if ( clopt_font != NULL )
         opt.font = strdup( clopt_font );
     if ( clopt_model != -1 )
