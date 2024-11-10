@@ -1722,92 +1722,98 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     if ( ui->calculator == UI_CALCULATOR_HP49GP_NEWRPL || ui->calculator == UI_CALCULATOR_HP50G_NEWRPL )
         _ui_load__newrplify_ui_keys();
 
-    for ( int i = 0; i < NB_KEYS; i++ ) {
-        button = &ui->buttons[ i ];
+    int key_index = 0;
+    for ( int row = 0; row < 10; row++ ) {
+        for ( int column = 0; column < ( ( row == 0 ) ? 6 : 5 ); column++ ) {
+            button = &ui->buttons[ key_index ];
 
-        button->x49gp = x49gp;
-        button->key = &ui_keys[ i ];
+            button->x49gp = x49gp;
+            button->key = &ui_keys[ key_index ];
 
-        button->button = gtk_button_new();
-        gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
-        gtk_widget_set_can_focus( button->button, false );
-        gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
+            button->button = gtk_button_new();
+            gtk_widget_set_size_request( button->button, button->key->width, button->key->height );
+            gtk_widget_set_can_focus( button->button, false );
+            gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
 
-        button->box = gtk_event_box_new();
-        gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), true );
-        gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
-        gtk_container_add( GTK_CONTAINER( button->box ), button->button );
+            button->box = gtk_event_box_new();
+            gtk_event_box_set_visible_window( GTK_EVENT_BOX( button->box ), true );
+            gtk_event_box_set_above_child( GTK_EVENT_BOX( button->box ), false );
+            gtk_container_add( GTK_CONTAINER( button->box ), button->button );
 
-        g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
-        g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
-        g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
+            g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
+            g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
 
-        gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
+            gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
 
-        gtk_widget_set_size_request( button->box, button->key->width, button->key->height );
-        gtk_fixed_put( GTK_FIXED( keyboard_container ), button->box, button->key->x, KEYBOARD_PADDING + button->key->y );
+            gtk_widget_set_size_request( button->box, button->key->width, button->key->height );
+            gtk_fixed_put( GTK_FIXED( keyboard_container ), button->box, button->key->x, KEYBOARD_PADDING + button->key->y );
 
-        if ( button->key->label ) {
-            ui_label = gtk_label_new( NULL );
-            gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "label-key" );
+            if ( button->key->label ) {
+                ui_label = gtk_label_new( NULL );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), "label-key" );
 
-            gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
-            gtk_label_set_markup( GTK_LABEL( ui_label ), button->key->label );
+                gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_label ), button->key->label );
 
-            gtk_container_add( GTK_CONTAINER( button->button ), ui_label );
-        }
-        if ( button->key->left ) {
-            ui_left = gtk_label_new( NULL );
-            gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "label-left" );
-            gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
-            gtk_label_set_markup( GTK_LABEL( ui_left ), button->key->left );
-
-            if ( button->key->right ) {
-                ui_right = gtk_label_new( NULL );
-                gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "label-right" );
-                gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
-                gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
+                gtk_container_add( GTK_CONTAINER( button->button ), ui_label );
             }
-            y = y2 = button->key->y - ( TINY_TEXT_HEIGHT + 2 );
-            if ( button->key->right ) {
-                x = button->key->x;
+            if ( button->key->left ) {
+                ui_left = gtk_label_new( NULL );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_left ), "label-left" );
+                gtk_label_set_use_markup( GTK_LABEL( ui_left ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_left ), button->key->left );
 
-                x2 = button->key->x + button->key->width - _tiny_text_width( button->key->right );
-
-                if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
-                    x -= ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
-                    x2 += ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
+                if ( button->key->right ) {
+                    ui_right = gtk_label_new( NULL );
+                    gtk_style_context_add_class( gtk_widget_get_style_context( ui_right ), "label-right" );
+                    gtk_label_set_use_markup( GTK_LABEL( ui_right ), true );
+                    gtk_label_set_markup( GTK_LABEL( ui_right ), button->key->right );
                 }
+                y = y2 = button->key->y - ( TINY_TEXT_HEIGHT + 2 );
+                if ( button->key->right ) {
+                    x = button->key->x;
 
-                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
-                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_right, x2, KEYBOARD_PADDING + y2 );
-            } else {
-                x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
-                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
+                    x2 = button->key->x + button->key->width - _tiny_text_width( button->key->right );
+
+                    if ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) > button->key->width ) {
+                        x -=
+                            ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
+                        x2 +=
+                            ( ( _tiny_text_width( button->key->right ) + _tiny_text_width( button->key->left ) ) - button->key->width ) / 2;
+                    }
+
+                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
+                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_right, x2, KEYBOARD_PADDING + y2 );
+                } else {
+                    x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->left ) ) / 2 );
+                    gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_left, x, KEYBOARD_PADDING + y );
+                }
             }
-        }
-        if ( button->key->letter ) {
-            ui_letter = gtk_label_new( NULL );
-            gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "label-letter" );
-            gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
-            gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
+            if ( button->key->letter ) {
+                ui_letter = gtk_label_new( NULL );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_letter ), "label-letter" );
+                gtk_label_set_use_markup( GTK_LABEL( ui_letter ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_letter ), button->key->letter );
 
-            x = button->key->x + button->key->width + ( TINY_TEXT_WIDTH / 2 );
-            y = button->key->y + button->key->height - ( TINY_TEXT_HEIGHT / 2 );
-            gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_letter, x, KEYBOARD_PADDING + y );
-        }
-        if ( button->key->below ) {
-            ui_below = gtk_label_new( NULL );
-            gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "label-below" );
-            gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
-            gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
+                x = button->key->x + button->key->width + ( TINY_TEXT_WIDTH / 2 );
+                y = button->key->y + button->key->height - ( TINY_TEXT_HEIGHT / 2 );
+                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_letter, x, KEYBOARD_PADDING + y );
+            }
+            if ( button->key->below ) {
+                ui_below = gtk_label_new( NULL );
+                gtk_style_context_add_class( gtk_widget_get_style_context( ui_below ), "label-below" );
+                gtk_label_set_use_markup( GTK_LABEL( ui_below ), true );
+                gtk_label_set_markup( GTK_LABEL( ui_below ), button->key->below );
 
-            x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->below ) ) / 2 );
-            y = button->key->y + button->key->height + 2;
-            gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_below, x, KEYBOARD_PADDING + y );
+                x = button->key->x + ( ( button->key->width - _tiny_text_width( button->key->below ) ) / 2 );
+                y = button->key->y + button->key->height + 2;
+                gtk_fixed_put( GTK_FIXED( keyboard_container ), ui_below, x, KEYBOARD_PADDING + y );
+            }
+
+            key_index++;
         }
     }
-
     // Right-click menu
     ui->menu = gtk_menu_new();
 
