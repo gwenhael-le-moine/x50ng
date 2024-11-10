@@ -5,61 +5,166 @@
 #include <getopt.h>
 #include <glib.h>
 
+#include <lua.h>
+#include <lauxlib.h>
+
 #include "options.h"
 
 #include "gdbstub.h"
 
-struct options opt;
+struct options opt = {
+    .config_lua_filename = NULL,
+    .state_filename = NULL,
+    .debug_port = 0,
+    .start_debugger = false,
+    .reinit = X49GP_REINIT_NONE,
+    .firmware = NULL,
+    .model = MODEL_50G,
+    .name = NULL,
+    .text_scale = 1,
+    .display_scale = 2,
+#if defined( __linux__ )
+    .font = "urw gothic l",
+#else
+    .font = "Century Gothic",
+#endif
+};
+
+lua_State* config_lua_values;
+
+static inline bool config_read( const char* filename )
+{
+    int rc;
+
+    assert( filename != NULL );
+
+    /*---------------------------------------------------
+    ; Create the Lua state, which includes NO predefined
+    ; functions or values.  This is literally an empty
+    ; slate.
+    ;----------------------------------------------------*/
+    config_lua_values = luaL_newstate();
+    if ( config_lua_values == NULL ) {
+        fprintf( stderr, "cannot create Lua state\n" );
+        return false;
+    }
+
+    /*-----------------------------------------------------
+    ; For the truly paranoid about sandboxing, enable the
+    ; following code, which removes the string library,
+    ; which some people find problematic to leave un-sand-
+    ; boxed. But in my opinion, if you are worried about
+    ; such attacks in a configuration file, you have bigger
+    ; security issues to worry about than this.
+    ;------------------------------------------------------*/
+#ifdef PARANOID
+    lua_pushliteral( config_lua_values, "x" );
+    lua_pushnil( config_lua_values );
+    lua_setmetatable( config_lua_values, -2 );
+    lua_pop( config_lua_values, 1 );
+#endif
+
+    /*-----------------------------------------------------
+    ; Lua 5.2+ can restrict scripts to being text only,
+    ; to avoid a potential problem with loading pre-compiled
+    ; Lua scripts that may have malformed Lua VM code that
+    ; could possibly lead to an exploit, but again, if you
+    ; have to worry about that, you have bigger security
+    ; issues to worry about.  But in any case, here I'm
+    ; restricting the file to "text" only.
+    ;------------------------------------------------------*/
+    rc = luaL_loadfile( config_lua_values, filename );
+    if ( rc != LUA_OK ) {
+        /* fprintf( stderr, "Lua error: (%d) %s\n", rc, lua_tostring( config_lua_values, -1 ) ); */
+        return false;
+    }
+
+    rc = lua_pcall( config_lua_values, 0, 0, 0 );
+    if ( rc != LUA_OK ) {
+        /* fprintf( stderr, "Lua error: (%d) %s\n", rc, lua_tostring( config_lua_values, -1 ) ); */
+        return false;
+    }
+
+    return true;
+}
+
+static void print_config( void )
+{
+    fprintf( stdout, "--------------------------------------------------------------------------------\n" );
+    fprintf( stdout, "-- Configuration file for x49gpng\n" );
+    fprintf( stdout, "-- This is a comment\n" );
+
+    fprintf( stdout, "name = \"%s\"\n", opt.name );
+
+    fprintf( stdout, "model = \"" );
+    switch ( opt.model ) {
+        case MODEL_49GP:
+            fprintf( stdout, "49gp" );
+            break;
+        case MODEL_49GP_NEWRPL:
+            fprintf( stdout, "49gp-newrpl" );
+            break;
+        case MODEL_50G:
+            fprintf( stdout, "50g" );
+            break;
+        case MODEL_50G_NEWRPL:
+            fprintf( stdout, "50g-newrpl" );
+            break;
+    }
+    fprintf( stdout, "\" -- possible values: \"49gp\", \"50g\", \"49gp-newrpl\", \"50g-newrpl\"\n" );
+    fprintf( stdout, "font = \"%s\"\n", opt.font );
+    fprintf( stdout, "text_scale = %i\n", opt.text_scale );
+    fprintf( stdout, "display_scale = %i\n", opt.display_scale );
+
+    fprintf( stdout, "--- End of saturnng configuration ----------------------------------------------\n" );
+}
 
 void config_init( char* progname, int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
 
+    char* config_lua_filename = ( char* )"config.lua";
+
     bool do_enable_debugger = false;
     bool do_start_debugger = false;
     bool do_reflash = false;
     bool do_reflash_full = false;
 
-    opt.state_filename = NULL;
-    opt.debug_port = 0;
-    opt.start_debugger = false;
-    opt.reinit = X49GP_REINIT_NONE;
-    opt.firmware = NULL;
-    opt.model = MODEL_50G;
-    opt.name = NULL;
-    opt.text_scale = 1;
-    opt.display_scale = 2;
+    char* clopt_name = NULL;
+    char* clopt_font = NULL;
+    int clopt_model = -1;
+    int clopt_text_scale = -1;
+    int clopt_display_scale = -1;
 
-#if defined( __linux__ )
-    opt.font = "urw gothic l";
-#else
-    opt.font = "Century Gothic";
-#endif
+    int print_config_and_exit = false;
 
     const char* optstring = "hrc:D:df:Fn:t:";
     struct option long_options[] = {
-        {"help",          no_argument,       NULL, 'h'},
+        {"help",          no_argument,       NULL,                   'h' },
+        {"print-config",  no_argument,       &print_config_and_exit, true},
 
-        {"config",        required_argument, NULL, 'c'},
+        {"config",        required_argument, NULL,                   'c' },
 
-        {"enable-debug",  required_argument, NULL, 'D'},
-        {"debug",         no_argument,       NULL, 'd'},
-        {"reflash",       required_argument, NULL, 'f'},
-        {"reflash-full",  no_argument,       NULL, 'F'},
-        {"reboot",        no_argument,       NULL, 'r'},
+        {"state",         required_argument, NULL,                   1   },
 
-        {"50g",           no_argument,       NULL, 506},
-        {"50g-newrpl",    no_argument,       NULL, 507},
-        {"49gp",          no_argument,       NULL, 496},
-        {"49gp-newrpl",   no_argument,       NULL, 497},
-        {"name",          required_argument, NULL, 'n'},
-        {"text-scale",    required_argument, NULL, 's'},
-        {"display-scale", required_argument, NULL, 'S'},
+        {"enable-debug",  required_argument, NULL,                   'D' },
+        {"debug",         no_argument,       NULL,                   'd' },
+        {"reflash",       required_argument, NULL,                   'f' },
+        {"reflash-full",  no_argument,       NULL,                   'F' },
+        {"reboot",        no_argument,       NULL,                   'r' },
 
-        {"font",          required_argument, NULL, 't'},
+        {"50g",           no_argument,       NULL,                   506 },
+        {"50g-newrpl",    no_argument,       NULL,                   507 },
+        {"49gp",          no_argument,       NULL,                   496 },
+        {"49gp-newrpl",   no_argument,       NULL,                   497 },
+        {"name",          required_argument, NULL,                   'n' },
+        {"text-scale",    required_argument, NULL,                   's' },
+        {"display-scale", required_argument, NULL,                   'S' },
 
-        {0,               0,                 0,    0  }
+        {"font",          required_argument, NULL,                   't' },
+
+        {0,               0,                 0,                      0   }
     };
 
     while ( c != EOF ) {
@@ -72,7 +177,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "Usage: %s [<options>]\n"
                          "Valid options:\n"
                          " -h --help                    print this message and exit\n"
-                         " -c --config[=<filename>]     alternate config file\n"
+                         "    --state[=<filename>]     alternate config file\n"
                          "    --50g                     show HP 50g faceplate (default)\n"
                          "    --50g-newrpl              show HP 50g faceplate with newRPL labels\n"
                          "    --49gp                    show HP 49g+ faceplate\n"
@@ -102,11 +207,12 @@ void config_init( char* progname, int argc, char* argv[] )
                 if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
                     opt.reinit = X49GP_REINIT_REBOOT_ONLY;
                 break;
-            case 'c':
+            case 1:
                 opt.state_filename = strdup( optarg );
                 break;
             case 'D':
                 do_enable_debugger = true;
+                opt.debug_port = atoi( optarg );
                 break;
             case 'd':
                 do_start_debugger = true;
@@ -118,51 +224,123 @@ void config_init( char* progname, int argc, char* argv[] )
                 do_reflash_full = true;
                 break;
             case 496:
-                opt.model = MODEL_49GP;
+                clopt_model = MODEL_49GP;
+                if ( clopt_name == NULL )
+                    clopt_name = "HP 49g+";
                 break;
             case 497:
-                opt.model = MODEL_49GP_NEWRPL;
+                clopt_model = MODEL_49GP_NEWRPL;
+                if ( clopt_name == NULL )
+                    clopt_name = "HP 49g+ / newRPL";
                 break;
             case 506:
-                opt.model = MODEL_50G;
+                clopt_model = MODEL_50G;
+                if ( clopt_name == NULL )
+                    clopt_name = "HP 50g";
                 break;
             case 507:
-                opt.model = MODEL_50G_NEWRPL;
+                clopt_model = MODEL_50G_NEWRPL;
+                if ( clopt_name == NULL )
+                    clopt_name = "HP 50g / newRPL";
                 break;
             case 'n':
-                opt.name = strdup( optarg );
+                clopt_name = strdup( optarg );
                 break;
             case 's':
-                opt.text_scale = atoi( optarg );
+                clopt_text_scale = atoi( optarg );
                 break;
             case 'S':
-                opt.display_scale = atoi( optarg );
+                clopt_display_scale = atoi( optarg );
                 break;
             case 't':
-                opt.font = strdup( optarg );
+                clopt_font = strdup( optarg );
                 break;
             default:
                 break;
         }
     }
 
-    if ( do_enable_debugger ) {
-        char* end;
-        int port;
+    char config_dir[ strlen( progname ) + 9 ];
+    const char* home = g_get_home_dir();
+    sprintf( config_dir, ".config/%s", progname );
 
-        if ( optarg == NULL && opt.debug_port == 0 )
-            opt.debug_port = DEFAULT_GDBSTUB_PORT;
+    opt.config_lua_filename = g_build_filename( home, config_dir, config_lua_filename, NULL );
 
-        port = strtoul( optarg, &end, 0 );
-        if ( ( end == optarg ) || ( *end != '\0' ) ) {
-            fprintf( stderr, "Invalid port \"%s\", using default\n", optarg );
-            if ( opt.debug_port == 0 )
-                opt.debug_port = DEFAULT_GDBSTUB_PORT;
+    /**********************/
+    /* 1. read config.lua */
+    /**********************/
+    bool haz_config_file = config_read( opt.config_lua_filename );
+    if ( haz_config_file ) {
+        lua_getglobal( config_lua_values, "model" );
+        const char* svalue_model = luaL_optstring( config_lua_values, -1, "50g" );
+        if ( svalue_model != NULL ) {
+            if ( strcmp( svalue_model, "50g" ) == 0 )
+                opt.model = MODEL_50G;
+            if ( strcmp( svalue_model, "50g-newrpl" ) == 0 )
+                opt.model = MODEL_50G_NEWRPL;
+            if ( strcmp( svalue_model, "49gp" ) == 0 )
+                opt.model = MODEL_49GP;
+            if ( strcmp( svalue_model, "49gp-newrpl" ) == 0 )
+                opt.model = MODEL_49GP_NEWRPL;
         }
 
-        if ( opt.debug_port != 0 && opt.debug_port != DEFAULT_GDBSTUB_PORT )
-            fprintf( stderr, "Additional debug port \"%s\" specified, overriding\n", optarg );
-        opt.debug_port = port;
+        lua_getglobal( config_lua_values, "name" );
+        opt.name = strdup( luaL_optstring( config_lua_values, -1, NULL ) );
+
+        lua_getglobal( config_lua_values, "font" );
+        opt.font = strdup( luaL_optstring( config_lua_values, -1, NULL ) );
+
+        lua_getglobal( config_lua_values, "text_scale" );
+        opt.text_scale = luaL_optinteger( config_lua_values, -1, 1.0 );
+
+        lua_getglobal( config_lua_values, "display_scale" );
+        opt.display_scale = luaL_optinteger( config_lua_values, -1, 1.0 );
+    }
+
+    /****************************************************/
+    /* 2. treat command-line params which have priority */
+    /****************************************************/
+    if ( clopt_name != NULL )
+        opt.name = strdup( clopt_name );
+    else
+        switch ( opt.model ) {
+            case MODEL_50G_NEWRPL:
+                opt.name = "HP 50g / newRPL";
+                break;
+            case MODEL_49GP:
+                opt.name = "HP 49g+";
+                break;
+            case MODEL_49GP_NEWRPL:
+                opt.name = "HP 49g+ / newRPL";
+                break;
+            case MODEL_50G:
+            default:
+                opt.name = "HP 50g";
+                break;
+        }
+    if ( clopt_font != NULL )
+        opt.font = strdup( clopt_font );
+    if ( clopt_model != -1 )
+        opt.model = clopt_model;
+    if ( clopt_text_scale != -1 )
+        opt.text_scale = clopt_text_scale;
+    if ( clopt_display_scale != -1 )
+        opt.display_scale = clopt_display_scale;
+
+    if ( print_config_and_exit ) {
+        print_config();
+        exit( EXIT_SUCCESS );
+    }
+
+    if ( !haz_config_file ) {
+        fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", opt.config_lua_filename );
+        fprintf( stderr, "You can solve this by running `mkdir -p %s/%s && %s --print-config >> %s`\n\n", home, config_dir, progname,
+                 opt.config_lua_filename );
+    }
+
+    if ( do_enable_debugger ) {
+        if ( opt.debug_port == 0 )
+            opt.debug_port = DEFAULT_GDBSTUB_PORT;
 
         opt.start_debugger = do_start_debugger;
     }
@@ -171,21 +349,13 @@ void config_init( char* progname, int argc, char* argv[] )
             opt.reinit = X49GP_REINIT_FLASH;
 
         if ( opt.firmware != NULL )
-            fprintf( stderr,
-                     "Additional firmware file \"%s\" specified,"
-                     " overriding\n",
-                     optarg );
+            fprintf( stderr, "Additional firmware file \"%s\" specified, overriding\n", optarg );
         opt.firmware = optarg;
 
         if ( do_reflash_full )
             opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
 
-    if ( opt.state_filename == NULL ) {
-        char config_dir[ strlen( progname ) + 9 ];
-
-        const char* home = g_get_home_dir();
-        sprintf( config_dir, ".config/%s", progname );
+    if ( opt.state_filename == NULL )
         opt.state_filename = g_build_filename( home, config_dir, "state", NULL );
-    }
 }

@@ -7,12 +7,19 @@ PATCHLEVEL = 0
 
 #
 DEBUG_CFLAGS = -g # -pg
-OPTIM = 2
+OPTIM ?= 2
+
+LUA_VERSION ?= lua
+PKG_CONFIG ?= pkg-config
+
+### lua
+LUACFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
+LUALIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 
 # GTK
-GTK_VERSION = "+-3.0"
-GTK_CFLAGS = $(shell pkg-config --cflags gtk$(GTK_VERSION)) -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE
-GTK_LDLIBS = $(shell pkg-config --libs gtk$(GTK_VERSION)) -lz -lm
+GTK_VERSION ?= "+-3.0"
+GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk$(GTK_VERSION)) -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE
+GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk$(GTK_VERSION)) -lz -lm
 
 # Embedded qemu
 QEMU_DIR = src/qemu-git
@@ -87,6 +94,7 @@ X49GP_CFLAGS = $(CFLAGS) \
 	$(X49GP_INCLUDES) \
 	$(QEMU_DEFINES) \
 	$(GTK_CFLAGS) \
+	$(LUACFLAGS) \
 	-D_GNU_SOURCE=1 \
 	-DVERSION_MAJOR=$(VERSION_MAJOR) \
 	-DVERSION_MINOR=$(VERSION_MINOR) \
@@ -99,7 +107,7 @@ ifeq ($(DEBUG), yes)
 endif
 
 X49GP_LDFLAGS = $(DEBUG_CFLAGS) $(LDFLAGS)
-X49GP_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS)
+X49GP_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(LUALIBS)
 
 SRCS = ./src/x49gpng/main.c \
 	./src/x49gpng/module.c \
