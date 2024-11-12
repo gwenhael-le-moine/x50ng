@@ -753,10 +753,6 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
     x49gp_t* x49gp = button->x49gp;
     x49gp_ui_t* ui = x49gp->ui;
 
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: type %u, button %u\n", __FUNCTION__, __LINE__, event->type, event->button );
-#endif
-
     if ( event->type != GDK_BUTTON_PRESS )
         return false;
 
@@ -777,11 +773,6 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
         default:
             return true;
     }
-
-#ifdef DEBUG_X49GP_UI
-    printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row,
-            button->key->eint );
-#endif
 
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 1 );
@@ -909,18 +900,12 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     int index;
     guint keyval;
 
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: type %u, keyval %04x\n", __FUNCTION__, __LINE__, event->type, event->keyval );
-#endif
     /* We want to know the keyval as interpreted without modifiers. */
     /* However, there is one modifier we do care about: NumLock, */
     /* which normally is represented by MOD2. */
     if ( !gdk_keymap_translate_keyboard_state( gdk_keymap_get_for_display( gdk_display_get_default() ), event->hardware_keycode,
                                                event->state & GDK_MOD2_MASK, event->group, &keyval, NULL, NULL, NULL ) )
         return false;
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: state %u, base keyval %04x\n", __FUNCTION__, __LINE__, event->state, keyval );
-#endif
 
     switch ( keyval ) {
         case GDK_KEY_a:
@@ -1197,10 +1182,6 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 
 static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: type %u, button %u\n", __FUNCTION__, __LINE__, event->type, event->button );
-#endif
-
     gdk_window_focus( gtk_widget_get_window( widget ), event->time );
     gdk_window_raise( gtk_widget_get_window( widget ) );
 
