@@ -26,7 +26,7 @@
 
 #define FONT_SIZE_KEY opt.font_size
 #define FONT_SIZE_SYMBOL ( 2 * opt.font_size )
-#define FONT_SIZE_NUMBER ( ( int )( 1.5 * opt.font_size ) )
+#define FONT_SIZE_NUMBER ( ( int )( 1.75 * opt.font_size ) )
 #define FONT_SIZE_TINY ( ( int )( 0.75 * opt.font_size ) )
 
 #define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
@@ -39,11 +39,11 @@
 #define KB_WIDTH_6_KEYS ( 3 * opt.font_size )
 #define KB_WIDTH_5_KEYS ( 4 * opt.font_size )
 
-#define KB_HEIGHT_MENU_KEYS ( 2 * opt.font_size )
-#define KB_HEIGHT_SMALL_KEYS ( ( int )( 1.5 * opt.font_size ) )
-#define KB_HEIGHT_BIG_KEYS ( 3 * opt.font_size )
+#define KB_HEIGHT_MENU_KEYS ( ( int )( 1.75 * opt.font_size ) )
+#define KB_HEIGHT_SMALL_KEYS ( ( int )( 2 * opt.font_size ) )
+#define KB_HEIGHT_BIG_KEYS ( ( int )( 2.5 * opt.font_size ) )
 
-#define KB_SPACING_KEYS TINY_TEXT_WIDTH
+#define KB_SPACING_KEYS ( ( int )( 0.5 * TINY_TEXT_WIDTH ) )
 #define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
 #define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
 
@@ -55,11 +55,7 @@
 #define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
 #define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
 
-#define KEYBOARD_PADDING ( TINY_TEXT_HEIGHT + 2 )
-
 #define WINDOW_WIDTH ( 384 )
-
-#define LCD_PADDING ( ( WINDOW_WIDTH - LCD_WIDTH ) / 2 )
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",
@@ -411,7 +407,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
     {.css_class = "alpha",
      .label = "ALPHA",
-     .letter = "",
+     .letter = NULL,
      .left = "USER",
      .right = "ENTRY",
      .below = NULL,
@@ -422,7 +418,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 4},
     {.css_class = "core-number",
      .label = "7",
-     .letter = "",
+     .letter = NULL,
      .left = "S.SLV",
      .right = "NUM.SLV",
      .below = NULL,
@@ -433,7 +429,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 4},
     {.css_class = "core-number",
      .label = "8",
-     .letter = "",
+     .letter = NULL,
      .left = "EXP&amp;LN",
      .right = "TRIG",
      .below = NULL,
@@ -444,7 +440,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 4},
     {.css_class = "core-number",
      .label = "9",
-     .letter = "",
+     .letter = NULL,
      .left = "FINANCE",
      .right = "TIME",
      .below = NULL,
@@ -455,7 +451,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 4},
     {.css_class = "core-number",
      .label = "×",
-     .letter = "",
+     .letter = NULL,
      .left = "[ ]",
      .right = "\" \"",
      .below = NULL,
@@ -467,7 +463,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
     {.css_class = "shift-left",
      .label = "⮢",
-     .letter = "",
+     .letter = NULL,
      .left = "",
      .right = NULL,
      .below = NULL,
@@ -478,7 +474,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 5},
     {.css_class = "core-number",
      .label = "4",
-     .letter = "",
+     .letter = NULL,
      .left = "CALC",
      .right = "ALG",
      .below = NULL,
@@ -489,7 +485,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 5},
     {.css_class = "core-number",
      .label = "5",
-     .letter = "",
+     .letter = NULL,
      .left = "MATRICES",
      .right = "STAT",
      .below = NULL,
@@ -500,7 +496,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 5},
     {.css_class = "core-number",
      .label = "6",
-     .letter = "",
+     .letter = NULL,
      .left = "CONVERT",
      .right = "UNITS",
      .below = NULL,
@@ -511,7 +507,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 5},
     {.css_class = "core-number",
      .label = "-",
-     .letter = "",
+     .letter = NULL,
      .left = "( )",
      .right = "_",
      .below = NULL,
@@ -523,7 +519,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
     {.css_class = "shift-right",
      .label = "⮣",
-     .letter = "",
+     .letter = NULL,
      .left = "",
      .right = NULL,
      .below = NULL,
@@ -534,7 +530,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
     {.css_class = "core-number",
      .label = "1",
-     .letter = "",
+     .letter = NULL,
      .left = "ARITH",
      .right = "CMPLX",
      .below = NULL,
@@ -545,7 +541,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
     {.css_class = "core-number",
      .label = "2",
-     .letter = "",
+     .letter = NULL,
      .left = "DEF",
      .right = "LIB",
      .below = NULL,
@@ -556,7 +552,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
     {.css_class = "core-number",
      .label = "3",
-     .letter = "",
+     .letter = NULL,
      .left = "#",
      .right = "BASE",
      .below = NULL,
@@ -567,7 +563,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
     {.css_class = "core-number",
      .label = "+",
-     .letter = "",
+     .letter = NULL,
      .left = "{ }",
      .right = "« »",
      .below = NULL,
@@ -579,7 +575,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
     {.css_class = "core",
      .label = "ON",
-     .letter = "",
+     .letter = NULL,
      .left = "CONT",
      .right = "OFF",
      .below = "CANCEL",
@@ -590,7 +586,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 0},
     {.css_class = "core-number",
      .label = "0",
-     .letter = "",
+     .letter = NULL,
      .left = "∞",
      .right = "→",
      .below = NULL,
@@ -601,7 +597,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 7},
     {.css_class = "core",
      .label = ".",
-     .letter = "",
+     .letter = NULL,
      .left = ": :",
      .right = "↲",
      .below = NULL,
@@ -612,7 +608,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 7},
     {.css_class = "core",
      .label = "SPC",
-     .letter = "",
+     .letter = NULL,
      .left = "𝚷",
      .right = ",",
      .below = NULL,
@@ -640,18 +636,20 @@ char* css_global = "window {"
                    "window * {"
                    "  font-weight: bold;"
                    "}"
+                   /* "box { border: 1px dashed red; }" */
+                   /* "label { border: 1px dotted yellow; }" */
                    ".annunciator {"
                    "  padding: 0px;"
                    "  color: #080808;"
                    "}"
                    ".lcd-container, .annunciators-container {"
-                   "  background-color: #abd2b4;"
+                   "  background-color: #a9d0b2;"
                    "}"
                    "button {"
                    "  background-image: none;"
                    "  padding: 0px;"
-                   "  margin-left: 5px;"
-                   "  margin-right: 5px;"
+                   "  margin-left: 15px;"
+                   "  margin-right: 15px;"
                    "}"
                    "button.menu {"
                    "  background-color: #a9a9a9;"
@@ -801,12 +799,8 @@ static gboolean react_to_button_release( GtkWidget* widget, GdkEventButton* even
     if ( event->type != GDK_BUTTON_RELEASE )
         return false;
 
-    switch ( event->button ) {
-        case 1:
-            break;
-        default:
-            return true;
-    }
+    if ( event->button != 1 )
+        return true;
 
     if ( ui->buttons_down > 0 )
         ui->buttons_down--;
@@ -1175,21 +1169,13 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     bev.button = 1;
     bev.state = event->state;
 
-    /* save_in = GTK_BUTTON( button->button )->in_button; */
-
     switch ( event->type ) {
         case GDK_KEY_PRESS:
             bev.type = GDK_BUTTON_PRESS;
             react_to_button_press( button->button, &bev, button );
-            /* GTK_BUTTON( button->button )->in_button = true; */
-            key_to_button( button->button, true );
-            /* GTK_BUTTON( button->button )->in_button = save_in; */
             break;
         case GDK_KEY_RELEASE:
             bev.type = GDK_BUTTON_RELEASE;
-            /* GTK_BUTTON( button->button )->in_button = true; */
-            key_to_button( button->button, false );
-            /* GTK_BUTTON( button->button )->in_button = save_in; */
             react_to_button_release( button->button, &bev, button );
             break;
         default:
@@ -1219,11 +1205,11 @@ static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event,
         case 1: // left click
             gdk_window_begin_move_drag( gtk_widget_get_window( widget ), event->button, event->x_root, event->y_root, event->time );
             break;
-        case 2: // middle click
-            GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD );
-            gchar* text = gtk_clipboard_wait_for_text( clip );
-            fprintf( stderr, "clipboard: %s\n", text );
-            break;
+        /* case 2: // middle click */
+        /*     GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD ); */
+        /*     gchar* text = gtk_clipboard_wait_for_text( clip ); */
+        /*     fprintf( stderr, "clipboard: %s\n", text ); */
+        /*     break; */
         case 3: // right click
             gtk_menu_popup_at_pointer( GTK_MENU( ui->menu ), NULL );
             return true;
@@ -1471,10 +1457,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "display-container" );
-    gtk_widget_set_margin_top( display_container, LCD_PADDING );
-    gtk_widget_set_margin_bottom( display_container, LCD_PADDING );
-    gtk_widget_set_margin_start( display_container, LCD_PADDING );
-    gtk_widget_set_margin_end( display_container, WINDOW_WIDTH - ( LCD_PADDING + LCD_WIDTH ) );
     gtk_container_add( GTK_CONTAINER( display_container ), annunciators_container );
     gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
 
@@ -1484,10 +1466,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GtkWidget* keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_style_context_add_class( gtk_widget_get_style_context( keyboard_container ), "keyboard-container" );
     gtk_box_set_homogeneous( GTK_BOX( keyboard_container ), true );
-    gtk_widget_set_margin_top( keyboard_container, KEYBOARD_PADDING );
-    gtk_widget_set_margin_bottom( keyboard_container, KEYBOARD_PADDING );
-    gtk_widget_set_margin_start( keyboard_container, KEYBOARD_PADDING );
-    gtk_widget_set_margin_end( keyboard_container, KEYBOARD_PADDING );
 
     gtk_container_add( GTK_CONTAINER( window_container ), keyboard_container );
 
@@ -1533,17 +1511,17 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
             gtk_widget_set_size_request( button->button, ( row == 0 ) ? KB_WIDTH_6_KEYS : KB_WIDTH_5_KEYS,
                                          ( row == 0 )         ? KB_HEIGHT_MENU_KEYS
-                                         : ( key_index < 40 ) ? KB_HEIGHT_SMALL_KEYS
+                                         : ( key_index < 30 ) ? KB_HEIGHT_SMALL_KEYS
                                                               : KB_HEIGHT_BIG_KEYS );
             gtk_widget_set_can_focus( button->button, false );
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
             g_signal_connect( G_OBJECT( button->button ), "leave-notify-event", G_CALLBACK( react_to_button_leave ), button );
+            gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), button->button );
+
             if ( button->key->label )
                 gtk_container_add( GTK_CONTAINER( button->button ), _ui_load__create_label( "label-key", button->key->label ) );
-
-            gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), button->button );
 
             if ( button->key->below )
                 gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
@@ -1687,7 +1665,7 @@ int gui_init( x49gp_t* x49gp )
 
     if ( opt.verbose ) {
         fprintf( stderr,
-                 " FONT_SIZE_KEY = %i\n"
+                 "\n FONT_SIZE_KEY = %i\n"
                  " FONT_SIZE_SYMBOL = %i\n"
                  " FONT_SIZE_NUMBER = %i\n"
                  " FONT_SIZE_TINY = %i\n"
@@ -1707,13 +1685,11 @@ int gui_init( x49gp_t* x49gp )
                  " LCD_PIXEL_SCALE = %i\n"
                  " LCD_WIDTH = %i\n"
                  " LCD_HEIGHT = %i\n"
-                 " KEYBOARD_PADDING = %i\n"
-                 " WINDOW_WIDTH = %i\n"
-                 " LCD_PADDING = %i\n",
+                 " WINDOW_WIDTH = %i\n",
                  FONT_SIZE_KEY, FONT_SIZE_SYMBOL, FONT_SIZE_NUMBER, FONT_SIZE_TINY, TINY_TEXT_HEIGHT, TINY_TEXT_WIDTH, KB_WIDTH_6_KEYS,
                  KB_WIDTH_5_KEYS, KB_HEIGHT_MENU_KEYS, KB_HEIGHT_SMALL_KEYS, KB_HEIGHT_BIG_KEYS, KB_SPACING_KEYS, KB_COLUMN_WIDTH_6_KEYS,
                  KB_COLUMN_WIDTH_5_KEYS, ANNUNCIATOR_WIDTH, ANNUNCIATOR_HEIGHT, ANNUNCIATORS_HEIGHT, LCD_PIXEL_SCALE, LCD_WIDTH, LCD_HEIGHT,
-                 KEYBOARD_PADDING, WINDOW_WIDTH, LCD_PADDING );
+                 WINDOW_WIDTH );
     }
 
     if ( x49gp_module_init( x49gp, "gui", ui_init, ui_exit, ui_reset, ui_load, ui_save, NULL, &module ) )
