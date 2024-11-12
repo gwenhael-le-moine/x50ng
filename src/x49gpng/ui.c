@@ -709,6 +709,22 @@ char* css_global = "window {"
 /* functions */
 /*************/
 
+static void x49gpng_press_key( x49gp_t* x49gp, const x49gp_ui_key_t* key )
+{
+    if ( key->rowbit )
+        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 1 );
+    else
+        s3c2410_io_port_f_set_bit( x49gp, key->eint, 1 );
+}
+
+static void x49gpng_release_key( x49gp_t* x49gp, const x49gp_ui_key_t* key )
+{
+    if ( key->rowbit )
+        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 0 );
+    else
+        s3c2410_io_port_f_set_bit( x49gp, key->eint, 0 );
+}
+
 static inline int _tiny_text_width( const char* text )
 {
     char* stripped_text;
@@ -743,10 +759,7 @@ static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cau
     /*     gtkbutton->in_button = false; */
     key_to_button( button->button, false );
 
-    if ( key->rowbit )
-        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 0 );
-    else
-        s3c2410_io_port_f_set_bit( x49gp, key->eint, 0 );
+    x49gpng_release_key( x49gp, key );
 }
 
 static void ui_release_all_buttons( x49gp_t* x49gp, x49gp_ui_button_t* cause )
@@ -801,10 +814,7 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
             button->key->eint );
 #endif
 
-    if ( key->rowbit )
-        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 1 );
-    else
-        s3c2410_io_port_f_set_bit( x49gp, key->eint, 1 );
+    x49gpng_press_key( x49gp, key );
 
     return false;
 }
