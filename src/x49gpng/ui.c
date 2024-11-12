@@ -717,31 +717,13 @@ static inline int _tiny_text_width( const char* text )
     return strlen( stripped_text ) * TINY_TEXT_WIDTH;
 }
 
-static void key_to_button( GtkWidget* button, bool is_press )
-{
-    GdkEventButton event = { .type = GDK_BUTTON_PRESS, .state = 0 };
-    static gboolean unused_but_needed_return_value;
-    g_signal_emit_by_name( GTK_BUTTON( button ), is_press ? "button-press-event" : "button-release-event", &event,
-                           &unused_but_needed_return_value );
-}
-
 static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause )
 {
     x49gp_t* x49gp = button->x49gp;
     const x49gp_ui_key_t* key = button->key;
-    /* GtkButton* gtkbutton = GTK_BUTTON( button->button ); */
-
-    /* #ifdef DEBUG_X49GP_UI */
-    /*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
-    /*             button->key->eint ); */
-    /* #endif */
 
     button->down = false;
     button->hold = false;
-
-    /* if ( button != cause ) */
-    /*     gtkbutton->in_button = false; */
-    key_to_button( button->button, false );
 
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 0 );
@@ -789,7 +771,7 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
             button->hold = true;
             if ( button->down )
                 return false;
-            key_to_button( button->button, true );
+
             button->down = true;
             break;
         default:
@@ -923,8 +905,6 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
-    x49gp_ui_button_t* button;
-    GdkEventButton bev;
     /* gboolean save_in; */
     int index;
     guint keyval;
@@ -1191,29 +1171,21 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
             return false;
     }
 
-    button = &ui->buttons[ index ];
+    x49gp_ui_button_t* button = &ui->buttons[ index ];
 
+    GdkEventButton bev;
     memset( &bev, 0, sizeof( GdkEventButton ) );
-
     bev.time = event->time;
     bev.button = 1;
     bev.state = event->state;
-
-    /* save_in = GTK_BUTTON( button->button )->in_button; */
 
     switch ( event->type ) {
         case GDK_KEY_PRESS:
             bev.type = GDK_BUTTON_PRESS;
             react_to_button_press( button->button, &bev, button );
-            /* GTK_BUTTON( button->button )->in_button = true; */
-            key_to_button( button->button, true );
-            /* GTK_BUTTON( button->button )->in_button = save_in; */
             break;
         case GDK_KEY_RELEASE:
             bev.type = GDK_BUTTON_RELEASE;
-            /* GTK_BUTTON( button->button )->in_button = true; */
-            key_to_button( button->button, false );
-            /* GTK_BUTTON( button->button )->in_button = save_in; */
             react_to_button_release( button->button, &bev, button );
             break;
         default:
