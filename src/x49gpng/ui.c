@@ -733,31 +733,13 @@ static inline int _tiny_text_width( const char* text )
     return strlen( stripped_text ) * TINY_TEXT_WIDTH;
 }
 
-static void key_to_button( GtkWidget* button, bool is_press )
-{
-    GdkEventButton event = { .type = GDK_BUTTON_PRESS, .state = 0 };
-    static gboolean unused_but_needed_return_value;
-    g_signal_emit_by_name( GTK_BUTTON( button ), is_press ? "button-press-event" : "button-release-event", &event,
-                           &unused_but_needed_return_value );
-}
-
 static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause )
 {
     x49gp_t* x49gp = button->x49gp;
     const x49gp_ui_key_t* key = button->key;
-    /* GtkButton* gtkbutton = GTK_BUTTON( button->button ); */
-
-    /* #ifdef DEBUG_X49GP_UI */
-    /*     printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row, */
-    /*             button->key->eint ); */
-    /* #endif */
 
     button->down = false;
     button->hold = false;
-
-    /* if ( button != cause ) */
-    /*     gtkbutton->in_button = false; */
-    key_to_button( button->button, false );
 
     x49gpng_release_key( x49gp, key );
 }
@@ -784,10 +766,6 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
     x49gp_t* x49gp = button->x49gp;
     x49gp_ui_t* ui = x49gp->ui;
 
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: type %u, button %u\n", __FUNCTION__, __LINE__, event->type, event->button );
-#endif
-
     if ( event->type != GDK_BUTTON_PRESS )
         return false;
 
@@ -798,21 +776,16 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
                 return false;
             button->down = true;
             break;
+        case 2:
         case 3:
             button->hold = true;
             if ( button->down )
                 return false;
-            key_to_button( button->button, true );
             button->down = true;
             break;
         default:
             return true;
     }
-
-#ifdef DEBUG_X49GP_UI
-    printf( "%s: button %u: col %u, row %u, eint %u\n", __FUNCTION__, event->button, button->key->column, button->key->row,
-            button->key->eint );
-#endif
 
     x49gpng_press_key( x49gp, key );
 
@@ -935,22 +908,15 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     x49gp_ui_t* ui = x49gp->ui;
     x49gp_ui_button_t* button;
     GdkEventButton bev;
-    /* gboolean save_in; */
     int index;
     guint keyval;
 
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: type %u, keyval %04x\n", __FUNCTION__, __LINE__, event->type, event->keyval );
-#endif
     /* We want to know the keyval as interpreted without modifiers. */
     /* However, there is one modifier we do care about: NumLock, */
     /* which normally is represented by MOD2. */
     if ( !gdk_keymap_translate_keyboard_state( gdk_keymap_get_for_display( gdk_display_get_default() ), event->hardware_keycode,
                                                event->state & GDK_MOD2_MASK, event->group, &keyval, NULL, NULL, NULL ) )
         return false;
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: state %u, base keyval %04x\n", __FUNCTION__, __LINE__, event->state, keyval );
-#endif
 
     switch ( keyval ) {
         case GDK_KEY_a:
@@ -1235,9 +1201,6 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 
 static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
-#ifdef DEBUG_X49GP_UI
-    fprintf( stderr, "%s:%u: type %u, button %u\n", __FUNCTION__, __LINE__, event->type, event->button );
-#endif
 
     gdk_window_focus( gtk_widget_get_window( widget ), event->time );
     gdk_window_raise( gtk_widget_get_window( widget ) );
