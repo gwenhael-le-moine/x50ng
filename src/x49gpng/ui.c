@@ -1635,7 +1635,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     asprintf( &css, css_global, is_50g ? color_bg_50g : color_bg_49gp, is_50g ? color_shift_left_50g : color_shift_left_49gp,
               FONT_SIZE_SYMBOL, FONT_SIZE_NUMBER, FONT_SIZE_KEY, FONT_SIZE_TINY, is_50g ? color_shift_left_50g : color_shift_left_49gp );
 
+#if GTK_MAJOR_VERSION == 4
+    gtk_css_provider_load_from_string( style_provider, css );
+#else
     gtk_css_provider_load_from_data( style_provider, css, -1, NULL );
+#endif
 
     gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
