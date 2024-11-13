@@ -108,7 +108,7 @@ static void print_config( void )
 
     fprintf( stdout, "verbose = %s\n", opt.verbose ? "true" : "false" );
 
-    fprintf( stdout, "--- End of saturnng configuration ----------------------------------------------\n" );
+    fprintf( stdout, "--- End of x49gpng configuration -----------------------------------------------\n" );
 }
 
 void config_init( char* progname, int argc, char* argv[] )
