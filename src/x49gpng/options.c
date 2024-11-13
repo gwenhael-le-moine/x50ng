@@ -316,8 +316,8 @@ void config_init( char* progname, int argc, char* argv[] )
 
     if ( !haz_config_file ) {
         fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", opt.config_lua_filename );
-        fprintf( stderr, "You can solve this by running `mkdir -p %s/%s && %s --print-config >> %s`\n\n", user_config_dir, progname, progname,
-                 opt.config_lua_filename );
+        fprintf( stderr, "You can solve this by running `mkdir -p %s/%s && %s --print-config >> %s`\n\n", user_config_dir, progname,
+                 progname, opt.config_lua_filename );
     }
 
     if ( do_enable_debugger ) {
