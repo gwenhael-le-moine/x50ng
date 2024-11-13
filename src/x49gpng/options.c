@@ -96,26 +96,14 @@ static void print_config( void )
     fprintf( stdout, "-- Configuration file for x49gpng\n" );
     fprintf( stdout, "-- This is a comment\n" );
 
-    fprintf( stdout, "verbose = %s\n\n", opt.verbose ? "true" : "false" );
-    fprintf( stdout, "name = \"%s\"", opt.name );
-    fprintf( stdout, " -- this customize the title of the window\n" );
-
-    fprintf( stdout, "model = \"" );
-    switch ( opt.model ) {
-        case MODEL_49GP:
-            fprintf( stdout, "49gp" );
-            break;
-        default:
-        case MODEL_50G:
-            fprintf( stdout, "50g" );
-            break;
-    }
-    fprintf( stdout, "\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n" );
-    fprintf( stdout, "newrpl_keyboard = %s", opt.newrpl ? "true" : "false" );
-    fprintf( stdout, " -- when true this makes the keyboard labels more suited to newRPL use\n" );
+    fprintf( stdout, "name = \"%s\" -- this customize the title of the window\n", opt.name );
+    fprintf( stdout, "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n", opt.model == MODEL_50G ? "50g" : "49gp" );
+    fprintf( stdout, "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n", opt.newrpl ? "true" : "false" );
     fprintf( stdout, "font = \"%s\"\n", opt.font );
-    fprintf( stdout, "font_size = %i\n", opt.font_size );
-    fprintf( stdout, "display_scale = %i\n", opt.display_scale );
+    fprintf( stdout, "font_size = %i -- integer only\n", opt.font_size );
+    fprintf( stdout, "display_scale = %i -- integer only\n", opt.display_scale );
+
+    fprintf( stdout, "verbose = %s\n", opt.verbose ? "true" : "false" );
 
     fprintf( stdout, "--- End of saturnng configuration ----------------------------------------------\n" );
 }
