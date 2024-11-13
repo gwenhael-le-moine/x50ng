@@ -651,6 +651,9 @@ char* css_global = "window {"
                    "  margin-left: 15px;"
                    "  margin-right: 15px;"
                    "}"
+                   "button.key-down {"
+                   "  border-color: #080808;"
+                   "}"
                    "button.menu {"
                    "  background-color: #a9a9a9;"
                    "}"
@@ -731,6 +734,28 @@ static inline int _tiny_text_width( const char* text )
     return strlen( stripped_text ) * TINY_TEXT_WIDTH;
 }
 
+static bool ui_press_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause, bool hold )
+{
+    x49gp_t* x49gp = button->x49gp;
+    const x49gp_ui_key_t* key = button->key;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    if ( button->down )
+        return false;
+
+    button->down = true;
+    button->hold = hold;
+
+    if ( !button->hold )
+        ui->buttons_down++;
+
+    gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "key-down" );
+
+    x49gpng_release_key( x49gp, key );
+
+    return true;
+}
+
 static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause )
 {
     x49gp_t* x49gp = button->x49gp;
@@ -738,6 +763,8 @@ static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cau
 
     button->down = false;
     button->hold = false;
+
+    gtk_style_context_remove_class( gtk_widget_get_style_context( button->button ), "key-down" );
 
     x49gpng_release_key( x49gp, key );
 }
@@ -762,29 +789,12 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
     x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
     x49gp_t* x49gp = button->x49gp;
-    x49gp_ui_t* ui = x49gp->ui;
 
-    if ( event->type != GDK_BUTTON_PRESS )
+    if ( event->type != GDK_BUTTON_PRESS || event->button > 3 )
         return false;
 
-    switch ( event->button ) {
-        case 1:
-            ui->buttons_down++;
-            if ( button->down )
-                return false;
-            button->down = true;
-            break;
-        case 2:
-        case 3:
-            button->hold = true;
-            if ( button->down )
-                return false;
-
-            button->down = true;
-            break;
-        default:
-            return true;
-    }
+    if ( !ui_press_button( button, button, event->button == 3 ) )
+        return false;
 
     x49gpng_press_key( x49gp, key );
 
@@ -901,16 +911,16 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
-    int index;
-    guint keyval;
 
     /* We want to know the keyval as interpreted without modifiers. */
     /* However, there is one modifier we do care about: NumLock, */
     /* which normally is represented by MOD2. */
+    guint keyval;
     if ( !gdk_keymap_translate_keyboard_state( gdk_keymap_get_for_display( gdk_display_get_default() ), event->hardware_keycode,
                                                event->state & GDK_MOD2_MASK, event->group, &keyval, NULL, NULL, NULL ) )
         return false;
 
+    int index;
     switch ( keyval ) {
         case GDK_KEY_a:
         case GDK_KEY_F1:
