@@ -226,13 +226,12 @@ INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
 dist/$(TARGET).desktop: dist/$(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).desktop.in >$@
 
-dist/$(TARGET).man: dist/$(TARGET).man.in
+dist/$(TARGET).man: dist/$(TARGET).scd
 	scdoc < dist/$(TARGET).scd >$@
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
 	mkdir -p "$(DESTDIR)$(INSTALL_DATA_DIR)/"
-	cp dist/*.png "$(DESTDIR)$(INSTALL_DATA_DIR)/"
 	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
 	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
 	cp -R dist/firmware/ "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"

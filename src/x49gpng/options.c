@@ -97,8 +97,11 @@ static void print_config( void )
     fprintf( stdout, "-- This is a comment\n" );
 
     fprintf( stdout, "name = \"%s\" -- this customize the title of the window\n", opt.name );
-    fprintf( stdout, "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n", opt.model == MODEL_50G ? "50g" : "49gp" );
-    fprintf( stdout, "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n", opt.newrpl ? "true" : "false" );
+    fprintf( stdout,
+             "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n",
+             opt.model == MODEL_50G ? "50g" : "49gp" );
+    fprintf( stdout, "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n",
+             opt.newrpl ? "true" : "false" );
     fprintf( stdout, "font = \"%s\"\n", opt.font );
     fprintf( stdout, "font_size = %i -- integer only\n", opt.font_size );
     fprintf( stdout, "display_scale = %i -- integer only\n", opt.display_scale );
@@ -188,7 +191,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "                              in the area beyond the firmware\n"
                          " -r --reboot                  reboot on startup instead of continuing from the\n"
                          "                              saved state in the state file\n\n"
-                         "The state file is formatted as INI file and contains the settings for which persistence makes sense like CPU registers, etc.\n"
+                         "The state file is formatted as INI file and contains the settings for which persistence makes sense like CPU "
+                         "registers, etc.\n"
                          "If the state file is omitted, ~/.config/%s/state is used.\n"
                          "Please consult the manual for more details on state file settings.\n",
                          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
