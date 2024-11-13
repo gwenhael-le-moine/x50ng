@@ -1184,7 +1184,7 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
     return true;
 }
 
-static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static gboolean react_to_display_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     gdk_window_focus( gtk_widget_get_window( widget ), event->time );
     gdk_window_raise( gtk_widget_get_window( widget ) );
@@ -1201,13 +1201,13 @@ static gboolean react_to_window_click( GtkWidget* widget, GdkEventButton* event,
 
     switch ( event->button ) {
         case 1: // left click
-            gdk_window_begin_move_drag( gtk_widget_get_window( widget ), event->button, event->x_root, event->y_root, event->time );
+            gdk_window_begin_move_drag( gtk_widget_get_window( ui->window ), event->button, event->x_root, event->y_root, event->time );
             break;
-        /* case 2: // middle click */
-        /*     GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD ); */
-        /*     gchar* text = gtk_clipboard_wait_for_text( clip ); */
-        /*     fprintf( stderr, "clipboard: %s\n", text ); */
-        /*     break; */
+        case 2: // middle click
+            GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD );
+            gchar* text = gtk_clipboard_wait_for_text( clip );
+            fprintf( stderr, "clipboard: %s\n", text );
+            break;
         case 3: // right click
             gtk_menu_popup_at_pointer( GTK_MENU( ui->menu ), NULL );
             return true;
@@ -1427,7 +1427,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
-    g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( react_to_window_click ), x49gp );
+    /* g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( react_to_display_click ), x49gp ); */
     g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
     g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
@@ -1458,7 +1458,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( display_container ), annunciators_container );
     gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
 
-    gtk_container_add( GTK_CONTAINER( window_container ), display_container );
+    GtkWidget* display_container_event_box = gtk_event_box_new();
+    g_signal_connect( G_OBJECT( display_container_event_box ), "button-press-event", G_CALLBACK( react_to_display_click ), x49gp );
+    gtk_container_add( GTK_CONTAINER( display_container_event_box ), display_container );
+
+    gtk_container_add( GTK_CONTAINER( window_container ), display_container_event_box );
 
     // keyboard
     GtkWidget* keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
