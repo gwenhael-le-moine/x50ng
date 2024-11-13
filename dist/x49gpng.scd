@@ -49,21 +49,21 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 # OPTIONS
 
-*-h* *--help*                    print this message and exit
-*--verbose*                 print out more information
-*--state*[=_filename_]      alternate config file
-*--50g*                     emulate an HP 50g (default)
-*--49gp*                    emulate an HP 49g+
-*--newrpl-keyboard*         label keyboard for newRPL
-*-n* *--name*[=_name_]           set alternate UI name
-*-t* *--font*[=_fontname_]       set alternate UI font
-*-s* *--font-size*[=_X_]         scale text by X (default: 3)
-*-S* *--display-scale*[=_X_]     scale LCD by X (default: 2)
-*-D* *--enable-debug*[=_port_]   enable the debugger interface (default port: 1234)
-*-d* *--debug*                   use along -D to also start the debugger immediately
-*-f* *--reflash*[=_firmware_]      rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
-*-F* *--reflash-full*            use along -f to drop the flash contents in the area beyond the firmware
-*-r* *--reboot*                  reboot on startup instead of continuing from the saved state in the state file
+- *-h* *--help*                    print this message and exit
+- *--verbose*                 print out more information
+- *--state*[=_filename_]      alternate config file
+- *--50g*                     emulate an HP 50g (default)
+- *--49gp*                    emulate an HP 49g+
+- *--newrpl-keyboard*         label keyboard for newRPL
+- *-n* *--name*[=_name_]           set alternate UI name
+- *-t* *--font*[=_fontname_]       set alternate UI font
+- *-s* *--font-size*[=_X_]         scale text by X (default: 3)
+- *-S* *--display-scale*[=_X_]     scale LCD by X (default: 2)
+- *-D* *--enable-debug*[=_port_]   enable the debugger interface (default port: 1234)
+- *-d* *--debug*                   use along -D to also start the debugger immediately
+- *-f* *--reflash*[=_firmware_]      rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
+- *-F* *--reflash-full*            use along -f to drop the flash contents in the area beyond the firmware
+- *-r* *--reboot*                  reboot on startup instead of continuing from the saved state in the state file
 
 # FILES
 
