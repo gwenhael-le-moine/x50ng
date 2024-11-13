@@ -6,13 +6,13 @@ NOTE: READ ALL INSTRUCTIONS
 
 Prereqs:
 
-* MacOS 10.12 64-bit:
+* MacOS 10.12 64-bit (outdated, likely doesn't work):
 
   * Install XQuartz, Xcode (from your installation media) in that order.
   * Install Macports (macports.org), then:
 
 ```
-  sudo port install gtk2 pkgconfig gcc6
+  sudo port install gtk3 pkgconfig gcc6
   sudo port select --set gcc mp-gcc6
   export PATH=/opt/local/bin:$PATH
 ```
@@ -20,19 +20,19 @@ Prereqs:
 * Ubuntu:
 
 ```
-  sudo apt-get install git libgtk2.0-dev
+  sudo apt-get install git libgtk3.0-dev
 ```
 
 * RedHat/CentOS, Fedora:
 
 ```
-  sudo yum install git gtk2-devel
+  sudo yum install git gtk3-devel
 ```
 
 * Arch:
 
 ```
-  sudo pacman -S git gtk2
+  sudo pacman -S git gtk3
 ```
 
 ------------------------------------------------------------------------
