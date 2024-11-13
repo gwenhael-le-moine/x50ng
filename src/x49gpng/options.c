@@ -245,11 +245,9 @@ void config_init( char* progname, int argc, char* argv[] )
         }
     }
 
-    char config_dir[ strlen( progname ) + 9 ];
-    const char* home = g_get_home_dir();
-    sprintf( config_dir, ".config/%s", progname );
+    const char* user_config_dir = g_get_user_config_dir();
 
-    opt.config_lua_filename = g_build_filename( home, config_dir, config_lua_filename, NULL );
+    opt.config_lua_filename = g_build_filename( user_config_dir, progname, config_lua_filename, NULL );
 
     /**********************/
     /* 1. read config.lua */
@@ -318,7 +316,7 @@ void config_init( char* progname, int argc, char* argv[] )
 
     if ( !haz_config_file ) {
         fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", opt.config_lua_filename );
-        fprintf( stderr, "You can solve this by running `mkdir -p %s/%s && %s --print-config >> %s`\n\n", home, config_dir, progname,
+        fprintf( stderr, "You can solve this by running `mkdir -p %s/%s && %s --print-config >> %s`\n\n", user_config_dir, progname, progname,
                  opt.config_lua_filename );
     }
 
@@ -341,5 +339,5 @@ void config_init( char* progname, int argc, char* argv[] )
     }
 
     if ( opt.state_filename == NULL )
-        opt.state_filename = g_build_filename( home, config_dir, "state", NULL );
+        opt.state_filename = g_build_filename( user_config_dir, progname, "state", NULL );
 }
