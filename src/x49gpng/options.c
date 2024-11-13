@@ -169,6 +169,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "Usage: %s [<options>]\n"
                          "Valid options:\n"
                          " -h --help                    print this message and exit\n"
+                         "    --verbose                 print out more information\n"
                          "    --state[=<filename>]      alternate config file\n"
                          "    --50g                     emulate an HP 50g (default)\n"
                          "    --49gp                    emulate an HP 49g+\n"
@@ -186,11 +187,10 @@ void config_init( char* progname, int argc, char* argv[] )
                          " -F --reflash-full            use along -f to drop the flash contents\n"
                          "                              in the area beyond the firmware\n"
                          " -r --reboot                  reboot on startup instead of continuing from the\n"
-                         "                              saved state in the config file\n"
-                         "The config file is formatted as INI file and contains the settings for which\n"
-                         "  persistence makes sense, like calculator model, CPU registers, etc.\n"
-                         "If the config file is omitted, ~/.config/%s/config is used.\n"
-                         "Please consult the manual for more details on config file settings.\n",
+                         "                              saved state in the state file\n\n"
+                         "The state file is formatted as INI file and contains the settings for which persistence makes sense like CPU registers, etc.\n"
+                         "If the state file is omitted, ~/.config/%s/state is used.\n"
+                         "Please consult the manual for more details on state file settings.\n",
                          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
                 exit( EXIT_SUCCESS );
                 break;

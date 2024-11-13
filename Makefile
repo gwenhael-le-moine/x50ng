@@ -227,7 +227,7 @@ dist/$(TARGET).desktop: dist/$(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).desktop.in >$@
 
 dist/$(TARGET).man: dist/$(TARGET).man.in
-	perl -p -e "s!TARGET_ALLCAPS!$(TARGET_ALLCAPS)!;" -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).man.in >$@
+	scdoc < dist/$(TARGET).scd >$@
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
