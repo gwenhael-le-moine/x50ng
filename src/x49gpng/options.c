@@ -148,10 +148,10 @@ void config_init( char* progname, int argc, char* argv[] )
         {"font-size",       required_argument, NULL,                   's' },
         {"display-scale",   required_argument, NULL,                   'S' },
 
-        {"enable-debug",    required_argument, NULL,                   10 },
-        {"debug",           no_argument,       NULL,                   11 },
-        {"reflash",         required_argument, NULL,                   90 },
-        {"reflash-full",    required_argument,       NULL,                   91 },
+        {"enable-debug",    required_argument, NULL,                   10  },
+        {"debug",           no_argument,       NULL,                   11  },
+        {"reflash",         required_argument, NULL,                   90  },
+        {"reflash-full",    required_argument, NULL,                   91  },
         {"reboot",          no_argument,       NULL,                   'r' },
 
         {0,                 0,                 0,                      0   }
