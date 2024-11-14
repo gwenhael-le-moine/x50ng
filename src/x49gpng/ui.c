@@ -617,8 +617,9 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
 char* css_global = "window {"
                    "  background-color: %s;"
+                   "  font-weight: normal;"
                    "}"
-                   "window * {"
+                   ".label-key, .label-left, .label-right, .label-letter, .label-below {"
                    "  font-weight: bold;"
                    "}"
                    /* "box { border: 1px dashed red; }" */
@@ -752,7 +753,7 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
     return GDK_EVENT_STOP;
 }
 
-static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static bool react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
@@ -769,7 +770,7 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
     return GDK_EVENT_STOP;
 }
 
-static gboolean react_to_button_release( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static bool react_to_button_release( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
 
@@ -842,7 +843,7 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
 }
 #endif
 
-static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
+static bool react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1130,7 +1131,7 @@ static gboolean react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpoin
 }
 
 #if GTK_MAJOR_VERSION == 3
-static gboolean react_to_display_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     gdk_window_focus( gtk_widget_get_window( widget ), event->time );
     gdk_window_raise( gtk_widget_get_window( widget ) );

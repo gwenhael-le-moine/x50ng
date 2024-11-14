@@ -1,6 +1,8 @@
 #ifndef _X49GP_UI_H
 #define _X49GP_UI_H 1
 
+#include <stdbool.h>
+
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <cairo.h>
@@ -116,8 +118,8 @@ typedef struct {
     x49gp_t* x49gp;
     const x49gp_ui_key_t* key;
     GtkWidget* button;
-    gboolean down;
-    gboolean hold;
+    bool down;
+    bool hold;
 } x49gp_ui_button_t;
 
 struct __x49gp_ui_s__ {
