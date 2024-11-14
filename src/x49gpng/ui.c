@@ -841,20 +841,6 @@ static gboolean react_to_button_leave( GtkWidget* widget, GdkEventCrossing* even
     return true;
 }
 
-static gboolean react_to_focus_lost( GtkWidget* widget, GdkEventFocus* event, gpointer user_data )
-{
-    x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    if ( event->type != GDK_FOCUS_CHANGE )
-        return false;
-
-    ui->buttons_down = 0;
-    ui_release_all_buttons( x49gp, NULL );
-
-    return false;
-}
-
 static void ui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
 {
     x49gp_ui_t* ui = x49gp->ui;
@@ -1446,7 +1432,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GtkWidget* window_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
 
-    g_signal_connect( G_OBJECT( ui->window ), "focus-out-event", G_CALLBACK( react_to_focus_lost ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
     /* g_signal_connect( G_OBJECT( ui->window ), "button-press-event", G_CALLBACK( react_to_display_click ), x49gp ); */
