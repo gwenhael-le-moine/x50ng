@@ -6,7 +6,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/times.h>
-#include <math.h>
 #include <errno.h>
 #include <arpa/inet.h> /* For ntohl() */
 
@@ -43,17 +42,14 @@
 #define KB_HEIGHT_SMALL_KEYS ( ( int )( 2 * opt.font_size ) )
 #define KB_HEIGHT_BIG_KEYS ( ( int )( 2.5 * opt.font_size ) )
 
-#define KB_SPACING_KEYS ( ( int )( 0.5 * TINY_TEXT_WIDTH ) )
-#define KB_COLUMN_WIDTH_6_KEYS ( KB_WIDTH_6_KEYS + KB_SPACING_KEYS )
-#define KB_COLUMN_WIDTH_5_KEYS ( KB_WIDTH_5_KEYS + KB_SPACING_KEYS )
+#define KB_SPACING_KEYS ( opt.display_scale )
 
 #define ANNUNCIATOR_WIDTH 16
 #define ANNUNCIATOR_HEIGHT 16
 #define ANNUNCIATORS_HEIGHT ANNUNCIATOR_HEIGHT
 
-#define LCD_PIXEL_SCALE opt.display_scale
-#define LCD_WIDTH ( 131 * LCD_PIXEL_SCALE )
-#define LCD_HEIGHT ( 80 * LCD_PIXEL_SCALE )
+#define LCD_WIDTH ( 131 * opt.display_scale )
+#define LCD_HEIGHT ( 80 * opt.display_scale )
 
 #define WINDOW_WIDTH ( 384 )
 
@@ -1683,9 +1679,9 @@ void gui_update_lcd( x49gp_t* x49gp )
         gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
         gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
 
-        for ( int y = 0; y < ( LCD_HEIGHT / LCD_PIXEL_SCALE ); y++ )
-            for ( int x = 0; x < ( LCD_WIDTH / LCD_PIXEL_SCALE ); x++ )
-                _draw_pixel( ui->lcd_surface, LCD_PIXEL_SCALE * x, LCD_PIXEL_SCALE * y, LCD_PIXEL_SCALE, LCD_PIXEL_SCALE,
+        for ( int y = 0; y < ( LCD_HEIGHT / opt.display_scale ); y++ )
+            for ( int x = 0; x < ( LCD_WIDTH / opt.display_scale ); x++ )
+                _draw_pixel( ui->lcd_surface, opt.display_scale * x, opt.display_scale * y, opt.display_scale, opt.display_scale,
                              &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
     }
 
@@ -1718,35 +1714,6 @@ void gui_open_firmware( x49gp_t* x49gp, char** filename )
 int gui_init( x49gp_t* x49gp )
 {
     x49gp_module_t* module;
-
-    if ( opt.verbose ) {
-        fprintf( stderr,
-                 "\n FONT_SIZE_KEY = %i\n"
-                 " FONT_SIZE_SYMBOL = %i\n"
-                 " FONT_SIZE_NUMBER = %i\n"
-                 " FONT_SIZE_TINY = %i\n"
-                 " TINY_TEXT_HEIGHT = %i\n"
-                 " TINY_TEXT_WIDTH = %i\n"
-                 " KB_WIDTH_6_KEYS = %i\n"
-                 " KB_WIDTH_5_KEYS = %i\n"
-                 " KB_HEIGHT_MENU_KEYS = %i\n"
-                 " KB_HEIGHT_SMALL_KEYS = %i\n"
-                 " KB_HEIGHT_BIG_KEYS = %i\n"
-                 " KB_SPACING_KEYS = %i\n"
-                 " KB_COLUMN_WIDTH_6_KEYS = %i\n"
-                 " KB_COLUMN_WIDTH_5_KEYS = %i\n"
-                 " ANNUNCIATOR_WIDTH = %i\n"
-                 " ANNUNCIATOR_HEIGHT = %i\n"
-                 " ANNUNCIATORS_HEIGHT = %i\n"
-                 " LCD_PIXEL_SCALE = %i\n"
-                 " LCD_WIDTH = %i\n"
-                 " LCD_HEIGHT = %i\n"
-                 " WINDOW_WIDTH = %i\n",
-                 FONT_SIZE_KEY, FONT_SIZE_SYMBOL, FONT_SIZE_NUMBER, FONT_SIZE_TINY, TINY_TEXT_HEIGHT, TINY_TEXT_WIDTH, KB_WIDTH_6_KEYS,
-                 KB_WIDTH_5_KEYS, KB_HEIGHT_MENU_KEYS, KB_HEIGHT_SMALL_KEYS, KB_HEIGHT_BIG_KEYS, KB_SPACING_KEYS, KB_COLUMN_WIDTH_6_KEYS,
-                 KB_COLUMN_WIDTH_5_KEYS, ANNUNCIATOR_WIDTH, ANNUNCIATOR_HEIGHT, ANNUNCIATORS_HEIGHT, LCD_PIXEL_SCALE, LCD_WIDTH, LCD_HEIGHT,
-                 WINDOW_WIDTH );
-    }
 
     if ( x49gp_module_init( x49gp, "gui", ui_init, ui_exit, ui_reset, ui_load, ui_save, NULL, &module ) )
         return -1;
