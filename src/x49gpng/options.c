@@ -14,8 +14,7 @@
 
 struct options opt = {
     .datadir = NULL,
-    .config_lua_filename = NULL,
-    .state_filename = NULL,
+
     .debug_port = 0,
     .start_debugger = false,
     .reinit = X49GP_REINIT_NONE,
@@ -116,8 +115,6 @@ void config_init( char* progname, int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
-
-    char* config_lua_filename = ( char* )"config.lua";
 
     bool do_enable_debugger = false;
     bool do_start_debugger = false;
@@ -255,14 +252,14 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.datadir = g_build_filename( user_config_dir, progname, NULL );
     }
 
-    opt.config_lua_filename = g_build_filename( opt.datadir, config_lua_filename, NULL );
+    const char* config_lua_filename = g_build_filename( opt.datadir, "config.lua", NULL );
 
     opt.state_filename = g_build_filename( opt.datadir, "state", NULL );
 
     /**********************/
     /* 1. read config.lua */
     /**********************/
-    bool haz_config_file = config_read( opt.config_lua_filename );
+    bool haz_config_file = config_read( config_lua_filename );
     if ( haz_config_file ) {
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
         opt.newrpl = lua_toboolean( config_lua_values, -1 );
@@ -325,9 +322,9 @@ void config_init( char* progname, int argc, char* argv[] )
         print_config();
 
     if ( !haz_config_file ) {
-        fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", opt.config_lua_filename );
+        fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", config_lua_filename );
         fprintf( stderr, "You can solve this by running `mkdir -p %s/ && %s --print-config >> %s`\n\n", opt.datadir, progname,
-                 opt.config_lua_filename );
+                 config_lua_filename );
     }
 
     if ( do_enable_debugger ) {

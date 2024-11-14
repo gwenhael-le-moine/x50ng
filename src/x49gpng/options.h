@@ -31,7 +31,6 @@ struct options {
     char* font;
     int display_scale;
     int font_size;
-    char* config_lua_filename;
     bool verbose;
 
     char* datadir;
