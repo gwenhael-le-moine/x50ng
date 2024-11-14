@@ -132,7 +132,7 @@ void config_init( char* progname, int argc, char* argv[] )
 
     int print_config_and_exit = false;
 
-    const char* optstring = "hrc:D:df:Fn:t:";
+    const char* optstring = "hrf:n:s:S:";
     struct option long_options[] = {
         {"help",            no_argument,       NULL,                   'h' },
         {"print-config",    no_argument,       &print_config_and_exit, true},
@@ -140,20 +140,19 @@ void config_init( char* progname, int argc, char* argv[] )
 
         {"datadir",         required_argument, NULL,                   1   },
 
-        {"enable-debug",    required_argument, NULL,                   'D' },
-        {"debug",           no_argument,       NULL,                   'd' },
-        {"reflash",         required_argument, NULL,                   'f' },
-        {"reflash-full",    no_argument,       NULL,                   'F' },
-        {"reboot",          no_argument,       NULL,                   'r' },
-
         {"50g",             no_argument,       NULL,                   506 },
         {"49gp",            no_argument,       NULL,                   496 },
         {"newrpl-keyboard", no_argument,       &clopt_newrpl,          true},
         {"name",            required_argument, NULL,                   'n' },
+        {"font",            required_argument, NULL,                   'f' },
         {"font-size",       required_argument, NULL,                   's' },
         {"display-scale",   required_argument, NULL,                   'S' },
 
-        {"font",            required_argument, NULL,                   't' },
+        {"enable-debug",    required_argument, NULL,                   10 },
+        {"debug",           no_argument,       NULL,                   11 },
+        {"reflash",         required_argument, NULL,                   90 },
+        {"reflash-full",    required_argument,       NULL,                   91 },
+        {"reboot",          no_argument,       NULL,                   'r' },
 
         {0,                 0,                 0,                      0   }
     };
@@ -177,18 +176,18 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --newrpl-keyboard         label keyboard for newRPL\n"
                          "\n"
                          " -n --name[=<name>]           set alternate UI name\n"
-                         " -t --font[=<fontname>]       set alternate UI font\n"
+                         " -f --font[=<fontname>]       set alternate UI font\n"
                          " -s --font-size[=<X>]         scale text by X (default: 3)\n"
                          " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
                          "\n"
-                         " -D --enable-debug[=<port>]   enable the debugger interface\n"
+                         "    --enable-debug[=<port>]   enable the debugger interface\n"
                          "                              (default port: %u)\n"
-                         " -d --debug                   use along -D to also start the debugger immediately\n"
+                         "    --debug                   use along -D to also start the debugger immediately\n"
                          "\n"
-                         " -f --reflash[=firmware]      rebuild the flash using the supplied firmware\n"
+                         "    --reflash[=firmware]      rebuild the flash using the supplied firmware\n"
                          "                              (default: select one interactively)\n"
                          "                              (implies -r for safety reasons)\n"
-                         " -F --reflash-full            use along -f to drop the flash contents\n"
+                         "    --reflash-full[=firmware] rebuild the flash using the supplied firmware and drop the flash contents\n"
                          "                              in the area beyond the firmware\n"
                          " -r --reboot                  reboot on startup instead of continuing from the\n"
                          "                              saved state in the state file\n\n"
@@ -207,19 +206,21 @@ void config_init( char* progname, int argc, char* argv[] )
             case 1:
                 opt.datadir = strdup( optarg );
                 break;
-            case 'D':
+            case 10:
                 do_enable_debugger = true;
                 opt.debug_port = atoi( optarg );
                 break;
-            case 'd':
+            case 11:
                 do_start_debugger = true;
                 break;
-            case 'f':
+            case 90:
                 do_reflash = true;
                 opt.firmware = strdup( optarg );
                 break;
-            case 'F':
+            case 91:
+                do_reflash = true;
                 do_reflash_full = true;
+                opt.firmware = strdup( optarg );
                 break;
             case 496:
                 clopt_model = MODEL_49GP;
@@ -240,7 +241,7 @@ void config_init( char* progname, int argc, char* argv[] )
             case 'S':
                 clopt_display_scale = atoi( optarg );
                 break;
-            case 't':
+            case 'f':
                 clopt_font = strdup( optarg );
                 break;
             default:
