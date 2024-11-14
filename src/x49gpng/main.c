@@ -285,11 +285,6 @@ int main( int argc, char** argv )
     if ( x49gp_modules_init( x49gp ) )
         exit( EXIT_FAILURE );
 
-    x49gp->basename = g_path_get_dirname( opt.state_filename );
-    x49gp->debug_port = opt.debug_port;
-    x49gp->startup_reinit = opt.reinit;
-    x49gp->firmware = opt.firmware;
-
     int error = x49gp_modules_load( x49gp, opt.state_filename );
     if ( error || opt.reinit >= X49GP_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )

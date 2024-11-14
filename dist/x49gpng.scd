@@ -51,7 +51,7 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 - *-h* *--help*                    print this message and exit
 - *--verbose*                 print out more information
-- *--state*[=_filename_]      alternate config file
+- *--datadir*[=_absolute path_] alternate datadir (default: $XDG_CONFIG_HOME/x49gpng/)
 - *--50g*                     emulate an HP 50g (default)
 - *--49gp*                    emulate an HP 49g+
 - *--newrpl-keyboard*         label keyboard for newRPL

@@ -10,6 +10,7 @@
 
 #include "x49gp.h"
 #include "ui.h"
+#include "options.h"
 
 #define FLASH_STATE_NORMAL 0
 
@@ -435,11 +436,11 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
 
     if ( flash->size > st.st_size ) {
         fprintf( stderr, "Flash too small, rebuilding\n" );
-        x49gp->startup_reinit = X49GP_REINIT_FLASH_FULL;
+        opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
-    if ( x49gp->startup_reinit >= X49GP_REINIT_FLASH ) {
+    if ( opt.reinit >= X49GP_REINIT_FLASH ) {
 
-        if ( x49gp->startup_reinit == X49GP_REINIT_FLASH_FULL )
+        if ( opt.reinit == X49GP_REINIT_FLASH_FULL )
             memset( phys_ram_base + flash->offset, 0xff, flash->size - st.st_size );
 
         bootfd = x49gp_module_open_rodata(
@@ -467,7 +468,7 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
         close( bootfd );
         g_free( bootfile );
 
-        if ( x49gp->startup_reinit == X49GP_REINIT_FLASH_FULL ) {
+        if ( opt.reinit == X49GP_REINIT_FLASH_FULL ) {
             /* The stock firmware expects special markers in certain
                spots across the flash. Without these, the user banks
                act up and are not usable, and PINIT apparently won't
@@ -485,8 +486,8 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
 
 retry:
         filename = NULL;
-        if ( x49gp->firmware != NULL )
-            filename = g_strdup( x49gp->firmware );
+        if ( opt.firmware != NULL )
+            filename = g_strdup( opt.firmware );
         else
             gui_open_firmware( x49gp, &filename );
 
@@ -496,7 +497,7 @@ retry:
                 fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
                 /* Mark firmware as invalid if there is one */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                if ( x49gp->firmware != NULL ) {
+                if ( opt.firmware != NULL ) {
                     fprintf( stderr, "Warning: Could not "
                                      "open selected firmware, "
                                      "falling back to bootloader "
@@ -514,7 +515,7 @@ retry:
                     /* Mark firmware as invalid
                        if there is one */
                     memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                    if ( x49gp->firmware != NULL ) {
+                    if ( opt.firmware != NULL ) {
                         fprintf( stderr, "Warning: "
                                          "Could not read "
                                          "selected firmware, "
@@ -531,7 +532,7 @@ retry:
                 } else if ( bytes_read < 16 || memcmp( phys_ram_base + flash->offset + BOOT_SIZE, "KINPOUPDATEIMAGE", 16 ) != 0 ) {
                     /* Mark firmware as invalid */
                     memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                    if ( x49gp->firmware != NULL ) {
+                    if ( opt.firmware != NULL ) {
                         fprintf( stderr, "Warning: "
                                          "Firmware is invalid, "
                                          "falling back to "
@@ -553,7 +554,7 @@ retry:
                     /* Mark firmware as invalid
                        if there is one */
                     memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                    if ( x49gp->firmware != NULL ) {
+                    if ( opt.firmware != NULL ) {
                         fprintf( stderr, "Warning: "
                                          "Could not read "
                                          "selected firmware, "

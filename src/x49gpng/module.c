@@ -8,6 +8,7 @@
 
 #include "list.h"
 #include "x49gp.h"
+#include "options.h"
 
 int x49gp_modules_init( x49gp_t* x49gp )
 {
@@ -94,7 +95,7 @@ int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
-    if ( g_mkdir_with_parents( x49gp->basename, 0755 ) ) {
+    if ( g_mkdir_with_parents( opt.datadir, 0755 ) ) {
         error = -errno;
         fprintf( stderr, "%s:%u: g_mkdir_with_parents: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
         return error;
@@ -213,7 +214,6 @@ int x49gp_module_unregister( x49gp_module_t* module )
 
 int x49gp_module_get_filename( x49gp_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep, char** path )
 {
-    x49gp_t* x49gp = module->x49gp;
     int error;
 
     error = x49gp_module_get_string( module, key, name, reset, valuep );
@@ -223,7 +223,7 @@ int x49gp_module_get_filename( x49gp_module_t* module, GKeyFile* key, const char
         return error;
     }
 
-    *path = g_build_filename( x49gp->basename, *valuep, NULL );
+    *path = g_build_filename( opt.datadir, *valuep, NULL );
     if ( NULL == path ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
         g_free( *valuep );
@@ -374,6 +374,8 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
     int error;
 
     *path = g_build_filename( x49gp->progpath, name, NULL );
+    if ( opt.verbose )
+        fprintf( stderr, "reading %s\n", *path );
     if ( NULL == *path ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
         return -ENOMEM;
@@ -386,6 +388,8 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
         g_free( *path );
 
         *path = g_build_filename( X49GP_DATADIR, name, NULL );
+        if ( opt.verbose )
+            fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
             fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
             return -ENOMEM;

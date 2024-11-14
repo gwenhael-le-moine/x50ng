@@ -826,8 +826,8 @@ static void do_start_gdb_server( GtkMenuItem* menuitem, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
 
-    if ( x49gp->debug_port != 0 && !gdbserver_isactive() ) {
-        gdbserver_start( x49gp->debug_port );
+    if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
+        gdbserver_start( opt.debug_port );
         gdb_handlesig( x49gp->env, 0 );
     }
 }
@@ -1541,7 +1541,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
     ui->menu_unmount = menu_unmount;
 
-    if ( x49gp->debug_port != 0 ) {
+    if ( opt.debug_port != 0 ) {
         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
 
         GtkWidget* menu_debug = gtk_menu_item_new_with_label( "Start debugger" );

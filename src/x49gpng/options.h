@@ -1,6 +1,8 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H 1
 
+#include <stdbool.h>
+
 #include "x49gp.h"
 
 #ifndef VERSION_MAJOR
@@ -31,6 +33,8 @@ struct options {
     int font_size;
     char* config_lua_filename;
     bool verbose;
+
+    char* datadir;
 };
 
 extern struct options opt;

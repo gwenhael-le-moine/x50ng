@@ -86,10 +86,6 @@ struct __x49gp_s__ {
     GKeyFile* state_filename;
     const char* progname;
     const char* progpath;
-    const char* basename;
-    int debug_port;
-    x49gp_reinit_t startup_reinit;
-    char* firmware;
 };
 
 extern void x49gp_set_idle( x49gp_t*, x49gp_arm_idle_t idle );

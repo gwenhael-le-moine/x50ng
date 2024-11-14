@@ -13,6 +13,7 @@
 #include "gdbstub.h"
 
 struct options opt = {
+    .datadir = NULL,
     .config_lua_filename = NULL,
     .state_filename = NULL,
     .debug_port = 0,
@@ -140,9 +141,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"print-config",    no_argument,       &print_config_and_exit, true},
         {"verbose",         no_argument,       &clopt_verbose,         true},
 
-        {"config",          required_argument, NULL,                   'c' },
-
-        {"state",           required_argument, NULL,                   1   },
+        {"datadir",         required_argument, NULL,                   1   },
 
         {"enable-debug",    required_argument, NULL,                   'D' },
         {"debug",           no_argument,       NULL,                   'd' },
@@ -173,17 +172,22 @@ void config_init( char* progname, int argc, char* argv[] )
                          "Valid options:\n"
                          " -h --help                    print this message and exit\n"
                          "    --verbose                 print out more information\n"
-                         "    --state[=<filename>]      alternate config file\n"
+                         "\n"
+                         "    --datadir[=<absolute path>] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
+                         "\n"
                          "    --50g                     emulate an HP 50g (default)\n"
                          "    --49gp                    emulate an HP 49g+\n"
                          "    --newrpl-keyboard         label keyboard for newRPL\n"
+                         "\n"
                          " -n --name[=<name>]           set alternate UI name\n"
                          " -t --font[=<fontname>]       set alternate UI font\n"
                          " -s --font-size[=<X>]         scale text by X (default: 3)\n"
                          " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
+                         "\n"
                          " -D --enable-debug[=<port>]   enable the debugger interface\n"
                          "                              (default port: %u)\n"
                          " -d --debug                   use along -D to also start the debugger immediately\n"
+                         "\n"
                          " -f --reflash[=firmware]      rebuild the flash using the supplied firmware\n"
                          "                              (default: select one interactively)\n"
                          "                              (implies -r for safety reasons)\n"
@@ -191,11 +195,12 @@ void config_init( char* progname, int argc, char* argv[] )
                          "                              in the area beyond the firmware\n"
                          " -r --reboot                  reboot on startup instead of continuing from the\n"
                          "                              saved state in the state file\n\n"
+                         "\n"
                          "The state file is formatted as INI file and contains the settings for which persistence makes sense like CPU "
                          "registers, etc.\n"
                          "If the state file is omitted, ~/.config/%s/state is used.\n"
                          "Please consult the manual for more details on state file settings.\n",
-                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, DEFAULT_GDBSTUB_PORT, progname );
+                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT, progname );
                 exit( EXIT_SUCCESS );
                 break;
             case 'r':
@@ -203,7 +208,7 @@ void config_init( char* progname, int argc, char* argv[] )
                     opt.reinit = X49GP_REINIT_REBOOT_ONLY;
                 break;
             case 1:
-                opt.state_filename = strdup( optarg );
+                opt.datadir = strdup( optarg );
                 break;
             case 'D':
                 do_enable_debugger = true;
@@ -245,9 +250,14 @@ void config_init( char* progname, int argc, char* argv[] )
         }
     }
 
-    const char* user_config_dir = g_get_user_config_dir();
+    if ( opt.datadir == NULL ) {
+        const char* user_config_dir = g_get_user_config_dir();
+        opt.datadir = g_build_filename( user_config_dir, progname, NULL );
+    }
 
-    opt.config_lua_filename = g_build_filename( user_config_dir, progname, config_lua_filename, NULL );
+    opt.config_lua_filename = g_build_filename( opt.datadir, progname, config_lua_filename, NULL );
+
+    opt.state_filename = g_build_filename( opt.datadir, "state", NULL );
 
     /**********************/
     /* 1. read config.lua */
@@ -316,8 +326,8 @@ void config_init( char* progname, int argc, char* argv[] )
 
     if ( !haz_config_file ) {
         fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", opt.config_lua_filename );
-        fprintf( stderr, "You can solve this by running `mkdir -p %s/%s && %s --print-config >> %s`\n\n", user_config_dir, progname,
-                 progname, opt.config_lua_filename );
+        fprintf( stderr, "You can solve this by running `mkdir -p %s/ && %s --print-config >> %s`\n\n", opt.datadir, progname,
+                 opt.config_lua_filename );
     }
 
     if ( do_enable_debugger ) {
@@ -337,7 +347,4 @@ void config_init( char* progname, int argc, char* argv[] )
         if ( do_reflash_full )
             opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
-
-    if ( opt.state_filename == NULL )
-        opt.state_filename = g_build_filename( user_config_dir, progname, "state", NULL );
 }

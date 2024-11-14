@@ -5,6 +5,13 @@ VERSION_MAJOR = 1
 VERSION_MINOR = 3
 PATCHLEVEL = 2
 
+INSTALL_PREFIX = /usr/local
+INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
+INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
+INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
+INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
+INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
+
 #
 DEBUG_CFLAGS = -g # -pg
 OPTIM ?= 2
@@ -216,13 +223,6 @@ else
 endif
 
 # Installation
-INSTALL_PREFIX = /usr/local
-INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
-INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
-INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
-INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
-INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
-
 dist/$(TARGET).desktop: dist/$(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).desktop.in >$@
 
