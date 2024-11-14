@@ -29,9 +29,7 @@ typedef enum {
 
 typedef enum {
     UI_CALCULATOR_HP49GP = 0,
-    UI_CALCULATOR_HP49GP_NEWRPL,
     UI_CALCULATOR_HP50G,
-    UI_CALCULATOR_HP50G_NEWRPL
 } x49gp_ui_calculator_t;
 
 typedef enum {
@@ -95,6 +93,8 @@ typedef enum {
     HPKEY_PERIOD,
     HPKEY_SPACE,
     HPKEY_ENTER, /* 50 */
+
+    NB_KEYS
 } x49gp_ui_hpkey_t;
 
 typedef struct {

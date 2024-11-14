@@ -21,8 +21,6 @@
 
 #include "gdbstub.h"
 
-#define NB_KEYS 51
-
 #define FONT_SIZE_KEY opt.font_size
 #define FONT_SIZE_SYMBOL ( 2 * opt.font_size )
 #define FONT_SIZE_NUMBER ( ( int )( 1.75 * opt.font_size ) )
@@ -1140,11 +1138,11 @@ static gboolean react_to_display_click( GtkWidget* widget, GdkEventButton* event
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
-#if GTK_MAJOR_VERSION == 3
+#  if GTK_MAJOR_VERSION == 3
     gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) );
     if ( ui->menu_debug )
         gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() );
-#endif
+#  endif
 
     if ( event->type != GDK_BUTTON_PRESS )
         return GDK_EVENT_PROPAGATE;
@@ -1159,11 +1157,11 @@ static gboolean react_to_display_click( GtkWidget* widget, GdkEventButton* event
             fprintf( stderr, "clipboard: %s\n", text );
             return GDK_EVENT_STOP;
         case 3: // right click
-#if GTK_MAJOR_VERSION == 3
+#  if GTK_MAJOR_VERSION == 3
             gtk_menu_popup_at_pointer( GTK_MENU( ui->menu ), NULL );
-#else
+#  else
             fprintf( stderr, "menu not implemented in gtk4 yet.\n" );
-#endif
+#  endif
             return GDK_EVENT_STOP;
         default:
             break;
