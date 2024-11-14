@@ -317,16 +317,5 @@ int main( int argc, char** argv )
     x49gp_modules_save( x49gp, opt.state_filename );
     x49gp_modules_exit( x49gp );
 
-#if false
-        printf("ClkTicks: %lu\n", ARMul_Time(x49gp->arm));
-        printf("D TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
-                x49gp->mmu->dTLB.hit0, x49gp->mmu->dTLB.hit1,
-                x49gp->mmu->dTLB.search, x49gp->mmu->dTLB.nsearch,
-                x49gp->mmu->dTLB.walk);
-        printf("I TLB: hit0 %lu, hit1 %lu, search %lu (%lu), walk %lu\n",
-                x49gp->mmu->iTLB.hit0, x49gp->mmu->iTLB.hit1,
-                x49gp->mmu->iTLB.search, x49gp->mmu->iTLB.nsearch,
-                x49gp->mmu->iTLB.walk);
-#endif
     return 0;
 }

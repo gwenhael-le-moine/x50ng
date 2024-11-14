@@ -27,9 +27,6 @@
 #include "block.h"
 #include "block_int.h"
 #include <zlib.h>
-#if 0
-#  include "aes.h"
-#endif
 
 /**************************************************************/
 /* QEMU COW block driver with compression and encryption support */

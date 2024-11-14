@@ -212,11 +212,9 @@ static uint32_t s3c2410_io_port_read( void* opaque, target_phys_addr_t offset )
             break;
 
         case S3C2410_IO_PORT_GPFDAT:
-#if 1
             if ( 1 != ( ( io->gpfcon >> 6 ) & 3 ) ) {
                 *( reg->datap ) |= 0x0008;
             }
-#endif
             break;
 
         case S3C2410_IO_PORT_GPGDAT:
