@@ -216,6 +216,7 @@ void config_init( char* progname, int argc, char* argv[] )
                 break;
             case 'f':
                 do_reflash = true;
+                opt.firmware = strdup( optarg );
                 break;
             case 'F':
                 do_reflash_full = true;
@@ -336,10 +337,6 @@ void config_init( char* progname, int argc, char* argv[] )
     if ( do_reflash ) {
         if ( opt.reinit < X49GP_REINIT_FLASH )
             opt.reinit = X49GP_REINIT_FLASH;
-
-        if ( opt.firmware != NULL )
-            fprintf( stderr, "Additional firmware file \"%s\" specified, overriding\n", optarg );
-        opt.firmware = optarg;
 
         if ( do_reflash_full )
             opt.reinit = X49GP_REINIT_FLASH_FULL;
