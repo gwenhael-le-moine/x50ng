@@ -249,10 +249,8 @@ void config_init( char* progname, int argc, char* argv[] )
         }
     }
 
-    if ( opt.datadir == NULL ) {
-        const char* user_config_dir = g_get_user_config_dir();
-        opt.datadir = g_build_filename( user_config_dir, progname, NULL );
-    }
+    if ( opt.datadir == NULL )
+        opt.datadir = g_build_filename( g_get_user_config_dir(), progname, NULL );
 
     const char* config_lua_filename = g_build_filename( opt.datadir, "config.lua", NULL );
 
