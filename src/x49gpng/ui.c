@@ -28,9 +28,6 @@
 #define FONT_SIZE_NUMBER ( ( int )( 1.75 * opt.font_size ) )
 #define FONT_SIZE_TINY ( ( int )( 0.75 * opt.font_size ) )
 
-#define TINY_TEXT_HEIGHT ( FONT_SIZE_TINY + 2 )
-#define TINY_TEXT_WIDTH ( TINY_TEXT_HEIGHT / 2 )
-
 #define KB_NB_ROWS 10
 #define KB_NB_COLS_MENU 6
 #define KB_NB_COLS 5
@@ -44,14 +41,8 @@
 
 #define KB_SPACING_KEYS ( opt.display_scale )
 
-#define ANNUNCIATOR_WIDTH 16
-#define ANNUNCIATOR_HEIGHT 16
-#define ANNUNCIATORS_HEIGHT ANNUNCIATOR_HEIGHT
-
 #define LCD_WIDTH ( 131 * opt.display_scale )
 #define LCD_HEIGHT ( 80 * opt.display_scale )
-
-#define WINDOW_WIDTH ( 384 )
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",
@@ -679,7 +670,7 @@ char* css_global = "window {"
                    "  font-size: %ipx;"
                    "  color: #080808;"
                    "}"
-                   "button.core-number .label-key, button.arrow .label-key {"
+                   "button.core-number .label-key, button.arrow .label-key, .annunciator {"
                    "  font-size: %ipx;"
                    "}"
                    ".label-key {"
@@ -1321,7 +1312,6 @@ static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const cha
 #endif
     gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
     gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
-    gtk_widget_set_size_request( ui_ann, ANNUNCIATOR_WIDTH, ANNUNCIATOR_HEIGHT );
 
     return ui_ann;
 }
@@ -1424,7 +1414,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_set_margin_bottom( lcd_container, 3 );
     gtk_box_set_center_widget( GTK_BOX( lcd_container ), ui->lcd_canvas );
 
-    GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, ( LCD_WIDTH - ( 6 * ANNUNCIATOR_WIDTH ) ) / 5 );
+    GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
 #if GTK_MAJOR_VERSION == 4
     gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
 #else
