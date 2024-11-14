@@ -706,21 +706,15 @@ char* css_global = "window {"
 /* functions */
 /*************/
 
-static void x49gpng_press_key( x49gp_t* x49gp, const x49gp_ui_key_t* key )
+static inline void x49gpng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* key, bool state )
 {
     if ( key->rowbit )
-        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 1 );
+        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, state );
     else
-        s3c2410_io_port_f_set_bit( x49gp, key->eint, 1 );
+        s3c2410_io_port_f_set_bit( x49gp, key->eint, state );
 }
-
-static void x49gpng_release_key( x49gp_t* x49gp, const x49gp_ui_key_t* key )
-{
-    if ( key->rowbit )
-        s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, 0 );
-    else
-        s3c2410_io_port_f_set_bit( x49gp, key->eint, 0 );
-}
+#define X49GPNG_PRESS_KEY( x49gp, key ) x49gpng_set_key_state( x49gp, key, true )
+#define X49GPNG_RELEASE_KEY( x49gp, key ) x49gpng_set_key_state( x49gp, key, false )
 
 static inline int _tiny_text_width( const char* text )
 {
@@ -728,32 +722,6 @@ static inline int _tiny_text_width( const char* text )
     pango_parse_markup( text, -1, 0, NULL, &stripped_text, NULL, NULL );
 
     return strlen( stripped_text ) * TINY_TEXT_WIDTH;
-}
-
-static bool ui_press_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause, bool hold )
-{
-    x49gp_t* x49gp = button->x49gp;
-    const x49gp_ui_key_t* key = button->key;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    if ( button->down )
-        return false;
-
-    button->down = true;
-    button->hold = hold;
-
-    if ( !button->hold )
-        ui->buttons_down++;
-
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( button->button, "key-down" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "key-down" );
-#endif
-
-    x49gpng_release_key( x49gp, key );
-
-    return true;
 }
 
 static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause )
@@ -770,7 +738,7 @@ static void ui_release_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cau
     gtk_style_context_remove_class( gtk_widget_get_style_context( button->button ), "key-down" );
 #endif
 
-    x49gpng_release_key( x49gp, key );
+    X49GPNG_RELEASE_KEY( x49gp, key );
 }
 
 static void ui_release_all_buttons( x49gp_t* x49gp, x49gp_ui_button_t* cause )
@@ -788,6 +756,37 @@ static void ui_release_all_buttons( x49gp_t* x49gp, x49gp_ui_button_t* cause )
     }
 }
 
+static bool ui_press_button( x49gp_ui_button_t* button, x49gp_ui_button_t* cause, bool hold )
+{
+    x49gp_t* x49gp = button->x49gp;
+    const x49gp_ui_key_t* key = button->key;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    if ( button->down ) {
+        if ( button->hold && hold ) {
+            ui_release_button( button, cause );
+            return true;
+        } else
+            return false;
+    }
+
+    button->down = true;
+    button->hold = hold;
+
+    if ( !button->hold )
+        ui->buttons_down++;
+
+#if GTK_MAJOR_VERSION == 4
+    gtk_widget_add_css_class( button->button, "key-down" );
+#else
+    gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "key-down" );
+#endif
+
+    X49GPNG_RELEASE_KEY( x49gp, key );
+
+    return true;
+}
+
 static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -800,7 +799,7 @@ static gboolean react_to_button_press( GtkWidget* widget, GdkEventButton* event,
     if ( !ui_press_button( button, button, event->button == 3 ) )
         return false;
 
-    x49gpng_press_key( x49gp, key );
+    X49GPNG_PRESS_KEY( x49gp, key );
 
     return false;
 }
