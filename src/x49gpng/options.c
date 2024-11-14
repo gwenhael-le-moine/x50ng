@@ -255,7 +255,7 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.datadir = g_build_filename( user_config_dir, progname, NULL );
     }
 
-    opt.config_lua_filename = g_build_filename( opt.datadir, progname, config_lua_filename, NULL );
+    opt.config_lua_filename = g_build_filename( opt.datadir, config_lua_filename, NULL );
 
     opt.state_filename = g_build_filename( opt.datadir, "state", NULL );
 
