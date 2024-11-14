@@ -383,6 +383,20 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
 
     fd = open( *path, O_RDONLY );
 
+    if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
+        g_free( *path );
+
+        *path = g_build_filename( opt.datadir, name, NULL );
+        if ( opt.verbose )
+            fprintf( stderr, "reading %s\n", *path );
+        if ( NULL == *path ) {
+            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+            return -ENOMEM;
+        }
+
+        fd = open( *path, O_RDONLY );
+    }
+
 #ifdef X49GP_DATADIR
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
