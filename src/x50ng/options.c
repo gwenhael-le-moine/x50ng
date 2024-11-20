@@ -93,7 +93,7 @@ static inline bool config_read( const char* filename )
 static void print_config( void )
 {
     fprintf( stdout, "--------------------------------------------------------------------------------\n" );
-    fprintf( stdout, "-- Configuration file for x49gpng\n" );
+    fprintf( stdout, "-- Configuration file for x50ng\n" );
     fprintf( stdout, "-- This is a comment\n" );
 
     fprintf( stdout, "name = \"%s\" -- this customize the title of the window\n", opt.name );
@@ -108,7 +108,7 @@ static void print_config( void )
 
     fprintf( stdout, "verbose = %s\n", opt.verbose ? "true" : "false" );
 
-    fprintf( stdout, "--- End of x49gpng configuration -----------------------------------------------\n" );
+    fprintf( stdout, "--- End of x50ng configuration -----------------------------------------------\n" );
 }
 
 void config_init( char* progname, int argc, char* argv[] )

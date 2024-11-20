@@ -693,15 +693,15 @@ char* css_global = "window {"
 /* functions */
 /*************/
 
-static inline void x49gpng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* key, bool state )
+static inline void x50ng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* key, bool state )
 {
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, state );
     else
         s3c2410_io_port_f_set_bit( x49gp, key->eint, state );
 }
-#define X49GPNG_PRESS_KEY( x49gp, key ) x49gpng_set_key_state( x49gp, key, true )
-#define X49GPNG_RELEASE_KEY( x49gp, key ) x49gpng_set_key_state( x49gp, key, false )
+#define X49GPNG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true )
+#define X49GPNG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false )
 
 static void ui_release_button( x49gp_ui_button_t* button )
 {

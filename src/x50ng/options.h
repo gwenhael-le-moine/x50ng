@@ -15,7 +15,7 @@
 #  define PATCHLEVEL 0
 #endif
 
-typedef enum { MODEL_49GP = 0, MODEL_50G } x49gpng_model_t;
+typedef enum { MODEL_49GP = 0, MODEL_50G } x50ng_model_t;
 
 struct options {
     char* state_filename;
@@ -24,7 +24,7 @@ struct options {
     char* firmware;
     x49gp_reinit_t reinit;
 
-    x49gpng_model_t model;
+    x50ng_model_t model;
     bool newrpl;
     char* name;
 
