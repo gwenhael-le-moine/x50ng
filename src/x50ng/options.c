@@ -249,8 +249,6 @@ void config_init( char* progname, int argc, char* argv[] )
 
     const char* config_lua_filename = g_build_filename( opt.datadir, "config.lua", NULL );
 
-    opt.state_filename = g_build_filename( opt.datadir, "state", NULL );
-
     /**********************/
     /* 1. read config.lua */
     /**********************/

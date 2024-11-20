@@ -18,7 +18,6 @@
 typedef enum { MODEL_49GP = 0, MODEL_50G } x50ng_model_t;
 
 struct options {
-    char* state_filename;
     int debug_port;
     int start_debugger;
     char* firmware;

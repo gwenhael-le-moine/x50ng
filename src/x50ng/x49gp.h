@@ -118,8 +118,8 @@ extern int s3c2410_sdi_is_mounted( x49gp_t* x49gp );
 extern int x49gp_modules_init( x49gp_t* );
 extern int x49gp_modules_exit( x49gp_t* );
 extern int x49gp_modules_reset( x49gp_t*, x49gp_reset_t );
-extern int x49gp_modules_load( x49gp_t*, const char* );
-extern int x49gp_modules_save( x49gp_t*, const char* );
+extern int x49gp_modules_load( x49gp_t* );
+extern int x49gp_modules_save( x49gp_t* );
 
 extern int x49gp_flash_init( x49gp_t* );
 extern int x49gp_sram_init( x49gp_t* );

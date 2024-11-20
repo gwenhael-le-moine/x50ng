@@ -10,6 +10,8 @@
 #include "x49gp.h"
 #include "options.h"
 
+#define STATE_FILE_NAME "state"
+
 int x49gp_modules_init( x49gp_t* x49gp )
 {
     x49gp_module_t* module;
@@ -85,11 +87,12 @@ int x49gp_modules_reset( x49gp_t* x49gp, x49gp_reset_t reset )
     return 0;
 }
 
-int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
+int x49gp_modules_load( x49gp_t* x49gp )
 {
     x49gp_module_t* module;
     GError* gerror = NULL;
     int error, result;
+    const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
@@ -140,7 +143,7 @@ int x49gp_modules_load( x49gp_t* x49gp, const char* filename )
     return result;
 }
 
-int x49gp_modules_save( x49gp_t* x49gp, const char* filename )
+int x49gp_modules_save( x49gp_t* x49gp )
 {
     x49gp_module_t* module;
     GError* gerror = NULL;
@@ -148,6 +151,7 @@ int x49gp_modules_save( x49gp_t* x49gp, const char* filename )
     gsize length;
     int error;
     int fd;
+    const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
