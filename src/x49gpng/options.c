@@ -190,13 +190,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --reflash-full[=firmware] rebuild the flash using the supplied firmware and drop the flash contents\n"
                          "                              in the area beyond the firmware\n"
                          " -r --reboot                  reboot on startup instead of continuing from the\n"
-                         "                              saved state in the state file\n\n"
-                         "\n"
-                         "The state file is formatted as INI file and contains the settings for which persistence makes sense like CPU "
-                         "registers, etc.\n"
-                         "If the state file is omitted, ~/.config/%s/state is used.\n"
-                         "Please consult the manual for more details on state file settings.\n",
-                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT, progname );
+                         "                              saved state in the state file\n\n",
+                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT );
                 exit( EXIT_SUCCESS );
                 break;
             case 'r':
