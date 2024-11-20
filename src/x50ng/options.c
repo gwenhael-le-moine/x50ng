@@ -12,6 +12,8 @@
 
 #include "gdbstub.h"
 
+#define CONFIG_LUA_FILE_NAME "config.lua"
+
 struct options opt = {
     .datadir = NULL,
 
@@ -90,25 +92,55 @@ static inline bool config_read( const char* filename )
     return true;
 }
 
-static void print_config( void )
+static char* config_to_string( void )
 {
-    fprintf( stdout, "--------------------------------------------------------------------------------\n" );
-    fprintf( stdout, "-- Configuration file for x50ng\n" );
-    fprintf( stdout, "-- This is a comment\n" );
+    char* config;
+    asprintf( &config,
+              "--------------------------------------------------------------------------------\n"
+              "-- Configuration file for x50ng\n"
+              "-- This is a comment\n"
+              "name = \"%s\" -- this customize the title of the window\n"
+              "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n"
+              "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
+              "font = \"%s\"\n"
+              "font_size = %i -- integer only\n"
+              "display_scale = %i -- integer only\n"
+              "verbose = %s\n"
+              "--- End of x50ng configuration -----------------------------------------------\n",
+              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.font, opt.font_size, opt.display_scale,
+              opt.verbose ? "true" : "false" );
 
-    fprintf( stdout, "name = \"%s\" -- this customize the title of the window\n", opt.name );
-    fprintf( stdout,
-             "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n",
-             opt.model == MODEL_50G ? "50g" : "49gp" );
-    fprintf( stdout, "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n",
-             opt.newrpl ? "true" : "false" );
-    fprintf( stdout, "font = \"%s\"\n", opt.font );
-    fprintf( stdout, "font_size = %i -- integer only\n", opt.font_size );
-    fprintf( stdout, "display_scale = %i -- integer only\n", opt.display_scale );
+    return config;
+}
 
-    fprintf( stdout, "verbose = %s\n", opt.verbose ? "true" : "false" );
+int save_config( void )
+{
+    int error;
+    const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
+    int fd = open( config_lua_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
 
-    fprintf( stdout, "--- End of x50ng configuration -----------------------------------------------\n" );
+    if ( fd < 0 ) {
+        error = -errno;
+        fprintf( stderr, "%s:%u: open %s: %s\n", __FUNCTION__, __LINE__, config_lua_filename, strerror( errno ) );
+        return error;
+    }
+
+    char* data = config_to_string();
+    if ( write( fd, data, strlen( data ) ) != strlen( data ) ) {
+        error = -errno;
+        fprintf( stderr, "%s:%u: write %s: %s\n", __FUNCTION__, __LINE__, config_lua_filename, strerror( errno ) );
+        close( fd );
+        g_free( data );
+        return error;
+    }
+
+    close( fd );
+    g_free( data );
+
+    if ( opt.verbose )
+        fprintf( stderr, "Current configuration has been written to %s\n", config_lua_filename );
+
+    return EXIT_SUCCESS;
 }
 
 void config_init( char* progname, int argc, char* argv[] )
@@ -131,30 +163,32 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_display_scale = -1;
 
     int print_config_and_exit = false;
+    int overwrite_config = false;
 
     const char* optstring = "hrf:n:s:S:";
     struct option long_options[] = {
-        {"help",            no_argument,       NULL,                   'h' },
-        {"print-config",    no_argument,       &print_config_and_exit, true},
-        {"verbose",         no_argument,       &clopt_verbose,         true},
+        {"help",             no_argument,       NULL,                   'h' },
+        {"print-config",     no_argument,       &print_config_and_exit, true},
+        {"verbose",          no_argument,       &clopt_verbose,         true},
 
-        {"datadir",         required_argument, NULL,                   1   },
+        {"overwrite-config", no_argument,       &overwrite_config,      true},
+        {"datadir",          required_argument, NULL,                   1   },
 
-        {"50g",             no_argument,       NULL,                   506 },
-        {"49gp",            no_argument,       NULL,                   496 },
-        {"newrpl-keyboard", no_argument,       &clopt_newrpl,          true},
-        {"name",            required_argument, NULL,                   'n' },
-        {"font",            required_argument, NULL,                   'f' },
-        {"font-size",       required_argument, NULL,                   's' },
-        {"display-scale",   required_argument, NULL,                   'S' },
+        {"50g",              no_argument,       NULL,                   506 },
+        {"49gp",             no_argument,       NULL,                   496 },
+        {"newrpl-keyboard",  no_argument,       &clopt_newrpl,          true},
+        {"name",             required_argument, NULL,                   'n' },
+        {"font",             required_argument, NULL,                   'f' },
+        {"font-size",        required_argument, NULL,                   's' },
+        {"display-scale",    required_argument, NULL,                   'S' },
 
-        {"enable-debug",    required_argument, NULL,                   10  },
-        {"debug",           no_argument,       NULL,                   11  },
-        {"reflash",         required_argument, NULL,                   90  },
-        {"reflash-full",    required_argument, NULL,                   91  },
-        {"reboot",          no_argument,       NULL,                   'r' },
+        {"enable-debug",     required_argument, NULL,                   10  },
+        {"debug",            no_argument,       NULL,                   11  },
+        {"reflash",          required_argument, NULL,                   90  },
+        {"reflash-full",     required_argument, NULL,                   91  },
+        {"reboot",           no_argument,       NULL,                   'r' },
 
-        {0,                 0,                 0,                      0   }
+        {0,                  0,                 0,                      0   }
     };
 
     while ( c != EOF ) {
@@ -170,6 +204,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --verbose                 print out more information\n"
                          "\n"
                          "    --datadir[=<absolute path>] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
+                         "\n"
+                         "    --overwrite-config        force writing <datadir>/config.lua even if it exists\n"
                          "\n"
                          "    --50g                     emulate an HP 50g (default)\n"
                          "    --49gp                    emulate an HP 49g+\n"
@@ -247,13 +283,13 @@ void config_init( char* progname, int argc, char* argv[] )
     if ( opt.datadir == NULL )
         opt.datadir = g_build_filename( g_get_user_config_dir(), progname, NULL );
 
-    const char* config_lua_filename = g_build_filename( opt.datadir, "config.lua", NULL );
+    const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
 
     /**********************/
     /* 1. read config.lua */
     /**********************/
-    bool haz_config_file = config_read( config_lua_filename );
-    if ( haz_config_file ) {
+    opt.haz_config_file = config_read( config_lua_filename );
+    if ( opt.haz_config_file ) {
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
         opt.newrpl = lua_toboolean( config_lua_values, -1 );
 
@@ -288,6 +324,8 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "display_scale" );
         opt.display_scale = luaL_optinteger( config_lua_values, -1, opt.display_scale );
     }
+    if ( opt.haz_config_file && overwrite_config )
+        opt.haz_config_file = false;
 
     /****************************************************/
     /* 2. treat command-line params which have priority */
@@ -308,17 +346,11 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.display_scale = clopt_display_scale;
 
     if ( print_config_and_exit ) {
-        print_config();
+        fprintf( stdout, config_to_string() );
         exit( EXIT_SUCCESS );
     }
     if ( opt.verbose )
-        print_config();
-
-    if ( !haz_config_file ) {
-        fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", config_lua_filename );
-        fprintf( stderr, "You can solve this by running `mkdir -p %s/ && %s --print-config >> %s`\n\n", opt.datadir, progname,
-                 config_lua_filename );
-    }
+        fprintf( stdout, config_to_string() );
 
     if ( do_enable_debugger ) {
         if ( opt.debug_port == 0 )

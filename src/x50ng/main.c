@@ -285,7 +285,7 @@ int main( int argc, char** argv )
     if ( x49gp_modules_init( x49gp ) )
         exit( EXIT_FAILURE );
 
-    int error = x49gp_modules_load( x49gp, opt.state_filename );
+    int error = x49gp_modules_load( x49gp );
     if ( error || opt.reinit >= X49GP_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
@@ -314,7 +314,10 @@ int main( int argc, char** argv )
 
     x49gp_main_loop( x49gp );
 
-    x49gp_modules_save( x49gp, opt.state_filename );
+    x49gp_modules_save( x49gp );
+    if ( !opt.haz_config_file )
+        save_config();
+
     x49gp_modules_exit( x49gp );
 
     return 0;

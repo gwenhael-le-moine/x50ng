@@ -31,6 +31,7 @@ struct options {
     int display_scale;
     int font_size;
     bool verbose;
+    bool haz_config_file;
 
     char* datadir;
 };
@@ -41,5 +42,6 @@ extern struct options opt;
 /* functions */
 /*************/
 extern void config_init( char* progname, int argc, char* argv[] );
+extern int save_config( void );
 
 #endif /* !_CONFIG_H */
