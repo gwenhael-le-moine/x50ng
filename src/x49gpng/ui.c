@@ -27,8 +27,6 @@
 #define FONT_SIZE_TINY ( ( int )( 0.75 * opt.font_size ) )
 
 #define KB_NB_ROWS 10
-#define KB_NB_COLS_MENU 6
-#define KB_NB_COLS 5
 
 #define KB_WIDTH_6_KEYS ( 3 * opt.font_size )
 #define KB_WIDTH_5_KEYS ( 4 * opt.font_size )
@@ -1467,15 +1465,32 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GtkWidget* keys_top_labels_containers[ NB_KEYS ];
 
     int key_index = 0;
+    int nb_keys_in_row = 0;
     for ( int row = 0; row < KB_NB_ROWS; row++ ) {
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, KB_SPACING_KEYS );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
         gtk_container_add( GTK_CONTAINER( keyboard_container ), rows_containers[ row ] );
 
-        for ( int column = 0; column < ( ( row == 0 ) ? KB_NB_COLS_MENU : KB_NB_COLS ); column++ ) {
-            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 3 );
+        switch ( row ) {
+        case 1:
+            nb_keys_in_row = 4;
+            break;
+        case 0:
+        case 2:
+            nb_keys_in_row = 6;
+            break;
+        default:
+            nb_keys_in_row = 5;
+        }
+
+        for ( int column = 0; column < nb_keys_in_row; column++ ) {
+            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 );
             gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
+            if ( row == 1 && column == 3 )
+                gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
             gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), keys_containers[ key_index ] );
+            if ( row == 1 && column == 3 )
+                gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
             button = &ui->buttons[ key_index ];
             button->x49gp = x49gp;
@@ -1501,7 +1516,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 #else
             gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
 #endif
-            gtk_widget_set_size_request( button->button, ( row == 0 ) ? KB_WIDTH_6_KEYS : KB_WIDTH_5_KEYS,
+            gtk_widget_set_size_request( button->button, ( row < 3 ) ? KB_WIDTH_6_KEYS : KB_WIDTH_5_KEYS,
                                          ( row == 0 )         ? KB_HEIGHT_MENU_KEYS
                                          : ( key_index < 30 ) ? KB_HEIGHT_SMALL_KEYS
                                                               : KB_HEIGHT_BIG_KEYS );
