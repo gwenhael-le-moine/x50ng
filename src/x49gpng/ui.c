@@ -7,7 +7,6 @@
 #include <fcntl.h>
 #include <sys/times.h>
 #include <errno.h>
-#include <arpa/inet.h> /* For ntohl() */
 
 #include <gtk/gtk.h>
 #include <glib.h>
@@ -1472,15 +1471,15 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         gtk_container_add( GTK_CONTAINER( keyboard_container ), rows_containers[ row ] );
 
         switch ( row ) {
-        case 1:
-            nb_keys_in_row = 4;
-            break;
-        case 0:
-        case 2:
-            nb_keys_in_row = 6;
-            break;
-        default:
-            nb_keys_in_row = 5;
+            case 1:
+                nb_keys_in_row = 4;
+                break;
+            case 0:
+            case 2:
+                nb_keys_in_row = 6;
+                break;
+            default:
+                nb_keys_in_row = 5;
         }
 
         for ( int column = 0; column < nb_keys_in_row; column++ ) {
