@@ -700,8 +700,8 @@ static inline void x50ng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* ke
     else
         s3c2410_io_port_f_set_bit( x49gp, key->eint, state );
 }
-#define X49GPNG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true )
-#define X49GPNG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false )
+#define X50NG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true )
+#define X50NG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false )
 
 static void ui_release_button( x49gp_ui_button_t* button )
 {
@@ -720,7 +720,7 @@ static void ui_release_button( x49gp_ui_button_t* button )
     gtk_style_context_remove_class( gtk_widget_get_style_context( button->button ), "key-down" );
 #endif
 
-    X49GPNG_RELEASE_KEY( x49gp, key );
+    X50NG_RELEASE_KEY( x49gp, key );
 }
 
 static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
@@ -745,7 +745,7 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
     gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "key-down" );
 #endif
 
-    X49GPNG_RELEASE_KEY( x49gp, key );
+    X50NG_RELEASE_KEY( x49gp, key );
 
     return GDK_EVENT_STOP;
 }
@@ -762,7 +762,7 @@ static bool react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpo
     if ( !ui_press_button( button, event->button == 3 ) )
         return GDK_EVENT_PROPAGATE;
 
-    X49GPNG_PRESS_KEY( x49gp, key );
+    X50NG_PRESS_KEY( x49gp, key );
 
     return GDK_EVENT_STOP;
 }
