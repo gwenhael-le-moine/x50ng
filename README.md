@@ -2,7 +2,7 @@ Quick Start Guide (2024-10-24)
 
 Taken over by gwh
 
-![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng")
+![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng") ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
 
 
 == originally by Egan Ford <egan@sense.net> ====================================
