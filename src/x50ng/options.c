@@ -158,20 +158,21 @@ void config_init( char* progname, int argc, char* argv[] )
     int print_config_and_exit = false;
     int overwrite_config = false;
 
-    const char* optstring = "hrf:n:s:S:";
+    const char* optstring = "dhrf:n:s:S:vV";
     struct option long_options[] = {
         {"help",             no_argument,       NULL,                   'h' },
-        {"print-config",     no_argument,       &print_config_and_exit, true},
-        {"verbose",          no_argument,       &clopt_verbose,         true},
+        {"version",          no_argument,       NULL,                   'v' },
+        {"verbose",          no_argument,       NULL,                   'V' },
 
+        {"print-config",     no_argument,       &print_config_and_exit, true},
         {"overwrite-config", no_argument,       &overwrite_config,      true},
-        {"datadir",          required_argument, NULL,                   1   },
+        {"datadir",          required_argument, NULL,                   'd' },
 
         {"50g",              no_argument,       NULL,                   506 },
         {"49gp",             no_argument,       NULL,                   496 },
         {"newrpl-keyboard",  no_argument,       &clopt_newrpl,          true},
         {"name",             required_argument, NULL,                   'n' },
-        {"style-filename",   required_argument, NULL,                   's' },
+        {"style",            required_argument, NULL,                   's' },
         {"display-scale",    required_argument, NULL,                   'S' },
 
         {"enable-debug",     required_argument, NULL,                   10  },
@@ -189,44 +190,33 @@ void config_init( char* progname, int argc, char* argv[] )
         switch ( c ) {
             case 'h':
                 fprintf( stderr,
-                         "%s %i.%i.%i Emulator for HP 49G+ / 50G calculators\n"
+                         "%s %i.%i.%i\n"
+                         "Emulator for HP 49G+ / 50G calculators' hardware\n"
                          "Usage: %s [<options>]\n"
                          "Valid options:\n"
-                         " -h --help                    print this message and exit\n"
-                         "    --verbose                 print out more information\n"
+                         "-h --help                    print this message and exit\n"
+                         "-v --version                 print out version\n"
+                         "-V --verbose                 print out more information\n"
+                         "-d --datadir[=absolute path] alternate datadir (default: $XDGCONFIGHOME/%s/)\n"
+                         "-n --name[=name]             set alternate UI name\n"
+                         "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
+                         "-S --display-scale[=X]       scale LCD by X (default: 2)\n"
+                         "-r --reboot                  reboot on startup instead of continuing from the saved state in the state file\n"
+                         "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
-                         "    --datadir[=<absolute path>] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
+                         "--newrpl-keyboard            label keyboard for newRPL\n"
                          "\n"
-                         "    --overwrite-config        force writing <datadir>/config.lua even if it exists\n"
+                         "--enable-debug[=port]        enable the debugger interface (default port: %i)\n"
+                         "--debug                      use along -D to also start the debugger immediately\n"
                          "\n"
-                         "    --50g                     emulate an HP 50g (default)\n"
-                         "    --49gp                    emulate an HP 49g+\n"
-                         "    --newrpl-keyboard         label keyboard for newRPL\n"
-                         "\n"
-                         " -n --name[=<name>]           set alternate UI name\n"
-                         " -s --style-filename[=<filename>] css filename in <datadir> (default: style-<model>.css)\n"
-                         " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
-                         "\n"
-                         "    --enable-debug[=<port>]   enable the debugger interface\n"
-                         "                              (default port: %u)\n"
-                         "    --debug                   use along -D to also start the debugger immediately\n"
-                         "\n"
-                         "    --reflash[=firmware]      rebuild the flash using the supplied firmware\n"
-                         "                              (default: select one interactively)\n"
-                         "                              (implies -r for safety reasons)\n"
-                         "    --reflash-full[=firmware] rebuild the flash using the supplied firmware and drop the flash contents\n"
-                         "                              in the area beyond the firmware\n"
-                         " -r --reboot                  reboot on startup instead of continuing from the\n"
-                         "                              saved state in the state file\n\n",
+                         "--reflash[=firmware]         rebuild the flash using the supplied firmware (default: select one interactively) "
+                         "(implies -r for safety reasons)\n"
+                         "--reflash-full[=firmware]    rebuild the flash using the supplied firmware and drop the flash contents in the "
+                         "area beyond the firmware (default: select one interactively) (implies -r for safety reasons)\n"
+                         "--50g                        use an HP 50g bootloader when (re-)flashing (default)\n"
+                         "--49gp                       use an HP 49g+ bootloader when (re-)flashing\n",
                          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT );
                 exit( EXIT_SUCCESS );
-                break;
-            case 'r':
-                if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
-                    opt.reinit = X49GP_REINIT_REBOOT_ONLY;
-                break;
-            case 1:
-                opt.datadir = strdup( optarg );
                 break;
             case 10:
                 do_enable_debugger = true;
@@ -258,8 +248,15 @@ void config_init( char* progname, int argc, char* argv[] )
                 if ( clopt_style_filename == NULL )
                     clopt_style_filename = "style-50g.css";
                 break;
+            case 'd':
+                opt.datadir = strdup( optarg );
+                break;
             case 'n':
                 clopt_name = strdup( optarg );
+                break;
+            case 'r':
+                if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
+                    opt.reinit = X49GP_REINIT_REBOOT_ONLY;
                 break;
             case 's':
                 clopt_style_filename = strdup( optarg );
@@ -267,6 +264,14 @@ void config_init( char* progname, int argc, char* argv[] )
             case 'S':
                 clopt_display_scale = atoi( optarg );
                 break;
+            case 'v':
+                fprintf( stderr, "%i.%i.%i\n", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+                exit( EXIT_SUCCESS );
+                break;
+            case 'V':
+                clopt_verbose = true;
+                break;
+
             default:
                 break;
         }

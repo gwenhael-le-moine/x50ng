@@ -43,31 +43,48 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 During the first launch, *x50ng* generates a new configuration with default values and empty memory.  *x50ng* does not ship with a default firmware, only with the  bootloaders  for  the supported  calculators.  Hence,  the  user is required to select a firmware to load into the flash.  *x50ng* will show a file selection window for that task. For the stock  firmware  HP has  always  used the file extension “.bin”, any other files (including the update.scp files that typically come with them!) are generally not actual firmware files.
 
-When the file selection dialog is cancelled or the file could not be read, *x50ng* creates a flash without firmware; the bootloader will complain and offer ways to correct the situation just like it would on a real device, which include receiving a firmware via  USB  (currently not  available  in  *x50ng*,  see _Caveats_ below) or loading one from the SD card. Apart from these options, it's also possible to recover from this by exiting *x50ng* and either  delet‐ ing  the  flash  file  or using one of the options *-f* and *-F*, causing *x50ng* to rebuild the flash and ask for a firmware again.
+When the file selection dialog is cancelled or the file could not be read, *x50ng* creates a flash without firmware; the bootloader will complain and offer ways to correct the situation just like it would on a real device, which include receiving a firmware via  USB  (currently not  available  in  *x50ng*,  see _Caveats_ below) or loading one from the SD card. Apart from these options, it's also possible to recover from this by exiting *x50ng* and either  deleting  the  flash  file  or using one of the options *-f* and *-F*, causing *x50ng* to rebuild the flash and ask for a firmware again.
 
 Please consult HP's manual (for their official firmware) or the documentation of the  custom firmware (if using one) for an explanation of using the calculator.
 
 # OPTIONS
 
-- *-h* *--help*                    print this message and exit
-- *--verbose*                    print out more information
-- *--datadir*[=_absolute path_]    alternate datadir (default: $XDG_CONFIG_HOME/x50ng/)
-- *--overwrite-config*           force writing <datadir>/config.lua even if it exists
-- *--50g*                        emulate an HP 50g (default)
-- *--49gp*                       emulate an HP 49g+
-- *--newrpl-keyboard*            label keyboard for newRPL
-- *-n* *--name*[=_name_]             set alternate UI name
-- *-s* *--style-filename*[=_filename_] css filename in <datadir> (default: style-<model>.css)
-- *-S* *--display-scale*[=_X_]       scale LCD by X (default: 2)
-- *--enable-debug*[=_port_]     enable the debugger interface (default port: 1234)
-- *--debug*                   use along -D to also start the debugger immediately
-- *--reflash*[=_firmware_]      rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
-- *--reflash-full*[=_firmware_] rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
-- *-r* *--reboot*                  reboot on startup instead of continuing from the saved state in the state file
+*-h* *--help*                    print this message and exit
+*-v* *--version*                 print out version
+*-V* *--verbose*                 print out more information
+*-d* *--datadir*[=_absolute path_] alternate datadir (default: $XDG_CONFIG_HOME/x50ng/)
+*-n* *--name*[=_name_]             set alternate UI name
+*-s* *--style*[=_filename_]        css filename in <datadir> (default: style-50g.css)
+*-S* *--display-scale*[=_X_]       scale LCD by X (default: 2)
+*-r* *--reboot*                  reboot on startup instead of continuing from the saved state in the state file
+*--overwrite-config*           force writing <datadir>/config.lua even if it exists
+
+*--newrpl-keyboard*            label keyboard for newRPL
+
+*--enable-debug*[=_port_]     enable the debugger interface (default port: 1234)
+*--debug*                   use along -D to also start the debugger immediately
+
+*--reflash*[=_firmware_]      rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
+*--reflash-full*[=_firmware_] rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
+*--50g*                        use an HP 50g bootloader when (re-)flashing (default)
+*--49gp*                       use an HP 49g+ bootloader when (re-)flashing
 
 # FILES
 
-All files are located under ~/.config/x50ng/
+## System-wide
+
+- *style-50g.css* and *style-49gp.css*
+
+Default styles provided defining colors and fonts (mostly) for the GUI. The format is CSS as defined by gtk+-3.
+
+- *firmware/*
+
+This directory contains a _Makefile_ that will download and extract the following files:
+- the arm bootloaders [ from _https://www.hpcalc.org/hp49/pc/rom/hp-arm-models-bootloader.zip_ ]
+- the latest official HP ROM 2.15 [ from _https://www.hpcalc.org/hp49/pc/rom/hp4950v215.zip_ ]
+- the latest newRPL build [ from _https://hpgcc3.org/downloads/newrplfw.bin_ ]
+
+## All further files are located under ~/.config/x50ng/
 
 - *config.lua*
 
