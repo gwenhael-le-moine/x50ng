@@ -15,6 +15,12 @@
 #  define PATCHLEVEL 0
 #endif
 
+#ifdef X49GP_DATADIR
+#  define GLOBAL_DATADIR X49GP_DATADIR
+#else
+#  define GLOBAL_DATADIR x49gp->progpath
+#endif
+
 typedef enum { MODEL_49GP = 0, MODEL_50G } x50ng_model_t;
 
 struct options {

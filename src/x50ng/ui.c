@@ -1689,14 +1689,26 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 #endif
 
     // Apply CSS
-    GtkCssProvider* style_provider = gtk_css_provider_new();
+    char* style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
 
-    gtk_css_provider_load_from_path( style_provider, g_build_filename( opt.datadir, opt.style_filename, NULL ), NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        fprintf( stderr, "Can't load style %s neither from %s/%s nor form %s/%s\n", opt.style_filename, opt.datadir, opt.style_filename,
+                 GLOBAL_DATADIR, opt.style_filename );
+    else {
+        GtkCssProvider* style_provider = gtk_css_provider_new();
+        gtk_css_provider_load_from_path( style_provider, g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL ), NULL );
 
-    gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
-                                               GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
+        gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
+                                                   GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
 
-    g_object_unref( style_provider );
+        g_object_unref( style_provider );
+
+        if ( opt.verbose )
+            fprintf( stderr, "Loaded style from %s\n", style_full_path );
+    }
+    free( style_full_path );
 
     // finally show the window
     gtk_widget_realize( ui->window );
