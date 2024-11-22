@@ -230,8 +230,12 @@ dist/$(TARGET).man: dist/$(TARGET).scd
 	scdoc < dist/$(TARGET).scd >$@
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
+	mkdir -p "$(DESTDIR)$(INSTALL_BINARY_DIR)/"
 	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
-	mkdir -p "$(DESTDIR)$(INSTALL_DATA_DIR)/"
+	mkdir -p "$(DESTDIR)$(INSTALL_MENU_DIR)/"
 	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
+	mkdir -p "$(DESTDIR)$(INSTALL_MAN_DIR)/"
 	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
+	mkdir -p "$(DESTDIR)$(INSTALL_DATA_DIR)/"
 	cp -R dist/firmware/ "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
+	cp dist/*.css "$(DESTDIR)$(INSTALL_DATA_DIR)/"
