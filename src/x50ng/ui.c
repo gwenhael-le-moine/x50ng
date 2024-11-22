@@ -20,21 +20,7 @@
 
 #include "gdbstub.h"
 
-#define FONT_SIZE_KEY opt.font_size
-#define FONT_SIZE_SYMBOL ( 2 * opt.font_size )
-#define FONT_SIZE_NUMBER ( ( int )( 1.75 * opt.font_size ) )
-#define FONT_SIZE_TINY ( ( int )( 0.75 * opt.font_size ) )
-
 #define KB_NB_ROWS 10
-
-#define KB_WIDTH_6_KEYS ( 3 * opt.font_size )
-#define KB_WIDTH_5_KEYS ( 4 * opt.font_size )
-
-#define KB_HEIGHT_MENU_KEYS ( ( int )( 1.75 * opt.font_size ) )
-#define KB_HEIGHT_SMALL_KEYS ( ( int )( 2 * opt.font_size ) )
-#define KB_HEIGHT_BIG_KEYS ( ( int )( 2.5 * opt.font_size ) )
-
-#define KB_SPACING_KEYS ( opt.display_scale )
 
 #define LCD_WIDTH ( 131 * opt.display_scale )
 #define LCD_HEIGHT ( 80 * opt.display_scale )
@@ -611,83 +597,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
 };
-
-char* css_global = "window {"
-                   "  background-color: %s;"
-                   "  font-weight: normal;"
-                   "}"
-                   ".label-key, .label-left, .label-right, .label-letter, .label-below {"
-                   "  font-weight: bold;"
-                   "}"
-                   /* "box { border: 1px dashed red; }" */
-                   /* "label { border: 1px dotted yellow; }" */
-                   ".annunciator {"
-                   "  padding: 0px;"
-                   "  color: #080808;"
-                   "}"
-                   ".lcd-container, .annunciators-container {"
-                   "  background-color: #a9d0b2;"
-                   "}"
-                   "button {"
-                   "  background-image: none;"
-                   "  padding: 0px;"
-                   "  margin-left: 15px;"
-                   "  margin-right: 15px;"
-                   "}"
-                   "button.key-down {"
-                   "  border-color: #080808;"
-                   "}"
-                   "button.menu {"
-                   "  background-color: #a9a9a9;"
-                   "}"
-                   "button.function {"
-                   "  background-color: #696969;"
-                   "}"
-                   "button.arrow {"
-                   "  background-color: #e0e0e0;"
-                   "  border-radius: 33%;"
-                   "}"
-                   "button.alpha {"
-                   "  background-color: #fae82c;"
-                   "}"
-                   "button.core, button.core-number {"
-                   "  background-color: #080808;"
-                   "}"
-                   "button.alpha .label-key, button.arrow .label-key, button.menu .label-key {"
-                   "  color: #080808;"
-                   "}"
-                   "button.shift-left {"
-                   "  background-color: %s;"
-                   "}"
-                   "button.shift-right {"
-                   "  background-color: #8e2518;"
-                   "}"
-                   "button.shift-left .label-key, button.shift-right .label-key {"
-                   "  font-size: %ipx;"
-                   "  color: #080808;"
-                   "}"
-                   "button.core-number .label-key, button.arrow .label-key, .annunciator {"
-                   "  font-size: %ipx;"
-                   "}"
-                   ".label-key {"
-                   "  font-size: %ipx;"
-                   "  color: #ffffff;"
-                   "}"
-                   ".label-left, .label-right, .label-letter, .label-below {"
-                   "  font-size: %ipx;"
-                   "}"
-                   ".label-left {"
-                   "  color: %s;"
-                   "}"
-                   ".label-right {"
-                   "  color: #c06e60;"
-                   "}"
-                   ".label-below {"
-                   "  color: #4060a4;"
-                   "}"
-                   ".label-letter {"
-                   "  color: #fae82c;"
-                   "}";
 
 /*************/
 /* functions */
@@ -1466,7 +1375,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     int key_index = 0;
     int nb_keys_in_row = 0;
     for ( int row = 0; row < KB_NB_ROWS; row++ ) {
-        rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, KB_SPACING_KEYS );
+        rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
         gtk_container_add( GTK_CONTAINER( keyboard_container ), rows_containers[ row ] );
 
@@ -1515,10 +1424,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 #else
             gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
 #endif
-            gtk_widget_set_size_request( button->button, ( row < 3 ) ? KB_WIDTH_6_KEYS : KB_WIDTH_5_KEYS,
-                                         ( row == 0 )         ? KB_HEIGHT_MENU_KEYS
-                                         : ( key_index < 30 ) ? KB_HEIGHT_SMALL_KEYS
-                                                              : KB_HEIGHT_BIG_KEYS );
             gtk_widget_set_can_focus( button->button, false );
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
@@ -1581,21 +1486,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // Apply CSS
     GtkCssProvider* style_provider = gtk_css_provider_new();
-    char* color_bg_49gp = "#f5deb3";
-    char* color_bg_50g = "#272727";
-    char* color_shift_left_49gp = "#4060a4";
-    char* color_shift_left_50g = "#f5f5f5";
-    bool is_50g = ( ui->calculator == UI_CALCULATOR_HP50G );
-    char* css;
 
-    asprintf( &css, css_global, is_50g ? color_bg_50g : color_bg_49gp, is_50g ? color_shift_left_50g : color_shift_left_49gp,
-              FONT_SIZE_SYMBOL, FONT_SIZE_NUMBER, FONT_SIZE_KEY, FONT_SIZE_TINY, is_50g ? color_shift_left_50g : color_shift_left_49gp );
-
-#if GTK_MAJOR_VERSION == 4
-    gtk_css_provider_load_from_string( style_provider, css );
-#else
-    gtk_css_provider_load_from_data( style_provider, css, -1, NULL );
-#endif
+    gtk_css_provider_load_from_path( style_provider, g_build_filename( opt.datadir, opt.style_filename, NULL ), NULL );
 
     gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );

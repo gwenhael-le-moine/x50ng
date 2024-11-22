@@ -57,8 +57,7 @@ Please consult HP's manual (for their official firmware) or the documentation of
 - *--49gp*                       emulate an HP 49g+
 - *--newrpl-keyboard*            label keyboard for newRPL
 - *-n* *--name*[=_name_]             set alternate UI name
-- *-f* *--font*[=_fontname_]         set alternate UI font
-- *-s* *--font-size*[=_X_]           scale text by X (default: 3)
+- *-s* *--style-filename*[=_filename_] css filename in <datadir> (default: style-<model>.css)
 - *-S* *--display-scale*[=_X_]       scale LCD by X (default: 2)
 - *--enable-debug*[=_port_]     enable the debugger interface (default port: 1234)
 - *--debug*                   use along -D to also start the debugger immediately
@@ -81,8 +80,7 @@ The general configuration file of *x49gpng*. Content reflecting default values (
 name = "HP 50g" -- this customize the title of the window
 model = "50g" -- possible values: "49gp", "50g". Changes the colors and the bootloader looked for when (re-)flashing
 newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use
-font = "urw gothic l"
-font_size = 12 -- integer only
+style_filename = "style-50g.css" -- CSS file (relative to this file)
 display_scale = 2 -- integer only
 verbose = false
 --- End of saturnng configuration ----------------------------------------------

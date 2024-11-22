@@ -25,13 +25,8 @@ struct options opt = {
     .newrpl = false,
     .name = NULL,
     .verbose = false,
-    .font_size = 12,
+    .style_filename = NULL,
     .display_scale = 2,
-#if defined( __linux__ )
-    .font = "urw gothic l",
-#else
-    .font = "Century Gothic",
-#endif
 };
 
 lua_State* config_lua_values;
@@ -100,14 +95,13 @@ static char* config_to_string( void )
               "-- Configuration file for x50ng\n"
               "-- This is a comment\n"
               "name = \"%s\" -- this customize the title of the window\n"
-              "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the colors and the bootloader looked for when (re-)flashing\n"
+              "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the bootloader looked for when (re-)flashing\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
-              "font = \"%s\"\n"
-              "font_size = %i -- integer only\n"
+              "style_filename = \"%s\" -- CSS file (relative to this file)\n"
               "display_scale = %i -- integer only\n"
               "verbose = %s\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.font, opt.font_size, opt.display_scale,
+              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.style_filename, opt.display_scale,
               opt.verbose ? "true" : "false" );
 
     return config;
@@ -156,10 +150,9 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_verbose = -1;
 
     char* clopt_name = NULL;
-    char* clopt_font = NULL;
+    char* clopt_style_filename = NULL;
     int clopt_model = -1;
     int clopt_newrpl = -1;
-    int clopt_font_size = -1;
     int clopt_display_scale = -1;
 
     int print_config_and_exit = false;
@@ -178,8 +171,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"49gp",             no_argument,       NULL,                   496 },
         {"newrpl-keyboard",  no_argument,       &clopt_newrpl,          true},
         {"name",             required_argument, NULL,                   'n' },
-        {"font",             required_argument, NULL,                   'f' },
-        {"font-size",        required_argument, NULL,                   's' },
+        {"style-filename",   required_argument, NULL,                   's' },
         {"display-scale",    required_argument, NULL,                   'S' },
 
         {"enable-debug",     required_argument, NULL,                   10  },
@@ -212,8 +204,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "    --newrpl-keyboard         label keyboard for newRPL\n"
                          "\n"
                          " -n --name[=<name>]           set alternate UI name\n"
-                         " -f --font[=<fontname>]       set alternate UI font\n"
-                         " -s --font-size[=<X>]         scale text by X (default: 3)\n"
+                         " -s --style-filename[=<filename>] css filename in <datadir> (default: style-<model>.css)\n"
                          " -S --display-scale[=<X>]     scale LCD by X (default: 2)\n"
                          "\n"
                          "    --enable-debug[=<port>]   enable the debugger interface\n"
@@ -257,23 +248,24 @@ void config_init( char* progname, int argc, char* argv[] )
                 clopt_model = MODEL_49GP;
                 if ( clopt_name == NULL )
                     clopt_name = "HP 49g+";
+                if ( clopt_style_filename == NULL )
+                    clopt_style_filename = "style-49gp.css";
                 break;
             case 506:
                 clopt_model = MODEL_50G;
                 if ( clopt_name == NULL )
                     clopt_name = "HP 50g";
+                if ( clopt_style_filename == NULL )
+                    clopt_style_filename = "style-50g.css";
                 break;
             case 'n':
                 clopt_name = strdup( optarg );
                 break;
             case 's':
-                clopt_font_size = atoi( optarg );
+                clopt_style_filename = strdup( optarg );
                 break;
             case 'S':
                 clopt_display_scale = atoi( optarg );
-                break;
-            case 'f':
-                clopt_font = strdup( optarg );
                 break;
             default:
                 break;
@@ -304,10 +296,12 @@ void config_init( char* progname, int argc, char* argv[] )
             switch ( opt.model ) {
                 case MODEL_49GP:
                     opt.name = opt.newrpl ? "HP 49g+ / newRPL" : "HP 49g+";
+                    opt.style_filename = "style-49gp.css";
                     break;
                 case MODEL_50G:
                 default:
                     opt.name = opt.newrpl ? "HP 50g / newRPL" : "HP 50g";
+                    opt.style_filename = "style-50g.css";
                     break;
             }
         }
@@ -315,11 +309,8 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "name" );
         opt.name = strdup( luaL_optstring( config_lua_values, -1, opt.name ) );
 
-        lua_getglobal( config_lua_values, "font" );
-        opt.font = strdup( luaL_optstring( config_lua_values, -1, opt.font ) );
-
-        lua_getglobal( config_lua_values, "font_size" );
-        opt.font_size = luaL_optinteger( config_lua_values, -1, opt.font_size );
+        lua_getglobal( config_lua_values, "style_filename" );
+        opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
 
         lua_getglobal( config_lua_values, "display_scale" );
         opt.display_scale = luaL_optinteger( config_lua_values, -1, opt.display_scale );
@@ -334,14 +325,12 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.verbose = clopt_verbose;
     if ( clopt_name != NULL )
         opt.name = strdup( clopt_name );
-    if ( clopt_font != NULL )
-        opt.font = strdup( clopt_font );
+    if ( clopt_style_filename != NULL )
+        opt.style_filename = strdup( clopt_style_filename );
     if ( clopt_model != -1 )
         opt.model = clopt_model;
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
-    if ( clopt_font_size > 0 )
-        opt.font_size = clopt_font_size;
     if ( clopt_display_scale > 0 )
         opt.display_scale = clopt_display_scale;
 

@@ -27,9 +27,8 @@ struct options {
     bool newrpl;
     char* name;
 
-    char* font;
     int display_scale;
-    int font_size;
+    char* style_filename;
     bool verbose;
     bool haz_config_file;
 
