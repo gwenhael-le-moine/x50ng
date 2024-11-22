@@ -223,11 +223,11 @@ else
 endif
 
 # Installation
-dist/$(TARGET).desktop: dist/$(TARGET).desktop.in
-	perl -p -e "s!TARGET!$(TARGET)!" < dist/$(TARGET).desktop.in >$@
+dist/$(TARGET).desktop: src/$(TARGET).desktop.in
+	perl -p -e "s!TARGET!$(TARGET)!" < $^ >$@
 
-dist/$(TARGET).man: dist/$(TARGET).scd
-	scdoc < dist/$(TARGET).scd >$@
+dist/$(TARGET).man: src/$(TARGET).scd
+	scdoc < $^ >$@
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	mkdir -p "$(DESTDIR)$(INSTALL_BINARY_DIR)/"
