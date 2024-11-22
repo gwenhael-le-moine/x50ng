@@ -6,11 +6,41 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#include <glib.h>
+#include <gio/gio.h>
+
 #include "list.h"
 #include "x49gp.h"
 #include "options.h"
 
+#ifdef X49GP_DATADIR
+#  define GLOBAL_DATADIR X49GP_DATADIR
+#else
+#  define GLOBAL_DATADIR x49gp->progpath
+#endif
 #define STATE_FILE_NAME "state"
+
+static int copy_file_from_global_datadir_to_user_datadir( const char* filename )
+{
+    GError* gerror = NULL;
+    if ( !g_file_test( g_build_filename( opt.datadir, filename, NULL ), G_FILE_TEST_EXISTS ) ) {
+        if ( opt.verbose )
+            fprintf( stderr, "Copying %s to %s\n", g_build_filename( GLOBAL_DATADIR, filename, NULL ),
+                     g_build_filename( opt.datadir, filename, NULL ) );
+
+        if ( !g_file_test( g_build_filename( GLOBAL_DATADIR, filename, NULL ), G_FILE_TEST_EXISTS ) )
+            return EXIT_FAILURE;
+
+        if ( !g_file_copy( g_file_new_build_filename( GLOBAL_DATADIR, filename, NULL ),
+                           g_file_new_build_filename( opt.datadir, filename, NULL ), G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, &gerror ) ) {
+            fprintf( stderr, "Unable to copy style: %s\n", gerror->message );
+            g_error_free( gerror );
+            return -errno;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
 
 int x49gp_modules_init( x49gp_t* x49gp )
 {
@@ -103,6 +133,9 @@ int x49gp_modules_load( x49gp_t* x49gp )
         fprintf( stderr, "%s:%u: g_mkdir_with_parents: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
         return error;
     }
+
+    copy_file_from_global_datadir_to_user_datadir( "style-50g.css" );
+    copy_file_from_global_datadir_to_user_datadir( "style-49gp.css" );
 
     x49gp->state = g_key_file_new();
     if ( NULL == x49gp->state ) {
