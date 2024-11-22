@@ -1,6 +1,11 @@
 Quick Start Guide (2024-10-24)
 
-Taken over by gwh, originally by Egan Ford <egan@sense.net>
+Taken over by gwh
+
+![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng") ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
+
+
+== originally by Egan Ford <egan@sense.net> ====================================
 
 NOTE: READ ALL INSTRUCTIONS
 
@@ -41,10 +46,10 @@ Start up X11 and use xterm
 
 ------------------------------------------------------------------------
 
-Download x49gpng source:
+Download x50ng source:
 
 ```
-git clone https://github.com/gwenhael-le-moine/x49gpng.git
+git clone https://github.com/gwenhael-le-moine/x50ng.git
 ```
 
 ------------------------------------------------------------------------
@@ -52,7 +57,7 @@ git clone https://github.com/gwenhael-le-moine/x49gpng.git
 Build:
 
 ```
-cd x49gpng
+cd x50ng
 make
 ```
 
@@ -69,14 +74,14 @@ make install
 Run:
 
 ```
-./dist/x49gpng
+./dist/x50ng
 ```
 
-When installed, there should be an applications menu entry to run x49gpng.
+When installed, there should be an applications menu entry to run x50ng.
 Installing also enables running it from the terminal in any directory:
 
 ```
-x49gpng
+x50ng
 ```
 
 ------------------------------------------------------------------------
@@ -87,7 +92,7 @@ On the first launch, the calculator will be missing a firmware, forcing
 the bootloader to complain and demand a fresh one.
 HP's official firmwares can be found at e.g.:
 https://www.hpcalc.org/hp49/pc/rom/
-Some of the most popular of these are also included in x49gpng's source
+Some of the most popular of these are also included in x50ng's source
 directory.
 Alternatively, the most up-to-date version of NewRPL can be found at:
 https://hpgcc3.org/downloads/newrplfw.bin
@@ -156,22 +161,22 @@ Start Over:
 * clean slate?
 
 ```
-rm -r ~/.config/x49gpng/
+rm -r ~/.config/x50ng/
 ```
 
 * soft reset only?
 
-With x49gpng running, press F12, or right click on the screen and select
+With x50ng running, press F12, or right click on the screen and select
 "Reset" from the menu.
 
 ------------------------------------------------------------------------
 
-Debugging with x49gpng
+Debugging with x50ng
 
 There is a GDB interface for debugging ARM programs, e.g. HPGCC2/3
-applications or replacement firmwares. To use it, start x49gpng from a
+applications or replacement firmwares. To use it, start x50ng from a
 terminal with the -d option, and start arm-none-eabi-gdb with an
-appropriate ELF file in another terminal. To connect to x49gpng, type in
+appropriate ELF file in another terminal. To connect to x50ng, type in
 the GDB console:
 
 ```

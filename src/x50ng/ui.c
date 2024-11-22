@@ -609,8 +609,8 @@ static inline void x50ng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* ke
     else
         s3c2410_io_port_f_set_bit( x49gp, key->eint, state );
 }
-#define X49GPNG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true )
-#define X49GPNG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false )
+#define X50NG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true )
+#define X50NG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false )
 
 static void ui_release_button( x49gp_ui_button_t* button )
 {
@@ -629,7 +629,7 @@ static void ui_release_button( x49gp_ui_button_t* button )
     gtk_style_context_remove_class( gtk_widget_get_style_context( button->button ), "key-down" );
 #endif
 
-    X49GPNG_RELEASE_KEY( x49gp, key );
+    X50NG_RELEASE_KEY( x49gp, key );
 }
 
 static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
@@ -654,7 +654,7 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
     gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "key-down" );
 #endif
 
-    X49GPNG_RELEASE_KEY( x49gp, key );
+    X50NG_RELEASE_KEY( x49gp, key );
 
     return GDK_EVENT_STOP;
 }
@@ -671,7 +671,7 @@ static bool react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpo
     if ( !ui_press_button( button, event->button == 3 ) )
         return GDK_EVENT_PROPAGATE;
 
-    X49GPNG_PRESS_KEY( x49gp, key );
+    X50NG_PRESS_KEY( x49gp, key );
 
     return GDK_EVENT_STOP;
 }
@@ -1036,6 +1036,207 @@ static bool react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer 
     return GDK_EVENT_STOP;
 }
 
+static void x50g_string_to_keys_sequence( const char* input )
+{
+    for ( int i = 0; i < strlen( input ); i++ ) {
+        switch ( input[ i ] ) {
+            case '0':
+                fprintf( stderr, "%c", '0' );
+                break;
+            case '1':
+                fprintf( stderr, "%c", '1' );
+                break;
+            case '2':
+                fprintf( stderr, "%c", '2' );
+                break;
+            case '3':
+                fprintf( stderr, "%c", '3' );
+                break;
+            case '4':
+                fprintf( stderr, "%c", '4' );
+                break;
+            case '5':
+                fprintf( stderr, "%c", '5' );
+                break;
+            case '6':
+                fprintf( stderr, "%c", '6' );
+                break;
+            case '7':
+                fprintf( stderr, "%c", '7' );
+                break;
+            case '8':
+                fprintf( stderr, "%c", '8' );
+                break;
+            case '9':
+                fprintf( stderr, "%c", '9' );
+                break;
+
+            case 'a':
+                fprintf( stderr, "%c", 'a' );
+                break;
+            case 'b':
+                fprintf( stderr, "%c", 'b' );
+                break;
+            case 'c':
+                fprintf( stderr, "%c", 'c' );
+                break;
+            case 'd':
+                fprintf( stderr, "%c", 'd' );
+                break;
+            case 'e':
+                fprintf( stderr, "%c", 'e' );
+                break;
+            case 'f':
+                fprintf( stderr, "%c", 'f' );
+                break;
+            case 'g':
+                fprintf( stderr, "%c", 'g' );
+                break;
+            case 'h':
+                fprintf( stderr, "%c", 'h' );
+                break;
+            case 'i':
+                fprintf( stderr, "%c", 'i' );
+                break;
+            case 'j':
+                fprintf( stderr, "%c", 'j' );
+                break;
+            case 'k':
+                fprintf( stderr, "%c", 'k' );
+                break;
+            case 'l':
+                fprintf( stderr, "%c", 'l' );
+                break;
+            case 'm':
+                fprintf( stderr, "%c", 'm' );
+                break;
+            case 'n':
+                fprintf( stderr, "%c", 'n' );
+                break;
+            case 'o':
+                fprintf( stderr, "%c", 'o' );
+                break;
+            case 'p':
+                fprintf( stderr, "%c", 'p' );
+                break;
+            case 'q':
+                fprintf( stderr, "%c", 'q' );
+                break;
+            case 'r':
+                fprintf( stderr, "%c", 'r' );
+                break;
+            case 's':
+                fprintf( stderr, "%c", 's' );
+                break;
+            case 't':
+                fprintf( stderr, "%c", 't' );
+                break;
+            case 'u':
+                fprintf( stderr, "%c", 'u' );
+                break;
+            case 'v':
+                fprintf( stderr, "%c", 'v' );
+                break;
+            case 'w':
+                fprintf( stderr, "%c", 'w' );
+                break;
+            case 'x':
+                fprintf( stderr, "%c", 'x' );
+                break;
+            case 'y':
+                fprintf( stderr, "%c", 'y' );
+                break;
+            case 'z':
+                fprintf( stderr, "%c", 'z' );
+                break;
+
+            case 'A':
+                fprintf( stderr, "%c", 'A' );
+                break;
+            case 'B':
+                fprintf( stderr, "%c", 'B' );
+                break;
+            case 'C':
+                fprintf( stderr, "%c", 'C' );
+                break;
+            case 'D':
+                fprintf( stderr, "%c", 'D' );
+                break;
+            case 'E':
+                fprintf( stderr, "%c", 'E' );
+                break;
+            case 'F':
+                fprintf( stderr, "%c", 'F' );
+                break;
+            case 'G':
+                fprintf( stderr, "%c", 'G' );
+                break;
+            case 'H':
+                fprintf( stderr, "%c", 'H' );
+                break;
+            case 'I':
+                fprintf( stderr, "%c", 'I' );
+                break;
+            case 'J':
+                fprintf( stderr, "%c", 'J' );
+                break;
+            case 'K':
+                fprintf( stderr, "%c", 'K' );
+                break;
+            case 'L':
+                fprintf( stderr, "%c", 'L' );
+                break;
+            case 'M':
+                fprintf( stderr, "%c", 'M' );
+                break;
+            case 'N':
+                fprintf( stderr, "%c", 'N' );
+                break;
+            case 'O':
+                fprintf( stderr, "%c", 'O' );
+                break;
+            case 'P':
+                fprintf( stderr, "%c", 'P' );
+                break;
+            case 'Q':
+                fprintf( stderr, "%c", 'Q' );
+                break;
+            case 'R':
+                fprintf( stderr, "%c", 'R' );
+                break;
+            case 'S':
+                fprintf( stderr, "%c", 'S' );
+                break;
+            case 'T':
+                fprintf( stderr, "%c", 'T' );
+                break;
+            case 'U':
+                fprintf( stderr, "%c", 'U' );
+                break;
+            case 'V':
+                fprintf( stderr, "%c", 'V' );
+                break;
+            case 'W':
+                fprintf( stderr, "%c", 'W' );
+                break;
+            case 'X':
+                fprintf( stderr, "%c", 'X' );
+                break;
+            case 'Y':
+                fprintf( stderr, "%c", 'Y' );
+                break;
+            case 'Z':
+                fprintf( stderr, "%c", 'Z' );
+                break;
+
+            default:
+                fprintf( stderr, "<unknown: %c>", input[ i ] );
+        }
+    }
+
+    fprintf( stderr, "\n" );
+}
+
 #if GTK_MAJOR_VERSION == 3
 static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
@@ -1062,6 +1263,9 @@ static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gp
             GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD );
             gchar* text = gtk_clipboard_wait_for_text( clip );
             fprintf( stderr, "clipboard: %s\n", text );
+
+            x50g_string_to_keys_sequence( text );
+
             return GDK_EVENT_STOP;
         case 3: // right click
 #  if GTK_MAJOR_VERSION == 3
