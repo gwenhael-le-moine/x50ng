@@ -97,7 +97,7 @@ static char* config_to_string( void )
               "name = \"%s\" -- this customize the title of the window\n"
               "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the bootloader looked for when (re-)flashing\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
-              "style_filename = \"%s\" -- CSS file (relative to this file)\n"
+              "style = \"%s\" -- CSS file (relative to this file)\n"
               "display_scale = %i -- integer only\n"
               "verbose = %s\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
@@ -314,7 +314,7 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "name" );
         opt.name = strdup( luaL_optstring( config_lua_values, -1, opt.name ) );
 
-        lua_getglobal( config_lua_values, "style_filename" );
+        lua_getglobal( config_lua_values, "style" );
         opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
 
         lua_getglobal( config_lua_values, "display_scale" );
