@@ -1698,7 +1698,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                  GLOBAL_DATADIR, opt.style_filename );
     else {
         GtkCssProvider* style_provider = gtk_css_provider_new();
-        gtk_css_provider_load_from_path( style_provider, g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL ), NULL );
+        gtk_css_provider_load_from_path( style_provider, style_full_path, NULL );
 
         gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
