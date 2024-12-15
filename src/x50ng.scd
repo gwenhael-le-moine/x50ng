@@ -55,19 +55,19 @@ Please consult HP's manual (for their official firmware) or the documentation of
 *-d* *--datadir*[=_absolute path_] alternate datadir (default: $XDG_CONFIG_HOME/x50ng/)
 *-n* *--name*[=_name_]             set alternate UI name
 *-s* *--style*[=_filename_]        css filename in <datadir> (default: style-50g.css)
-*-S* *--display-scale*[=_X_]       scale LCD by X (default: 2)
-*-r* *--reboot*                  reboot on startup instead of continuing from the saved state in the state file
-*--overwrite-config*           force writing <datadir>/config.lua even if it exists
+*-z* *--zoom*[=_X_]                scale LCD by X (default: 2)
+*-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
+   *--overwrite-config*        force writing <datadir>/config.lua even if it exists
 
-*--newrpl-keyboard*            label keyboard for newRPL
+   *--newrpl-keyboard*         label keyboard for newRPL
 
-*--enable-debug*[=_port_]     enable the debugger interface (default port: 1234)
-*--debug*                   use along -D to also start the debugger immediately
+   *--enable-debug*[=_port_]  enable the debugger interface (default port: 1234)
+   *--debug*                use along -D to also start the debugger immediately
 
-*--reflash*[=_firmware_]      rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
-*--reflash-full*[=_firmware_] rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
-*--50g*                        use an HP 50g bootloader when (re-)flashing (default)
-*--49gp*                       use an HP 49g+ bootloader when (re-)flashing
+   *--reflash*[=_firmware_]   rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
+   *--reflash-full*[=_firmware_] rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
+   *--50g*                     use an HP 50g bootloader when (re-)flashing (default)
+   *--49gp*                    use an HP 49g+ bootloader when (re-)flashing
 
 # FILES
 

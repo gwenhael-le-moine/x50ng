@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <assert.h>
 #include <getopt.h>
 #include <glib.h>
 
@@ -26,7 +27,7 @@ struct options opt = {
     .name = NULL,
     .verbose = false,
     .style_filename = NULL,
-    .display_scale = 2,
+    .zoom = 2,
 };
 
 lua_State* config_lua_values;
@@ -98,10 +99,10 @@ static char* config_to_string( void )
               "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the bootloader looked for when (re-)flashing\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
-              "display_scale = %i -- integer only\n"
+              "zoom = %i -- integer only\n"
               "verbose = %s\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.style_filename, opt.display_scale,
+              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.style_filename, opt.zoom,
               opt.verbose ? "true" : "false" );
 
     return config;
@@ -153,12 +154,12 @@ void config_init( char* progname, int argc, char* argv[] )
     char* clopt_style_filename = NULL;
     int clopt_model = -1;
     int clopt_newrpl = -1;
-    int clopt_display_scale = -1;
+    int clopt_zoom = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
 
-    const char* optstring = "dhrf:n:s:S:vV";
+    const char* optstring = "dhrf:n:s:S:vVz:";
     struct option long_options[] = {
         {"help",             no_argument,       NULL,                   'h' },
         {"version",          no_argument,       NULL,                   'v' },
@@ -173,13 +174,15 @@ void config_init( char* progname, int argc, char* argv[] )
         {"newrpl-keyboard",  no_argument,       &clopt_newrpl,          true},
         {"name",             required_argument, NULL,                   'n' },
         {"style",            required_argument, NULL,                   's' },
-        {"display-scale",    required_argument, NULL,                   'S' },
+        {"display-scale",    required_argument, NULL,                   'S' }, /* deprecated */
+        {"zoom",             required_argument, NULL,                   'z' },
 
         {"enable-debug",     required_argument, NULL,                   10  },
         {"debug",            no_argument,       NULL,                   11  },
         {"reflash",          required_argument, NULL,                   90  },
         {"reflash-full",     required_argument, NULL,                   91  },
-        {"reboot",           no_argument,       NULL,                   'r' },
+        {"reboot",           no_argument,       NULL,                   'r' }, /* deprecated */
+        {"reset",            no_argument,       NULL,                   'r' },
 
         {0,                  0,                 0,                      0   }
     };
@@ -200,8 +203,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-d --datadir[=absolute path] alternate datadir (default: $XDGCONFIGHOME/%s/)\n"
                          "-n --name[=name]             set alternate UI name\n"
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
-                         "-S --display-scale[=X]       scale LCD by X (default: 2)\n"
-                         "-r --reboot                  reboot on startup instead of continuing from the saved state in the state file\n"
+                         "-S --zoom[=X]                scale LCD by X (default: 2)\n"
+                         "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
                          "--newrpl-keyboard            label keyboard for newRPL\n"
@@ -262,7 +265,7 @@ void config_init( char* progname, int argc, char* argv[] )
                 clopt_style_filename = strdup( optarg );
                 break;
             case 'S':
-                clopt_display_scale = atoi( optarg );
+                clopt_zoom = atoi( optarg );
                 break;
             case 'v':
                 fprintf( stderr, "%i.%i.%i\n", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
@@ -317,8 +320,11 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "style" );
         opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
 
-        lua_getglobal( config_lua_values, "display_scale" );
-        opt.display_scale = luaL_optinteger( config_lua_values, -1, opt.display_scale );
+        lua_getglobal( config_lua_values, "zoom" );
+        opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
+
+        lua_getglobal( config_lua_values, "zoom" );
+        opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
     }
     if ( opt.haz_config_file && overwrite_config )
         opt.haz_config_file = false;
@@ -336,8 +342,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.model = clopt_model;
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
-    if ( clopt_display_scale > 0 )
-        opt.display_scale = clopt_display_scale;
+    if ( clopt_zoom > 0 )
+        opt.zoom = clopt_zoom;
 
     if ( print_config_and_exit ) {
         fprintf( stdout, config_to_string() );
