@@ -33,7 +33,7 @@ struct options {
     bool newrpl;
     char* name;
 
-    int display_scale;
+    int zoom;
     char* style_filename;
     bool verbose;
     bool haz_config_file;

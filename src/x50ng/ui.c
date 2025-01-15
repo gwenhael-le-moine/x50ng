@@ -22,8 +22,8 @@
 
 #define KB_NB_ROWS 10
 
-#define LCD_WIDTH ( 131 * opt.display_scale )
-#define LCD_HEIGHT ( 80 * opt.display_scale )
+#define LCD_WIDTH ( 131 * opt.zoom )
+#define LCD_HEIGHT ( 80 * opt.zoom )
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",
@@ -1743,9 +1743,9 @@ void gui_update_lcd( x49gp_t* x49gp )
         gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
         gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
 
-        for ( int y = 0; y < ( LCD_HEIGHT / opt.display_scale ); y++ )
-            for ( int x = 0; x < ( LCD_WIDTH / opt.display_scale ); x++ )
-                _draw_pixel( ui->lcd_surface, opt.display_scale * x, opt.display_scale * y, opt.display_scale, opt.display_scale,
+        for ( int y = 0; y < ( LCD_HEIGHT / opt.zoom ); y++ )
+            for ( int x = 0; x < ( LCD_WIDTH / opt.zoom ); x++ )
+                _draw_pixel( ui->lcd_surface, opt.zoom * x, opt.zoom * y, opt.zoom, opt.zoom,
                              &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
     }
 
