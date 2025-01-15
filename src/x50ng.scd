@@ -77,7 +77,7 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *--reflash*[=_firmware_]         rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
 
-*--reflash-full*[=_firmware_]   rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
+*--reflash-full*[=_firmware_]    rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
 
 *--50g*                        use an HP 50g bootloader when (re-)flashing (default)
 
