@@ -28,6 +28,7 @@ struct options opt = {
     .verbose = false,
     .style_filename = NULL,
     .zoom = 2,
+    .gray = false,
 };
 
 lua_State* config_lua_values;
@@ -100,10 +101,11 @@ static char* config_to_string( void )
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
               "zoom = %i -- integer only\n"
+              "gray = %s\n"
               "verbose = %s\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
               opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.style_filename, opt.zoom,
-              opt.verbose ? "true" : "false" );
+              opt.gray ? "true" : "false", opt.verbose ? "true" : "false" );
 
     return config;
 }
@@ -155,6 +157,7 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_model = -1;
     int clopt_newrpl = -1;
     int clopt_zoom = -1;
+    int clopt_gray = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -176,6 +179,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"style",            required_argument, NULL,                   's' },
         {"display-scale",    required_argument, NULL,                   'S' }, /* deprecated */
         {"zoom",             required_argument, NULL,                   'z' },
+        {"gray",             no_argument,       &clopt_gray,            true},
 
         {"enable-debug",     required_argument, NULL,                   10  },
         {"debug",            no_argument,       NULL,                   11  },
@@ -204,6 +208,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-n --name[=name]             set alternate UI name\n"
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
                          "-S --zoom[=X]                scale LCD by X (default: 2)\n"
+                         "--gray                       grayish LCD instead of greenish (default: false)\n"
                          "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
@@ -325,6 +330,9 @@ void config_init( char* progname, int argc, char* argv[] )
 
         lua_getglobal( config_lua_values, "zoom" );
         opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
+
+        lua_getglobal( config_lua_values, "gray" );
+        opt.gray = lua_toboolean( config_lua_values, -1 );
     }
     if ( opt.haz_config_file && overwrite_config )
         opt.haz_config_file = false;
@@ -344,6 +352,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.newrpl = clopt_newrpl;
     if ( clopt_zoom > 0 )
         opt.zoom = clopt_zoom;
+    if ( clopt_gray != -1 )
+        opt.gray = clopt_gray;
 
     if ( print_config_and_exit ) {
         fprintf( stdout, config_to_string() );

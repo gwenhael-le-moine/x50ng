@@ -34,6 +34,7 @@ struct options {
     char* name;
 
     int zoom;
+    bool gray;
     char* style_filename;
     bool verbose;
     bool haz_config_file;

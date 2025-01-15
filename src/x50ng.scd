@@ -56,6 +56,7 @@ Please consult HP's manual (for their official firmware) or the documentation of
 *-n* *--name*[=_name_]             set alternate UI name
 *-s* *--style*[=_filename_]        css filename in <datadir> (default: style-50g.css)
 *-z* *--zoom*[=_X_]                scale LCD by X (default: 2)
+*--gray*                    grayish LCD instead of greenish (default: false)
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 *--overwrite-config*        force writing <datadir>/config.lua even if it exists
 
