@@ -63,25 +63,25 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *-z* *--zoom*[=_X_]                scale LCD by X (default: 2)
 
-*--gray*                    grayish LCD instead of greenish (default: false)
+*--gray*                       grayish LCD instead of greenish (default: false)
 
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 
-*--overwrite-config*        force writing <datadir>/config.lua even if it exists
+*--overwrite-config*           force writing <datadir>/config.lua even if it exists
 
-*--newrpl-keyboard*         label keyboard for newRPL
+*--newrpl-keyboard*            label keyboard for newRPL
 
-*--enable-debug*[=_port_]  enable the debugger interface (default port: 1234)
+*--enable-debug*[=_port_]        enable the debugger interface (default port: 1234)
 
-*--debug*                use along -D to also start the debugger immediately
+*--debug*                      use along -D to also start the debugger immediately
 
-*--reflash*[=_firmware_]   rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
+*--reflash*[=_firmware_]         rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
 
-*--reflash-full*[=_firmware_] rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
+*--reflash-full*[=_firmware_]   rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
 
-*--50g*                     use an HP 50g bootloader when (re-)flashing (default)
+*--50g*                        use an HP 50g bootloader when (re-)flashing (default)
 
-*--49gp*                    use an HP 49g+ bootloader when (re-)flashing
+*--49gp*                       use an HP 49g+ bootloader when (re-)flashing
 
 # FILES
 
