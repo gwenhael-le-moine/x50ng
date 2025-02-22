@@ -1,3 +1,4 @@
+#include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,6 +20,8 @@
 #include "s3c2410.h"
 
 #include "gdbstub.h"
+
+// #define TEST_PASTE true
 
 #define KB_NB_ROWS 10
 
@@ -604,13 +607,16 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
 
 static inline void x50ng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* key, bool state )
 {
+    if ( opt.verbose )
+        fprintf( stderr, "%s -> %s\n", key->label, state ? "true" : "false" );
+
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, state );
     else
         s3c2410_io_port_f_set_bit( x49gp, key->eint, state );
 }
-#define X50NG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true )
-#define X50NG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false )
+#define X50NG_PRESS_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, true );
+#define X50NG_RELEASE_KEY( x49gp, key ) x50ng_set_key_state( x49gp, key, false );
 
 static void ui_release_button( x49gp_ui_button_t* button )
 {
@@ -749,7 +755,7 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
 }
 #endif
 
-static bool react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer user_data )
+static bool react_to_key_event( GtkWidget* _widget, GdkEventKey* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1012,8 +1018,20 @@ static bool react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer 
             return GDK_EVENT_PROPAGATE;
     }
 
-    x49gp_ui_button_t* button = &ui->buttons[ hpkey ];
+    // Bypassing GUI buttons:
+    /* switch ( event->type ) { */
+    /*     case GDK_KEY_PRESS: */
+    /*         X50NG_PRESS_KEY( x49gp, &ui_keys[ hpkey ] ); */
+    /*         break; */
+    /*     case GDK_KEY_RELEASE: */
+    /*         X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] ); */
+    /*         break; */
+    /*     default: */
+    /*         return GDK_EVENT_PROPAGATE; */
+    /* } */
 
+    // Using GUI buttons:
+    x49gp_ui_button_t* button = &ui->buttons[ hpkey ];
     GdkEventButton bev;
     memset( &bev, 0, sizeof( GdkEventButton ) );
     bev.time = event->time;
@@ -1036,206 +1054,70 @@ static bool react_to_key_event( GtkWidget* widget, GdkEventKey* event, gpointer 
     return GDK_EVENT_STOP;
 }
 
-static void x50g_string_to_keys_sequence( const char* input )
+#ifdef TEST_PASTE
+static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 {
+    // struct timespec key_press_delay = { 1, 0 };
+    int hpkey = -1;
     for ( int i = 0; i < strlen( input ); i++ ) {
-        switch ( input[ i ] ) {
-            case '0':
-                fprintf( stderr, "%c", '0' );
-                break;
-            case '1':
-                fprintf( stderr, "%c", '1' );
-                break;
-            case '2':
-                fprintf( stderr, "%c", '2' );
-                break;
-            case '3':
-                fprintf( stderr, "%c", '3' );
-                break;
-            case '4':
-                fprintf( stderr, "%c", '4' );
-                break;
-            case '5':
-                fprintf( stderr, "%c", '5' );
-                break;
-            case '6':
-                fprintf( stderr, "%c", '6' );
-                break;
-            case '7':
-                fprintf( stderr, "%c", '7' );
-                break;
-            case '8':
-                fprintf( stderr, "%c", '8' );
-                break;
-            case '9':
-                fprintf( stderr, "%c", '9' );
-                break;
+        if ( hpkey > 0 )
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] )
 
-            case 'a':
-                fprintf( stderr, "%c", 'a' );
-                break;
-            case 'b':
-                fprintf( stderr, "%c", 'b' );
-                break;
-            case 'c':
-                fprintf( stderr, "%c", 'c' );
-                break;
-            case 'd':
-                fprintf( stderr, "%c", 'd' );
-                break;
-            case 'e':
-                fprintf( stderr, "%c", 'e' );
-                break;
-            case 'f':
-                fprintf( stderr, "%c", 'f' );
-                break;
-            case 'g':
-                fprintf( stderr, "%c", 'g' );
-                break;
-            case 'h':
-                fprintf( stderr, "%c", 'h' );
-                break;
-            case 'i':
-                fprintf( stderr, "%c", 'i' );
-                break;
-            case 'j':
-                fprintf( stderr, "%c", 'j' );
-                break;
-            case 'k':
-                fprintf( stderr, "%c", 'k' );
-                break;
-            case 'l':
-                fprintf( stderr, "%c", 'l' );
-                break;
-            case 'm':
-                fprintf( stderr, "%c", 'm' );
-                break;
-            case 'n':
-                fprintf( stderr, "%c", 'n' );
-                break;
-            case 'o':
-                fprintf( stderr, "%c", 'o' );
-                break;
-            case 'p':
-                fprintf( stderr, "%c", 'p' );
-                break;
-            case 'q':
-                fprintf( stderr, "%c", 'q' );
-                break;
-            case 'r':
-                fprintf( stderr, "%c", 'r' );
-                break;
-            case 's':
-                fprintf( stderr, "%c", 's' );
-                break;
-            case 't':
-                fprintf( stderr, "%c", 't' );
-                break;
-            case 'u':
-                fprintf( stderr, "%c", 'u' );
-                break;
-            case 'v':
-                fprintf( stderr, "%c", 'v' );
-                break;
-            case 'w':
-                fprintf( stderr, "%c", 'w' );
-                break;
-            case 'x':
-                fprintf( stderr, "%c", 'x' );
-                break;
-            case 'y':
-                fprintf( stderr, "%c", 'y' );
-                break;
-            case 'z':
-                fprintf( stderr, "%c", 'z' );
-                break;
+        fprintf( stderr, "%c", input[ i ] );
+        if ( input[ i ] >= '0' && input[ i ] <= '9' ) {
+            switch ( input[ i ] ) {
+                case '0':
+                    hpkey = HPKEY_0;
+                    break;
+                case '1':
+                    hpkey = HPKEY_1;
+                    break;
+                case '2':
+                    hpkey = HPKEY_2;
+                    break;
+                case '3':
+                    hpkey = HPKEY_3;
+                    break;
+                case '4':
+                    hpkey = HPKEY_4;
+                    break;
+                case '5':
+                    hpkey = HPKEY_5;
+                    break;
+                case '6':
+                    hpkey = HPKEY_6;
+                    break;
+                case '7':
+                    hpkey = HPKEY_7;
+                    break;
+                case '8':
+                    hpkey = HPKEY_8;
+                    break;
+                case '9':
+                    hpkey = HPKEY_9;
+                    break;
+                default:
+                    hpkey = HPKEY_ENTER;
+            }
+        }
 
-            case 'A':
-                fprintf( stderr, "%c", 'A' );
-                break;
-            case 'B':
-                fprintf( stderr, "%c", 'B' );
-                break;
-            case 'C':
-                fprintf( stderr, "%c", 'C' );
-                break;
-            case 'D':
-                fprintf( stderr, "%c", 'D' );
-                break;
-            case 'E':
-                fprintf( stderr, "%c", 'E' );
-                break;
-            case 'F':
-                fprintf( stderr, "%c", 'F' );
-                break;
-            case 'G':
-                fprintf( stderr, "%c", 'G' );
-                break;
-            case 'H':
-                fprintf( stderr, "%c", 'H' );
-                break;
-            case 'I':
-                fprintf( stderr, "%c", 'I' );
-                break;
-            case 'J':
-                fprintf( stderr, "%c", 'J' );
-                break;
-            case 'K':
-                fprintf( stderr, "%c", 'K' );
-                break;
-            case 'L':
-                fprintf( stderr, "%c", 'L' );
-                break;
-            case 'M':
-                fprintf( stderr, "%c", 'M' );
-                break;
-            case 'N':
-                fprintf( stderr, "%c", 'N' );
-                break;
-            case 'O':
-                fprintf( stderr, "%c", 'O' );
-                break;
-            case 'P':
-                fprintf( stderr, "%c", 'P' );
-                break;
-            case 'Q':
-                fprintf( stderr, "%c", 'Q' );
-                break;
-            case 'R':
-                fprintf( stderr, "%c", 'R' );
-                break;
-            case 'S':
-                fprintf( stderr, "%c", 'S' );
-                break;
-            case 'T':
-                fprintf( stderr, "%c", 'T' );
-                break;
-            case 'U':
-                fprintf( stderr, "%c", 'U' );
-                break;
-            case 'V':
-                fprintf( stderr, "%c", 'V' );
-                break;
-            case 'W':
-                fprintf( stderr, "%c", 'W' );
-                break;
-            case 'X':
-                fprintf( stderr, "%c", 'X' );
-                break;
-            case 'Y':
-                fprintf( stderr, "%c", 'Y' );
-                break;
-            case 'Z':
-                fprintf( stderr, "%c", 'Z' );
-                break;
-
-            default:
-                fprintf( stderr, "<unknown: %c>", input[ i ] );
+        if ( hpkey > 0 ) {
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] )
+            X50NG_PRESS_KEY( x49gp, &ui_keys[ hpkey ] )
         }
     }
-
     fprintf( stderr, "\n" );
+
+    if ( hpkey > 0 )
+        X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] )
+
+    /* if ( hpkey > 0 ) { */
+    /*     X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_ENTER ] ) */
+    /*     X50NG_PRESS_KEY( x49gp, &ui_keys[ HPKEY_ENTER ] ) */
+    /*     X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_ENTER ] ) */
+    /* } */
 }
+#endif
 
 #if GTK_MAJOR_VERSION == 3
 static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
@@ -1259,14 +1141,17 @@ static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gp
         case 1: // left click
             gdk_window_begin_move_drag( gtk_widget_get_window( ui->window ), event->button, event->x_root, event->y_root, event->time );
             break;
+#  ifdef TEST_PASTE
         case 2: // middle click
             GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD );
             gchar* text = gtk_clipboard_wait_for_text( clip );
             fprintf( stderr, "clipboard: %s\n", text );
 
-            x50g_string_to_keys_sequence( text );
+            // x50g_string_to_keys_sequence( x49gp, text );
+            x50g_string_to_keys_sequence( x49gp, "0123456789\n" );
 
             return GDK_EVENT_STOP;
+#  endif
         case 3: // right click
 #  if GTK_MAJOR_VERSION == 3
             gtk_menu_popup_at_pointer( GTK_MENU( ui->menu ), NULL );
@@ -1303,6 +1188,27 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
 
     return GDK_EVENT_STOP;
 }
+
+#ifdef TEST_PASTE
+static void do_paste( gpointer user_data, GtkWidget* widget, GdkEvent* event )
+{
+    x49gp_t* x49gp = user_data;
+
+    // x49gp->arm_exit++;
+
+    X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_1 ] )
+    X50NG_PRESS_KEY( x49gp, &ui_keys[ HPKEY_1 ] )
+    // nanosleep( &key_press_delay, NULL );
+    sleep( 10 );
+    X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_1 ] )
+    /* GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD ); */
+    /* gchar* text = gtk_clipboard_wait_for_text( clip ); */
+    /* fprintf( stderr, "clipboard: %s\n", text ); */
+
+    /* // x50g_string_to_keys_sequence( x49gp, text ); */
+    /* x50g_string_to_keys_sequence( x49gp, "0123456789\n" ); */
+}
+#endif
 
 static void do_quit( gpointer user_data, GtkWidget* widget, GdkEvent* event )
 {
@@ -1674,6 +1580,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         ui->menu_debug = NULL;
 
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
+
+#  ifdef TEST_PASTE
+    GtkWidget* menu_paste = gtk_menu_item_new_with_label( "Paste" );
+    gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_paste );
+    g_signal_connect_swapped( G_OBJECT( menu_paste ), "activate", G_CALLBACK( do_paste ), x49gp );
+#  endif
 
     GtkWidget* menu_reset = gtk_menu_item_new_with_label( "Reset" );
     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset );
