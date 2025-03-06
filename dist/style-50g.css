@@ -23,9 +23,10 @@ button {
     padding: 0px;
     margin-left: 15px;
     margin-right: 15px;
+    border-style: outset;
 }
 button.key-down {
-    border-color: #080808;
+    border-style: inset;
 }
 button.menu {
     background-color: #a9a9a9;
