@@ -348,7 +348,7 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.model = clopt_model;
     if ( clopt_style_filename != NULL )
         opt.style_filename = strdup( clopt_style_filename );
-    else
+    else if ( opt.style_filename == NULL )
         opt.style_filename = opt.model == MODEL_50G ? "style-50g.css" : "style-49gp.css";
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
