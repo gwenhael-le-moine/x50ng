@@ -10,6 +10,20 @@ This is my fork of x49gp
 `x50ng --help`
 
 
+## Tips & tricks
+
+- _arigit_: For anyone having the "slow keystroke issue" for repeated keystrokes, this is easily fixable by configuring the calculator with "300" as the KEYTIME value (the default value on a stock HP 50g is `1138`.)
+
+To issue the KEYTIME command on the HP50g calculator, follow these steps:
+
+   1. Enter the desired KEYTIME value (e.g., 500) on the stack
+   2. Press [RIGHT-SHIFT] followed by the key to produce the right arrow (→) symbol
+   3. Type "KEYTIME" using the [ALPHA] key for each letter
+   4. Press [ENTER] to execute the command
+
+Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](https://www.hpmuseum.org/cgi-sys/cgiwrap/hpmuseum/archv016.cgi?read=107543) )
+
+
 ## Compilation
 `make INSTALL_PREFIX=/usr`
 
