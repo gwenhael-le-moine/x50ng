@@ -1,200 +1,58 @@
-Quick Start Guide (2024-10-24)
+# x50ng -- HP 50g hardware level emulator
+This is my fork of x49gp
 
-Taken over by gwh
-
+## Screenshots
 ![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng") ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
 
+## Usage
+`x50ng --help`
 
-== originally by Egan Ford <egan@sense.net> ====================================
 
-NOTE: READ ALL INSTRUCTIONS
+## Compilation
+`make INSTALL_PREFIX=/usr`
 
-Prereqs:
+### Dependencies
+- `lua` (`luajit` also works, see `LUA_VERSION` in `Makefile`)
+- `gtk+3`
 
-* MacOS 10.12 64-bit (outdated, likely doesn't work):
 
-  * Install XQuartz, Xcode (from your installation media) in that order.
-  * Install Macports (macports.org), then:
+## Installation
 
-```
-  sudo port install gtk3 pkgconfig gcc6
-  sudo port select --set gcc mp-gcc6
-  export PATH=/opt/local/bin:$PATH
-```
+0. I advise you to download the necessary firmware and ROM from https://hpcalc.org/ by running `make pull-firmware`
+1. Run `sudo make install INSTALL_PREFIX=/usr` (see the Makefile to see what variables your can override.)
 
-* Ubuntu:
 
-```
-  sudo apt-get install git libgtk3.0-dev
-```
+## Run
 
-* RedHat/CentOS, Fedora:
+*A configuration and data folder is automatically created and populated in `$XDG_CONFIG_HOME/x50ng/` (typically `~/.config/x50ng/`)*
 
-```
-  sudo yum install git gtk3-devel
-```
+### If you have installed x50ng
+#### First run
+1. launch the emulator by running `./dist/x50ng`
+2. in the file chooser dialog navigate to the folder */usr/share/x50ng/firmware/hp4950v215/2MB_FIX/* then click _Open_ (if no dialog shows up: right-click on the screen and choose _Mount SD Folder..._)
+   (if prompted: in the emulator press the key _2_)
+3. follow instructions if prompted, enjoy your virtual HP 50g
+4. you can right-click on the screen and choose _Unmount SD_
 
-* Arch:
+### Run Locally without installation
+#### First run
+1. You will need to download the necessary firmware and ROM from https://hpcalc.org/ by running `make pull-firmware`
+2. launch the emulator by running `./dist/x50ng`
+3. in the file chooser dialog navigate to the folder *./dist/firmware/hp4950v215/2MB_FIX/* then click _Open_ (if no dialog shows up: right-click on the screen and choose _Mount SD Folder..._)
+   (if prompted: in the emulator press the key _2_)
+4. follow instructions if prompted, enjoy your virtual HP 50g
+5. you can right-click on the screen and choose _Unmount SD_
 
-```
-  sudo pacman -S git gtk3
-```
 
-------------------------------------------------------------------------
 
-Start up X11 and use xterm
+## Development
 
-------------------------------------------------------------------------
+- `make` to compile with all warnings
+- `make clean` and `make mrproper` to clean between compilation runs
+- `make pretty-code` to format the code using `clang-format` and the provided `.clang-format`
 
-Download x50ng source:
 
-```
-git clone https://github.com/gwenhael-le-moine/x50ng.git
-```
-
-------------------------------------------------------------------------
-
-Build:
-
-```
-cd x50ng
-make
-```
-
-------------------------------------------------------------------------
-
-Install (optional):
-
-```
-make install
-```
-
-------------------------------------------------------------------------
-
-Run:
-
-```
-./dist/x50ng
-```
-
-When installed, there should be an applications menu entry to run x50ng.
-Installing also enables running it from the terminal in any directory:
-
-```
-x50ng
-```
-
-------------------------------------------------------------------------
-
-First launch setup
-
-On the first launch, the calculator will be missing a firmware, forcing
-the bootloader to complain and demand a fresh one.
-HP's official firmwares can be found at e.g.:
-https://www.hpcalc.org/hp49/pc/rom/
-Some of the most popular of these are also included in x50ng's source
-directory.
-Alternatively, the most up-to-date version of NewRPL can be found at:
-https://hpgcc3.org/downloads/newrplfw.bin
-
-Pick a firmware to use and store it in any directory along with its
-update.scp file. The update.scp file only contains the filename of the
-firmware (when renaming the firmware, make sure the new name fits into
-a DOS-style 8.3 naming scheme) followed by a DOS-style linebreak, so a
-missing update.scp can be rectified easily.
-
-Right click on the screen, or press the menu key on a physical keyboard,
-to open the menu, and click on "Mount SD folder".
-Select the directory containing the firmware. Then, select the SD option
-from the bootloader's update source menu by clicking on the virtual key
-labeled "2" or by pressing the "2" key on a physical keyboard.
-
-Now the bootloader is installing the firmware; wait until it finishes
-printing hex numbers to the virtual display, then follow its prompt to
-press Reset ( = F12 or the Reset entry in the menu) or Enter.
-The calculator should be fully usable after this procedure.
-
-------------------------------------------------------------------------
-
-Do stuff, e.g.:
-
-Restore backup:
-
-```
-BACKUP
-3
-->TAG
-RESTORE
-```
-
-Install ARMToolbox (HPGCC2):
-
-```
-2
-SETUP.BIN
-3
-->TAG
-RCL
-EVAL
-```
-(Right Click ON, Left Click C)
-
-------------------------------------------------------------------------
-
-To Exit Emulator
-
-Use any of:
-
-* Press F7 or F10
-
-* Press Alt-F4 or your system's equivalent key combination
-
-* Open the menu using a right click on the screen or the menu key, then
-choose "Quit"
-
-* Press Ctrl-C  in the launch terminal
-
-------------------------------------------------------------------------
-
-Start Over:
-
-* clean slate?
-
-```
-rm -r ~/.config/x50ng/
-```
-
-* soft reset only?
-
-With x50ng running, press F12, or right click on the screen and select
-"Reset" from the menu.
-
-------------------------------------------------------------------------
-
-Debugging with x50ng
-
-There is a GDB interface for debugging ARM programs, e.g. HPGCC2/3
-applications or replacement firmwares. To use it, start x50ng from a
-terminal with the -d option, and start arm-none-eabi-gdb with an
-appropriate ELF file in another terminal. To connect to x50ng, type in
-the GDB console:
-
-```
-target remote :1234
-```
-
-------------------------------------------------------------------------
-
-Known Limitations:
-
-* HPGCC SD Card I/O
-  - `libfsystem` unavailable.
-  - `f*` calls unstable (HPGCC2)
-  - `f*` calls stable (HPGCC3)
-
-------------------------------------------------------------------------
-
-Post fork todo-list:
+## Post fork todo-list:
 
 * [DONE] first port `gtk+-2` code to `gtk+-3`
   - https://docs.gtk.org/gtk3/migrating-2to3.html
