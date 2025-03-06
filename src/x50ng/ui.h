@@ -66,35 +66,35 @@ typedef enum {
     HPKEY_T,
     HPKEY_U,
 
+    HPKEY_ENTER,
     HPKEY_V,
     HPKEY_W,
     HPKEY_X,
-    HPKEY_Y,
-    HPKEY_Z, /* 30 */
+    HPKEY_Y, /* 30 */
 
     HPKEY_ALPHA,
     HPKEY_7,
     HPKEY_8,
     HPKEY_9,
-    HPKEY_MULTIPLY,
+    HPKEY_Z,
 
     HPKEY_SHIFT_LEFT,
     HPKEY_4,
     HPKEY_5,
     HPKEY_6,
-    HPKEY_MINUS, /* 40 */
+    HPKEY_MULTIPLY, /* 40 */
 
     HPKEY_SHIFT_RIGHT,
     HPKEY_1,
     HPKEY_2,
     HPKEY_3,
-    HPKEY_PLUS,
+    HPKEY_MINUS,
 
     HPKEY_ON,
     HPKEY_0,
     HPKEY_PERIOD,
     HPKEY_SPACE,
-    HPKEY_ENTER, /* 50 */
+    HPKEY_PLUS, /* 50 */
 
     NB_KEYS
 } x49gp_ui_hpkey_t;

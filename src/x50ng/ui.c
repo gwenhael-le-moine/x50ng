@@ -320,6 +320,17 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
 
+    {.css_class = "core",
+     .label = "ENTER",
+     .letter = NULL,
+     .left = "ANS",
+     .right = "→NUM",
+     .below = NULL,
+     .column = 0,
+     .row = 7,
+     .columnbit = ( 1 << 0 ),
+     .rowbit = ( 1 << 7 ),
+     .eint = 7},
     {.css_class = "function",
      .label = "EEX",
      .letter = "V",
@@ -362,17 +373,6 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .column = 1,
      .row = 3,
      .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-    {.css_class = "core-number",
-     .label = "÷",
-     .letter = "Z",
-     .left = "ABS",
-     .right = "ARG",
-     .below = NULL,
-     .column = 0,
-     .row = 3,
-     .columnbit = ( 1 << 0 ),
      .rowbit = ( 1 << 3 ),
      .eint = 3},
 
@@ -421,16 +421,16 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4},
     {.css_class = "core-number",
-     .label = "×",
-     .letter = NULL,
-     .left = "[ ]",
-     .right = "\" \"",
+     .label = "÷",
+     .letter = "Z",
+     .left = "ABS",
+     .right = "ARG",
      .below = NULL,
      .column = 0,
-     .row = 4,
+     .row = 3,
      .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
+     .rowbit = ( 1 << 3 ),
+     .eint = 3},
 
     {.css_class = "shift-left",
      .label = "⮢",
@@ -477,16 +477,16 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5},
     {.css_class = "core-number",
-     .label = "-",
+     .label = "×",
      .letter = NULL,
-     .left = "( )",
-     .right = "_",
+     .left = "[ ]",
+     .right = "\" \"",
      .below = NULL,
      .column = 0,
-     .row = 5,
+     .row = 4,
      .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
+     .rowbit = ( 1 << 4 ),
+     .eint = 4},
 
     {.css_class = "shift-right",
      .label = "⮣",
@@ -533,16 +533,16 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6},
     {.css_class = "core-number",
-     .label = "+",
+     .label = "-",
      .letter = NULL,
-     .left = "{ }",
-     .right = "« »",
+     .left = "( )",
+     .right = "_",
      .below = NULL,
      .column = 0,
-     .row = 6,
+     .row = 5,
      .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
+     .rowbit = ( 1 << 5 ),
+     .eint = 5},
 
     {.css_class = "core",
      .label = "ON",
@@ -588,17 +588,17 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .columnbit = ( 1 << 1 ),
      .rowbit = ( 1 << 7 ),
      .eint = 7},
-    {.css_class = "core",
-     .label = "ENTER",
+    {.css_class = "core-number",
+     .label = "+",
      .letter = NULL,
-     .left = "ANS",
-     .right = "→NUM",
+     .left = "{ }",
+     .right = "« »",
      .below = NULL,
      .column = 0,
-     .row = 7,
+     .row = 6,
      .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
+     .rowbit = ( 1 << 6 ),
+     .eint = 6},
 };
 
 /*************/
@@ -1258,63 +1258,63 @@ static void _ui_load__init_color( GdkRGBA* color, u8 red, u8 green, u8 blue )
 static inline void _ui_load__newrplify_ui_keys()
 {
     // modify keys' labeling for newRPL
-    for ( int i = 0; i < 6; i++ )
+    for ( int i = HPKEY_A; i <= HPKEY_F; i++ )
         ui_keys[ i ].left = "";
 
-    for ( int i = 6; i < 9; i++ ) {
+    for ( int i = HPKEY_G; i <= HPKEY_I; i++ ) {
         ui_keys[ i ].label = "";
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    for ( int i = 10; i < 13; i++ ) {
+    for ( int i = HPKEY_J; i <= HPKEY_K; i++ ) {
         ui_keys[ i ].label = "";
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ 9 ].left = "UPDIR";
+    ui_keys[ HPKEY_UP ].left = "UPDIR";
 
-    ui_keys[ 13 ].left = "BEG";
-    ui_keys[ 13 ].right = "COPY";
+    ui_keys[ HPKEY_LEFT ].left = "BEG";
+    ui_keys[ HPKEY_LEFT ].right = "COPY";
 
-    ui_keys[ 14 ].left = "CUT";
+    ui_keys[ HPKEY_DOWN ].left = "CUT";
 
-    ui_keys[ 15 ].left = "END";
-    ui_keys[ 15 ].right = "PASTE";
+    ui_keys[ HPKEY_RIGHT ].left = "END";
+    ui_keys[ HPKEY_RIGHT ].right = "PASTE";
 
-    ui_keys[ 16 ].label = "STO⏵";
-    ui_keys[ 16 ].left = "RCL";
-    ui_keys[ 16 ].right = "PREV.M";
+    ui_keys[ HPKEY_M ].label = "STO⏵";
+    ui_keys[ HPKEY_M ].left = "RCL";
+    ui_keys[ HPKEY_M ].right = "PREV.M";
 
-    for ( int i = 17; i < 20; i++ ) {
+    for ( int i = HPKEY_N; i <= HPKEY_O; i++ ) {
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ 19 ].label = "MENU";
+    ui_keys[ HPKEY_P ].label = "MENU";
 
-    ui_keys[ 20 ].left = "";
+    ui_keys[ HPKEY_BACKSPACE ].left = "";
 
-    for ( int i = 23; i < 26; i++ )
+    for ( int i = HPKEY_S; i <= HPKEY_U; i++ )
         ui_keys[ i ].right = NULL;
 
-    for ( int i = 31; i < 35; i++ )
+    for ( int i = HPKEY_ALPHA; i <= HPKEY_9; i++ )
         ui_keys[ i ].left = "";
 
-    ui_keys[ 33 ].right = NULL;
+    ui_keys[ HPKEY_8 ].right = NULL;
 
-    for ( int i = 37; i < 39; i++ ) {
+    for ( int i = HPKEY_4; i <= HPKEY_6; i++ ) {
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ 43 ].left = "";
+    ui_keys[ HPKEY_2 ].left = "";
 
-    ui_keys[ 46 ].left = "";
-    ui_keys[ 46 ].below = NULL;
+    ui_keys[ HPKEY_ON ].left = "";
+    ui_keys[ HPKEY_ON ].below = NULL;
 
-    ui_keys[ 50 ].left = "";
+    ui_keys[ HPKEY_ENTER ].left = "";
 }
 
 static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const char* label )
