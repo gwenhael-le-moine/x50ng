@@ -344,10 +344,12 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.verbose = clopt_verbose;
     if ( clopt_name != NULL )
         opt.name = strdup( clopt_name );
-    if ( clopt_style_filename != NULL )
-        opt.style_filename = strdup( clopt_style_filename );
     if ( clopt_model != -1 )
         opt.model = clopt_model;
+    if ( clopt_style_filename != NULL )
+        opt.style_filename = strdup( clopt_style_filename );
+    else
+        opt.style_filename = opt.model == MODEL_50G ? "style-50g.css" : "style-49gp.css";
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
     if ( clopt_zoom > 0 )

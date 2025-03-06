@@ -1602,10 +1602,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     char* style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
         style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        style_full_path = g_build_filename( x49gp->progpath, opt.style_filename, NULL );
 
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        fprintf( stderr, "Can't load style %s neither from %s/%s nor form %s/%s\n", opt.style_filename, opt.datadir, opt.style_filename,
-                 GLOBAL_DATADIR, opt.style_filename );
+        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", opt.style_filename, opt.datadir,
+                 opt.style_filename, GLOBAL_DATADIR, opt.style_filename, x49gp->progpath, opt.style_filename );
     else {
         GtkCssProvider* style_provider = gtk_css_provider_new();
         gtk_css_provider_load_from_path( style_provider, style_full_path, NULL );
