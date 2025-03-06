@@ -1,6 +1,8 @@
 # x50ng -- HP 50g hardware level emulator
 This is my fork of x49gp
 
+[ The reference public source repository is https://codeberg.org/gwh/x50ng ]
+
 ## Screenshots
 ![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng") ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
 
