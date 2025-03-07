@@ -320,7 +320,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
 
-    {.css_class = "core",
+    {.css_class = "enter",
      .label = "ENTER",
      .letter = NULL,
      .left = "ANS",

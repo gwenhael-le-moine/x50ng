@@ -3,13 +3,23 @@ window {
     font-family: URW Gothic;
     font-weight: normal;
 }
-.label-key,
-.label-left,
-.label-right,
-.label-letter,
-.label-below {
-    font-weight: bold;
+
+window > box {
+    border: 4px outset #333333;
 }
+
+.annunciators-container, .lcd-container {
+    border-style: solid;
+    border-color: #012321;
+    border-width: 0 16px;
+}
+.annunciators-container {
+    border-top-width: 12px;
+}
+.lcd-container {
+    border-bottom-width: 12px;
+}
+
 .annunciator {
     padding: 0px;
     color: #080808;
@@ -18,12 +28,30 @@ window {
 .annunciators-container {
     background-color: #a9d0b2;
 }
+
+.keyboard-container {
+        border: 3px inset #333333;
+}
+.keyboard-container > box:first-child {
+        border-bottom: 3px outset #333333;
+}
+.keyboard-container > box:nth-child(3) {
+        border-bottom: 3px outset #333333;
+}
+.keyboard-container > box:nth-child(6) {
+        border-bottom: 3px outset #333333;
+}
+
 button {
     background-image: none;
     padding: 0px;
-    margin-left: 15px;
-    margin-right: 15px;
+    margin: 0 15px;
+    min-height: 40px;
     border-style: outset;
+}
+button.enter {
+    margin: 0 1px;
+    min-height: 64px;
 }
 button.key-down {
     border-style: inset;
@@ -45,6 +73,14 @@ button.core,
 button.core-number {
     background-color: #080808;
 }
+
+.label-key,
+.label-left,
+.label-right,
+.label-letter,
+.label-below {
+    font-weight: bold;
+}
 button.alpha .label-key,
 button.arrow .label-key,
 button.menu .label-key {
@@ -58,23 +94,23 @@ button.shift-right {
 }
 button.shift-left .label-key,
 button.shift-right .label-key {
-    font-size: 24px;            /* typically 2 * base font size */
+    font-size: 2em;            /* typically 2 * base font size */
     color: #080808;
 }
 button.core-number .label-key,
 button.arrow .label-key,
 .annunciator {
-    font-size: 21px;            /* typically 1.75 * base font size */
+    font-size: 1.75em;            /* typically 1.75 * base font size */
 }
 .label-key {
-    font-size: 12px;            /* base font size */
+    font-size: 1em;            /* base font size */
     color: #ffffff;
 }
 .label-left,
 .label-right,
 .label-letter,
 .label-below {
-    font-size: 9px;            /* typically 0.75 * base font size */
+    font-size: 0.75em;            /* typically 0.75 * base font size */
 }
 .label-left {
     color: #f5f5f5;
