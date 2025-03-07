@@ -30,6 +30,7 @@
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",
+     .css_id = "F1",
      .label = "F1",
      .letter = "A",
      .left = "Y=",
@@ -41,6 +42,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "menu",
+     .css_id = "F2",
      .label = "F2",
      .letter = "B",
      .left = "WIN",
@@ -52,6 +54,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
     {.css_class = "menu",
+     .css_id = "F3",
      .label = "F3",
      .letter = "C",
      .left = "GRAPH",
@@ -63,6 +66,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 3 ),
      .eint = 3},
     {.css_class = "menu",
+     .css_id = "F4",
      .label = "F4",
      .letter = "D",
      .left = "2D/3D",
@@ -74,6 +78,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4},
     {.css_class = "menu",
+     .css_id = "F5",
      .label = "F5",
      .letter = "E",
      .left = "TBLSET",
@@ -85,6 +90,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5},
     {.css_class = "menu",
+     .css_id = "F6",
      .label = "F6",
      .letter = "F",
      .left = "TABLE",
@@ -97,6 +103,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
 
     {.css_class = "function",
+     .css_id = "APPS",
      .label = "APPS",
      .letter = "G",
      .left = "FILES",
@@ -108,6 +115,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
     {.css_class = "function",
+     .css_id = "MODE",
      .label = "MODE",
      .letter = "H",
      .left = "CUSTOM",
@@ -119,6 +127,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5},
     {.css_class = "function",
+     .css_id = "TOOL",
      .label = "TOOL",
      .letter = "I",
      .left = "i",
@@ -130,6 +139,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6},
     {.css_class = "arrow",
+     .css_id = "UP",
      .label = "⬆",
      .letter = "",
      .left = "",
@@ -141,6 +151,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "function",
+     .css_id = "VAR",
      .label = "VAR",
      .letter = "J",
      .left = "UPDIR",
@@ -152,6 +163,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
     {.css_class = "function",
+     .css_id = "STO",
      .label = "STO⏵",
      .letter = "K",
      .left = "RCL",
@@ -163,6 +175,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "function",
+     .css_id = "NXT",
      .label = "NXT",
      .letter = "L",
      .left = "PREV",
@@ -175,6 +188,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 2},
 
     {.css_class = "arrow",
+     .css_id = "LEFT",
      .label = "⬅",
      .letter = "",
      .left = "",
@@ -186,6 +200,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
     {.css_class = "arrow",
+     .css_id = "DOWN",
      .label = "⬇",
      .letter = "",
      .left = "",
@@ -197,6 +212,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 3 ),
      .eint = 3},
     {.css_class = "arrow",
+     .css_id = "RIGHT",
      .label = "⮕",
      .letter = "",
      .left = "",
@@ -209,6 +225,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 4},
 
     {.css_class = "function",
+     .css_id = "HIST",
      .label = "HIST",
      .letter = "M",
      .left = "CMD",
@@ -220,6 +237,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "function",
+     .css_id = "EVAL",
      .label = "EVAL",
      .letter = "N",
      .left = "PRG",
@@ -231,6 +249,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "function",
+     .css_id = "QUOTE",
      .label = "'",
      .letter = "O",
      .left = "MTRW",
@@ -242,6 +261,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "function",
+     .css_id = "SYMB",
      .label = "SYMB",
      .letter = "P",
      .left = "MTH",
@@ -253,6 +273,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 1 ),
      .eint = 1},
     {.css_class = "function",
+     .css_id = "BACKSPACE",
      .label = "⬅",
      .letter = "",
      .left = "DEL",
@@ -265,6 +286,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 1},
 
     {.css_class = "function",
+     .css_id = "POW",
      .label = "Y<sup>x</sup>",
      .letter = "Q",
      .left = "𝑒<sup>x</sup>",
@@ -276,6 +298,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
     {.css_class = "function",
+     .css_id = "SQRT",
      .label = "√𝓍",
      .letter = "R",
      .left = "𝓍<sup>2</sup>",
@@ -287,6 +310,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
     {.css_class = "function",
+     .css_id = "SIN",
      .label = "SIN",
      .letter = "S",
      .left = "ASIN",
@@ -298,6 +322,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
     {.css_class = "function",
+     .css_id = "COS",
      .label = "COS",
      .letter = "T",
      .left = "ACOS",
@@ -309,6 +334,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 2 ),
      .eint = 2},
     {.css_class = "function",
+     .css_id = "TAN",
      .label = "TAN",
      .letter = "U",
      .left = "ATAN",
@@ -321,6 +347,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 2},
 
     {.css_class = "enter",
+     .css_id = "ENTER",
      .label = "ENTER",
      .letter = NULL,
      .left = "ANS",
@@ -332,6 +359,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
     {.css_class = "function",
+     .css_id = "EEX",
      .label = "EEX",
      .letter = "V",
      .left = "10<sup>𝓍</sup>",
@@ -343,6 +371,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 3 ),
      .eint = 3},
     {.css_class = "function",
+     .css_id = "NEG",
      .label = "+/-",
      .letter = "W",
      .left = "≠",
@@ -354,6 +383,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 3 ),
      .eint = 3},
     {.css_class = "function",
+     .css_id = "X",
      .label = "𝓍",
      .letter = "X",
      .left = "≤",
@@ -365,6 +395,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 3 ),
      .eint = 3},
     {.css_class = "function",
+     .css_id = "INV",
      .label = "1/𝓍",
      .letter = "Y",
      .left = "≥",
@@ -377,6 +408,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 3},
 
     {.css_class = "alpha",
+     .css_id = "ALPHA",
      .label = "ALPHA",
      .letter = NULL,
      .left = "USER",
@@ -388,6 +420,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = 0,
      .eint = 4},
     {.css_class = "core-number",
+     .css_id = "SEVEN",
      .label = "7",
      .letter = NULL,
      .left = "S.SLV",
@@ -399,6 +432,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4},
     {.css_class = "core-number",
+     .css_id = "EIGHT",
      .label = "8",
      .letter = NULL,
      .left = "EXP&amp;LN",
@@ -410,6 +444,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4},
     {.css_class = "core-number",
+     .css_id = "NINE",
      .label = "9",
      .letter = NULL,
      .left = "FINANCE",
@@ -421,6 +456,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 4 ),
      .eint = 4},
     {.css_class = "core-number",
+     .css_id = "DIVIDE",
      .label = "÷",
      .letter = "Z",
      .left = "ABS",
@@ -433,6 +469,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 3},
 
     {.css_class = "shift-left",
+     .css_id = "SHIFT-LEFT",
      .label = "⮢",
      .letter = NULL,
      .left = "",
@@ -444,6 +481,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = 0,
      .eint = 5},
     {.css_class = "core-number",
+     .css_id = "FOUR",
      .label = "4",
      .letter = NULL,
      .left = "CALC",
@@ -455,6 +493,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5},
     {.css_class = "core-number",
+     .css_id = "FIVE",
      .label = "5",
      .letter = NULL,
      .left = "MATRICES",
@@ -466,6 +505,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5},
     {.css_class = "core-number",
+     .css_id = "SIX",
      .label = "6",
      .letter = NULL,
      .left = "CONVERT",
@@ -477,6 +517,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 5 ),
      .eint = 5},
     {.css_class = "core-number",
+     .css_id = "MULTIPLY",
      .label = "×",
      .letter = NULL,
      .left = "[ ]",
@@ -489,6 +530,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 4},
 
     {.css_class = "shift-right",
+     .css_id = "SHIFT-RIGHT",
      .label = "⮣",
      .letter = NULL,
      .left = "",
@@ -500,6 +542,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = 0,
      .eint = 6},
     {.css_class = "core-number",
+     .css_id = "ONE",
      .label = "1",
      .letter = NULL,
      .left = "ARITH",
@@ -511,6 +554,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6},
     {.css_class = "core-number",
+     .css_id = "TWO",
      .label = "2",
      .letter = NULL,
      .left = "DEF",
@@ -522,6 +566,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6},
     {.css_class = "core-number",
+     .css_id = "THREE",
      .label = "3",
      .letter = NULL,
      .left = "#",
@@ -533,6 +578,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 6 ),
      .eint = 6},
     {.css_class = "core-number",
+     .css_id = "MINUS",
      .label = "-",
      .letter = NULL,
      .left = "( )",
@@ -545,6 +591,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 5},
 
     {.css_class = "core",
+     .css_id = "ON",
      .label = "ON",
      .letter = NULL,
      .left = "CONT",
@@ -556,6 +603,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = 0,
      .eint = 0},
     {.css_class = "core-number",
+     .css_id = "ZERO",
      .label = "0",
      .letter = NULL,
      .left = "∞",
@@ -567,6 +615,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
     {.css_class = "core",
+     .css_id = "PERIOD",
      .label = ".",
      .letter = NULL,
      .left = ": :",
@@ -578,6 +627,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
     {.css_class = "core",
+     .css_id = "SPC",
      .label = "SPC",
      .letter = NULL,
      .left = "𝚷",
@@ -589,6 +639,7 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .rowbit = ( 1 << 7 ),
      .eint = 7},
     {.css_class = "core-number",
+     .css_id = "PLUS",
      .label = "+",
      .letter = NULL,
      .left = "{ }",
@@ -1324,6 +1375,7 @@ static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const cha
     gtk_widget_add_css_class( ui_ann, "annunciator" );
 #else
     gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "annunciator" );
+    gtk_widget_set_name( ui_ann, label );
 #endif
     gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
     gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
@@ -1412,6 +1464,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_css_class( ui->lcd_canvas, "lcd" );
 #else
     gtk_style_context_add_class( gtk_widget_get_style_context( ui->lcd_canvas ), "lcd" );
+    gtk_widget_set_name( ui->lcd_canvas, "lcd" );
 #endif
     gtk_widget_set_size_request( ui->lcd_canvas, LCD_WIDTH, LCD_HEIGHT );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
@@ -1422,6 +1475,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_css_class( lcd_container, "lcd-container" );
 #else
     gtk_style_context_add_class( gtk_widget_get_style_context( lcd_container ), "lcd-container" );
+    gtk_widget_set_name( lcd_container, "lcd-container" );
 #endif
     gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
     gtk_widget_set_margin_bottom( lcd_container, 3 );
@@ -1433,6 +1487,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
 #else
     gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "annunciators-container" );
+    gtk_widget_set_name( annunciators_container, "annunciators-container" );
 #endif
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_left );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_right );
@@ -1446,6 +1501,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_css_class( annunciators_container, "display-container" );
 #else
     gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "display-container" );
+    gtk_widget_set_name( display_container, "display-container" );
 #endif
     gtk_container_add( GTK_CONTAINER( display_container ), annunciators_container );
     gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
@@ -1466,6 +1522,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_css_class( keyboard_container, "keyboard-container" );
 #else
     gtk_style_context_add_class( gtk_widget_get_style_context( keyboard_container ), "keyboard-container" );
+    gtk_widget_set_name( keyboard_container, "keyboard-container" );
 #endif
     gtk_box_set_homogeneous( GTK_BOX( keyboard_container ), true );
 
@@ -1529,8 +1586,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->button = gtk_button_new();
 #if GTK_MAJOR_VERSION == 4
             gtk_widget_add_css_class( button->button, button->key->css_class );
+            // gtk_widget_set_name( button->button, button->key->css_id );
 #else
-            gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), button->key->css_class );
+            gtk_style_context_add_class(
+                gtk_widget_get_style_context(button->button),
+                button->key->css_class);
+            gtk_widget_set_name( button->button, button->key->css_id );
 #endif
             gtk_widget_set_can_focus( button->button, false );
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );

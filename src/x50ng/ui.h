@@ -101,6 +101,7 @@ typedef enum {
 
 typedef struct {
     const char* css_class;
+    const char* css_id;
     const char* label;
     const char* letter;
     const char* left;
