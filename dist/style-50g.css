@@ -49,12 +49,13 @@ button {
     min-height: 40px;
     border-style: outset;
 }
+button.key-down {
+    border-style: inset;
+}
+
 button.enter {
     margin: 0 1px;
     min-height: 64px;
-}
-button.key-down {
-    border-style: inset;
 }
 button.menu {
     background-color: #a9a9a9;
