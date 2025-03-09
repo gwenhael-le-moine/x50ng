@@ -21,6 +21,14 @@
 
 #include "gdbstub.h"
 
+#if GTK_MAJOR_VERSION == 4
+#define GTK_WIDGET_ADD_CSS_CLASS(widget, class) gtk_widget_add_css_class( widget, class )
+#define GTK_WIDGET_REMOVE_CSS_CLASS(widget, class) gtk_widget_remove_css_class( widget, class )
+#else
+#define GTK_WIDGET_ADD_CSS_CLASS(widget, class) gtk_style_context_add_class( gtk_widget_get_style_context( widget ), class )
+#define GTK_WIDGET_REMOVE_CSS_CLASS(widget, class) gtk_style_context_remove_class( gtk_widget_get_style_context( widget ), class )
+#endif
+
 // #define TEST_PASTE true
 
 #define KB_NB_ROWS 10
@@ -680,11 +688,7 @@ static void ui_release_button( x49gp_ui_button_t* button )
     button->down = false;
     button->hold = false;
 
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_remove_css_class( button->button, "key-down" );
-#else
-    gtk_style_context_remove_class( gtk_widget_get_style_context( button->button ), "key-down" );
-#endif
+    GTK_WIDGET_REMOVE_CSS_CLASS( button->button, "key-down" );
 
     X50NG_RELEASE_KEY( x49gp, key );
 }
@@ -705,11 +709,7 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
     button->down = true;
     button->hold = hold;
 
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( button->button, "key-down" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( button->button ), "key-down" );
-#endif
+    GTK_WIDGET_ADD_CSS_CLASS( button->button, "key-down" );
 
     X50NG_RELEASE_KEY( x49gp, key );
 
@@ -1371,12 +1371,9 @@ static inline void _ui_load__newrplify_ui_keys()
 static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const char* label )
 {
     GtkWidget* ui_ann = gtk_label_new( NULL );
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( ui_ann, "annunciator" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( ui_ann ), "annunciator" );
+    GTK_WIDGET_ADD_CSS_CLASS( ui_ann, "annunciator" );
     gtk_widget_set_name( ui_ann, label );
-#endif
+
     gtk_label_set_use_markup( GTK_LABEL( ui_ann ), true );
     gtk_label_set_markup( GTK_LABEL( ui_ann ), label );
 
@@ -1386,11 +1383,8 @@ static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const cha
 static GtkWidget* _ui_load__create_label( const char* css_class, const char* text )
 {
     GtkWidget* ui_label = gtk_label_new( NULL );
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( ui_label, css_class );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( ui_label ), css_class );
-#endif
+    GTK_WIDGET_ADD_CSS_CLASS( ui_label, css_class );
+
     gtk_label_set_use_markup( GTK_LABEL( ui_label ), true );
     gtk_label_set_markup( GTK_LABEL( ui_label ), text );
 
@@ -1451,6 +1445,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
 
     GtkWidget* window_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    GTK_WIDGET_ADD_CSS_CLASS( window_container, "window-container" );
+    gtk_widget_set_name( window_container, "window-container" );
+
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
 
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
@@ -1460,35 +1457,26 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 
     ui->lcd_canvas = gtk_drawing_area_new();
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( ui->lcd_canvas, "lcd" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( ui->lcd_canvas ), "lcd" );
+    GTK_WIDGET_ADD_CSS_CLASS( ui->lcd_canvas, "lcd" );
     gtk_widget_set_name( ui->lcd_canvas, "lcd" );
-#endif
+
     gtk_widget_set_size_request( ui->lcd_canvas, LCD_WIDTH, LCD_HEIGHT );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( lcd_container, "lcd-container" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( lcd_container ), "lcd-container" );
+    GTK_WIDGET_ADD_CSS_CLASS( lcd_container, "lcd-container" );
     gtk_widget_set_name( lcd_container, "lcd-container" );
-#endif
+
     gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
     gtk_widget_set_margin_bottom( lcd_container, 3 );
     gtk_box_set_center_widget( GTK_BOX( lcd_container ), ui->lcd_canvas );
 
     GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "annunciators-container" );
+    GTK_WIDGET_ADD_CSS_CLASS( annunciators_container, "annunciators-container" );
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
-#endif
+
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_left );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_right );
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_alpha );
@@ -1497,12 +1485,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_io );
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( annunciators_container, "display-container" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( annunciators_container ), "display-container" );
+    GTK_WIDGET_ADD_CSS_CLASS( annunciators_container, "display-container" );
     gtk_widget_set_name( display_container, "display-container" );
-#endif
+
     gtk_container_add( GTK_CONTAINER( display_container ), annunciators_container );
     gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
 
@@ -1518,12 +1503,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // keyboard
     GtkWidget* keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
-#if GTK_MAJOR_VERSION == 4
-    gtk_widget_add_css_class( keyboard_container, "keyboard-container" );
-#else
-    gtk_style_context_add_class( gtk_widget_get_style_context( keyboard_container ), "keyboard-container" );
+    GTK_WIDGET_ADD_CSS_CLASS( keyboard_container, "keyboard-container" );
     gtk_widget_set_name( keyboard_container, "keyboard-container" );
-#endif
+
     gtk_box_set_homogeneous( GTK_BOX( keyboard_container ), true );
 
     gtk_container_add( GTK_CONTAINER( window_container ), keyboard_container );
@@ -1584,15 +1566,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                                            _ui_load__create_label( "label-left", button->key->left ) );
 
             button->button = gtk_button_new();
-#if GTK_MAJOR_VERSION == 4
-            gtk_widget_add_css_class( button->button, button->key->css_class );
-            // gtk_widget_set_name( button->button, button->key->css_id );
-#else
-            gtk_style_context_add_class(
-                gtk_widget_get_style_context(button->button),
-                button->key->css_class);
+            GTK_WIDGET_ADD_CSS_CLASS( button->button, button->key->css_class );
             gtk_widget_set_name( button->button, button->key->css_id );
-#endif
+
             gtk_widget_set_can_focus( button->button, false );
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
