@@ -29,6 +29,7 @@ struct options opt = {
     .style_filename = NULL,
     .zoom = 2,
     .gray = false,
+    .netbook = false,
 };
 
 lua_State* config_lua_values;
@@ -102,10 +103,11 @@ static char* config_to_string( void )
               "style = \"%s\" -- CSS file (relative to this file)\n"
               "zoom = %i -- integer only\n"
               "gray = %s\n"
+              "netbook = %s\n"
               "verbose = %s\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
               opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.style_filename, opt.zoom,
-              opt.gray ? "true" : "false", opt.verbose ? "true" : "false" );
+              opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.verbose ? "true" : "false" );
 
     return config;
 }
@@ -158,6 +160,7 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_newrpl = -1;
     int clopt_zoom = -1;
     int clopt_gray = -1;
+    int clopt_netbook = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -180,6 +183,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"display-scale",    required_argument, NULL,                   'S' }, /* deprecated */
         {"zoom",             required_argument, NULL,                   'z' },
         {"gray",             no_argument,       &clopt_gray,            true},
+        {"netbook",             no_argument,       &clopt_netbook,            true},
 
         {"enable-debug",     required_argument, NULL,                   10  },
         {"debug",            no_argument,       NULL,                   11  },
@@ -209,6 +213,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
                          "-S --zoom[=X]                scale LCD by X (default: 2)\n"
                          "--gray                       grayish LCD instead of greenish (default: false)\n"
+                         "--netbook                    horizontal window (default: false)\n"
                          "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
@@ -333,6 +338,9 @@ void config_init( char* progname, int argc, char* argv[] )
 
         lua_getglobal( config_lua_values, "gray" );
         opt.gray = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "netbook" );
+        opt.netbook = lua_toboolean( config_lua_values, -1 );
     }
     if ( opt.haz_config_file && overwrite_config )
         opt.haz_config_file = false;
@@ -356,6 +364,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.zoom = clopt_zoom;
     if ( clopt_gray != -1 )
         opt.gray = clopt_gray;
+    if ( clopt_netbook != -1 )
+        opt.netbook = clopt_netbook;
 
     if ( print_config_and_exit ) {
         fprintf( stdout, config_to_string() );

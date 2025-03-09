@@ -65,6 +65,8 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *--gray*                       grayish LCD instead of greenish (default: false)
 
+*--netbook*                    horizontal window (default: false)
+
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 
 *--overwrite-config*           force writing <datadir>/config.lua even if it exists
