@@ -169,33 +169,33 @@ void config_init( char* progname, int argc, char* argv[] )
 
     const char* optstring = "dhrf:n:s:S:vVz:";
     struct option long_options[] = {
-        {"help",             no_argument,       NULL,                   'h' },
-        {"version",          no_argument,       NULL,                   'v' },
-        {"verbose",          no_argument,       NULL,                   'V' },
+        {"help",               no_argument,       NULL,                   'h' },
+        {"version",            no_argument,       NULL,                   'v' },
+        {"verbose",            no_argument,       NULL,                   'V' },
 
-        {"print-config",     no_argument,       &print_config_and_exit, true},
-        {"overwrite-config", no_argument,       &overwrite_config,      true},
-        {"datadir",          required_argument, NULL,                   'd' },
+        {"print-config",       no_argument,       &print_config_and_exit, true},
+        {"overwrite-config",   no_argument,       &overwrite_config,      true},
+        {"datadir",            required_argument, NULL,                   'd' },
 
-        {"50g",              no_argument,       NULL,                   506 },
-        {"49gp",             no_argument,       NULL,                   496 },
-        {"newrpl-keyboard",  no_argument,       &clopt_newrpl,          true},
-        {"name",             required_argument, NULL,                   'n' },
-        {"style",            required_argument, NULL,                   's' },
-        {"display-scale",    required_argument, NULL,                   'S' }, /* deprecated */
-        {"zoom",             required_argument, NULL,                   'z' },
-        {"gray",             no_argument,       &clopt_gray,            true},
-        {"netbook",          no_argument,       &clopt_netbook,         true},
-        {"netbook-pivot-line",             required_argument, NULL,                   1001 },
+        {"50g",                no_argument,       NULL,                   506 },
+        {"49gp",               no_argument,       NULL,                   496 },
+        {"newrpl-keyboard",    no_argument,       &clopt_newrpl,          true},
+        {"name",               required_argument, NULL,                   'n' },
+        {"style",              required_argument, NULL,                   's' },
+        {"display-scale",      required_argument, NULL,                   'S' }, /* deprecated */
+        {"zoom",               required_argument, NULL,                   'z' },
+        {"gray",               no_argument,       &clopt_gray,            true},
+        {"netbook",            no_argument,       &clopt_netbook,         true},
+        {"netbook-pivot-line", required_argument, NULL,                   1001},
 
-        {"enable-debug",     required_argument, NULL,                   10  },
-        {"debug",            no_argument,       NULL,                   11  },
-        {"reflash",          required_argument, NULL,                   90  },
-        {"reflash-full",     required_argument, NULL,                   91  },
-        {"reboot",           no_argument,       NULL,                   'r' }, /* deprecated */
-        {"reset",            no_argument,       NULL,                   'r' },
+        {"enable-debug",       required_argument, NULL,                   10  },
+        {"debug",              no_argument,       NULL,                   11  },
+        {"reflash",            required_argument, NULL,                   90  },
+        {"reflash-full",       required_argument, NULL,                   91  },
+        {"reboot",             no_argument,       NULL,                   'r' }, /* deprecated */
+        {"reset",              no_argument,       NULL,                   'r' },
 
-        {0,                  0,                 0,                      0   }
+        {0,                    0,                 0,                      0   }
     };
 
     while ( c != EOF ) {
@@ -265,9 +265,9 @@ void config_init( char* progname, int argc, char* argv[] )
                 if ( clopt_style_filename == NULL )
                     clopt_style_filename = "style-50g.css";
                 break;
-        case 1001:
-            clopt_netbook_pivot_line = atoi(optarg);
-            break;
+            case 1001:
+                clopt_netbook_pivot_line = atoi( optarg );
+                break;
             case 'd':
                 opt.datadir = strdup( optarg );
                 break;
@@ -281,8 +281,8 @@ void config_init( char* progname, int argc, char* argv[] )
             case 's':
                 clopt_style_filename = strdup( optarg );
                 break;
-        case 'S':
-        case 'z':
+            case 'S':
+            case 'z':
                 clopt_zoom = atoi( optarg );
                 break;
             case 'v':
