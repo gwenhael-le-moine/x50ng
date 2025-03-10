@@ -660,6 +660,69 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
 };
 
+static int keys_order[] = {
+    HPKEY_A,
+    HPKEY_B,
+    HPKEY_C,
+    HPKEY_D,
+    HPKEY_E,
+    HPKEY_F,
+
+    HPKEY_G,
+    HPKEY_H,
+    HPKEY_I,
+    HPKEY_UP,
+    HPKEY_J,
+
+    HPKEY_K,
+    HPKEY_L,
+    HPKEY_LEFT,
+    HPKEY_DOWN,
+    HPKEY_RIGHT,
+
+    HPKEY_M,
+    HPKEY_N,
+    HPKEY_O,
+    HPKEY_P,
+    HPKEY_BACKSPACE,
+
+    HPKEY_Q,
+    HPKEY_R,
+    HPKEY_S,
+    HPKEY_T,
+    HPKEY_U,
+
+    HPKEY_ENTER,
+    HPKEY_V,
+    HPKEY_W,
+    HPKEY_X,
+    HPKEY_Y,
+
+    HPKEY_ALPHA,
+    HPKEY_7,
+    HPKEY_8,
+    HPKEY_9,
+    HPKEY_Z,
+
+    HPKEY_SHIFT_LEFT,
+    HPKEY_4,
+    HPKEY_5,
+    HPKEY_6,
+    HPKEY_MULTIPLY,
+
+    HPKEY_SHIFT_RIGHT,
+    HPKEY_1,
+    HPKEY_2,
+    HPKEY_3,
+    HPKEY_MINUS,
+
+    HPKEY_ON,
+    HPKEY_0,
+    HPKEY_PERIOD,
+    HPKEY_SPACE,
+    HPKEY_PLUS,
+};
+
 /*************/
 /* functions */
 /*************/
@@ -1549,7 +1612,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             button = &ui->buttons[ key_index ];
             button->x49gp = x49gp;
-            button->key = &ui_keys[ key_index ];
+            button->key = &ui_keys[ keys_order[ key_index ] ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
             gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), false );
