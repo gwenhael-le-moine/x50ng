@@ -30,6 +30,7 @@ struct options opt = {
     .zoom = 2,
     .gray = false,
     .netbook = false,
+    .netbook_pivot_line = 3,
 };
 
 lua_State* config_lua_values;
@@ -161,6 +162,7 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_zoom = -1;
     int clopt_gray = -1;
     int clopt_netbook = -1;
+    int clopt_netbook_pivot_line = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -183,7 +185,8 @@ void config_init( char* progname, int argc, char* argv[] )
         {"display-scale",    required_argument, NULL,                   'S' }, /* deprecated */
         {"zoom",             required_argument, NULL,                   'z' },
         {"gray",             no_argument,       &clopt_gray,            true},
-        {"netbook",             no_argument,       &clopt_netbook,            true},
+        {"netbook",          no_argument,       &clopt_netbook,         true},
+        {"netbook-pivot-line",             required_argument, NULL,                   1001 },
 
         {"enable-debug",     required_argument, NULL,                   10  },
         {"debug",            no_argument,       NULL,                   11  },
@@ -214,6 +217,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-S --zoom[=X]                scale LCD by X (default: 2)\n"
                          "--gray                       grayish LCD instead of greenish (default: false)\n"
                          "--netbook                    horizontal window (default: false)\n"
+                         "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
                          "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
@@ -261,6 +265,9 @@ void config_init( char* progname, int argc, char* argv[] )
                 if ( clopt_style_filename == NULL )
                     clopt_style_filename = "style-50g.css";
                 break;
+        case 1001:
+            clopt_netbook_pivot_line = atoi(optarg);
+            break;
             case 'd':
                 opt.datadir = strdup( optarg );
                 break;
@@ -274,7 +281,8 @@ void config_init( char* progname, int argc, char* argv[] )
             case 's':
                 clopt_style_filename = strdup( optarg );
                 break;
-            case 'S':
+        case 'S':
+        case 'z':
                 clopt_zoom = atoi( optarg );
                 break;
             case 'v':
@@ -341,6 +349,9 @@ void config_init( char* progname, int argc, char* argv[] )
 
         lua_getglobal( config_lua_values, "netbook" );
         opt.netbook = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "netbook-pivot-line" );
+        opt.zoom = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
     }
     if ( opt.haz_config_file && overwrite_config )
         opt.haz_config_file = false;
@@ -366,6 +377,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.gray = clopt_gray;
     if ( clopt_netbook != -1 )
         opt.netbook = clopt_netbook;
+    if ( clopt_netbook_pivot_line != -1 )
+        opt.netbook_pivot_line = clopt_netbook_pivot_line;
 
     if ( print_config_and_exit ) {
         fprintf( stdout, config_to_string() );

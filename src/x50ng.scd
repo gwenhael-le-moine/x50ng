@@ -67,6 +67,8 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *--netbook*                    horizontal window (default: false)
 
+*--netbook-pivot-line*[=_X_]       at which line is the keyboard split in netbook mode (default: 3)
+
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 
 *--overwrite-config*           force writing <datadir>/config.lua even if it exists

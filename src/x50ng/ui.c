@@ -1519,6 +1519,17 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 
+    /* for --netbook */
+    GtkWidget* upper_left_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    GTK_WIDGET_ADD_CSS_CLASS( upper_left_container, "upper-left-container" );
+    gtk_widget_set_name( upper_left_container, "upper-left-container" );
+    gtk_container_add( GTK_CONTAINER( window_container ), upper_left_container );
+
+    GtkWidget* downer_right_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    GTK_WIDGET_ADD_CSS_CLASS( downer_right_container, "downer-right-container" );
+    gtk_widget_set_name( downer_right_container, "downer-right-container" );
+    gtk_container_add( GTK_CONTAINER( window_container ), downer_right_container );
+
     ui->lcd_canvas = gtk_drawing_area_new();
     GTK_WIDGET_ADD_CSS_CLASS( ui->lcd_canvas, "lcd" );
     gtk_widget_set_name( ui->lcd_canvas, "lcd" );
@@ -1555,23 +1566,31 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
 
 #if GTK_MAJOR_VERSION == 4
-    gtk_container_add( GTK_CONTAINER( window_container ), display_container );
+    gtk_container_add( GTK_CONTAINER( upper_left_container ), display_container );
 #else
     GtkWidget* display_container_event_box = gtk_event_box_new();
     g_signal_connect( G_OBJECT( display_container_event_box ), "button-press-event", G_CALLBACK( react_to_display_click ), x49gp );
     gtk_container_add( GTK_CONTAINER( display_container_event_box ), display_container );
 
-    gtk_container_add( GTK_CONTAINER( window_container ), display_container_event_box );
+    gtk_container_add( GTK_CONTAINER( upper_left_container ), display_container_event_box );
 #endif
 
     // keyboard
-    GtkWidget* keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
-    GTK_WIDGET_ADD_CSS_CLASS( keyboard_container, "keyboard-container" );
-    gtk_widget_set_name( keyboard_container, "keyboard-container" );
+    GtkWidget* high_keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    GTK_WIDGET_ADD_CSS_CLASS( high_keyboard_container, "keyboard-container" );
+    gtk_widget_set_name( high_keyboard_container, "high-keyboard-container" );
 
-    gtk_box_set_homogeneous( GTK_BOX( keyboard_container ), true );
+    gtk_box_set_homogeneous( GTK_BOX( high_keyboard_container ), true );
 
-    gtk_container_add( GTK_CONTAINER( window_container ), keyboard_container );
+    gtk_container_add( GTK_CONTAINER( upper_left_container ), high_keyboard_container );
+
+    GtkWidget* low_keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    GTK_WIDGET_ADD_CSS_CLASS( low_keyboard_container, "keyboard-container" );
+    gtk_widget_set_name( low_keyboard_container, "low-keyboard-container" );
+
+    gtk_box_set_homogeneous( GTK_BOX( low_keyboard_container ), true );
+
+    gtk_container_add( GTK_CONTAINER( downer_right_container ), low_keyboard_container );
 
     x49gp_ui_button_t* button;
 
@@ -1587,7 +1606,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     for ( int row = 0; row < KB_NB_ROWS; row++ ) {
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
-        gtk_container_add( GTK_CONTAINER( keyboard_container ), rows_containers[ row ] );
+        gtk_container_add( GTK_CONTAINER( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ), rows_containers[ row ] );
 
         switch ( row ) {
             case 1:
