@@ -67,7 +67,7 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *--netbook*                    horizontal window (default: false)
 
-*--netbook-pivot-line*[=_X_]       at which line is the keyboard split in netbook mode (default: 3)
+*--netbook-pivot-line*[=_X_]     at which line is the keyboard split in netbook mode (default: 3)
 
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 
@@ -81,7 +81,7 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *--reflash*[=_firmware_]         rebuild the flash using the supplied firmware (default: select one interactively) (implies -r for safety reasons)
 
-*--reflash-full*[=_firmware_]    rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
+*--reflash-full*[=_firmware_]   rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
 
 *--50g*                        use an HP 50g bootloader when (re-)flashing (default)
 
