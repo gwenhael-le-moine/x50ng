@@ -59,7 +59,44 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 4. follow instructions if prompted, enjoy your virtual HP 50g
 5. you can right-click on the screen and choose _Unmount SD_
 
+## Styling
 
+You can apply your own styling using a CSS file (gtk+3 css documentation: https://docs.gtk.org/gtk3/css-overview.html ).
+You can access gtk's UI by running `GTK_DEBUG=interactive x50ng`. In it you can see the classes and names of each components.
+
+For example here's my HiDPI customisation:
+- in `~/.config/x50ng/config.lua` I set
+```lua
+zoom = 4
+style =  = "style-gwh.css"
+```
+
+and here's `~/.config/x50ng/style-gwh.css` :
+```css
+@import "/usr/share/x50ng/style-50g.css";
+
+window {
+    font-size: 20px;
+}
+button.shift-left .label-key,
+button.shift-right .label-key {
+    font-size: 2em;            /* typically 2 * base font size */
+}
+button.core-number .label-key,
+button.arrow .label-key,
+.annunciator {
+    font-size: 1.75em;            /* typically 1.75 * base font size */
+}
+.label-key {
+    font-size: 1em;            /* base font size */
+}
+.label-left,
+.label-right,
+.label-letter,
+.label-below {
+    font-size: 0.75em;            /* typically 0.75 * base font size */
+}
+```
 
 ## Development
 
