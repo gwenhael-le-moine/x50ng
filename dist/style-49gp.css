@@ -1,4 +1,29 @@
-window {
+/* Here is the hierarchy of components' selectors.
+You can inspect the application by setting the environment variable
+ GTK_DEBUG=interactive before running the application.
+*/
+/*
+window.background
+  box#window-container
+    box#upper-left-container
+      box#display-container
+        box#annunciators-container
+          label.annunciator
+        box#lcd-container
+          GtkDrawingArea#lcd
+      box.keyboard-container#high-keyboard-container
+    box#downer-right-container
+      box.keyboard-container#low-keyboard-container
+        box.row-container
+          box.key-container
+            box.top-labels-container
+              label.label-left
+              label.label-right
+            button.key.(menu,function,arrow,enter,core,core-number,alpha,shift-left,shift-right)
+              label.label-key
+            label.label-letter
+*/
+.background {
     background-color: #f5deb3;
     font-family: URW Gothic;
     font-weight: normal;

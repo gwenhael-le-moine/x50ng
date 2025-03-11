@@ -33,7 +33,7 @@ window.background
     border: 4px outset #333333;
 }
 
-#annunciators-container, #lcd-container {
+#display-container {
     border-style: solid;
     border-color: #012321;
     border-width: 0 16px;
@@ -52,7 +52,14 @@ window.background
 }
 
 .keyboard-container {
-        border: 3px inset #333333;
+    border-style: inset;
+    border-color: #333333;
+}
+#high-keyboard-container {
+    border-width: 3px 3px 3px 0;
+}
+#low-keyboard-container {
+    border-width: 3px 0 3px 3px;
 }
 #high-keyboard-container > .row-container:first-child {
         border-bottom: 3px outset #333333;
@@ -70,8 +77,9 @@ window.background
 }
 
 .key.enter {
+    background-color: #088080;
     margin: 0 1px;
-    min-height: 64px;
+    min-height: 46px;
 }
 .key.menu {
     background-color: #a9a9a9;
