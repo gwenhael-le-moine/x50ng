@@ -68,7 +68,7 @@ For example here's my HiDPI customisation:
 - in `~/.config/x50ng/config.lua` I set
 ```lua
 zoom = 4
-style =  = "style-gwh.css"
+style = "style-gwh.css"
 ```
 
 and here's `~/.config/x50ng/style-gwh.css` :
