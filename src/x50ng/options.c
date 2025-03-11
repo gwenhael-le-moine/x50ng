@@ -211,7 +211,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-h --help                    print this message and exit\n"
                          "-v --version                 print out version\n"
                          "-V --verbose                 print out more information\n"
-                         "-d --datadir[=absolute path] alternate datadir (default: $XDGCONFIGHOME/%s/)\n"
+                         "-d --datadir[=absolute path] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
                          "-n --name[=name]             set alternate UI name\n"
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
                          "-S --zoom[=X]                scale LCD by X (default: 2)\n"
