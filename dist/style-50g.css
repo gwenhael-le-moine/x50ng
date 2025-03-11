@@ -56,10 +56,10 @@ window.background
     border-color: #333333;
 }
 #high-keyboard-container {
-    border-width: 3px 3px 3px 0;
+    border-width: 3px 3px 0 3px;
 }
 #low-keyboard-container {
-    border-width: 3px 0 3px 3px;
+    border-width: 0 3px 3px 3px;
 }
 #high-keyboard-container > .row-container:first-child {
         border-bottom: 3px outset #333333;
