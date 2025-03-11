@@ -24,7 +24,7 @@
 #if GTK_MAJOR_VERSION == 4
 #  define GTK_WIDGET_ADD_CSS_CLASS( widget, class ) gtk_widget_add_css_class( widget, class )
 #  define GTK_WIDGET_REMOVE_CSS_CLASS( widget, class ) gtk_widget_remove_css_class( widget, class )
-#  define GTK_BOX_APPEND( box, widget ) gtk_box_append( box, widget )
+#  define GTK_BOX_APPEND( box, widget ) gtk_box_append( ( GtkBox* )box, widget )
 #else
 #  define GTK_WIDGET_ADD_CSS_CLASS( widget, class ) gtk_style_context_add_class( gtk_widget_get_style_context( widget ), class )
 #  define GTK_WIDGET_REMOVE_CSS_CLASS( widget, class ) gtk_style_context_remove_class( gtk_widget_get_style_context( widget ), class )
@@ -1473,7 +1473,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_set_name( window_container, "window-container" );
 
 #if GTK_MAJOR_VERSION == 4
-    gtk_window_set_child( ui->window, window_container );
+    gtk_window_set_child( ( GtkWindow* )ui->window, window_container );
 #else
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
 #endif
