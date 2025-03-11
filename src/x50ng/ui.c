@@ -1503,13 +1503,21 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
 
+#if GTK_MAJOR_VERSION == 4
+    GtkWidget* lcd_container = gtk_center_box_new();
+#else
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+#endif
     GTK_WIDGET_ADD_CSS_CLASS( lcd_container, "lcd-container" );
     gtk_widget_set_name( lcd_container, "lcd-container" );
 
     gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
     gtk_widget_set_margin_bottom( lcd_container, 3 );
+#if GTK_MAJOR_VERSION == 4
+    gtk_center_box_set_center_widget( GTK_CENTER_BOX( lcd_container ), ui->lcd_canvas );
+#else
     gtk_box_set_center_widget( GTK_BOX( lcd_container ), ui->lcd_canvas );
+#endif
 
     GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
@@ -1572,7 +1580,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         GTK_WIDGET_ADD_CSS_CLASS( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
-        GTK_BOX_APPEND( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container, rows_containers[ row ] );
+        GTK_BOX_APPEND( ( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ), rows_containers[ row ] );
 
         switch ( row ) {
             case 1:
@@ -1600,20 +1608,36 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->x49gp = x49gp;
             button->key = &ui_keys[ keys_order[ key_index ] ];
 
+#if GTK_MAJOR_VERSION == 4
+            keys_top_labels_containers[ key_index ] = gtk_center_box_new();
+#else
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+#endif
             GTK_WIDGET_ADD_CSS_CLASS( keys_top_labels_containers[ key_index ], "top-labels-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), false );
 
             GTK_BOX_APPEND( keys_containers[ key_index ], keys_top_labels_containers[ key_index ] );
 
             if ( button->key->right ) {
+#if GTK_MAJOR_VERSION == 4
+                gtk_center_box_set_start_widget( GTK_CENTER_BOX( keys_top_labels_containers[ key_index ] ),
+                                                 _ui_load__create_label( "label-left", button->key->left ) );
+                gtk_center_box_set_end_widget( GTK_CENTER_BOX( keys_top_labels_containers[ key_index ] ),
+                                               _ui_load__create_label( "label-right", button->key->right ) );
+#else
                 gtk_box_pack_start( GTK_BOX( keys_top_labels_containers[ key_index ] ),
                                     _ui_load__create_label( "label-left", button->key->left ), true, true, 0 );
                 gtk_box_pack_end( GTK_BOX( keys_top_labels_containers[ key_index ] ),
                                   _ui_load__create_label( "label-right", button->key->right ), true, true, 0 );
+#endif
             } else if ( button->key->left )
+#if GTK_MAJOR_VERSION == 4
+                gtk_center_box_set_center_widget( GTK_CENTER_BOX( keys_top_labels_containers[ key_index ] ),
+                                                  _ui_load__create_label( "label-left", button->key->left ) );
+#else
                 gtk_box_set_center_widget( GTK_BOX( keys_top_labels_containers[ key_index ] ),
                                            _ui_load__create_label( "label-left", button->key->left ) );
+#endif
 
             button->button = gtk_button_new();
             GTK_WIDGET_ADD_CSS_CLASS( button->button, "key" );
@@ -1710,7 +1734,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     // finally show the window
     gtk_widget_realize( ui->window );
+#if GTK_MAJOR_VERSION == 4
+    gtk_window_present( GTK_WINDOW( ui->window ) );
+#else
     gtk_widget_show_all( ui->window );
+#endif
 
     return 0;
 }
