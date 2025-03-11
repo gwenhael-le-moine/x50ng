@@ -1566,7 +1566,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         GTK_WIDGET_ADD_CSS_CLASS( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
-        gtk_container_add( GTK_CONTAINER( /* opt.netbook &&  */row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ),
+        gtk_container_add( GTK_CONTAINER( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ),
                            rows_containers[ row ] );
 
         switch ( row ) {
