@@ -108,24 +108,6 @@ and here's `~/.config/x50ng/style-gwh.css` :
 window {
     font-size: 20px;
 }
-button.shift-left .label-key,
-button.shift-right .label-key {
-    font-size: 2em;            /* typically 2 * base font size */
-}
-button.core-number .label-key,
-button.arrow .label-key,
-.annunciator {
-    font-size: 1.75em;            /* typically 1.75 * base font size */
-}
-.label-key {
-    font-size: 1em;            /* base font size */
-}
-.label-left,
-.label-right,
-.label-letter,
-.label-below {
-    font-size: 0.75em;            /* typically 0.75 * base font size */
-}
 ```
 
 ## Development
