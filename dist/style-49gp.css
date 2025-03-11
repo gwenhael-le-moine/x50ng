@@ -1,104 +1,64 @@
-/* Here is the hierarchy of components' selectors.
-You can inspect the application by setting the environment variable
- GTK_DEBUG=interactive before running the application.
-*/
-/*
-window.background
-  box#window-container
-    box#upper-left-container
-      box#display-container
-        box#annunciators-container
-          label.annunciator
-        box#lcd-container
-          GtkDrawingArea#lcd
-      box.keyboard-container#high-keyboard-container
-    box#downer-right-container
-      box.keyboard-container#low-keyboard-container
-        box.row-container
-          box.key-container
-            box.top-labels-container
-              label.label-left
-              label.label-right
-            button.key.(menu,function,arrow,enter,core,core-number,alpha,shift-left,shift-right)
-              label.label-key
-            label.label-letter
-*/
-.background {
+@import "style-common.css";
+
+window {
     background-color: #f5deb3;
-    font-family: URW Gothic;
-    font-weight: normal;
 }
-.label-key,
-.label-left,
-.label-right,
-.label-letter,
-.label-below {
-    font-weight: bold;
+
+#window-container {
+    border-color: #f7ffe5;
 }
-.annunciator {
-    padding: 0px;
-    color: #080808;
-}
-.lcd-container,
-.annunciators-container {
+
+#display-container {
+    border-color: #f7ffe5;
     background-color: #a9d0b2;
 }
-button {
-    background-image: none;
-    padding: 0px;
-    margin-left: 15px;
-    margin-right: 15px;
+
+.annunciator {
+    color: #080808;
 }
-button.key-down {
-    border-color: #080808;
+
+.keyboard-container,
+#high-keyboard-container > .row-container:first-child {
+    border-color: #f7ffe5;
 }
-button.menu {
+
+
+.key.enter {
+    background-color: #088080;
+}
+.key.menu {
     background-color: #a9a9a9;
 }
-button.function {
+.key.function {
     background-color: #696969;
 }
-button.arrow {
+.key.arrow {
     background-color: #e0e0e0;
-    border-radius: 33%;
 }
-button.alpha {
+.key.alpha {
     background-color: #fae82c;
 }
-button.core,
-button.core-number {
+.key.core,
+.key.core-number {
     background-color: #080808;
 }
-button.alpha .label-key,
-button.arrow .label-key,
-button.menu .label-key {
+.key.alpha .label-key,
+.key.arrow .label-key,
+.key.menu .label-key {
     color: #080808;
 }
-button.shift-left {
+.key.shift-left {
     background-color: #4060a4;
 }
-button.shift-right {
+.key.shift-right {
     background-color: #8e2518;
 }
-button.shift-left .label-key,
-button.shift-right .label-key {
-    font-size: 24px;            /* typically 2 * base font size */
+.key.shift-left .label-key,
+.key.shift-right .label-key {
     color: #080808;
 }
-button.core-number .label-key,
-button.arrow .label-key,
-.annunciator {
-    font-size: 21px;            /* typically 1.75 * base font size */
-}
 .label-key {
-    font-size: 12px;            /* base font size */
     color: #ffffff;
-}
-.label-left,
-.label-right,
-.label-letter,
-.label-below {
-    font-size: 9px;            /* typically 0.75 * base font size */
 }
 .label-left {
     color: #4060a4;
