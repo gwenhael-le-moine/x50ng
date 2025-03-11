@@ -4,10 +4,10 @@ This is my fork of x49gp, emulator of the HP 49G+/50G hardware platform. Instead
 
 **x50ng** is part of my little collection of HP calculators' emulators' that I took over maintenance :
 
-- (x50ng)[https://codeberg.org/gwh/x50ng] ← You are here
-- (x48ng)[https://codeberg.org/gwh/x48ng]
-- (saturnng)[https://codeberg.org/gwh/saturnng]
-- (hpemung)[https://codeberg.org/gwh/hpemung]
+- [x50ng](https://codeberg.org/gwh/x50ng) ← You are here
+- [x48ng](https://codeberg.org/gwh/x48ng)
+- [saturnng](https://codeberg.org/gwh/saturnng)
+- [hpemung](https://codeberg.org/gwh/hpemung)
 
 [ The reference public source repository is https://codeberg.org/gwh/x50ng ]
 
@@ -42,7 +42,7 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 
 ## Installation
 
-0. I advise you to download the necessary firmware and ROM from https://hpcalc.org/ by running `make pull-firmware`
+0. I advise you to download the necessary firmware and ROM from [hpcalc.org](https://hpcalc.org/) by running `make pull-firmware`
 1. Run `sudo make install INSTALL_PREFIX=/usr` (see the Makefile to see what variables your can override.)
 
 
@@ -60,7 +60,7 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 
 ### Run Locally without installation
 #### First run
-1. You will need to download the necessary firmware and ROM from (hpcalc.org)[https://hpcalc.org/] by running `make pull-firmware`
+1. You will need to download the necessary firmware and ROM from [hpcalc.org](https://hpcalc.org/) by running `make pull-firmware`
 2. launch the emulator by running `./dist/x50ng`
 3. in the file chooser dialog navigate to the folder **./dist/firmware/hp4950v215/2MB_FIX/** then click __Open__ (if no dialog shows up: right-click on the screen and choose _Mount SD Folder..._)
    (if prompted: in the emulator press the key _2_)
@@ -69,7 +69,7 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 
 ## Styling
 
-You can apply your own styling using a CSS file ( (gtk+3 css documentation)[https://docs.gtk.org/gtk3/css-overview.html] ).
+You can apply your own styling using a CSS file ( [gtk+3 css documentation](https://docs.gtk.org/gtk3/css-overview.html) ).
 You can access gtk's UI by running `GTK_DEBUG=interactive x50ng`. In it you can see the classes and names of each components.
 
 For example here's my HiDPI customisation:
