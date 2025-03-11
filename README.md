@@ -72,6 +72,28 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 You can apply your own styling using a CSS file ( [gtk+3 css documentation](https://docs.gtk.org/gtk3/css-overview.html) ).
 You can access gtk's UI by running `GTK_DEBUG=interactive x50ng`. In it you can see the classes and names of each components.
 
+For reference here is a tree of the css selectors defined by the application:
+
+- window.background
+  - box#window-container
+    - box#upper-left-container
+      - box#display-container
+        - box#annunciators-container
+          - label.annunciator
+        - box#lcd-container
+          - GtkDrawingArea#lcd
+      - box.keyboard-container#high-keyboard-container
+    - box#downer-right-container
+      - box.keyboard-container#low-keyboard-container
+        - box.row-container
+          - box.key-container
+            - box.top-labels-container
+              - label.label-left
+              - label.label-right
+            - button.key.(menu,function,arrow,enter,core,core-number,alpha,shift-left,shift-right)
+              - label.label-key
+            - label.label-letter
+
 For example here's my HiDPI customisation:
 - in `~/.config/x50ng/config.lua` I set
 ```lua
