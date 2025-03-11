@@ -24,9 +24,11 @@
 #if GTK_MAJOR_VERSION == 4
 #  define GTK_WIDGET_ADD_CSS_CLASS( widget, class ) gtk_widget_add_css_class( widget, class )
 #  define GTK_WIDGET_REMOVE_CSS_CLASS( widget, class ) gtk_widget_remove_css_class( widget, class )
+#  define GTK_BOX_APPEND( box, widget ) gtk_box_append( box, widget )
 #else
 #  define GTK_WIDGET_ADD_CSS_CLASS( widget, class ) gtk_style_context_add_class( gtk_widget_get_style_context( widget ), class )
 #  define GTK_WIDGET_REMOVE_CSS_CLASS( widget, class ) gtk_style_context_remove_class( gtk_widget_get_style_context( widget ), class )
+#  define GTK_BOX_APPEND( box, widget ) gtk_container_add( GTK_CONTAINER( box ), widget )
 #endif
 
 // #define TEST_PASTE true
@@ -1470,7 +1472,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GTK_WIDGET_ADD_CSS_CLASS( window_container, "window-container" );
     gtk_widget_set_name( window_container, "window-container" );
 
+#if GTK_MAJOR_VERSION == 4
+    gtk_window_set_child( ui->window, window_container );
+#else
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
+#endif
 
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
@@ -1482,12 +1488,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GtkWidget* upper_left_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     GTK_WIDGET_ADD_CSS_CLASS( upper_left_container, "upper-left-container" );
     gtk_widget_set_name( upper_left_container, "upper-left-container" );
-    gtk_container_add( GTK_CONTAINER( window_container ), upper_left_container );
+    GTK_BOX_APPEND( window_container, upper_left_container );
 
     GtkWidget* downer_right_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     GTK_WIDGET_ADD_CSS_CLASS( downer_right_container, "downer-right-container" );
     gtk_widget_set_name( downer_right_container, "downer-right-container" );
-    gtk_container_add( GTK_CONTAINER( window_container ), downer_right_container );
+    GTK_BOX_APPEND( window_container, downer_right_container );
 
     ui->lcd_canvas = gtk_drawing_area_new();
     GTK_WIDGET_ADD_CSS_CLASS( ui->lcd_canvas, "lcd" );
@@ -1510,28 +1516,28 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GTK_WIDGET_ADD_CSS_CLASS( annunciators_container, "annunciators-container" );
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
-    gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_left );
-    gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_right );
-    gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_alpha );
-    gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_battery );
-    gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_busy );
-    gtk_container_add( GTK_CONTAINER( annunciators_container ), ui->ui_ann_io );
+    GTK_BOX_APPEND( annunciators_container, ui->ui_ann_left );
+    GTK_BOX_APPEND( annunciators_container, ui->ui_ann_right );
+    GTK_BOX_APPEND( annunciators_container, ui->ui_ann_alpha );
+    GTK_BOX_APPEND( annunciators_container, ui->ui_ann_battery );
+    GTK_BOX_APPEND( annunciators_container, ui->ui_ann_busy );
+    GTK_BOX_APPEND( annunciators_container, ui->ui_ann_io );
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     GTK_WIDGET_ADD_CSS_CLASS( annunciators_container, "display-container" );
     gtk_widget_set_name( display_container, "display-container" );
 
-    gtk_container_add( GTK_CONTAINER( display_container ), annunciators_container );
-    gtk_container_add( GTK_CONTAINER( display_container ), lcd_container );
+    GTK_BOX_APPEND( display_container, annunciators_container );
+    GTK_BOX_APPEND( display_container, lcd_container );
 
 #if GTK_MAJOR_VERSION == 4
-    gtk_container_add( GTK_CONTAINER( upper_left_container ), display_container );
+    GTK_BOX_APPEND( upper_left_container, display_container );
 #else
     GtkWidget* display_container_event_box = gtk_event_box_new();
     g_signal_connect( G_OBJECT( display_container_event_box ), "button-press-event", G_CALLBACK( react_to_display_click ), x49gp );
-    gtk_container_add( GTK_CONTAINER( display_container_event_box ), display_container );
+    GTK_BOX_APPEND( display_container_event_box, display_container );
 
-    gtk_container_add( GTK_CONTAINER( upper_left_container ), display_container_event_box );
+    GTK_BOX_APPEND( upper_left_container, display_container_event_box );
 #endif
 
     // keyboard
@@ -1541,7 +1547,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     gtk_box_set_homogeneous( GTK_BOX( high_keyboard_container ), true );
 
-    gtk_container_add( GTK_CONTAINER( upper_left_container ), high_keyboard_container );
+    GTK_BOX_APPEND( upper_left_container, high_keyboard_container );
 
     GtkWidget* low_keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     GTK_WIDGET_ADD_CSS_CLASS( low_keyboard_container, "keyboard-container" );
@@ -1549,7 +1555,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     gtk_box_set_homogeneous( GTK_BOX( low_keyboard_container ), true );
 
-    gtk_container_add( GTK_CONTAINER( downer_right_container ), low_keyboard_container );
+    GTK_BOX_APPEND( downer_right_container, low_keyboard_container );
 
     x49gp_ui_button_t* button;
 
@@ -1566,8 +1572,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         GTK_WIDGET_ADD_CSS_CLASS( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
-        gtk_container_add( GTK_CONTAINER( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ),
-                           rows_containers[ row ] );
+        GTK_BOX_APPEND( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container, rows_containers[ row ] );
 
         switch ( row ) {
             case 1:
@@ -1586,10 +1591,10 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             GTK_WIDGET_ADD_CSS_CLASS( keys_containers[ key_index ], "key-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
             if ( row == 1 && column == 3 )
-                gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
-            gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), keys_containers[ key_index ] );
+                GTK_BOX_APPEND( rows_containers[ row ], gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
+            GTK_BOX_APPEND( rows_containers[ row ], keys_containers[ key_index ] );
             if ( row == 1 && column == 3 )
-                gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
+                GTK_BOX_APPEND( rows_containers[ row ], gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
             button = &ui->buttons[ key_index ];
             button->x49gp = x49gp;
@@ -1599,7 +1604,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             GTK_WIDGET_ADD_CSS_CLASS( keys_top_labels_containers[ key_index ], "top-labels-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), false );
 
-            gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), keys_top_labels_containers[ key_index ] );
+            GTK_BOX_APPEND( keys_containers[ key_index ], keys_top_labels_containers[ key_index ] );
 
             if ( button->key->right ) {
                 gtk_box_pack_start( GTK_BOX( keys_top_labels_containers[ key_index ] ),
@@ -1619,17 +1624,15 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
-            gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), button->button );
+            GTK_BOX_APPEND( keys_containers[ key_index ], button->button );
 
             if ( button->key->label )
-                gtk_container_add( GTK_CONTAINER( button->button ), _ui_load__create_label( "label-key", button->key->label ) );
+                GTK_BOX_APPEND( button->button, _ui_load__create_label( "label-key", button->key->label ) );
 
             if ( button->key->below )
-                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
-                                   _ui_load__create_label( "label-below", button->key->below ) );
+                GTK_BOX_APPEND( keys_containers[ key_index ], _ui_load__create_label( "label-below", button->key->below ) );
             if ( button->key->letter )
-                gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ),
-                                   _ui_load__create_label( "label-letter", button->key->letter ) );
+                GTK_BOX_APPEND( keys_containers[ key_index ], _ui_load__create_label( "label-letter", button->key->letter ) );
 
             key_index++;
         }
