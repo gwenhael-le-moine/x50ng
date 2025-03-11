@@ -1,22 +1,48 @@
-window {
+/* Here is the hierarchy of components' selectors.
+You can inspect the application by setting the environment variable
+ GTK_DEBUG=interactive before running the application.
+*/
+/*
+window.background
+  box#window-container
+    box#upper-left-container
+      box#display-container
+        box#annunciators-container
+          label.annunciator
+        box#lcd-container
+          GtkDrawingArea#lcd
+      box.keyboard-container#high-keyboard-container
+    box#downer-right-container
+      box.keyboard-container#low-keyboard-container
+        box.row-container
+          box.key-container
+            box.top-labels-container
+              label.label-left
+              label.label-right
+            button.key.(menu,function,arrow,enter,core,core-number,alpha,shift-left,shift-right)
+              label.label-key
+            label.label-letter
+*/
+.background {
     background-color: #272727;
     font-family: URW Gothic;
     font-weight: normal;
 }
 
-window > box {
+#window-container {
     border: 4px outset #333333;
 }
 
-.annunciators-container, .lcd-container {
+#annunciators-container, #lcd-container {
     border-style: solid;
     border-color: #012321;
     border-width: 0 16px;
+    background-color: #a9d0b2;
 }
-.annunciators-container {
+#annunciators-container {
     border-top-width: 12px;
 }
-.lcd-container {
+#lcd-container {
     border-bottom-width: 12px;
 }
 
@@ -24,54 +50,44 @@ window > box {
     padding: 0px;
     color: #080808;
 }
-.lcd-container,
-.annunciators-container {
-    background-color: #a9d0b2;
-}
 
 .keyboard-container {
         border: 3px inset #333333;
 }
-.keyboard-container > box:first-child {
-        border-bottom: 3px outset #333333;
-}
-.keyboard-container > box:nth-child(3) {
-        border-bottom: 3px outset #333333;
-}
-.keyboard-container > box:nth-child(6) {
+#high-keyboard-container > .row-container:first-child {
         border-bottom: 3px outset #333333;
 }
 
-button {
+.key {
     background-image: none;
     padding: 0px;
     margin: 0 15px;
     min-height: 40px;
     border-style: outset;
 }
-button.key-down {
+.key.key-down {
     border-style: inset;
 }
 
-button.enter {
+.key.enter {
     margin: 0 1px;
     min-height: 64px;
 }
-button.menu {
+.key.menu {
     background-color: #a9a9a9;
 }
-button.function {
+.key.function {
     background-color: #696969;
 }
-button.arrow {
+.key.arrow {
     background-color: #e0e0e0;
     border-radius: 33%;
 }
-button.alpha {
+.key.alpha {
     background-color: #fae82c;
 }
-button.core,
-button.core-number {
+.key.core,
+.key.core-number {
     background-color: #080808;
 }
 
@@ -82,24 +98,24 @@ button.core-number {
 .label-below {
     font-weight: bold;
 }
-button.alpha .label-key,
-button.arrow .label-key,
-button.menu .label-key {
+.key.alpha .label-key,
+.key.arrow .label-key,
+.key.menu .label-key {
     color: #080808;
 }
-button.shift-left {
+.key.shift-left {
     background-color: #f5f5f5;
 }
-button.shift-right {
+.key.shift-right {
     background-color: #8e2518;
 }
-button.shift-left .label-key,
-button.shift-right .label-key {
+.key.shift-left .label-key,
+.key.shift-right .label-key {
     font-size: 2em;            /* typically 2 * base font size */
     color: #080808;
 }
-button.core-number .label-key,
-button.arrow .label-key,
+.key.core-number .label-key,
+.key.arrow .label-key,
 .annunciator {
     font-size: 1.75em;            /* typically 1.75 * base font size */
 }

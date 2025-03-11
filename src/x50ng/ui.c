@@ -1564,6 +1564,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     int nb_keys_in_row = 0;
     for ( int row = 0; row < KB_NB_ROWS; row++ ) {
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+        GTK_WIDGET_ADD_CSS_CLASS( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
         gtk_container_add( GTK_CONTAINER( opt.netbook && row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ),
                            rows_containers[ row ] );
@@ -1582,6 +1583,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
         for ( int column = 0; column < nb_keys_in_row; column++ ) {
             keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 );
+            GTK_WIDGET_ADD_CSS_CLASS( keys_containers[ key_index ], "key-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
             if ( row == 1 && column == 3 )
                 gtk_container_add( GTK_CONTAINER( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
@@ -1594,6 +1596,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->key = &ui_keys[ keys_order[ key_index ] ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+            GTK_WIDGET_ADD_CSS_CLASS( keys_top_labels_containers[ key_index ], "top-labels-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), false );
 
             gtk_container_add( GTK_CONTAINER( keys_containers[ key_index ] ), keys_top_labels_containers[ key_index ] );
@@ -1608,6 +1611,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                                            _ui_load__create_label( "label-left", button->key->left ) );
 
             button->button = gtk_button_new();
+            GTK_WIDGET_ADD_CSS_CLASS( button->button, "key" );
             GTK_WIDGET_ADD_CSS_CLASS( button->button, button->key->css_class );
             gtk_widget_set_name( button->button, button->key->css_id );
 
