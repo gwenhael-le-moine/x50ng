@@ -30,10 +30,17 @@ window {
 .key.alpha {
     background-color: #fae82c;
 }
+.key.shift-left {
+    background-color: #f5f5f5;
+}
+.key.shift-right {
+    background-color: #8e2518;
+}
 .key.core,
 .key.core-number {
     background-color: #080808;
 }
+
 .annunciator,
 .key.alpha .label-key,
 .key.arrow .label-key,
@@ -42,20 +49,14 @@ window {
 .key.shift-right .label-key {
     color: #080808;
 }
-.key.shift-left {
-    background-color: #f5f5f5;
-}
-.key.shift-right {
-    background-color: #8e2518;
-}
 .label-key {
     color: #ffffff;
 }
 .label-left {
-    color: #4060a4;
+    color: #f5f5f5;
 }
 .label-right {
-    color: #c06e60;
+    color: #8e2518;
 }
 .label-below {
     color: #4060a4;
