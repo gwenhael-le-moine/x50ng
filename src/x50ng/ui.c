@@ -740,6 +740,9 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
     return GDK_EVENT_STOP;
 }
 
+#if GTK_MAJOR_VERSION == 4
+// TODO
+#else
 static bool react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
     x49gp_ui_button_t* button = user_data;
@@ -771,6 +774,7 @@ static bool react_to_button_release( GtkWidget* widget, GdkEventButton* event, g
 
     return GDK_EVENT_STOP;
 }
+#endif
 
 #if GTK_MAJOR_VERSION == 3
 static void ui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
@@ -830,6 +834,9 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
 }
 #endif
 
+#if GTK_MAJOR_VERSION == 4
+// TODO
+#else
 static bool react_to_key_event( GtkWidget* _widget, GdkEventKey* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
@@ -957,13 +964,13 @@ static bool react_to_key_event( GtkWidget* _widget, GdkEventKey* event, gpointer
             hpkey = HPKEY_Z;
             break;
         case GDK_KEY_Tab:
-#ifndef __APPLE__
+#  ifndef __APPLE__
         case GDK_KEY_Alt_L:
         case GDK_KEY_Alt_R:
         case GDK_KEY_Meta_L:
         case GDK_KEY_Meta_R:
         case GDK_KEY_Mode_switch:
-#endif
+#  endif
             hpkey = HPKEY_ALPHA;
             break;
         case GDK_KEY_7:
@@ -1128,6 +1135,7 @@ static bool react_to_key_event( GtkWidget* _widget, GdkEventKey* event, gpointer
 
     return GDK_EVENT_STOP;
 }
+#endif
 
 #ifdef TEST_PASTE
 static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
@@ -1253,6 +1261,9 @@ static int redraw_lcd( GtkWidget* widget, cairo_t* cr, gpointer user_data )
     return GDK_EVENT_STOP;
 }
 
+#if GTK_MAJOR_VERSION == 4
+/* TODO */
+#else
 static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
@@ -1263,6 +1274,7 @@ static int draw_lcd( GtkWidget* widget, GdkEventConfigure* event, gpointer user_
 
     return GDK_EVENT_STOP;
 }
+#endif
 
 #ifdef TEST_PASTE
 static void do_paste( gpointer user_data, GtkWidget* widget, GdkEvent* event )
@@ -1478,11 +1490,15 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
 #endif
 
+#if GTK_MAJOR_VERSION == 4
+    // TODO
+#else
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
     g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
     g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
+#endif
 
     /* for --netbook */
     GtkWidget* upper_left_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
@@ -1501,7 +1517,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     gtk_widget_set_size_request( ui->lcd_canvas, LCD_WIDTH, LCD_HEIGHT );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
+#if GTK_MAJOR_VERSION == 4
+/* TODO */
+#else
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "configure-event", G_CALLBACK( draw_lcd ), x49gp );
+#endif
 
 #if GTK_MAJOR_VERSION == 4
     GtkWidget* lcd_container = gtk_center_box_new();
@@ -1645,9 +1665,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_widget_set_name( button->button, button->key->css_id );
 
             gtk_widget_set_can_focus( button->button, false );
+#if GTK_MAJOR_VERSION == 4
+            // TODO
+#else
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( G_OBJECT( button->button ), "button-release-event", G_CALLBACK( react_to_button_release ), button );
+#endif
             GTK_BOX_APPEND( keys_containers[ key_index ], button->button );
 
             if ( button->key->label )
@@ -1720,10 +1744,18 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
                  opt.style_filename, GLOBAL_DATADIR, opt.style_filename, x49gp->progpath, opt.style_filename );
     else {
         GtkCssProvider* style_provider = gtk_css_provider_new();
+#if GTK_MAJOR_VERSION == 4
+        gtk_css_provider_load_from_path( style_provider, style_full_path );
+#else
         gtk_css_provider_load_from_path( style_provider, style_full_path, NULL );
+#endif
 
+#if GTK_MAJOR_VERSION == 4
+        // TODO
+#else
         gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
+#endif
 
         g_object_unref( style_provider );
 
@@ -1785,7 +1817,11 @@ void gui_update_lcd( x49gp_t* x49gp )
     rect.width = LCD_WIDTH;
     rect.height = LCD_HEIGHT;
 
+#if GTK_MAJOR_VERSION == 4
+    // TODO
+#else
     gdk_window_invalidate_rect( gtk_widget_get_window( ui->lcd_canvas ), &rect, false );
+#endif
 }
 
 void gui_show_error( x49gp_t* x49gp, const char* text )
