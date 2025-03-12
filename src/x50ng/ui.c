@@ -662,28 +662,25 @@ static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
      .eint = 6},
 };
 
-static int keys_order[] = {
-    HPKEY_A,           HPKEY_B, HPKEY_C,      HPKEY_D,     HPKEY_E,         HPKEY_F,
-
-    HPKEY_G,           HPKEY_H, HPKEY_I,      HPKEY_UP,    HPKEY_J,
-
-    HPKEY_K,           HPKEY_L, HPKEY_LEFT,   HPKEY_DOWN,  HPKEY_RIGHT,
-
-    HPKEY_M,           HPKEY_N, HPKEY_O,      HPKEY_P,     HPKEY_BACKSPACE,
-
-    HPKEY_Q,           HPKEY_R, HPKEY_S,      HPKEY_T,     HPKEY_U,
-
-    HPKEY_ENTER,       HPKEY_V, HPKEY_W,      HPKEY_X,     HPKEY_Y,
-
-    HPKEY_ALPHA,       HPKEY_7, HPKEY_8,      HPKEY_9,     HPKEY_Z,
-
-    HPKEY_SHIFT_LEFT,  HPKEY_4, HPKEY_5,      HPKEY_6,     HPKEY_MULTIPLY,
-
-    HPKEY_SHIFT_RIGHT, HPKEY_1, HPKEY_2,      HPKEY_3,     HPKEY_MINUS,
-
-    HPKEY_ON,          HPKEY_0, HPKEY_PERIOD, HPKEY_SPACE, HPKEY_PLUS,
+static int keys_order_normal[ NB_KEYS ] = {
+    HPKEY_A,          HPKEY_B,  HPKEY_C,         HPKEY_D,      HPKEY_E,     HPKEY_F,           HPKEY_G,     HPKEY_H, HPKEY_I,
+    HPKEY_UP,         HPKEY_J,  HPKEY_K,         HPKEY_L,      HPKEY_LEFT,  HPKEY_DOWN,        HPKEY_RIGHT, HPKEY_M, HPKEY_N,
+    HPKEY_O,          HPKEY_P,  HPKEY_BACKSPACE, HPKEY_Q,      HPKEY_R,     HPKEY_S,           HPKEY_T,     HPKEY_U, HPKEY_V,
+    HPKEY_W,          HPKEY_X,  HPKEY_Y,         HPKEY_Z,      HPKEY_ALPHA, HPKEY_7,           HPKEY_8,     HPKEY_9, HPKEY_MULTIPLY,
+    HPKEY_SHIFT_LEFT, HPKEY_4,  HPKEY_5,         HPKEY_6,      HPKEY_MINUS, HPKEY_SHIFT_RIGHT, HPKEY_1,     HPKEY_2, HPKEY_3,
+    HPKEY_PLUS,       HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE, HPKEY_ENTER,
 };
 
+static int keys_order_legacy[ NB_KEYS ] = {
+    HPKEY_A,          HPKEY_B,  HPKEY_C,         HPKEY_D,      HPKEY_E,        HPKEY_F,           HPKEY_G,     HPKEY_H, HPKEY_I,
+    HPKEY_UP,         HPKEY_J,  HPKEY_K,         HPKEY_L,      HPKEY_LEFT,     HPKEY_DOWN,        HPKEY_RIGHT, HPKEY_M, HPKEY_N,
+    HPKEY_O,          HPKEY_P,  HPKEY_BACKSPACE, HPKEY_Q,      HPKEY_R,        HPKEY_S,           HPKEY_T,     HPKEY_U, HPKEY_ENTER,
+    HPKEY_V,          HPKEY_W,  HPKEY_X,         HPKEY_Y,      HPKEY_ALPHA,    HPKEY_7,           HPKEY_8,     HPKEY_9, HPKEY_Z,
+    HPKEY_SHIFT_LEFT, HPKEY_4,  HPKEY_5,         HPKEY_6,      HPKEY_MULTIPLY, HPKEY_SHIFT_RIGHT, HPKEY_1,     HPKEY_2, HPKEY_3,
+    HPKEY_MINUS,      HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE,    HPKEY_PLUS,
+};
+
+#define NORMALIZE_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
 /*************/
 /* functions */
 /*************/
@@ -878,7 +875,6 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
 #endif
 
 #if GTK_MAJOR_VERSION == 4
-// TODO
 #  define KEY_PRESS 1
 #  define KEY_RELEASE 2
 static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data,
@@ -1133,13 +1129,13 @@ static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval,
             }
             return GDK_EVENT_STOP;
 
-            /* case GDK_KEY_Menu: */
-            /*     gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) ); */
-            /*     if ( ui->menu_debug ) */
-            /*         gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() ); */
+        case GDK_KEY_Menu:
+            /* gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) ); */
+            /* if ( ui->menu_debug ) */
+            /*     gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() ); */
 
-            /*     gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->window, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL ); */
-            /*     return GDK_EVENT_STOP; */
+            /* gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->window, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL ); */
+            return GDK_EVENT_STOP;
 
         default:
             return GDK_EVENT_PROPAGATE;
@@ -1492,7 +1488,7 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
     int hpkey = -1;
     for ( int i = 0; i < strlen( input ); i++ ) {
         if ( hpkey > 0 )
-            X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] )
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
 
         fprintf( stderr, "%c", input[ i ] );
         if ( input[ i ] >= '0' && input[ i ] <= '9' ) {
@@ -1533,14 +1529,14 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
         }
 
         if ( hpkey > 0 ) {
-            X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] )
-            X50NG_PRESS_KEY( x49gp, &ui_keys[ hpkey ] )
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
+            X50NG_PRESS_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
         }
     }
     fprintf( stderr, "\n" );
 
     if ( hpkey > 0 )
-        X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] )
+        X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
 
     /* if ( hpkey > 0 ) { */
     /*     X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_ENTER ] ) */
@@ -1974,9 +1970,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             if ( row == 1 && column == 3 )
                 GTK_BOX_APPEND( rows_containers[ row ], gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
-            button = &ui->buttons[ key_index ];
+            button = &ui->buttons[ NORMALIZE_KEYS_ORDER( key_index ) ];
             button->x49gp = x49gp;
-            button->key = &ui_keys[ keys_order[ key_index ] ];
+            button->key = &ui_keys[ NORMALIZE_KEYS_ORDER( key_index ) ];
 
 #if GTK_MAJOR_VERSION == 4
             keys_top_labels_containers[ key_index ] = gtk_center_box_new();
@@ -2015,7 +2011,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_widget_set_name( button->button, button->key->css_id );
 
             // There's always a label, even if it's empty.
-            GtkWidget *label = _ui_load__create_label( "label-key", button->key->label );
+            GtkWidget* label = _ui_load__create_label( "label-key", button->key->label );
 #if GTK_MAJOR_VERSION == 4
             gtk_button_set_child( GTK_BUTTON( button->button ), label );
 #else
@@ -2033,7 +2029,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             /* GtkGesture* right_click_controller = gtk_gesture_click_new(); */
             /* gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (right_click_controller), 3); */
-            /* g_signal_connect( right_click_controller, /\* "released" *\/"pressed", G_CALLBACK( react_to_button_right_click_release ), button ); */
+            /* g_signal_connect( right_click_controller, /\* "released" *\/"pressed", G_CALLBACK( react_to_button_right_click_release ),
+             * button ); */
             /* gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER (right_click_controller) ); */
 #else
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );

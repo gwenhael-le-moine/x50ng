@@ -24,6 +24,7 @@ struct options opt = {
     .firmware = NULL,
     .model = MODEL_50G,
     .newrpl = false,
+    .legacy_keyboard = false,
     .name = NULL,
     .verbose = false,
     .style_filename = NULL,
@@ -101,14 +102,15 @@ static char* config_to_string( void )
               "name = \"%s\" -- this customize the title of the window\n"
               "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the bootloader looked for when (re-)flashing\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
+              "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
               "zoom = %i -- integer only\n"
               "gray = %s\n"
               "netbook = %s\n"
               "verbose = %s\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.style_filename, opt.zoom,
-              opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.verbose ? "true" : "false" );
+              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.legacy_keyboard ? "true" : "false",
+              opt.style_filename, opt.zoom, opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.verbose ? "true" : "false" );
 
     return config;
 }
@@ -159,6 +161,7 @@ void config_init( char* progname, int argc, char* argv[] )
     char* clopt_style_filename = NULL;
     int clopt_model = -1;
     int clopt_newrpl = -1;
+    int clopt_legacy_keyboard = -1;
     int clopt_zoom = -1;
     int clopt_gray = -1;
     int clopt_netbook = -1;
@@ -180,6 +183,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"50g",                no_argument,       NULL,                   506 },
         {"49gp",               no_argument,       NULL,                   496 },
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl,          true},
+        {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
         {"name",               required_argument, NULL,                   'n' },
         {"style",              required_argument, NULL,                   's' },
         {"display-scale",      required_argument, NULL,                   'S' }, /* deprecated */
@@ -222,6 +226,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
                          "--newrpl-keyboard            label keyboard for newRPL\n"
+                         "\n"
+                         "--legacy-keyboard            place Enter key where it belongs\n"
                          "\n"
                          "--enable-debug[=port]        enable the debugger interface (default port: %i)\n"
                          "--debug                      use along -D to also start the debugger immediately\n"
@@ -311,6 +317,9 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
         opt.newrpl = lua_toboolean( config_lua_values, -1 );
 
+        lua_getglobal( config_lua_values, "legacy_keyboard" );
+        opt.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
+
         lua_getglobal( config_lua_values, "model" );
         const char* svalue_model = luaL_optstring( config_lua_values, -1, "50g" );
         if ( svalue_model != NULL ) {
@@ -371,6 +380,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.style_filename = opt.model == MODEL_50G ? "style-50g.css" : "style-49gp.css";
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
+    if ( clopt_legacy_keyboard != -1 )
+        opt.legacy_keyboard = clopt_legacy_keyboard;
     if ( clopt_zoom > 0 )
         opt.zoom = clopt_zoom;
     if ( clopt_gray != -1 )

@@ -31,6 +31,7 @@ struct options {
 
     x50ng_model_t model;
     bool newrpl;
+    bool legacy_keyboard;
     char* name;
 
     int zoom;

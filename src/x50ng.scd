@@ -75,6 +75,8 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 *--newrpl-keyboard*            label keyboard for newRPL
 
+*--legacy-keyboard*            place Enter key where it belongs
+
 *--enable-debug*[=_port_]        enable the debugger interface (default port: 1234)
 
 *--debug*                      use along -D to also start the debugger immediately
