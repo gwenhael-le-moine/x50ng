@@ -836,6 +836,318 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
 
 #if GTK_MAJOR_VERSION == 4
 // TODO
+#define KEY_PRESS 1
+#define KEY_RELEASE 2
+static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data, int event_type )
+{
+    x49gp_t* x49gp = user_data;
+    //x49gp_ui_t* ui = x49gp->ui;
+
+    /* We want to know the keyval as interpreted without modifiers. */
+    /* However, there is one modifier we do care about: NumLock, */
+    /* which normally is represented by MOD2. */
+    /* guint keyval; */
+    /* if ( !gdk_keymap_translate_keyboard_state( gdk_keymap_get_for_display( gdk_display_get_default() ), event->hardware_keycode, */
+    /*                                            event->state & GDK_MOD2_MASK, event->group, &keyval, NULL, NULL, NULL ) ) */
+    /*     return GDK_EVENT_PROPAGATE; */
+
+    int hpkey;
+    switch ( keyval ) {
+        case GDK_KEY_a:
+        case GDK_KEY_F1:
+            hpkey = HPKEY_A;
+            break;
+        case GDK_KEY_b:
+        case GDK_KEY_F2:
+            hpkey = HPKEY_B;
+            break;
+        case GDK_KEY_c:
+        case GDK_KEY_F3:
+            hpkey = HPKEY_C;
+            break;
+        case GDK_KEY_d:
+        case GDK_KEY_F4:
+            hpkey = HPKEY_D;
+            break;
+        case GDK_KEY_e:
+        case GDK_KEY_F5:
+            hpkey = HPKEY_E;
+            break;
+        case GDK_KEY_f:
+        case GDK_KEY_F6:
+            hpkey = HPKEY_F;
+            break;
+        case GDK_KEY_g:
+            hpkey = HPKEY_G;
+            break;
+        case GDK_KEY_h:
+            hpkey = HPKEY_H;
+            break;
+        case GDK_KEY_i:
+            hpkey = HPKEY_I;
+            break;
+        case GDK_KEY_j:
+            hpkey = HPKEY_J;
+            break;
+        case GDK_KEY_k:
+            hpkey = HPKEY_K;
+            break;
+        case GDK_KEY_l:
+            hpkey = HPKEY_L;
+            break;
+        case GDK_KEY_Up:
+        case GDK_KEY_KP_Up:
+            hpkey = HPKEY_UP;
+            break;
+        case GDK_KEY_Left:
+        case GDK_KEY_KP_Left:
+            hpkey = HPKEY_LEFT;
+            break;
+        case GDK_KEY_Down:
+        case GDK_KEY_KP_Down:
+            hpkey = HPKEY_DOWN;
+            break;
+        case GDK_KEY_Right:
+        case GDK_KEY_KP_Right:
+            hpkey = HPKEY_RIGHT;
+            break;
+        case GDK_KEY_m:
+            hpkey = HPKEY_M;
+            break;
+        case GDK_KEY_n:
+            hpkey = HPKEY_N;
+            break;
+        case GDK_KEY_o:
+        case GDK_KEY_apostrophe:
+            hpkey = HPKEY_O;
+            break;
+        case GDK_KEY_p:
+            hpkey = HPKEY_P;
+            break;
+        case GDK_KEY_BackSpace:
+        case GDK_KEY_Delete:
+        case GDK_KEY_KP_Delete:
+            hpkey = HPKEY_BACKSPACE;
+            break;
+        case GDK_KEY_dead_circumflex:
+        case GDK_KEY_asciicircum:
+        case GDK_KEY_q:
+        case GDK_KEY_caret:
+            hpkey = HPKEY_Q;
+            break;
+        case GDK_KEY_r:
+            hpkey = HPKEY_R;
+            break;
+        case GDK_KEY_s:
+            hpkey = HPKEY_S;
+            break;
+        case GDK_KEY_t:
+            hpkey = HPKEY_T;
+            break;
+        case GDK_KEY_u:
+            hpkey = HPKEY_U;
+            break;
+        case GDK_KEY_v:
+            hpkey = HPKEY_V;
+            break;
+        case GDK_KEY_w:
+            hpkey = HPKEY_W;
+            break;
+        case GDK_KEY_x:
+            hpkey = HPKEY_X;
+            break;
+        case GDK_KEY_y:
+            hpkey = HPKEY_Y;
+            break;
+        case GDK_KEY_z:
+        case GDK_KEY_slash:
+        case GDK_KEY_KP_Divide:
+            hpkey = HPKEY_Z;
+            break;
+        case GDK_KEY_Tab:
+#  ifndef __APPLE__
+        case GDK_KEY_Alt_L:
+        case GDK_KEY_Alt_R:
+        case GDK_KEY_Meta_L:
+        case GDK_KEY_Meta_R:
+        case GDK_KEY_Mode_switch:
+#  endif
+            hpkey = HPKEY_ALPHA;
+            break;
+        case GDK_KEY_7:
+        case GDK_KEY_KP_7:
+            hpkey = HPKEY_7;
+            break;
+        case GDK_KEY_8:
+        case GDK_KEY_KP_8:
+            hpkey = HPKEY_8;
+            break;
+        case GDK_KEY_9:
+        case GDK_KEY_KP_9:
+            hpkey = HPKEY_9;
+            break;
+        case GDK_KEY_multiply:
+        case GDK_KEY_KP_Multiply:
+            hpkey = HPKEY_MULTIPLY;
+            break;
+        case GDK_KEY_Shift_L:
+        case GDK_KEY_Shift_R:
+            hpkey = HPKEY_SHIFT_LEFT;
+            break;
+        case GDK_KEY_4:
+        case GDK_KEY_KP_4:
+            hpkey = HPKEY_4;
+            break;
+        case GDK_KEY_5:
+        case GDK_KEY_KP_5:
+            hpkey = HPKEY_5;
+            break;
+        case GDK_KEY_6:
+        case GDK_KEY_KP_6:
+            hpkey = HPKEY_6;
+            break;
+        case GDK_KEY_minus:
+        case GDK_KEY_KP_Subtract:
+            hpkey = HPKEY_MINUS;
+            break;
+        case GDK_KEY_Control_L:
+        case GDK_KEY_Control_R:
+            hpkey = HPKEY_SHIFT_RIGHT;
+            break;
+        case GDK_KEY_1:
+        case GDK_KEY_KP_1:
+            hpkey = HPKEY_1;
+            break;
+        case GDK_KEY_2:
+        case GDK_KEY_KP_2:
+            hpkey = HPKEY_2;
+            break;
+        case GDK_KEY_3:
+        case GDK_KEY_KP_3:
+            hpkey = HPKEY_3;
+            break;
+        case GDK_KEY_plus:
+        case GDK_KEY_KP_Add:
+            hpkey = HPKEY_PLUS;
+            break;
+        case GDK_KEY_Escape:
+            hpkey = HPKEY_ON;
+            break;
+        case GDK_KEY_0:
+        case GDK_KEY_KP_0:
+            hpkey = HPKEY_0;
+            break;
+        case GDK_KEY_period:
+        case GDK_KEY_comma:
+        case GDK_KEY_KP_Decimal:
+        case GDK_KEY_KP_Separator:
+            hpkey = HPKEY_PERIOD;
+            break;
+        case GDK_KEY_space:
+        case GDK_KEY_KP_Space:
+            hpkey = HPKEY_SPACE;
+            break;
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
+            hpkey = HPKEY_ENTER;
+            break;
+
+        /* QWERTY compat: US English, UK English, International English */
+        case GDK_KEY_backslash:
+            hpkey = HPKEY_MULTIPLY;
+            break;
+        case GDK_KEY_equal:
+            hpkey = HPKEY_PLUS;
+            break;
+
+        /* QWERTZ compat: German */
+        case GDK_KEY_ssharp:
+            hpkey = HPKEY_Z;
+            break;
+        case GDK_KEY_numbersign:
+            hpkey = HPKEY_MULTIPLY;
+            break;
+
+        case GDK_KEY_F7:
+        case GDK_KEY_F10:
+            x49gp->arm_exit = 1;
+            cpu_exit( x49gp->env );
+            return GDK_EVENT_STOP;
+
+        case GDK_KEY_F12:
+            switch ( event_type ) {
+                case KEY_PRESS:
+                    x49gp_modules_reset( x49gp, X49GP_RESET_POWER_ON );
+                    cpu_reset( x49gp->env );
+                    x49gp_set_idle( x49gp, 1 );
+                    break;
+                case KEY_RELEASE:
+                    x49gp_set_idle( x49gp, 0 );
+                    break;
+                default:
+                    break;
+            }
+            return GDK_EVENT_STOP;
+
+        /* case GDK_KEY_Menu: */
+        /*     gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) ); */
+        /*     if ( ui->menu_debug ) */
+        /*         gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() ); */
+
+        /*     gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->window, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL ); */
+        /*     return GDK_EVENT_STOP; */
+
+        default:
+            return GDK_EVENT_PROPAGATE;
+    }
+
+    // Bypassing GUI buttons:
+    switch ( event_type ) {
+        case KEY_PRESS:
+            X50NG_PRESS_KEY( x49gp, &ui_keys[ hpkey ] );
+            break;
+        case KEY_RELEASE:
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ hpkey ] );
+            break;
+        default:
+            return GDK_EVENT_PROPAGATE;
+    }
+
+    /* // Using GUI buttons: */
+    /* x49gp_ui_button_t* button = &ui->buttons[ hpkey ]; */
+    /* GdkEventButton bev; */
+    /* memset( &bev, 0, sizeof( GdkEventButton ) ); */
+    /* bev.time = event->time; */
+    /* bev.button = 1; */
+    /* bev.state = event->state; */
+
+    /* switch ( event->type ) { */
+    /*     case GDK_KEY_PRESS: */
+    /*         bev.type = GDK_BUTTON_PRESS; */
+    /*         react_to_button_press( button->button, &bev, button ); */
+    /*         break; */
+    /*     case GDK_KEY_RELEASE: */
+    /*         bev.type = GDK_BUTTON_RELEASE; */
+    /*         react_to_button_release( button->button, &bev, button ); */
+    /*         break; */
+    /*     default: */
+    /*         return GDK_EVENT_PROPAGATE; */
+    /* } */
+
+    return GDK_EVENT_STOP;
+}
+
+static bool react_to_key_pressed( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
+                                  gpointer user_data )
+{
+    return react_to_key_event( controller, keyval, keycode, state, user_data, KEY_PRESS );
+}
+
+static bool react_to_key_released( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
+                                  gpointer user_data )
+{
+    return react_to_key_event( controller, keyval, keycode, state, user_data, KEY_RELEASE );
+}
 #else
 static bool react_to_key_event( GtkWidget* _widget, GdkEventKey* event, gpointer user_data )
 {
@@ -1486,13 +1798,18 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_container_add( GTK_CONTAINER( ui->window ), window_container );
 #endif
 
+    g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
+    g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
+
 #if GTK_MAJOR_VERSION == 4
     // TODO
+    GtkEventController* keys_controller = gtk_event_controller_key_new();
+    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( react_to_key_pressed ), x49gp );
+    g_signal_connect( keys_controller, "key-released", G_CALLBACK( react_to_key_released ), x49gp );
+    gtk_widget_add_controller( ui->window, keys_controller );
 #else
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
     g_signal_connect( G_OBJECT( ui->window ), "key-release-event", G_CALLBACK( react_to_key_event ), x49gp );
-    g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
-    g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
     gtk_widget_add_events( ui->window, GDK_FOCUS_CHANGE_MASK | GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 #endif
 
@@ -1817,7 +2134,6 @@ void gui_update_lcd( x49gp_t* x49gp )
     }
 
 #if GTK_MAJOR_VERSION == 4
-    // TODO
     gtk_widget_queue_draw( ui->lcd_canvas );
 #else
     GdkRectangle rect;
