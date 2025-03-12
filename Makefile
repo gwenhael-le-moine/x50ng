@@ -23,7 +23,7 @@ LUACFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
 LUALIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 
 # GTK
-GTK_VERSION ?= "+-3.0"
+GTK_VERSION ?= "4"
 GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk$(GTK_VERSION)) -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE
 GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk$(GTK_VERSION)) -lz -lm
 
