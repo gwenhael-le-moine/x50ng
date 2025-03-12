@@ -1672,7 +1672,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             GTK_BOX_APPEND( keys_containers[ key_index ], button->button );
 
             if ( button->key->label )
+#if GTK_MAJOR_VERSION == 4
+                gtk_button_set_child( GTK_BUTTON( button->button ), _ui_load__create_label( "label-key", button->key->label ) );
+#else
                 GTK_BOX_APPEND( button->button, _ui_load__create_label( "label-key", button->key->label ) );
+#endif
 
             if ( button->key->below )
                 GTK_BOX_APPEND( keys_containers[ key_index ], _ui_load__create_label( "label-below", button->key->below ) );
