@@ -709,6 +709,9 @@ static void ui_release_button( x49gp_ui_button_t* button )
     x49gp_t* x49gp = button->x49gp;
     const x49gp_ui_key_t* key = button->key;
 
+    if ( opt.verbose )
+        fprintf( stderr, "Releasing button %s\n", key->label );
+
     button->down = false;
     button->hold = false;
 
@@ -729,6 +732,8 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
         } else
             return GDK_EVENT_PROPAGATE;
     }
+    if ( opt.verbose )
+        fprintf( stderr, "Pressing button %s\n", key->label );
 
     button->down = true;
     button->hold = hold;
@@ -742,6 +747,41 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
 
 #if GTK_MAJOR_VERSION == 4
 // TODO
+static void react_to_button_press( GtkGesture *gesture, int n_press, double x, double y, gpointer user_data )
+{
+    x49gp_ui_button_t* button = user_data;
+    const x49gp_ui_key_t* key = button->key;
+    x49gp_t* x49gp = button->x49gp;
+
+    ui_press_button( button, false );
+
+    X50NG_PRESS_KEY( x49gp, key );
+}
+
+static void react_to_button_release( GtkGesture *gesture, int n_press, double x, double y, gpointer user_data )
+{
+    x49gp_ui_button_t* button = user_data;
+    const x49gp_ui_key_t* key = button->key;
+    x49gp_t* x49gp = button->x49gp;
+
+    if ( opt.verbose )
+        fprintf( stderr, "UI Releasing button %s\n", key->label );
+
+    ui_release_button( button );
+}
+
+static void react_to_button_right_click_release( GtkGesture *gesture, int n_press, double x, double y, gpointer user_data )
+{
+    x49gp_ui_button_t* button = user_data;
+    const x49gp_ui_key_t* key = button->key;
+    x49gp_t* x49gp = button->x49gp;
+
+    button->down = true;
+    button->hold = true;
+
+    ui_press_button( button, true );
+}
+
 #else
 static bool react_to_button_press( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
 {
@@ -1137,13 +1177,13 @@ static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval,
     return GDK_EVENT_STOP;
 }
 
-static bool react_to_key_pressed( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
+static bool react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
                                   gpointer user_data )
 {
     return react_to_key_event( controller, keyval, keycode, state, user_data, KEY_PRESS );
 }
 
-static bool react_to_key_released( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
+static bool react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
                                   gpointer user_data )
 {
     return react_to_key_event( controller, keyval, keycode, state, user_data, KEY_RELEASE );
@@ -1804,8 +1844,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 #if GTK_MAJOR_VERSION == 4
     // TODO
     GtkEventController* keys_controller = gtk_event_controller_key_new();
-    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( react_to_key_pressed ), x49gp );
-    g_signal_connect( keys_controller, "key-released", G_CALLBACK( react_to_key_released ), x49gp );
+    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( react_to_key_press ), x49gp );
+    g_signal_connect( keys_controller, "key-released", G_CALLBACK( react_to_key_release ), x49gp );
     gtk_widget_add_controller( ui->window, keys_controller );
 #else
     g_signal_connect( G_OBJECT( ui->window ), "key-press-event", G_CALLBACK( react_to_key_event ), x49gp );
@@ -1980,7 +2020,16 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             gtk_widget_set_can_focus( button->button, false );
 #if GTK_MAJOR_VERSION == 4
-            // TODO
+            GtkGesture* left_click_controller = gtk_gesture_click_new();
+            gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (left_click_controller), 1);
+            g_signal_connect( left_click_controller, "pressed", G_CALLBACK( react_to_button_press ), button );
+            g_signal_connect( left_click_controller, "released", G_CALLBACK( react_to_button_release ), button ); /* FIXME: not called? */
+            gtk_widget_add_controller( button->button, GTK_EVENT_CONTROLLER (left_click_controller) );
+
+            /* GtkGesture* right_click_controller = gtk_gesture_click_new(); */
+            /* gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (right_click_controller), 3); */
+            /* g_signal_connect( right_click_controller, "released", G_CALLBACK( react_to_button_right_click_release ), button ); */
+            /* gtk_widget_add_controller( button->button, GTK_EVENT_CONTROLLER (right_click_controller) ); */
 #else
             gtk_widget_add_events( button->button, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_LEAVE_NOTIFY_MASK );
             g_signal_connect( G_OBJECT( button->button ), "button-press-event", G_CALLBACK( react_to_button_press ), button );
