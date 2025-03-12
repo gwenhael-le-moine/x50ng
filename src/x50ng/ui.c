@@ -1252,9 +1252,15 @@ static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gp
 
 #if GTK_MAJOR_VERSION == 4
 static void redraw_lcd( GtkDrawingArea* widget, cairo_t* cr, int width, int height, gpointer user_data )
+{
+    x49gp_t* x49gp = user_data;
+    x49gp_ui_t* ui = x49gp->ui;
+
+    cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
+    cairo_paint( cr );
+}
 #else
 static int redraw_lcd( GtkWidget* widget, cairo_t* cr, gpointer user_data )
-#endif
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1262,10 +1268,9 @@ static int redraw_lcd( GtkWidget* widget, cairo_t* cr, gpointer user_data )
     cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
     cairo_paint( cr );
 
-#if GTK_MAJOR_VERSION == 3
     return GDK_EVENT_STOP;
-#endif
 }
+#endif
 
 #ifdef TEST_PASTE
 static void do_paste( gpointer user_data, GtkWidget* widget, GdkEvent* event )
@@ -1507,12 +1512,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_set_name( ui->lcd_canvas, "lcd" );
 
 #if GTK_MAJOR_VERSION == 4
-    /* TODO */
-    ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, LCD_WIDTH, LCD_HEIGHT );
-
     gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( ui->lcd_canvas ), LCD_WIDTH );
     gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( ui->lcd_canvas ), LCD_HEIGHT );
-    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( ui->lcd_canvas ), redraw_lcd, NULL, NULL );
+    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( ui->lcd_canvas ), redraw_lcd, x49gp, NULL );
 #else
     gtk_widget_set_size_request( ui->lcd_canvas, LCD_WIDTH, LCD_HEIGHT );
     g_signal_connect( G_OBJECT( ui->lcd_canvas ), "draw", G_CALLBACK( redraw_lcd ), x49gp );
