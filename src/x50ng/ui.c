@@ -1751,7 +1751,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 #endif
 
 #if GTK_MAJOR_VERSION == 4
-        // TODO
+        gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
+                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
 #else
         gtk_style_context_add_provider_for_screen( gdk_screen_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
