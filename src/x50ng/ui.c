@@ -1608,7 +1608,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( left_click_controller ), 1 );
             g_signal_connect( left_click_controller, "pressed", G_CALLBACK( react_to_button_press ), button );
             g_signal_connect( left_click_controller, /* "released" */ "end", G_CALLBACK( react_to_button_release ), button );
-            /* Here we attach the controller to the label because… gtk4 reasons? gtk4 button only handles 'clicked' event now */
+            /* Here we attach the controller to the label because… gtk4 reasons? gtk4 button only handles 'clicked' event now but we
+             * actually need pressed and released (AKA end?) */
             gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( left_click_controller ) );
 
             GtkGesture* right_click_controller = gtk_gesture_click_new();
