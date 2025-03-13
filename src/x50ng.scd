@@ -95,9 +95,9 @@ Please consult HP's manual (for their official firmware) or the documentation of
 
 ## System-wide
 
-- *style-50g.css* and *style-49gp.css*
+- *style-common.css*, *style-50g.css* and *style-49gp.css*
 
-Default styles provided defining colors and fonts (mostly) for the GUI. The format is CSS as defined by gtk+-3.
+Default styles provided defining colors and fonts (mostly) for the GUI. The format is CSS as defined by gtk4 (documentated at _https://docs.gtk.org/gtk4/css-overview.html_ and _https://docs.gtk.org/gtk4/css-properties.html_).
 
 - *firmware/*
 
@@ -119,8 +119,11 @@ The general configuration file of *x50ng*. Content reflecting default values (as
 name = "HP 50g" -- this customize the title of the window
 model = "50g" -- possible values: "49gp", "50g". Changes the colors and the bootloader looked for when (re-)flashing
 newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use
+legacy_keyboard = false -- when true this put the Enter key where it belongs
 style_filename = "style-50g.css" -- CSS file (relative to this file)
-display_scale = 2 -- integer only
+zoom = 2 -- integer only
+gray = false
+netbook = false
 verbose = false
 --- End of saturnng configuration ----------------------------------------------
 ```
