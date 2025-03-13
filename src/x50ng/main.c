@@ -191,13 +191,8 @@ static void arm_sighnd( int sig )
 
 void x49gp_gtk_timer( void* data )
 {
-#if GTK_MAJOR_VERSION == 4
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
-#else
-    while ( gtk_events_pending() )
-        gtk_main_iteration_do( false );
-#endif
 
     x49gp_mod_timer( x49gp->gtk_timer, x49gp_get_clock() + X49GP_GTK_REFRESH_INTERVAL );
 }
@@ -233,11 +228,7 @@ int main( int argc, char** argv )
     char* progname = g_path_get_basename( argv[ 0 ] );
     char* progpath = g_path_get_dirname( argv[ 0 ] );
 
-#if GTK_MAJOR_VERSION == 4
     gtk_init();
-#else
-    gtk_init( &argc, &argv );
-#endif
 
     config_init( progname, argc, argv );
 
@@ -292,7 +283,6 @@ int main( int argc, char** argv )
 
         x49gp_modules_reset( x49gp, X49GP_RESET_POWER_ON );
     }
-    // x49gp_modules_reset(x49gp, X49GP_RESET_POWER_ON);
 
     signal( SIGINT, ui_sighnd );
     signal( SIGTERM, ui_sighnd );
