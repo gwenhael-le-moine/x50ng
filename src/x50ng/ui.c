@@ -862,7 +862,8 @@ static void open_menu( GtkWidget* parent, x49gp_t* x49gp )
 
     GSimpleAction* act_mount_SD = g_simple_action_new( "mount_SD", NULL );
     g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( do_select_and_mount_sd_folder ), x49gp );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
+    if ( !s3c2410_sdi_is_mounted( x49gp ) )
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
     g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
 
     GSimpleAction* act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
