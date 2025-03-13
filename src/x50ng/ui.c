@@ -674,7 +674,7 @@ static int keys_order_legacy[ NB_KEYS ] = {
     HPKEY_MINUS,      HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE,    HPKEY_PLUS,
 };
 
-#define NORMALIZE_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
+#define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
 /*************/
 /* functions */
 /*************/
@@ -776,45 +776,39 @@ static void react_to_button_release( GtkGesture* gesture, int n_press, double x,
 /*     X50NG_PRESS_KEY( x49gp, key ); */
 /* } */
 
-#if GTK_MAJOR_VERSION == 3
-static void ui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChooserAction action, char** filename )
+static void mount_sd_folder_file_chooser_callback( GtkDialog* dialog, int response, gpointer user_data )
 {
-    x49gp_ui_t* ui = x49gp->ui;
-    GtkWidget* dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, "_Cancel", GTK_RESPONSE_CANCEL, "_Open",
-                                                     GTK_RESPONSE_ACCEPT, NULL );
+    if ( response == GTK_RESPONSE_ACCEPT ) {
+        x49gp_t* x49gp = user_data;
+        GtkFileChooser* chooser = GTK_FILE_CHOOSER( dialog );
 
-    /* gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true ); */
-    /* gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false ); */
+        g_autoptr( GFile ) file = gtk_file_chooser_get_file( chooser );
 
-    if ( gtk_window_present( GTK_DIALOG( dialog ) ) == GTK_RESPONSE_ACCEPT )
-        *filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( dialog ) );
-    else
-        *filename = NULL;
+        if ( file != NULL )
+            s3c2410_sdi_mount( x49gp, g_file_get_path( file ) );
+    }
 
-    /* gtk_widget_destroy( dialog ); */
+    gtk_window_destroy( GTK_WINDOW( dialog ) );
 }
 
-static void do_select_and_mount_sd_folder( GtkMenuItem* menuitem, gpointer user_data )
+static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuitem )
 {
     x49gp_t* x49gp = user_data;
-    char* filename;
+    x49gp_ui_t* ui = x49gp->ui;
 
-    ui_open_file_dialog( x49gp, "Choose SD folder ...", GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, &filename );
-    if ( filename != NULL )
-        s3c2410_sdi_mount( x49gp, filename );
+    GtkWidget* dialog = gtk_file_chooser_dialog_new( "Choose SD folder…", GTK_WINDOW( ui->window ), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                                     "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL );
+
+    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
+
+    GtkFileChooser* chooser = GTK_FILE_CHOOSER( dialog );
+
+    gtk_window_present( GTK_WINDOW( dialog ) );
+
+    g_signal_connect( dialog, "response", G_CALLBACK( mount_sd_folder_file_chooser_callback ), x49gp );
 }
 
-/* static void do_select_and_mount_sd_image( GtkMenuItem* menuitem, gpointer user_data ) */
-/* { */
-/*     x49gp_t* x49gp = user_data; */
-/*     char* filename; */
-
-/*     ui_open_file_dialog( x49gp, "Choose SD image ...", GTK_FILE_CHOOSER_ACTION_OPEN, &filename ); */
-/*     if ( filename != NULL ) */
-/*         s3c2410_sdi_mount( x49gp, filename ); */
-/* } */
-
-static void do_start_gdb_server( GtkMenuItem* menuitem, gpointer user_data )
+static void do_start_gdb_server( GMenuItem* menuitem, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
 
@@ -823,15 +817,82 @@ static void do_start_gdb_server( GtkMenuItem* menuitem, gpointer user_data )
         gdb_handlesig( x49gp->env, 0 );
     }
 }
-#endif
 
-static void do_reset( GMenuItem* menuitem, gpointer user_data )
+static void do_reset( gpointer user_data, GMenuItem* widget )
 {
     x49gp_t* x49gp = user_data;
 
     x49gp_modules_reset( x49gp, X49GP_RESET_POWER_ON );
     cpu_reset( x49gp->env );
     x49gp_set_idle( x49gp, 0 );
+}
+
+#ifdef TEST_PASTE
+static void do_paste( gpointer user_data, GtkWidget* widget )
+{
+    x49gp_t* x49gp = user_data;
+
+    GdkClipboard* clip = gdk_clipboard_get_content( GDK_SELECTION_CLIPBOARD );
+    gchar* text = gtk_clipboard_wait_for_text( clip );
+    fprintf( stderr, "clipboard: %s\n", text );
+
+    /* // x50g_string_to_keys_sequence( x49gp, text ); */
+    /* x50g_string_to_keys_sequence( x49gp, "0123456789\n" ); */
+}
+#endif
+
+static void do_quit( gpointer user_data, GtkWidget* widget )
+{
+    x49gp_t* x49gp = user_data;
+
+    x49gp->arm_exit++;
+}
+
+static void open_menu( GtkWidget* parent, x49gp_t* x49gp )
+{
+    GMenu* menu = g_menu_new();
+    GSimpleActionGroup* action_group = g_simple_action_group_new();
+
+#ifdef TEST_PASTE
+    GSimpleAction* act_paste = g_simple_action_new( "paste", NULL );
+    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( do_paste ), x49gp );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
+    g_menu_append( menu, "Paste", "app.paste" );
+#endif
+
+    GSimpleAction* act_mount_SD = g_simple_action_new( "mount_SD", NULL );
+    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( do_select_and_mount_sd_folder ), x49gp );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
+    g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
+
+    GSimpleAction* act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
+    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
+    if ( s3c2410_sdi_is_mounted( x49gp ) )
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
+    g_menu_append( menu, "Unmount SD", "app.unmount_SD" );
+
+    GSimpleAction* act_debug = g_simple_action_new( "debug", NULL );
+    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( do_start_gdb_server ), x49gp );
+    if ( opt.debug_port != 0 )
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
+    g_menu_append( menu, "Start gdb server", "app.debug" );
+
+    GSimpleAction* act_reset = g_simple_action_new( "reset", NULL );
+    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( do_reset ), x49gp );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
+    g_menu_append( menu, "Reset", "app.reset" );
+
+    GSimpleAction* act_quit = g_simple_action_new( "quit", NULL );
+    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( do_quit ), x49gp );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
+    g_menu_append( menu, "Quit", "app.quit" );
+
+    GtkWidget* popup = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
+    // g_signal_connect( G_OBJECT( view ), "destroy", G_CALLBACK( popover_close ), popup );
+    gtk_widget_insert_action_group( popup, "app", G_ACTION_GROUP( action_group ) );
+    gtk_widget_set_parent( popup, GTK_WIDGET( parent ) );
+
+    gtk_popover_popup( GTK_POPOVER( popup ) );
 }
 
 #define KEY_PRESS 1
@@ -1089,12 +1150,7 @@ static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval,
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            /* gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) ); */
-            /* if ( ui->menu_debug ) */
-            /*     gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() ); */
-
-            /* gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->window, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL ); */
-            gtk_popover_popup( GTK_POPOVER( ui->menu ) );
+            open_menu( ui->lcd_canvas, x49gp );
             return GDK_EVENT_STOP;
 
         default:
@@ -1148,7 +1204,7 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
     int hpkey = -1;
     for ( int i = 0; i < strlen( input ); i++ ) {
         if ( hpkey > 0 )
-            X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZED_KEYS_ORDER( hpkey ) ] )
 
         fprintf( stderr, "%c", input[ i ] );
         if ( input[ i ] >= '0' && input[ i ] <= '9' ) {
@@ -1189,14 +1245,14 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
         }
 
         if ( hpkey > 0 ) {
-            X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
-            X50NG_PRESS_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
+            X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZED_KEYS_ORDER( hpkey ) ] )
+            X50NG_PRESS_KEY( x49gp, &ui_keys[ NORMALIZED_KEYS_ORDER( hpkey ) ] )
         }
     }
     fprintf( stderr, "\n" );
 
     if ( hpkey > 0 )
-        X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZE_KEYS_ORDER( hpkey ) ] )
+        X50NG_RELEASE_KEY( x49gp, &ui_keys[ NORMALIZED_KEYS_ORDER( hpkey ) ] )
 
     /* if ( hpkey > 0 ) { */
     /*     X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_ENTER ] ) */
@@ -1206,47 +1262,13 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 }
 #endif
 
-#if GTK_MAJOR_VERSION == 3
-static bool react_to_display_click( GtkWidget* widget, GdkEventButton* event, gpointer user_data )
+static bool react_to_display_click( GtkWidget* widget, gpointer user_data )
 {
-    gdk_window_focus( gtk_widget_get_window( widget ), event->time );
-    gdk_window_raise( gtk_widget_get_window( widget ) );
-
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
-    gtk_widget_set_sensitive( ui->menu_unmount, s3c2410_sdi_is_mounted( x49gp ) );
-    if ( ui->menu_debug )
-        gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() );
-
-    if ( event->type != GDK_BUTTON_PRESS )
-        return GDK_EVENT_PROPAGATE;
-
-    switch ( event->button ) {
-        case 1: // left click
-            gdk_window_begin_move_drag( gtk_widget_get_window( ui->window ), event->button, event->x_root, event->y_root, event->time );
-            break;
-#  ifdef TEST_PASTE
-        case 2: // middle click
-            GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD );
-            gchar* text = gtk_clipboard_wait_for_text( clip );
-            fprintf( stderr, "clipboard: %s\n", text );
-
-            // x50g_string_to_keys_sequence( x49gp, text );
-            x50g_string_to_keys_sequence( x49gp, "0123456789\n" );
-
-            return GDK_EVENT_STOP;
-#  endif
-        case 3: // right click
-            gtk_menu_popup_at_pointer( GTK_MENU( ui->menu ), NULL );
-            return GDK_EVENT_STOP;
-        default:
-            break;
-    }
-
-    return GDK_EVENT_STOP;
+    open_menu( ui->lcd_canvas, x49gp );
 }
-#endif
 
 static void redraw_lcd( GtkDrawingArea* widget, cairo_t* cr, int width, int height, gpointer user_data )
 {
@@ -1255,34 +1277,6 @@ static void redraw_lcd( GtkDrawingArea* widget, cairo_t* cr, int width, int heig
 
     cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
     cairo_paint( cr );
-}
-
-#ifdef TEST_PASTE
-static void do_paste( gpointer user_data, GtkWidget* widget, GdkEvent* event )
-{
-    x49gp_t* x49gp = user_data;
-
-    // x49gp->arm_exit++;
-
-    X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_1 ] )
-    X50NG_PRESS_KEY( x49gp, &ui_keys[ HPKEY_1 ] )
-    // nanosleep( &key_press_delay, NULL );
-    sleep( 10 );
-    X50NG_RELEASE_KEY( x49gp, &ui_keys[ HPKEY_1 ] )
-    /* GtkClipboard* clip = gtk_clipboard_get( GDK_SELECTION_CLIPBOARD ); */
-    /* gchar* text = gtk_clipboard_wait_for_text( clip ); */
-    /* fprintf( stderr, "clipboard: %s\n", text ); */
-
-    /* // x50g_string_to_keys_sequence( x49gp, text ); */
-    /* x50g_string_to_keys_sequence( x49gp, "0123456789\n" ); */
-}
-#endif
-
-static void do_quit( gpointer user_data, GtkWidget* widget, GdkEvent* event )
-{
-    x49gp_t* x49gp = user_data;
-
-    x49gp->arm_exit++;
 }
 
 static int ui_init( x49gp_module_t* module )
@@ -1516,12 +1510,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     GTK_BOX_APPEND( display_container, lcd_container );
 
     GTK_BOX_APPEND( upper_left_container, display_container );
-    /*     GtkWidget* display_container_event_box = gtk_event_box_new(); */
-    /*     g_signal_connect( G_OBJECT( display_container_event_box ), "button-press-event", G_CALLBACK( react_to_display_click ), x49gp );
-     */
-    /*     GTK_BOX_APPEND( display_container_event_box, display_container ); */
 
-    /*     GTK_BOX_APPEND( upper_left_container, display_container_event_box ); */
+    GtkGesture* right_click_controller = gtk_gesture_click_new();
+    gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
+    g_signal_connect( right_click_controller, "pressed", G_CALLBACK( react_to_display_click ), x49gp ); /* FIXME */
+    gtk_widget_add_controller( display_container, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
     // keyboard
     GtkWidget* high_keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
@@ -1579,9 +1572,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             if ( row == 1 && column == 3 )
                 GTK_BOX_APPEND( rows_containers[ row ], gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
-            button = &ui->buttons[ NORMALIZE_KEYS_ORDER( key_index ) ];
+            button = &ui->buttons[ NORMALIZED_KEYS_ORDER( key_index ) ];
             button->x49gp = x49gp;
-            button->key = &ui_keys[ NORMALIZE_KEYS_ORDER( key_index ) ];
+            button->key = &ui_keys[ NORMALIZED_KEYS_ORDER( key_index ) ];
 
             keys_top_labels_containers[ key_index ] = gtk_center_box_new();
             GTK_WIDGET_ADD_CSS_CLASS( keys_top_labels_containers[ key_index ], "top-labels-container" );
@@ -1631,73 +1624,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             key_index++;
         }
     }
-
-    // Right-click menu
-    GSimpleAction* act_reset = g_simple_action_new( "reset", NULL );
-    g_signal_connect( act_reset, "activate", G_CALLBACK( do_reset ), NULL );
-    GSimpleAction* act_quit = g_simple_action_new( "quit", NULL );
-    g_signal_connect( act_quit, "activate", G_CALLBACK( do_quit ), NULL );
-
-    GSimpleActionGroup* action_group = g_simple_action_group_new();
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
-
-    GMenu* menu = g_menu_new();
-    g_menu_append( menu, "Paste", NULL );
-    g_menu_append( menu, "Mount SD folder…", NULL );
-    g_menu_append( menu, "Unmount SD", NULL );
-    g_menu_append( menu, "Start dedbugger", NULL );
-    g_menu_append( menu, "Reset", "app.reset" );
-    g_menu_append( menu, "Quit", "app.quit" );
-
-    ui->menu = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
-    // g_signal_connect( G_OBJECT( view ), "destroy", G_CALLBACK( popover_close ), ui->menu );
-    gtk_widget_insert_action_group( ui->menu, "app", G_ACTION_GROUP( action_group ) );
-    gtk_widget_set_parent( ui->menu, GTK_WIDGET( ui->lcd_canvas ) );
-    /* gtk_popover_set_pointing_to (GTK_POPOVER (ui->menu), &(const GdkRectangle){ element_x + element_width / 2, element_y +
-     * element_height, 1, 1}); */
-
-    /* gtk_popover_popup( GTK_POPOVER( ui->menu ) ); */
-
-    /*     GtkWidget* menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." ); */
-    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_folder ); */
-    /*     g_signal_connect( G_OBJECT( menu_mount_folder ), "activate", G_CALLBACK( do_select_and_mount_sd_folder ), x49gp ); */
-
-    /*     /\* GtkWidget* menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." ); *\/ */
-    /*     /\* gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_image ); *\/ */
-    /*     /\* g_signal_connect( G_OBJECT( menu_mount_image ), "activate", G_CALLBACK( do_select_and_mount_sd_image ), x49gp ); *\/ */
-
-    /*     GtkWidget* menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" ); */
-    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_unmount ); */
-    /*     g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp ); */
-    /*     ui->menu_unmount = menu_unmount; */
-
-    /*     if ( opt.debug_port != 0 ) { */
-    /*         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() ); */
-
-    /*         GtkWidget* menu_debug = gtk_menu_item_new_with_label( "Start debugger" ); */
-    /*         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_debug ); */
-    /*         g_signal_connect( G_OBJECT( menu_debug ), "activate", G_CALLBACK( do_start_gdb_server ), x49gp ); */
-    /*         ui->menu_debug = menu_debug; */
-    /*     } else */
-    /*         ui->menu_debug = NULL; */
-
-    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() ); */
-
-    /* #  ifdef TEST_PASTE */
-    /*     GtkWidget* menu_paste = gtk_menu_item_new_with_label( "Paste" ); */
-    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_paste ); */
-    /*     g_signal_connect_swapped( G_OBJECT( menu_paste ), "activate", G_CALLBACK( do_paste ), x49gp ); */
-    /* #  endif */
-
-    /*     GtkWidget* menu_reset = gtk_menu_item_new_with_label( "Reset" ); */
-    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset ); */
-    /*     g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( do_reset ), x49gp ); */
-
-    /*     GtkWidget* menu_quit = gtk_menu_item_new_with_label( "Quit" ); */
-    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_quit ); */
-    /*     g_signal_connect_swapped( G_OBJECT( menu_quit ), "activate", G_CALLBACK( do_quit ), x49gp ); */
-
-    // gtk_widget_show_all( ui->menu );
 
     // Apply CSS
     char* style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
@@ -1777,7 +1703,7 @@ void gui_show_error( x49gp_t* x49gp, const char* text ) { fprintf( stderr, "Erro
 
 void gui_open_firmware( x49gp_t* x49gp, char** filename )
 {
-    // ui_open_file_dialog( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
+    // TODO
 }
 
 int gui_init( x49gp_t* x49gp )
