@@ -125,9 +125,6 @@ typedef struct {
 
 struct __x49gp_ui_s__ {
     GtkWidget* window;
-    GtkWidget* menu;
-    /* GtkWidget* menu_unmount; */
-    /* GtkWidget* menu_debug; */
 
     GdkRGBA colors[ UI_COLOR_MAX ];
 

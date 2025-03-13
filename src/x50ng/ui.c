@@ -843,40 +843,40 @@ static void do_quit( gpointer user_data, GtkWidget* widget )
 
 static void open_menu( int x, int y, x49gp_t* x49gp )
 {
-    GMenu* menu = g_menu_new();
-    GSimpleActionGroup* action_group = g_simple_action_group_new();
+    g_autoptr( GMenu ) menu = g_menu_new();
+    g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
 
 #ifdef TEST_PASTE
-    GSimpleAction* act_paste = g_simple_action_new( "paste", NULL );
+    g_autoptr( GSimpleAction ) act_paste = g_simple_action_new( "paste", NULL );
     g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( do_paste ), x49gp );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
     g_menu_append( menu, "Paste", "app.paste" );
 #endif
 
-    GSimpleAction* act_mount_SD = g_simple_action_new( "mount_SD", NULL );
+    g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
     g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( do_select_and_mount_sd_folder ), x49gp );
     if ( !s3c2410_sdi_is_mounted( x49gp ) )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
     g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
 
-    GSimpleAction* act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
+    g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
     g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
     if ( s3c2410_sdi_is_mounted( x49gp ) )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
     g_menu_append( menu, "Unmount SD", "app.unmount_SD" );
 
-    GSimpleAction* act_debug = g_simple_action_new( "debug", NULL );
+    g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
     g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( do_start_gdb_server ), x49gp );
     if ( opt.debug_port != 0 )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
     g_menu_append( menu, "Start gdb server", "app.debug" );
 
-    GSimpleAction* act_reset = g_simple_action_new( "reset", NULL );
+    g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
     g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( do_reset ), x49gp );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
     g_menu_append( menu, "Reset", "app.reset" );
 
-    GSimpleAction* act_quit = g_simple_action_new( "quit", NULL );
+    g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
     g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( do_quit ), x49gp );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
     g_menu_append( menu, "Quit", "app.quit" );
