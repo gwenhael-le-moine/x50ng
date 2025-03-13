@@ -82,10 +82,12 @@ Please consult HP's manual (for their official firmware) or the documentation of
 *--debug*                      use along --enable-debug to also start the debugger immediately
 
 *--50g*                        use an HP 50g bootloader when (re-)flashing (default)
+
 *--49gp*                       use an HP 49g+ bootloader when (re-)flashing
 (You need to run `sudo make -C /usr/share/x50ng/firmware`)
 
 *--reflash*[=_firmware_]         rebuild the flash using the supplied firmware (implies -r for safety reasons)
+
 *--reflash-full*[=_firmware_]   rebuild the flash using the supplied firmware and drop the flash contents in the area beyond the firmware (default: select one interactively) (implies -r for safety reasons)
 (_firmware_ is the absolute or relative path to a firmware file. It is recommended to run `sudo make -C /usr/share/x50ng/firmware` and use /usr/share/x50ng/firmware/hp4950v215/2MB_FIX/2MB_215f.bin or /usr/share/x50ng/firmware/newrpl-latest/newrplfw.bin)
 
