@@ -1262,7 +1262,7 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 }
 #endif
 
-static bool react_to_display_click( gpointer user_data, GtkEventController* gesture, gdouble x, gdouble y )
+static void react_to_display_click( gpointer user_data, GtkEventController* gesture, gdouble x, gdouble y )
 
 {
     x49gp_t* x49gp = user_data;
