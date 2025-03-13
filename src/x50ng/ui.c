@@ -777,7 +777,7 @@ static void mount_sd_folder_file_chooser_callback( GtkDialog* dialog, int respon
         x49gp_t* x49gp = user_data;
         GtkFileChooser* chooser = GTK_FILE_CHOOSER( dialog );
 
-        g_autoptr( GFile ) file = gtk_file_chooser_get_file( chooser );
+        g_autoptr( GFile ) file = gtk_file_chooser_get_file( chooser ); /* FIXME: deprecated */
 
         if ( file != NULL )
             s3c2410_sdi_mount( x49gp, g_file_get_path( file ) );
@@ -791,9 +791,10 @@ static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuit
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
+    /* FIXME: deprecated */
     GtkWidget* dialog = gtk_file_chooser_dialog_new( "Choose SD folder…", GTK_WINDOW( ui->window ), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                                      "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL );
-    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
+    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false ); /* FIXME: deprecated */
 
     gtk_window_present( GTK_WINDOW( dialog ) );
 
