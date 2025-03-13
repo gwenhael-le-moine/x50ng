@@ -754,7 +754,6 @@ static void react_to_button_release( GtkGesture* gesture, int n_press, double x,
 {
     x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
-    x49gp_t* x49gp = button->x49gp;
 
     if ( opt.verbose )
         fprintf( stderr, "UI Releasing button %s\n", key->label );
@@ -798,10 +797,7 @@ static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuit
 
     GtkWidget* dialog = gtk_file_chooser_dialog_new( "Choose SD folder…", GTK_WINDOW( ui->window ), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                                      "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL );
-
     gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
-
-    GtkFileChooser* chooser = GTK_FILE_CHOOSER( dialog );
 
     gtk_window_present( GTK_WINDOW( dialog ) );
 
@@ -848,7 +844,7 @@ static void do_quit( gpointer user_data, GtkWidget* widget )
     x49gp->arm_exit++;
 }
 
-static void open_menu( GtkWidget* parent, x49gp_t* x49gp )
+static void open_menu( int x, int y, x49gp_t* x49gp )
 {
     GMenu* menu = g_menu_new();
     GSimpleActionGroup* action_group = g_simple_action_group_new();
@@ -891,8 +887,15 @@ static void open_menu( GtkWidget* parent, x49gp_t* x49gp )
     GtkWidget* popup = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
     // g_signal_connect( G_OBJECT( view ), "destroy", G_CALLBACK( popover_close ), popup );
     gtk_widget_insert_action_group( popup, "app", G_ACTION_GROUP( action_group ) );
-    gtk_widget_set_parent( popup, GTK_WIDGET( parent ) );
 
+    GdkRectangle rect;
+    rect.x = x;
+    rect.y = y;
+    rect.width = rect.height = 1;
+    gtk_popover_set_pointing_to( GTK_POPOVER( popup ), &rect );
+
+    gtk_widget_set_parent( GTK_WIDGET( popup ), x49gp->ui->window );
+    gtk_popover_set_position( GTK_POPOVER( popup ), GTK_POS_BOTTOM );
     gtk_popover_popup( GTK_POPOVER( popup ) );
 }
 
@@ -1151,7 +1154,7 @@ static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval,
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            open_menu( ui->lcd_canvas, x49gp );
+            open_menu( LCD_WIDTH / 2, LCD_HEIGHT / 2, x49gp );
             return GDK_EVENT_STOP;
 
         default:
@@ -1263,12 +1266,13 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 }
 #endif
 
-static bool react_to_display_click( gpointer user_data, GtkWidget* widget )
+static bool react_to_display_click( gpointer user_data, GtkEventController* gesture, gdouble x, gdouble y )
+
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
-    open_menu( ui->lcd_canvas, x49gp );
+    open_menu( ( int )x, ( int )y, x49gp );
 }
 
 static void redraw_lcd( GtkDrawingArea* widget, cairo_t* cr, int width, int height, gpointer user_data )
