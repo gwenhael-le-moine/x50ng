@@ -1262,7 +1262,7 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 }
 #endif
 
-static bool react_to_display_click( GtkWidget* widget, gpointer user_data )
+static bool react_to_display_click( gpointer user_data, GtkWidget* widget )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1513,7 +1513,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     GtkGesture* right_click_controller = gtk_gesture_click_new();
     gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
-    g_signal_connect( right_click_controller, "pressed", G_CALLBACK( react_to_display_click ), x49gp ); /* FIXME */
+    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( react_to_display_click ), x49gp ); /* FIXME */
     gtk_widget_add_controller( display_container, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
     // keyboard
