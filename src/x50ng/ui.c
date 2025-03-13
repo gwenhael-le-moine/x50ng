@@ -783,15 +783,15 @@ static void ui_open_file_dialog( x49gp_t* x49gp, const char* prompt, GtkFileChoo
     GtkWidget* dialog = gtk_file_chooser_dialog_new( prompt, GTK_WINDOW( ui->window ), action, "_Cancel", GTK_RESPONSE_CANCEL, "_Open",
                                                      GTK_RESPONSE_ACCEPT, NULL );
 
-    gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true );
-    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false );
+    /* gtk_file_chooser_set_local_only( GTK_FILE_CHOOSER( dialog ), true ); */
+    /* gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false ); */
 
-    if ( gtk_dialog_run( GTK_DIALOG( dialog ) ) == GTK_RESPONSE_ACCEPT )
+    if ( gtk_window_present( GTK_DIALOG( dialog ) ) == GTK_RESPONSE_ACCEPT )
         *filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( dialog ) );
     else
         *filename = NULL;
 
-    gtk_widget_destroy( dialog );
+    /* gtk_widget_destroy( dialog ); */
 }
 
 static void do_select_and_mount_sd_folder( GtkMenuItem* menuitem, gpointer user_data )
@@ -804,15 +804,15 @@ static void do_select_and_mount_sd_folder( GtkMenuItem* menuitem, gpointer user_
         s3c2410_sdi_mount( x49gp, filename );
 }
 
-static void do_select_and_mount_sd_image( GtkMenuItem* menuitem, gpointer user_data )
-{
-    x49gp_t* x49gp = user_data;
-    char* filename;
+/* static void do_select_and_mount_sd_image( GtkMenuItem* menuitem, gpointer user_data ) */
+/* { */
+/*     x49gp_t* x49gp = user_data; */
+/*     char* filename; */
 
-    ui_open_file_dialog( x49gp, "Choose SD image ...", GTK_FILE_CHOOSER_ACTION_OPEN, &filename );
-    if ( filename != NULL )
-        s3c2410_sdi_mount( x49gp, filename );
-}
+/*     ui_open_file_dialog( x49gp, "Choose SD image ...", GTK_FILE_CHOOSER_ACTION_OPEN, &filename ); */
+/*     if ( filename != NULL ) */
+/*         s3c2410_sdi_mount( x49gp, filename ); */
+/* } */
 
 static void do_start_gdb_server( GtkMenuItem* menuitem, gpointer user_data )
 {
@@ -1094,6 +1094,7 @@ static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval,
             /*     gtk_widget_set_sensitive( ui->menu_debug, !gdbserver_isactive() ); */
 
             /* gtk_menu_popup_at_widget( GTK_MENU( ui->menu ), ui->window, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL ); */
+            gtk_popover_popup( GTK_POPOVER( ui->menu ) );
             return GDK_EVENT_STOP;
 
         default:
@@ -1632,50 +1633,68 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // Right-click menu
-    #if GTK_MAJOR_VERSION == 3
-        ui->menu = gtk_menu_new();
+    GSimpleActionGroup* action_group = g_simple_action_group_new();
+    GSimpleAction* act_quit = g_simple_action_new( "quit", NULL );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
+    g_signal_connect( act_quit, "activate", G_CALLBACK( do_quit ), NULL );
 
-        GtkWidget* menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." );
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_folder );
-        g_signal_connect( G_OBJECT( menu_mount_folder ), "activate", G_CALLBACK( do_select_and_mount_sd_folder ), x49gp );
+    GMenu* menu = g_menu_new();
+    g_menu_append( menu, "Paste", NULL );
+    g_menu_append( menu, "Mount SD folder…", NULL );
+    g_menu_append( menu, "Unmount SD", NULL );
+    g_menu_append( menu, "Start dedbugger", NULL );
+    g_menu_append( menu, "Reset", NULL );
+    g_menu_append( menu, "Quit", "app.quit" );
 
-        GtkWidget* menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." );
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_image );
-        g_signal_connect( G_OBJECT( menu_mount_image ), "activate", G_CALLBACK( do_select_and_mount_sd_image ), x49gp );
+    ui->menu = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
+    // g_signal_connect( G_OBJECT( view ), "destroy", G_CALLBACK( popover_close ), ui->menu );
+    gtk_widget_insert_action_group( ui->menu, "app", G_ACTION_GROUP( action_group ) );
+    gtk_widget_set_parent( ui->menu, GTK_WIDGET( ui->lcd_canvas ) );
+    /* gtk_popover_set_pointing_to (GTK_POPOVER (ui->menu), &(const GdkRectangle){ element_x + element_width / 2, element_y +
+     * element_height, 1, 1}); */
 
-        GtkWidget* menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" );
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_unmount );
-        g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
-        ui->menu_unmount = menu_unmount;
+    /* gtk_popover_popup( GTK_POPOVER( ui->menu ) ); */
 
-        if ( opt.debug_port != 0 ) {
-            gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
+    /*     GtkWidget* menu_mount_folder = gtk_menu_item_new_with_label( "Mount SD folder ..." ); */
+    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_folder ); */
+    /*     g_signal_connect( G_OBJECT( menu_mount_folder ), "activate", G_CALLBACK( do_select_and_mount_sd_folder ), x49gp ); */
 
-            GtkWidget* menu_debug = gtk_menu_item_new_with_label( "Start debugger" );
-            gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_debug );
-            g_signal_connect( G_OBJECT( menu_debug ), "activate", G_CALLBACK( do_start_gdb_server ), x49gp );
-            ui->menu_debug = menu_debug;
-        } else
-            ui->menu_debug = NULL;
+    /*     /\* GtkWidget* menu_mount_image = gtk_menu_item_new_with_label( "Mount SD image ..." ); *\/ */
+    /*     /\* gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_mount_image ); *\/ */
+    /*     /\* g_signal_connect( G_OBJECT( menu_mount_image ), "activate", G_CALLBACK( do_select_and_mount_sd_image ), x49gp ); *\/ */
 
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() );
+    /*     GtkWidget* menu_unmount = gtk_menu_item_new_with_label( "Unmount SD" ); */
+    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_unmount ); */
+    /*     g_signal_connect_swapped( G_OBJECT( menu_unmount ), "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp ); */
+    /*     ui->menu_unmount = menu_unmount; */
 
-    #  ifdef TEST_PASTE
-        GtkWidget* menu_paste = gtk_menu_item_new_with_label( "Paste" );
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_paste );
-        g_signal_connect_swapped( G_OBJECT( menu_paste ), "activate", G_CALLBACK( do_paste ), x49gp );
-    #  endif
+    /*     if ( opt.debug_port != 0 ) { */
+    /*         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() ); */
 
-        GtkWidget* menu_reset = gtk_menu_item_new_with_label( "Reset" );
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset );
-        g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( do_emulator_reset ), x49gp );
+    /*         GtkWidget* menu_debug = gtk_menu_item_new_with_label( "Start debugger" ); */
+    /*         gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_debug ); */
+    /*         g_signal_connect( G_OBJECT( menu_debug ), "activate", G_CALLBACK( do_start_gdb_server ), x49gp ); */
+    /*         ui->menu_debug = menu_debug; */
+    /*     } else */
+    /*         ui->menu_debug = NULL; */
 
-        GtkWidget* menu_quit = gtk_menu_item_new_with_label( "Quit" );
-        gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_quit );
-        g_signal_connect_swapped( G_OBJECT( menu_quit ), "activate", G_CALLBACK( do_quit ), x49gp );
+    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), gtk_separator_menu_item_new() ); */
 
-        gtk_widget_show_all( ui->menu );
-    #endif
+    /* #  ifdef TEST_PASTE */
+    /*     GtkWidget* menu_paste = gtk_menu_item_new_with_label( "Paste" ); */
+    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_paste ); */
+    /*     g_signal_connect_swapped( G_OBJECT( menu_paste ), "activate", G_CALLBACK( do_paste ), x49gp ); */
+    /* #  endif */
+
+    /*     GtkWidget* menu_reset = gtk_menu_item_new_with_label( "Reset" ); */
+    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset ); */
+    /*     g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( do_emulator_reset ), x49gp ); */
+
+    /*     GtkWidget* menu_quit = gtk_menu_item_new_with_label( "Quit" ); */
+    /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_quit ); */
+    /*     g_signal_connect_swapped( G_OBJECT( menu_quit ), "activate", G_CALLBACK( do_quit ), x49gp ); */
+
+    // gtk_widget_show_all( ui->menu );
 
     // Apply CSS
     char* style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
@@ -1755,9 +1774,7 @@ void gui_show_error( x49gp_t* x49gp, const char* text ) { fprintf( stderr, "Erro
 
 void gui_open_firmware( x49gp_t* x49gp, char** filename )
 {
-    #if GTK_MAJOR_VERSION == 3
-        ui_open_file_dialog( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
-    #endif
+    // ui_open_file_dialog( x49gp, "Choose firmware ...", GTK_FILE_CHOOSER_ACTION_OPEN, filename );
 }
 
 int gui_init( x49gp_t* x49gp )
