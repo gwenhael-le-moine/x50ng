@@ -823,8 +823,9 @@ static void do_start_gdb_server( GtkMenuItem* menuitem, gpointer user_data )
         gdb_handlesig( x49gp->env, 0 );
     }
 }
+#endif
 
-static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
+static void do_reset( GMenuItem* menuitem, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
 
@@ -832,7 +833,6 @@ static void do_emulator_reset( GtkMenuItem* menuitem, gpointer user_data )
     cpu_reset( x49gp->env );
     x49gp_set_idle( x49gp, 0 );
 }
-#endif
 
 #define KEY_PRESS 1
 #define KEY_RELEASE 2
@@ -1633,17 +1633,20 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // Right-click menu
-    GSimpleActionGroup* action_group = g_simple_action_group_new();
+    GSimpleAction* act_reset = g_simple_action_new( "reset", NULL );
+    g_signal_connect( act_reset, "activate", G_CALLBACK( do_reset ), NULL );
     GSimpleAction* act_quit = g_simple_action_new( "quit", NULL );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
     g_signal_connect( act_quit, "activate", G_CALLBACK( do_quit ), NULL );
+
+    GSimpleActionGroup* action_group = g_simple_action_group_new();
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
 
     GMenu* menu = g_menu_new();
     g_menu_append( menu, "Paste", NULL );
     g_menu_append( menu, "Mount SD folder…", NULL );
     g_menu_append( menu, "Unmount SD", NULL );
     g_menu_append( menu, "Start dedbugger", NULL );
-    g_menu_append( menu, "Reset", NULL );
+    g_menu_append( menu, "Reset", "app.reset" );
     g_menu_append( menu, "Quit", "app.quit" );
 
     ui->menu = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
@@ -1688,7 +1691,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     /*     GtkWidget* menu_reset = gtk_menu_item_new_with_label( "Reset" ); */
     /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_reset ); */
-    /*     g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( do_emulator_reset ), x49gp ); */
+    /*     g_signal_connect( G_OBJECT( menu_reset ), "activate", G_CALLBACK( do_reset ), x49gp ); */
 
     /*     GtkWidget* menu_quit = gtk_menu_item_new_with_label( "Quit" ); */
     /*     gtk_menu_shell_append( GTK_MENU_SHELL( ui->menu ), menu_quit ); */
