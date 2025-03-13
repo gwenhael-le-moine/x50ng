@@ -1628,7 +1628,9 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     }
 
     // Apply CSS
-    char* style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
+    char* style_full_path = g_build_filename( opt.style_filename, NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
         style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
