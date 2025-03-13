@@ -533,11 +533,13 @@ retry:
                     /* Mark firmware as invalid */
                     memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
                     if ( opt.firmware != NULL ) {
-                        fprintf( stderr, "Warning: "
-                                         "Firmware is invalid, "
-                                         "falling back to "
-                                         "bootloader recovery "
-                                         "tools\n" );
+                        fprintf( stderr,
+                                 "Warning: "
+                                 "Firmware is invalid, "
+                                 "falling back to "
+                                 "bootloader recovery "
+                                 "tools (tried with firmware = %s)\n",
+                                 opt.firmware );
                     } else {
                         gui_show_error( x49gp, "Selected "
                                                "firmware "
