@@ -1453,6 +1453,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
     gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
+    g_set_application_name( ui->name );
 
     GtkWidget* window_container = gtk_box_new( opt.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
     GTK_WIDGET_ADD_CSS_CLASS( window_container, "window-container" );
@@ -1460,7 +1461,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     gtk_window_set_child( ( GtkWindow* )ui->window, window_container );
 
-    g_signal_connect_swapped( G_OBJECT( ui->window ), "delete-event", G_CALLBACK( do_quit ), x49gp );
     g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
 
     GtkEventController* keys_controller = gtk_event_controller_key_new();
@@ -1583,7 +1583,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
             keys_top_labels_containers[ key_index ] = gtk_center_box_new();
             GTK_WIDGET_ADD_CSS_CLASS( keys_top_labels_containers[ key_index ], "top-labels-container" );
-            gtk_box_set_homogeneous( GTK_BOX( keys_top_labels_containers[ key_index ] ), false );
 
             GTK_BOX_APPEND( keys_containers[ key_index ], keys_top_labels_containers[ key_index ] );
 
