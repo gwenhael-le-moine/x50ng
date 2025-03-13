@@ -762,19 +762,19 @@ static void react_to_button_release( GtkGesture* gesture, int n_press, double x,
     ui_release_button( button );
 }
 
-/* static void react_to_button_right_click_release( GtkGesture* gesture, int n_press, double x, double y, gpointer user_data ) */
-/* { */
-/*     x49gp_ui_button_t* button = user_data; */
-/*     const x49gp_ui_key_t* key = button->key; */
-/*     x49gp_t* x49gp = button->x49gp; */
+static void react_to_button_right_click_release( gpointer user_data, GtkGesture* gesture, int n_press, double x, double y )
+{
+    x49gp_ui_button_t* button = user_data;
+    const x49gp_ui_key_t* key = button->key;
+    x49gp_t* x49gp = button->x49gp;
 
-/*     button->down = true; */
-/*     button->hold = true; */
+    button->down = true;
+    button->hold = true;
 
-/*     ui_press_button( button, true ); */
+    ui_press_button( button, true );
 
-/*     X50NG_PRESS_KEY( x49gp, key ); */
-/* } */
+    X50NG_PRESS_KEY( x49gp, key );
+}
 
 static void mount_sd_folder_file_chooser_callback( GtkDialog* dialog, int response, gpointer user_data )
 {
@@ -1513,7 +1513,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     GtkGesture* right_click_controller = gtk_gesture_click_new();
     gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
-    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( react_to_display_click ), x49gp ); /* FIXME */
+    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( react_to_display_click ), x49gp );
     gtk_widget_add_controller( display_container, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
     // keyboard
@@ -1608,11 +1608,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             /* Here we attach the controller to the label because… gtk4 reasons? gtk4 button only handles 'clicked' event now */
             gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( left_click_controller ) );
 
-            /* GtkGesture* right_click_controller = gtk_gesture_click_new(); */
-            /* gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (right_click_controller), 3); */
-            /* g_signal_connect( right_click_controller, /\* "released" *\/"pressed", G_CALLBACK( react_to_button_right_click_release ),
-             * button ); */
-            /* gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER (right_click_controller) ); */
+            GtkGesture* right_click_controller = gtk_gesture_click_new();
+            gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
+            g_signal_connect_swapped( right_click_controller, /* "released" */ "pressed", G_CALLBACK( react_to_button_right_click_release ),
+                                      button );
+            gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
             GTK_BOX_APPEND( keys_containers[ key_index ], button->button );
 
