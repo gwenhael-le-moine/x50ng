@@ -1270,7 +1270,6 @@ static bool react_to_display_click( gpointer user_data, GtkEventController* gest
 
 {
     x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
 
     open_menu( ( int )x, ( int )y, x49gp );
 }
