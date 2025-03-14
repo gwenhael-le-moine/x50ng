@@ -114,7 +114,6 @@ The general configuration file of *x50ng*. Content reflecting default values (as
 -- This is a comment
 style = "style-50g.css" -- CSS file (relative to this file)
 zoom = 2 -- integer only
-gray = false
 netbook = false
 netbook-pivot-line = 3
 newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use
