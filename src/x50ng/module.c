@@ -413,15 +413,27 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
     int fd;
     int error;
 
-    *path = g_build_filename( x49gp->progpath, name, NULL );
+    *path = g_build_filename( name, NULL );
     if ( opt.verbose )
         fprintf( stderr, "reading %s\n", *path );
     if ( NULL == *path ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
         return -ENOMEM;
     }
-
     fd = open( *path, O_RDONLY );
+
+    if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
+        g_free( *path );
+
+        *path = g_build_filename( x49gp->progpath, name, NULL );
+        if ( opt.verbose )
+            fprintf( stderr, "reading %s\n", *path );
+        if ( NULL == *path ) {
+            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+            return -ENOMEM;
+        }
+        fd = open( *path, O_RDONLY );
+    }
 
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
@@ -433,7 +445,6 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
             fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
             return -ENOMEM;
         }
-
         fd = open( *path, O_RDONLY );
     }
 
@@ -448,7 +459,6 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
             fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
             return -ENOMEM;
         }
-
         fd = open( *path, O_RDONLY );
     }
 #endif
