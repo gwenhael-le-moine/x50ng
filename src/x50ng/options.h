@@ -28,7 +28,7 @@ struct options {
     char* firmware;
     x49gp_reinit_t reinit;
 
-    bool newrpl;
+    bool newrpl_keyboard;
     bool legacy_keyboard;
     char* name;
 

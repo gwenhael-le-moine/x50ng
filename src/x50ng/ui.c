@@ -1522,7 +1522,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
     x49gp_ui_button_t* button;
 
-    if ( opt.newrpl )
+    if ( opt.newrpl_keyboard )
         _ui_load__newrplify_ui_keys();
 
     GtkWidget* rows_containers[ KB_NB_ROWS ];

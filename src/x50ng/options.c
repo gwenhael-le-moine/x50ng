@@ -23,7 +23,7 @@ struct options opt = {
     .reinit = X49GP_REINIT_NONE,
     .bootloader = "firmware/boot-50g.bin",
     .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
-    .newrpl = false,
+    .newrpl_keyboard = false,
     .legacy_keyboard = false,
     .name = NULL,
     .verbose = false,
@@ -108,7 +108,7 @@ static char* config_to_string( void )
               "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
               opt.style_filename, opt.zoom, opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.netbook_pivot_line,
-              opt.newrpl ? "true" : "false", opt.legacy_keyboard ? "true" : "false" );
+              opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" );
 
     return config;
 }
@@ -155,7 +155,7 @@ void config_init( char* progname, int argc, char* argv[] )
     bool do_flash_full = false;
 
     char* clopt_style_filename = NULL;
-    int clopt_newrpl = -1;
+    int clopt_newrpl_keyboard = -1;
     int clopt_legacy_keyboard = -1;
     int clopt_zoom = -1;
     int clopt_gray = -1;
@@ -179,7 +179,7 @@ void config_init( char* progname, int argc, char* argv[] )
 
         {"50g",                no_argument,       NULL,                   506 },
         {"49gp",               no_argument,       NULL,                   496 },
-        {"newrpl-keyboard",    no_argument,       &clopt_newrpl,          true},
+        {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard,          true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
         {"style",              required_argument, NULL,                   's' },
         {"zoom",               required_argument, NULL,                   'z' },
@@ -321,7 +321,7 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
 
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
-        opt.newrpl = lua_toboolean( config_lua_values, -1 );
+        opt.newrpl_keyboard = lua_toboolean( config_lua_values, -1 );
 
         lua_getglobal( config_lua_values, "legacy_keyboard" );
         opt.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
@@ -336,8 +336,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.style_filename = strdup( clopt_style_filename );
     else if ( opt.style_filename == NULL )
         opt.style_filename = "style-50g.css";
-    if ( clopt_newrpl != -1 )
-        opt.newrpl = clopt_newrpl;
+    if ( clopt_newrpl_keyboard != -1 )
+        opt.newrpl_keyboard = clopt_newrpl_keyboard;
     if ( clopt_legacy_keyboard != -1 )
         opt.legacy_keyboard = clopt_legacy_keyboard;
     if ( clopt_zoom > 0 )
