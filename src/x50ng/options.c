@@ -103,7 +103,7 @@ static char* config_to_string( void )
               "zoom = %i -- integer only\n"
               "gray = %s\n"
               "netbook = %s\n"
-              "netbook-pivot-line = %i -- this marks the transition between higher and lower keyboard\n"
+              "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
               "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
@@ -297,6 +297,8 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.datadir = g_build_filename( g_get_user_config_dir(), progname, NULL );
 
     const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
+    if ( opt.verbose )
+        fprintf( stderr, "Loading configuration file %s\n", config_lua_filename );
 
     /**********************/
     /* 1. read config.lua */
@@ -315,7 +317,7 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "netbook" );
         opt.netbook = lua_toboolean( config_lua_values, -1 );
 
-        lua_getglobal( config_lua_values, "netbook-pivot-line" );
+        lua_getglobal( config_lua_values, "netbook_pivot_line" );
         opt.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
 
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
@@ -348,11 +350,11 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.netbook_pivot_line = clopt_netbook_pivot_line;
 
     if ( print_config_and_exit ) {
-        fprintf( stdout, config_to_string() );
+        fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
         exit( EXIT_SUCCESS );
     }
     if ( opt.verbose )
-        fprintf( stdout, config_to_string() );
+        fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
 
     if ( do_enable_debugger ) {
         if ( opt.debug_port == 0 )

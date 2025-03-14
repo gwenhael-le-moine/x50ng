@@ -1417,8 +1417,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     int step_b = b / 15;
     for ( int i = 0; i < 16; i++ ) {
         _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_0 + i ], r, g, b );
-        if ( opt.verbose )
-            fprintf( stderr, "UI_COLOR_GRAYSCALE_%i = %i, %i, %i\n", UI_COLOR_GRAYSCALE_0 + i, r, g, b );
+
         r -= step_r;
         g -= step_g;
         b -= step_b;
