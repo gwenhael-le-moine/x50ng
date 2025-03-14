@@ -21,8 +21,8 @@ struct options opt = {
     .debug_port = 0,
     .start_debugger = false,
     .reinit = X49GP_REINIT_NONE,
-    .firmware = NULL,
-    .model = MODEL_50G,
+    .bootloader = "firmware/boot-50g.bin",
+    .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
     .newrpl = false,
     .legacy_keyboard = false,
     .name = NULL,
@@ -34,7 +34,7 @@ struct options opt = {
     .netbook_pivot_line = 3,
 };
 
-lua_State* config_lua_values;
+static lua_State* config_lua_values;
 
 static inline bool config_read( const char* filename )
 {
@@ -99,18 +99,16 @@ static char* config_to_string( void )
               "--------------------------------------------------------------------------------\n"
               "-- Configuration file for x50ng\n"
               "-- This is a comment\n"
-              "name = \"%s\" -- this customize the title of the window\n"
-              "model = \"%s\" -- possible values: \"49gp\", \"50g\". Changes the bootloader looked for when (re-)flashing\n"
-              "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
-              "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
               "zoom = %i -- integer only\n"
               "gray = %s\n"
               "netbook = %s\n"
-              "verbose = %s\n"
+              "netbook-pivot-line = %i -- this marks the transition between higher and lower keyboard\n"
+              "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
+              "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.name, opt.model == MODEL_50G ? "50g" : "49gp", opt.newrpl ? "true" : "false", opt.legacy_keyboard ? "true" : "false",
-              opt.style_filename, opt.zoom, opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.verbose ? "true" : "false" );
+              opt.style_filename, opt.zoom, opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.netbook_pivot_line,
+              opt.newrpl ? "true" : "false", opt.legacy_keyboard ? "true" : "false" );
 
     return config;
 }
@@ -119,6 +117,7 @@ int save_config( void )
 {
     int error;
     const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
+    fprintf( stderr, "Loading configuration file: %s\n", config_lua_filename );
     int fd = open( config_lua_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
 
     if ( fd < 0 ) {
@@ -152,14 +151,10 @@ void config_init( char* progname, int argc, char* argv[] )
 
     bool do_enable_debugger = false;
     bool do_start_debugger = false;
-    bool do_reflash = false;
-    bool do_reflash_full = false;
+    bool do_flash = false;
+    bool do_flash_full = false;
 
-    int clopt_verbose = -1;
-
-    char* clopt_name = NULL;
     char* clopt_style_filename = NULL;
-    int clopt_model = -1;
     int clopt_newrpl = -1;
     int clopt_legacy_keyboard = -1;
     int clopt_zoom = -1;
@@ -170,7 +165,9 @@ void config_init( char* progname, int argc, char* argv[] )
     int print_config_and_exit = false;
     int overwrite_config = false;
 
-    const char* optstring = "dhrf:n:s:S:vVz:";
+    asprintf( &( opt.name ), "%s %i.%i.%i", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+
+    const char* optstring = "d:hrs:vVz:";
     struct option long_options[] = {
         {"help",               no_argument,       NULL,                   'h' },
         {"version",            no_argument,       NULL,                   'v' },
@@ -184,9 +181,7 @@ void config_init( char* progname, int argc, char* argv[] )
         {"49gp",               no_argument,       NULL,                   496 },
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl,          true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
-        {"name",               required_argument, NULL,                   'n' },
         {"style",              required_argument, NULL,                   's' },
-        {"display-scale",      required_argument, NULL,                   'S' }, /* deprecated */
         {"zoom",               required_argument, NULL,                   'z' },
         {"gray",               no_argument,       &clopt_gray,            true},
         {"netbook",            no_argument,       &clopt_netbook,         true},
@@ -194,9 +189,10 @@ void config_init( char* progname, int argc, char* argv[] )
 
         {"enable-debug",       required_argument, NULL,                   10  },
         {"debug",              no_argument,       NULL,                   11  },
-        {"reflash",            required_argument, NULL,                   90  },
-        {"reflash-full",       required_argument, NULL,                   91  },
-        {"reboot",             no_argument,       NULL,                   'r' }, /* deprecated */
+        {"flash",              no_argument,       NULL,                   90  },
+        {"flash-full",         no_argument,       NULL,                   91  },
+        {"bootloader",         required_argument, NULL,                   92  },
+        {"firmware",           required_argument, NULL,                   93  },
         {"reset",              no_argument,       NULL,                   'r' },
 
         {0,                    0,                 0,                      0   }
@@ -216,29 +212,28 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-v --version                 print out version\n"
                          "-V --verbose                 print out more information\n"
                          "-d --datadir[=absolute path] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
-                         "-n --name[=name]             set alternate UI name\n"
-                         "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
-                         "-S --zoom[=X]                scale LCD by X (default: 2)\n"
-                         "--gray                       grayish LCD instead of greenish (default: false)\n"
-                         "--netbook                    horizontal window (default: false)\n"
-                         "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
                          "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
+                         "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
+                         "-z --zoom[=X]                scale LCD by X (default: 2)\n"
+                         "--gray                       grayish LCD instead of greenish (default: false)\n"
+                         "--netbook                    horizontal window (default: false)\n"
+                         "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
                          "--newrpl-keyboard            label keyboard for newRPL\n"
-                         "\n"
                          "--legacy-keyboard            place Enter key where it belongs\n"
                          "\n"
                          "--enable-debug[=port]        enable the debugger interface (default port: %i)\n"
                          "--debug                      use along -D to also start the debugger immediately\n"
                          "\n"
-                         "--reflash[=firmware]         rebuild the flash using the supplied firmware (default: select one interactively) "
+                         "--flash         rebuild the flash using the supplied firmware (requires --firmware=) "
                          "(implies -r for safety reasons)\n"
-                         "--reflash-full[=firmware]    rebuild the flash using the supplied firmware and drop the flash contents in the "
-                         "area beyond the firmware (default: select one interactively) (implies -r for safety reasons)\n"
-                         "--50g                        use an HP 50g bootloader when (re-)flashing (default)\n"
-                         "--49gp                       use an HP 49g+ bootloader when (re-)flashing\n",
-                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT );
+                         "--flash-full    rebuild the flash using the supplied firmware and drop the flash contents in the "
+                         "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
+                         "--bootloader[=filename]         bootloader file (default: %s)\n"
+                         "--firmware[=filename]         firmware file (default: %s)\n",
+                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT, opt.bootloader,
+                         opt.firmware );
                 exit( EXIT_SUCCESS );
                 break;
             case 10:
@@ -249,36 +244,23 @@ void config_init( char* progname, int argc, char* argv[] )
                 do_start_debugger = true;
                 break;
             case 90:
-                do_reflash = true;
-                opt.firmware = strdup( optarg );
+                do_flash = true;
                 break;
             case 91:
-                do_reflash = true;
-                do_reflash_full = true;
+                do_flash = true;
+                do_flash_full = true;
+                break;
+            case 92:
+                opt.bootloader = strdup( optarg );
+                break;
+            case 93:
                 opt.firmware = strdup( optarg );
-                break;
-            case 496:
-                clopt_model = MODEL_49GP;
-                if ( clopt_name == NULL )
-                    clopt_name = "HP 49g+";
-                if ( clopt_style_filename == NULL )
-                    clopt_style_filename = "style-49gp.css";
-                break;
-            case 506:
-                clopt_model = MODEL_50G;
-                if ( clopt_name == NULL )
-                    clopt_name = "HP 50g";
-                if ( clopt_style_filename == NULL )
-                    clopt_style_filename = "style-50g.css";
                 break;
             case 1001:
                 clopt_netbook_pivot_line = atoi( optarg );
                 break;
             case 'd':
                 opt.datadir = strdup( optarg );
-                break;
-            case 'n':
-                clopt_name = strdup( optarg );
                 break;
             case 'r':
                 if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
@@ -296,12 +278,19 @@ void config_init( char* progname, int argc, char* argv[] )
                 exit( EXIT_SUCCESS );
                 break;
             case 'V':
-                clopt_verbose = true;
+                opt.verbose = true;
                 break;
 
             default:
                 break;
         }
+    }
+
+    if ( do_flash && ( opt.bootloader == NULL || opt.firmware == NULL ) ) {
+        fprintf(
+            stderr,
+            "Error: --flash(-full) requires you to provide a bootloader and firmware using --bootloader and --firmware respectively!\n" );
+        exit( EXIT_FAILURE );
     }
 
     if ( opt.datadir == NULL )
@@ -314,41 +303,8 @@ void config_init( char* progname, int argc, char* argv[] )
     /**********************/
     opt.haz_config_file = config_read( config_lua_filename );
     if ( opt.haz_config_file ) {
-        lua_getglobal( config_lua_values, "newrpl_keyboard" );
-        opt.newrpl = lua_toboolean( config_lua_values, -1 );
-
-        lua_getglobal( config_lua_values, "legacy_keyboard" );
-        opt.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
-
-        lua_getglobal( config_lua_values, "model" );
-        const char* svalue_model = luaL_optstring( config_lua_values, -1, "50g" );
-        if ( svalue_model != NULL ) {
-            if ( strcmp( svalue_model, "50g" ) == 0 )
-                opt.model = MODEL_50G;
-            if ( strcmp( svalue_model, "49gp" ) == 0 )
-                opt.model = MODEL_49GP;
-
-            switch ( opt.model ) {
-                case MODEL_49GP:
-                    opt.name = opt.newrpl ? "HP 49g+ / newRPL" : "HP 49g+";
-                    opt.style_filename = "style-49gp.css";
-                    break;
-                case MODEL_50G:
-                default:
-                    opt.name = opt.newrpl ? "HP 50g / newRPL" : "HP 50g";
-                    opt.style_filename = "style-50g.css";
-                    break;
-            }
-        }
-
-        lua_getglobal( config_lua_values, "name" );
-        opt.name = strdup( luaL_optstring( config_lua_values, -1, opt.name ) );
-
         lua_getglobal( config_lua_values, "style" );
         opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
-
-        lua_getglobal( config_lua_values, "zoom" );
-        opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
 
         lua_getglobal( config_lua_values, "zoom" );
         opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
@@ -360,7 +316,13 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.netbook = lua_toboolean( config_lua_values, -1 );
 
         lua_getglobal( config_lua_values, "netbook-pivot-line" );
-        opt.zoom = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
+        opt.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
+
+        lua_getglobal( config_lua_values, "newrpl_keyboard" );
+        opt.newrpl = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "legacy_keyboard" );
+        opt.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
     }
     if ( opt.haz_config_file && overwrite_config )
         opt.haz_config_file = false;
@@ -368,16 +330,10 @@ void config_init( char* progname, int argc, char* argv[] )
     /****************************************************/
     /* 2. treat command-line params which have priority */
     /****************************************************/
-    if ( clopt_verbose != -1 )
-        opt.verbose = clopt_verbose;
-    if ( clopt_name != NULL )
-        opt.name = strdup( clopt_name );
-    if ( clopt_model != -1 )
-        opt.model = clopt_model;
     if ( clopt_style_filename != NULL )
         opt.style_filename = strdup( clopt_style_filename );
     else if ( opt.style_filename == NULL )
-        opt.style_filename = opt.model == MODEL_50G ? "style-50g.css" : "style-49gp.css";
+        opt.style_filename = "style-50g.css";
     if ( clopt_newrpl != -1 )
         opt.newrpl = clopt_newrpl;
     if ( clopt_legacy_keyboard != -1 )
@@ -404,11 +360,11 @@ void config_init( char* progname, int argc, char* argv[] )
 
         opt.start_debugger = do_start_debugger;
     }
-    if ( do_reflash ) {
+    if ( do_flash ) {
         if ( opt.reinit < X49GP_REINIT_FLASH )
             opt.reinit = X49GP_REINIT_FLASH;
 
-        if ( do_reflash_full )
+        if ( do_flash_full )
             opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
 }

@@ -43,7 +43,7 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 
 ### Dependencies
 - `lua` (`luajit` also works, see `LUA_VERSION` in `Makefile`)
-- `gtk+3`
+- `gtk4`
 
 
 ## Installation
@@ -51,19 +51,11 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 0. I advise you to download the necessary firmware and ROM from [hpcalc.org](https://hpcalc.org/) by running `make pull-firmware`
 1. Run `sudo make install INSTALL_PREFIX=/usr` (see the Makefile to see what variables your can override.)
 
-
 ## Run
 
 *A configuration and data folder is automatically created and populated in `$XDG_CONFIG_HOME/x50ng/` (typically `~/.config/x50ng/`)*
 
-### If you have installed x50ng
-#### First run
-1. launch the emulator by running `./dist/x50ng --reflash-full=/usr/share/x50ng/firmware/hp4950v215/2MB_FIX/2MB_215f.bin`
-
-### Run Locally without installation
-#### First run
-1. You will need to download the necessary firmware and ROM from [hpcalc.org](https://hpcalc.org/) by running `make pull-firmware`
-2. launch the emulator by running `./dist/x50ng --reflash-full=./dist/firmware/hp4950v215/2MB_FIX/2MB_215f.bin`
+On first run *x50ng* will flash the default bootloader and default firmware. See `x50ng --help` for their pathes and how to override them.
 
 ## Styling
 
@@ -113,9 +105,3 @@ window {
 - `make` to compile with all warnings
 - `make clean` and `make mrproper` to clean between compilation runs
 - `make pretty-code` to format the code using `clang-format` and the provided `.clang-format`
-
-
-## Post fork todo-list:
-
-* [DONE] then port `gtk+-3` code to `gtk4`
-  - https://docs.gtk.org/gtk4/migrating-3to4.html

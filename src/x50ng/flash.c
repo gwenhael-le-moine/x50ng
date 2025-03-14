@@ -380,11 +380,10 @@ static void flash_writel( void* opaque, target_phys_addr_t offset, uint32_t data
 static int flash_load( x49gp_module_t* module, GKeyFile* key )
 {
     x49gp_flash_t* flash = module->user_data;
-    x49gp_t* x49gp = module->x49gp;
-    x49gp_ui_t* ui = x49gp->ui;
     char* filename;
     struct stat st;
     char* bootfile;
+    char* firmwarefile;
     int bootfd, fwfd;
     int error;
     int i;
@@ -443,8 +442,16 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
         if ( opt.reinit == X49GP_REINIT_FLASH_FULL )
             memset( phys_ram_base + flash->offset, 0xff, flash->size - st.st_size );
 
-        bootfd = x49gp_module_open_rodata(
-            module, ui->calculator == UI_CALCULATOR_HP49GP ? "firmware/boot-49g+.bin" : "firmware/boot-50g.bin", &bootfile );
+        if ( opt.bootloader == NULL ) {
+            fprintf( stderr, "Error: no bootloader provided! Please provide one with --bootloader" );
+            exit( -1 );
+        }
+        if ( opt.firmware == NULL ) {
+            fprintf( stderr, "Error: no firmware provided! Please provide one with --firmware" );
+            exit( -1 );
+        }
+
+        bootfd = x49gp_module_open_rodata( module, opt.bootloader, &bootfile );
 
         if ( bootfd < 0 ) {
             g_free( filename );
@@ -485,102 +492,91 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
         }
 
 retry:
-        filename = NULL;
-        if ( opt.firmware != NULL )
-            filename = g_strdup( opt.firmware );
-        else
-            gui_open_firmware( x49gp, &filename );
-
-        if ( filename != NULL ) {
-            fwfd = open( filename, O_RDONLY );
-            if ( fwfd < 0 ) {
-                fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
-                /* Mark firmware as invalid if there is one */
+        fwfd = x49gp_module_open_rodata( module, opt.firmware, &firmwarefile );
+        if ( fwfd < 0 ) {
+            fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, firmwarefile, strerror( errno ) );
+            /* Mark firmware as invalid if there is one */
+            memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
+            if ( opt.firmware != NULL ) {
+                fprintf( stderr, "Warning: Could not "
+                                 "open selected firmware, "
+                                 "falling back to bootloader "
+                                 "recovery tools\n" );
+            } else {
+                fprintf( stderr, "Could not open "
+                                 "selected "
+                                 "firmware!" );
+                goto retry;
+            }
+        } else {
+            bytes_read = read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE, 16 );
+            if ( bytes_read < 0 ) {
+                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, opt.firmware, strerror( errno ) );
+                /* Mark firmware as invalid
+                   if there is one */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
                 if ( opt.firmware != NULL ) {
-                    fprintf( stderr, "Warning: Could not "
-                                     "open selected firmware, "
-                                     "falling back to bootloader "
-                                     "recovery tools\n" );
+                    fprintf( stderr, "Warning: "
+                                     "Could not read "
+                                     "selected firmware, "
+                                     "falling back to "
+                                     "bootloader recovery "
+                                     "tools\n" );
                 } else {
-                    gui_show_error( x49gp, "Could not open "
-                                           "selected "
-                                           "firmware!" );
+                    fprintf( stderr, "Could not "
+                                     "read "
+                                     "selected "
+                                     "firmware!" );
+                    goto retry;
+                }
+            } else if ( bytes_read < 16 || memcmp( phys_ram_base + flash->offset + BOOT_SIZE, "KINPOUPDATEIMAGE", 16 ) != 0 ) {
+                /* Mark firmware as invalid */
+                memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
+                if ( opt.firmware != NULL ) {
+                    fprintf( stderr,
+                             "Warning: "
+                             "Firmware is invalid, "
+                             "falling back to "
+                             "bootloader recovery "
+                             "tools (tried with firmware = %s)\n",
+                             opt.firmware );
+                } else {
+                    fprintf( stderr, "Selected "
+                                     "firmware "
+                                     "is "
+                                     "invalid!" );
+                    goto retry;
+                }
+                /* The firmware may be shorter than
+                   SST29VF160_SIZE - BOOT_SIZE, but if so,
+                   read will just give us what it sees.
+                   The space after that will remain empty. */
+            } else if ( read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE + 16, SST29VF160_SIZE - ( BOOT_SIZE + 16 ) ) < 0 ) {
+                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, opt.firmware, strerror( errno ) );
+                /* Mark firmware as invalid
+                   if there is one */
+                memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
+                if ( opt.firmware != NULL ) {
+                    fprintf( stderr, "Warning: "
+                                     "Could not read "
+                                     "selected firmware, "
+                                     "falling back to "
+                                     "bootloader recovery "
+                                     "tools\n" );
+                } else {
+                    fprintf( stderr, "Could not "
+                                     "read "
+                                     "selected "
+                                     "firmware!" );
                     goto retry;
                 }
             } else {
-                bytes_read = read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE, 16 );
-                if ( bytes_read < 0 ) {
-                    fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
-                    /* Mark firmware as invalid
-                       if there is one */
-                    memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                    if ( opt.firmware != NULL ) {
-                        fprintf( stderr, "Warning: "
-                                         "Could not read "
-                                         "selected firmware, "
-                                         "falling back to "
-                                         "bootloader recovery "
-                                         "tools\n" );
-                    } else {
-                        gui_show_error( x49gp, "Could not "
-                                               "read "
-                                               "selected "
-                                               "firmware!" );
-                        goto retry;
-                    }
-                } else if ( bytes_read < 16 || memcmp( phys_ram_base + flash->offset + BOOT_SIZE, "KINPOUPDATEIMAGE", 16 ) != 0 ) {
-                    /* Mark firmware as invalid */
-                    memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                    if ( opt.firmware != NULL ) {
-                        fprintf( stderr,
-                                 "Warning: "
-                                 "Firmware is invalid, "
-                                 "falling back to "
-                                 "bootloader recovery "
-                                 "tools (tried with firmware = %s)\n",
-                                 opt.firmware );
-                    } else {
-                        gui_show_error( x49gp, "Selected "
-                                               "firmware "
-                                               "is "
-                                               "invalid!" );
-                        goto retry;
-                    }
-                    /* The firmware may be shorter than
-                       SST29VF160_SIZE - BOOT_SIZE, but if so,
-                       read will just give us what it sees.
-                       The space after that will remain empty. */
-                } else if ( read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE + 16, SST29VF160_SIZE - ( BOOT_SIZE + 16 ) ) < 0 ) {
-                    fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
-                    /* Mark firmware as invalid
-                       if there is one */
-                    memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                    if ( opt.firmware != NULL ) {
-                        fprintf( stderr, "Warning: "
-                                         "Could not read "
-                                         "selected firmware, "
-                                         "falling back to "
-                                         "bootloader recovery "
-                                         "tools\n" );
-                    } else {
-                        gui_show_error( x49gp, "Could not "
-                                               "read "
-                                               "selected "
-                                               "firmware!" );
-                        goto retry;
-                    }
-                } else {
-                    /* Mark firmware as valid in the same
-                       way the bootloader does */
-                    memcpy( phys_ram_base + flash->offset + BOOT_SIZE, "Kinposhcopyright", 16 );
-                }
-                close( fwfd );
+                /* Mark firmware as valid in the same
+                   way the bootloader does */
+                memcpy( phys_ram_base + flash->offset + BOOT_SIZE, "Kinposhcopyright", 16 );
             }
-            g_free( filename );
+            close( fwfd );
         }
-    } else {
-        g_free( filename );
     }
 
     return error;

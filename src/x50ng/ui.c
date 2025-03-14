@@ -1424,19 +1424,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         b -= step_b;
     }
 
-    /* set calculator type and name */
-    switch ( opt.model ) {
-        case MODEL_49GP:
-            ui->calculator = UI_CALCULATOR_HP49GP;
-            ui->name = opt.name != NULL ? opt.name : "HP 49g+";
-            break;
-        case MODEL_50G:
-        default:
-            ui->calculator = UI_CALCULATOR_HP50G;
-            ui->name = opt.name != NULL ? opt.name : "HP 50g";
-            break;
-    }
-
     // create window and widgets/stuff
     ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
     ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
@@ -1448,8 +1435,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     ui->window = gtk_window_new();
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
-    gtk_window_set_title( GTK_WINDOW( ui->window ), ui->name );
-    g_set_application_name( ui->name );
+    gtk_window_set_title( GTK_WINDOW( ui->window ), opt.name );
+    g_set_application_name( opt.name );
 
     GtkWidget* window_container = gtk_box_new( opt.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( window_container, "window-container" );
@@ -1699,13 +1686,6 @@ void gui_update_lcd( x49gp_t* x49gp )
     }
 
     gtk_widget_queue_draw( ui->lcd_canvas );
-}
-
-void gui_show_error( x49gp_t* x49gp, const char* text ) { fprintf( stderr, "Error: %s\n", text ); }
-
-void gui_open_firmware( x49gp_t* x49gp, char** filename )
-{
-    // TODO
 }
 
 int gui_init( x49gp_t* x49gp )

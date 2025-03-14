@@ -2,7 +2,7 @@ TARGET = x50ng
 
 VERSION_MAJOR = 1
 VERSION_MINOR = 9
-PATCHLEVEL = 99
+PATCHLEVEL = 999
 
 INSTALL_PREFIX = /usr/local
 INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
@@ -224,7 +224,7 @@ dist/$(TARGET).desktop: src/$(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" < $^ >$@
 
 dist/$(TARGET).man: src/$(TARGET).scd
-	scdoc < $^ >$@
+	scdoc < $^ > $@
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	mkdir -p "$(DESTDIR)$(INSTALL_BINARY_DIR)/"

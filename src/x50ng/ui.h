@@ -30,11 +30,6 @@ typedef enum {
 } x49gp_ui_color_t;
 
 typedef enum {
-    UI_CALCULATOR_HP49GP = 0,
-    UI_CALCULATOR_HP50G,
-} x49gp_ui_calculator_t;
-
-typedef enum {
     HPKEY_A = 0,
     HPKEY_B,
     HPKEY_C,
@@ -128,11 +123,7 @@ struct __x49gp_ui_s__ {
 
     GdkRGBA colors[ UI_COLOR_MAX ];
 
-    x49gp_ui_calculator_t calculator;
-
     x49gp_ui_button_t* buttons;
-
-    char* name;
 
     GtkWidget* lcd_canvas;
     cairo_surface_t* lcd_surface;
@@ -148,7 +139,5 @@ struct __x49gp_ui_s__ {
 void gui_update_lcd( x49gp_t* x49gp );
 
 int gui_init( x49gp_t* x49gp );
-void gui_show_error( x49gp_t* x49gp, const char* text );
-void gui_open_firmware( x49gp_t* x49gp, char** filename );
 
 #endif /* !(_X49GP_UI_H) */

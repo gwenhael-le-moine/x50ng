@@ -21,15 +21,13 @@
 #  define GLOBAL_DATADIR x49gp->progpath
 #endif
 
-typedef enum { MODEL_49GP = 0, MODEL_50G } x50ng_model_t;
-
 struct options {
     int debug_port;
     int start_debugger;
+    char* bootloader;
     char* firmware;
     x49gp_reinit_t reinit;
 
-    x50ng_model_t model;
     bool newrpl;
     bool legacy_keyboard;
     char* name;
