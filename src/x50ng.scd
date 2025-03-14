@@ -61,8 +61,6 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 *-z* *--zoom*[=_X_]                scale LCD by X (default: 2)
 
-*--gray*                       grayish LCD instead of greenish (default: false)
-
 *--netbook*                    horizontal window (default: false)
 
 *--netbook-pivot-line*[=_X_]     at which line is the keyboard split in netbook mode (default: 3)

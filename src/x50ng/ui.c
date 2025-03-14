@@ -1310,14 +1310,6 @@ static int ui_exit( x49gp_module_t* module ) { return 0; }
 
 static int ui_reset( x49gp_module_t* module, x49gp_reset_t reset ) { return 0; }
 
-static void _ui_load__init_color( GdkRGBA* color, u8 red, u8 green, u8 blue )
-{
-    color->red = red / 255.0;
-    color->green = green / 255.0;
-    color->blue = blue / 255.0;
-    color->alpha = 1.0;
-}
-
 static inline void _ui_load__newrplify_ui_keys()
 {
     // modify keys' labeling for newRPL
@@ -1407,21 +1399,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
     x49gp_ui_t* ui = module->user_data;
-
-    // create all colors
-    int r = 165, g = 210, b = 180; /* start r, g, b from their brightest value */
-    if ( opt.gray )
-        r = g = b = 210;
-    int step_r = r / 15;
-    int step_g = g / 15;
-    int step_b = b / 15;
-    for ( int i = 0; i < 16; i++ ) {
-        _ui_load__init_color( &ui->colors[ UI_COLOR_GRAYSCALE_0 + i ], r, g, b );
-
-        r -= step_r;
-        g -= step_g;
-        b -= step_b;
-    }
 
     // create window and widgets/stuff
     ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
@@ -1647,11 +1624,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
 
 static int ui_save( x49gp_module_t* module, GKeyFile* keyfile ) { return 0; }
 
-static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, GdkRGBA* color )
+static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, int opacity )
 {
     cairo_t* cr = cairo_create( target );
 
-    cairo_set_source_rgb( cr, color->red, color->green, color->blue );
+    cairo_set_source_rgba( cr, 0, 0, 0, opacity / 15.0 );
     cairo_rectangle( cr, x, y, w, h );
     cairo_fill( cr );
 
@@ -1675,13 +1652,13 @@ void gui_update_lcd( x49gp_t* x49gp )
         gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
         gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
 
-        if ( NULL == ui->lcd_surface )
-            ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, LCD_WIDTH, LCD_HEIGHT );
+        if ( NULL != ui->lcd_surface )
+            g_free( ui->lcd_surface );
+        ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
 
         for ( int y = 0; y < ( LCD_HEIGHT / opt.zoom ); y++ )
             for ( int x = 0; x < ( LCD_WIDTH / opt.zoom ); x++ )
-                _draw_pixel( ui->lcd_surface, opt.zoom * x, opt.zoom * y, opt.zoom, opt.zoom,
-                             &( ui->colors[ UI_COLOR_GRAYSCALE_0 + x49gp_get_pixel_color( lcd, x, y ) ] ) );
+                _draw_pixel( ui->lcd_surface, opt.zoom * x, opt.zoom * y, opt.zoom, opt.zoom, x49gp_get_pixel_color( lcd, x, y ) );
     }
 
     gtk_widget_queue_draw( ui->lcd_canvas );

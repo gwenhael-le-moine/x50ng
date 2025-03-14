@@ -33,7 +33,6 @@ struct options {
     char* name;
 
     int zoom;
-    bool gray;
     bool netbook;
     int netbook_pivot_line;
     char* style_filename;

@@ -29,7 +29,6 @@ struct options opt = {
     .verbose = false,
     .style_filename = NULL,
     .zoom = 2,
-    .gray = false,
     .netbook = false,
     .netbook_pivot_line = 3,
 };
@@ -101,14 +100,13 @@ static char* config_to_string( void )
               "-- This is a comment\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
               "zoom = %i -- integer only\n"
-              "gray = %s\n"
               "netbook = %s\n"
               "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
               "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.style_filename, opt.zoom, opt.gray ? "true" : "false", opt.netbook ? "true" : "false", opt.netbook_pivot_line,
-              opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" );
+              opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line, opt.newrpl_keyboard ? "true" : "false",
+              opt.legacy_keyboard ? "true" : "false" );
 
     return config;
 }
@@ -158,7 +156,6 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_newrpl_keyboard = -1;
     int clopt_legacy_keyboard = -1;
     int clopt_zoom = -1;
-    int clopt_gray = -1;
     int clopt_netbook = -1;
     int clopt_netbook_pivot_line = -1;
 
@@ -179,11 +176,10 @@ void config_init( char* progname, int argc, char* argv[] )
 
         {"50g",                no_argument,       NULL,                   506 },
         {"49gp",               no_argument,       NULL,                   496 },
-        {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard,          true},
+        {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
         {"style",              required_argument, NULL,                   's' },
         {"zoom",               required_argument, NULL,                   'z' },
-        {"gray",               no_argument,       &clopt_gray,            true},
         {"netbook",            no_argument,       &clopt_netbook,         true},
         {"netbook-pivot-line", required_argument, NULL,                   1001},
 
@@ -217,7 +213,6 @@ void config_init( char* progname, int argc, char* argv[] )
                          "\n"
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
                          "-z --zoom[=X]                scale LCD by X (default: 2)\n"
-                         "--gray                       grayish LCD instead of greenish (default: false)\n"
                          "--netbook                    horizontal window (default: false)\n"
                          "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
                          "--newrpl-keyboard            label keyboard for newRPL\n"
@@ -311,9 +306,6 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "zoom" );
         opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
 
-        lua_getglobal( config_lua_values, "gray" );
-        opt.gray = lua_toboolean( config_lua_values, -1 );
-
         lua_getglobal( config_lua_values, "netbook" );
         opt.netbook = lua_toboolean( config_lua_values, -1 );
 
@@ -342,8 +334,6 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.legacy_keyboard = clopt_legacy_keyboard;
     if ( clopt_zoom > 0 )
         opt.zoom = clopt_zoom;
-    if ( clopt_gray != -1 )
-        opt.gray = clopt_gray;
     if ( clopt_netbook != -1 )
         opt.netbook = clopt_netbook;
     if ( clopt_netbook_pivot_line != -1 )

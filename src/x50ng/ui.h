@@ -10,26 +10,6 @@
 #include "x49gp_types.h"
 
 typedef enum {
-    UI_COLOR_GRAYSCALE_0 = 0,
-    UI_COLOR_GRAYSCALE_1,
-    UI_COLOR_GRAYSCALE_2,
-    UI_COLOR_GRAYSCALE_3,
-    UI_COLOR_GRAYSCALE_4,
-    UI_COLOR_GRAYSCALE_5,
-    UI_COLOR_GRAYSCALE_6,
-    UI_COLOR_GRAYSCALE_7,
-    UI_COLOR_GRAYSCALE_8,
-    UI_COLOR_GRAYSCALE_9,
-    UI_COLOR_GRAYSCALE_10,
-    UI_COLOR_GRAYSCALE_11,
-    UI_COLOR_GRAYSCALE_12,
-    UI_COLOR_GRAYSCALE_13,
-    UI_COLOR_GRAYSCALE_14,
-    UI_COLOR_GRAYSCALE_15,
-    UI_COLOR_MAX,
-} x49gp_ui_color_t;
-
-typedef enum {
     HPKEY_A = 0,
     HPKEY_B,
     HPKEY_C,
@@ -120,8 +100,6 @@ typedef struct {
 
 struct __x49gp_ui_s__ {
     GtkWidget* window;
-
-    GdkRGBA colors[ UI_COLOR_MAX ];
 
     x49gp_ui_button_t* buttons;
 
