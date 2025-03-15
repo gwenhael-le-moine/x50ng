@@ -309,7 +309,7 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
 
         lua_getglobal( config_lua_values, "name" );
-        char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
+        const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
         if ( lua_name != NULL )
             opt.name = strdup( lua_name );
 
