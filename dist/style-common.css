@@ -68,7 +68,7 @@ window.background
 .key {
     background-image: none;
     padding: 0px;
-    margin: 0px;
+    margin: 2px 0px;
     min-height: 40px;
     border-style: outset;
 }
