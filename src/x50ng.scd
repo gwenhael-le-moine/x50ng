@@ -57,6 +57,8 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 *-d* *--datadir*[=_absolute path_] alternate datadir (default: $XDG_CONFIG_HOME/x50ng/)
 
+*-n* *--name*[=_text_]             customize the title of the window (default: "x50ng")
+
 *-s* *--style*[=_filename_]        css filename in <datadir> (default: style-50g.css)
 
 *-z* *--zoom*[=_X_]                scale LCD by X (default: 2)

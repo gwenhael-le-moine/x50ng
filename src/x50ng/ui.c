@@ -1412,6 +1412,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
     gtk_window_set_title( GTK_WINDOW( ui->window ), opt.name );
+    gtk_window_set_default_size( GTK_WINDOW( ui->window ), 240, 320 );
+    gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     g_set_application_name( opt.name );
 
     GtkWidget* window_container = gtk_box_new( opt.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );

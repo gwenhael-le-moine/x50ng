@@ -100,6 +100,7 @@ static char* config_to_string( void )
               "--------------------------------------------------------------------------------\n"
               "-- Configuration file for x50ng\n"
               "-- This is a comment\n"
+              "name = \"%s\"  -- this customize the title of the window\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
               "zoom = %i -- integer only\n"
               "netbook = %s\n"
@@ -107,8 +108,8 @@ static char* config_to_string( void )
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
               "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
               "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line, opt.newrpl_keyboard ? "true" : "false",
-              opt.legacy_keyboard ? "true" : "false" );
+              opt.name, opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
+              opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" );
 
     return config;
 }
@@ -155,6 +156,7 @@ void config_init( char* progname, int argc, char* argv[] )
     bool do_flash_full = false;
 
     char* clopt_style_filename = NULL;
+    char* clopt_name = NULL;
     int clopt_newrpl_keyboard = -1;
     int clopt_legacy_keyboard = -1;
     int clopt_zoom = -1;
@@ -164,9 +166,7 @@ void config_init( char* progname, int argc, char* argv[] )
     int print_config_and_exit = false;
     int overwrite_config = false;
 
-    asprintf( &( opt.name ), "%s %i.%i.%i", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
-
-    const char* optstring = "d:hrs:vVz:";
+    const char* optstring = "d:hn:rs:vVz:";
     struct option long_options[] = {
         {"help",               no_argument,       NULL,                   'h' },
         {"version",            no_argument,       NULL,                   'v' },
@@ -176,8 +176,8 @@ void config_init( char* progname, int argc, char* argv[] )
         {"overwrite-config",   no_argument,       &overwrite_config,      true},
         {"datadir",            required_argument, NULL,                   'd' },
 
-        {"50g",                no_argument,       NULL,                   506 },
-        {"49gp",               no_argument,       NULL,                   496 },
+        {"name",               required_argument, NULL,                   'n' },
+
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
         {"style",              required_argument, NULL,                   's' },
@@ -213,6 +213,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
+                         "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
                          "-z --zoom[=X]                scale LCD by X (default: 2)\n"
                          "--netbook                    horizontal window (default: false)\n"
@@ -229,8 +230,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
                          "--bootloader[=filename]         bootloader file (default: %s)\n"
                          "--firmware[=filename]         firmware file (default: %s)\n",
-                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, DEFAULT_GDBSTUB_PORT, opt.bootloader,
-                         opt.firmware );
+                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, progname, DEFAULT_GDBSTUB_PORT,
+                         opt.bootloader, opt.firmware );
                 exit( EXIT_SUCCESS );
                 break;
             case 10:
@@ -259,6 +260,9 @@ void config_init( char* progname, int argc, char* argv[] )
             case 'd':
                 opt.datadir = strdup( optarg );
                 break;
+            case 'n':
+                clopt_name = strdup( optarg );
+                break;
             case 'r':
                 if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
                     opt.reinit = X49GP_REINIT_REBOOT_ONLY;
@@ -266,7 +270,6 @@ void config_init( char* progname, int argc, char* argv[] )
             case 's':
                 clopt_style_filename = strdup( optarg );
                 break;
-            case 'S':
             case 'z':
                 clopt_zoom = atoi( optarg );
                 break;
@@ -305,6 +308,11 @@ void config_init( char* progname, int argc, char* argv[] )
         lua_getglobal( config_lua_values, "style" );
         opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
 
+        lua_getglobal( config_lua_values, "name" );
+        char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
+        if ( lua_name != NULL )
+            opt.name = strdup( lua_name );
+
         lua_getglobal( config_lua_values, "zoom" );
         opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
 
@@ -330,14 +338,24 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.style_filename = strdup( clopt_style_filename );
     else if ( opt.style_filename == NULL )
         opt.style_filename = "style-50g.css";
+
+    if ( clopt_name != NULL )
+        opt.name = strdup( clopt_name );
+    else if ( opt.name == NULL )
+        opt.name = strdup( progname );
+
     if ( clopt_newrpl_keyboard != -1 )
         opt.newrpl_keyboard = clopt_newrpl_keyboard;
+
     if ( clopt_legacy_keyboard != -1 )
         opt.legacy_keyboard = clopt_legacy_keyboard;
+
     if ( clopt_zoom > 0 )
         opt.zoom = clopt_zoom;
+
     if ( clopt_netbook != -1 )
         opt.netbook = clopt_netbook;
+
     if ( clopt_netbook_pivot_line != -1 )
         opt.netbook_pivot_line = clopt_netbook_pivot_line;
 
@@ -345,6 +363,7 @@ void config_init( char* progname, int argc, char* argv[] )
         fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
         exit( EXIT_SUCCESS );
     }
+
     if ( opt.verbose )
         fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
 
