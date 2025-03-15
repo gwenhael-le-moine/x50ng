@@ -22,6 +22,12 @@
 #endif
 
 struct options {
+    bool verbose;
+    bool haz_config_file;
+
+    char* datadir;
+    char* style_filename;
+
     int debug_port;
     int start_debugger;
     char* bootloader;
@@ -31,15 +37,9 @@ struct options {
     bool newrpl_keyboard;
     bool legacy_keyboard;
     char* name;
-
     int zoom;
     bool netbook;
     int netbook_pivot_line;
-    char* style_filename;
-    bool verbose;
-    bool haz_config_file;
-
-    char* datadir;
 };
 
 extern struct options opt;

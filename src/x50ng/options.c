@@ -16,18 +16,20 @@
 #define CONFIG_LUA_FILE_NAME "config.lua"
 
 struct options opt = {
+    .verbose = false,
+
     .datadir = NULL,
+    .style_filename = NULL,
 
     .debug_port = 0,
     .start_debugger = false,
-    .reinit = X49GP_REINIT_NONE,
     .bootloader = "firmware/boot-50g.bin",
     .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
+    .reinit = X49GP_REINIT_NONE,
+
     .newrpl_keyboard = false,
     .legacy_keyboard = false,
     .name = NULL,
-    .verbose = false,
-    .style_filename = NULL,
     .zoom = 2,
     .netbook = false,
     .netbook_pivot_line = 3,
