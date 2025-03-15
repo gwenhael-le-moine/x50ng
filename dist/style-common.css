@@ -51,6 +51,9 @@ window.background
 .keyboard-container {
     border-style: inset;
 }
+.key-container {
+    margin: 1px 5px;
+}
 #high-keyboard-container {
     border-width: 3px 3px 0 3px;
 }
@@ -65,7 +68,7 @@ window.background
 .key {
     background-image: none;
     padding: 0px;
-    margin: 0 15px;
+    margin: 0px;
     min-height: 40px;
     border-style: outset;
 }
@@ -88,6 +91,16 @@ window.background
 .label-below {
     font-weight: bold;
 }
+.label-key {
+    font-size: 1em;            /* base font size */
+}
+.label-left,
+.label-right,
+.label-letter,
+.label-below {
+    font-size: 0.75em;            /* typically 0.75 * base font size */
+}
+
 .key.shift-left .label-key,
 .key.shift-right .label-key {
     font-size: 2em;            /* typically 2 * base font size */
@@ -97,12 +110,7 @@ window.background
 .annunciator {
     font-size: 1.75em;            /* typically 1.75 * base font size */
 }
-.label-key {
-    font-size: 1em;            /* base font size */
-}
-.label-left,
-.label-right,
-.label-letter,
-.label-below {
-    font-size: 0.75em;            /* typically 0.75 * base font size */
+.key.alpha .label-key,
+.key.enter .label-key {
+    font-size: 1.25em;            /* typically 2 * base font size */
 }

@@ -6,7 +6,8 @@ window {
 
 #display-container {
     border-color: #f7ffe5;
-    background-color: #a9d0b2;
+    /* background-color: #a9d0b2; */
+    background-color: #f5f5f5;
 }
 
 #window-container,

@@ -1435,6 +1435,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_box_append( ( GTK_BOX( window_container ) ), upper_left_container );
 
     GtkWidget* downer_right_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    gtk_widget_set_vexpand( GTK_WIDGET( downer_right_container ), true );
     gtk_widget_add_css_class( downer_right_container, "downer-right-container" );
     gtk_widget_set_name( downer_right_container, "downer-right-container" );
     gtk_box_append( GTK_BOX( window_container ), downer_right_container );
@@ -1494,6 +1495,8 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_box_append( GTK_BOX( upper_left_container ), high_keyboard_container );
 
     GtkWidget* low_keyboard_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+    gtk_widget_set_valign( GTK_WIDGET( low_keyboard_container ), GTK_ALIGN_END );
+    gtk_widget_set_vexpand( GTK_WIDGET( low_keyboard_container ), true );
     gtk_widget_add_css_class( low_keyboard_container, "keyboard-container" );
     gtk_widget_set_name( low_keyboard_container, "low-keyboard-container" );
 
@@ -1532,7 +1535,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
         }
 
         for ( int column = 0; column < nb_keys_in_row; column++ ) {
-            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 );
+            keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
             gtk_widget_add_css_class( keys_containers[ key_index ], "key-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
             if ( row == 1 && column == 3 )
