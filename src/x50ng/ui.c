@@ -1412,7 +1412,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
     gtk_window_set_title( GTK_WINDOW( ui->window ), opt.name );
-    gtk_window_set_default_size( GTK_WINDOW( ui->window ), 240, 320 );
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     g_set_application_name( opt.name );
 
@@ -1448,13 +1447,16 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( ui->lcd_canvas ), LCD_HEIGHT );
     gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( ui->lcd_canvas ), redraw_lcd, x49gp, NULL );
 
-    GtkWidget* lcd_container = gtk_center_box_new();
+    GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    gtk_widget_set_halign( lcd_container, GTK_ALIGN_CENTER );
     gtk_widget_add_css_class( lcd_container, "lcd-container" );
     gtk_widget_set_name( lcd_container, "lcd-container" );
 
     gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
     gtk_widget_set_margin_bottom( lcd_container, 3 );
-    gtk_center_box_set_center_widget( GTK_CENTER_BOX( lcd_container ), ui->lcd_canvas );
+    gtk_box_append( GTK_BOX( lcd_container ), ui->lcd_canvas );
+    gtk_widget_set_halign( GTK_WIDGET( ui->lcd_canvas ), GTK_ALIGN_CENTER );
+    gtk_widget_set_hexpand( GTK_WIDGET( ui->lcd_canvas ), false );
 
     GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
@@ -1543,19 +1545,33 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
             button->x49gp = x49gp;
             button->key = &ui_keys[ NORMALIZED_KEYS_ORDER( key_index ) ];
 
-            keys_top_labels_containers[ key_index ] = gtk_center_box_new();
+            keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
             gtk_widget_add_css_class( keys_top_labels_containers[ key_index ], "top-labels-container" );
 
             gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), keys_top_labels_containers[ key_index ] );
 
-            if ( button->key->right ) {
-                gtk_center_box_set_start_widget( GTK_CENTER_BOX( keys_top_labels_containers[ key_index ] ),
-                                                 _ui_load__create_label( "label-left", button->key->left ) );
-                gtk_center_box_set_end_widget( GTK_CENTER_BOX( keys_top_labels_containers[ key_index ] ),
-                                               _ui_load__create_label( "label-right", button->key->right ) );
-            } else if ( button->key->left )
-                gtk_center_box_set_center_widget( GTK_CENTER_BOX( keys_top_labels_containers[ key_index ] ),
-                                                  _ui_load__create_label( "label-left", button->key->left ) );
+            GtkWidget* label_left = NULL;
+            if ( button->key->left )
+                label_left = _ui_load__create_label( "label-left", button->key->left );
+
+            GtkWidget* label_right = NULL;
+            if ( button->key->right )
+                label_right = _ui_load__create_label( "label-right", button->key->right );
+
+            if ( button->key->left && button->key->right ) {
+                gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_left );
+                gtk_widget_set_halign( GTK_WIDGET( label_left ), GTK_ALIGN_START );
+
+                gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_right );
+                gtk_widget_set_halign( GTK_WIDGET( label_right ), GTK_ALIGN_END );
+                gtk_widget_set_hexpand( label_right, true );
+            } else if ( button->key->left ) {
+                gtk_widget_set_halign( GTK_WIDGET( keys_top_labels_containers[ key_index ] ), GTK_ALIGN_CENTER );
+
+                gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_left );
+                gtk_widget_set_halign( GTK_WIDGET( label_left ), GTK_ALIGN_CENTER );
+                gtk_widget_set_hexpand( GTK_WIDGET( label_left ), false );
+            }
 
             button->button = gtk_button_new();
             gtk_widget_add_css_class( button->button, "key" );
