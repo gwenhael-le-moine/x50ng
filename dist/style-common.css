@@ -6,6 +6,7 @@ You can inspect the application by setting the environment variable
 window.background
   box#window-container
     box#upper-left-container
+      box#header-container
       box#display-container
         box#annunciators-container
           label.annunciator

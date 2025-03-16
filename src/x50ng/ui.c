@@ -1440,6 +1440,11 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_set_name( downer_right_container, "downer-right-container" );
     gtk_box_append( GTK_BOX( window_container ), downer_right_container );
 
+    GtkWidget* header_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    gtk_widget_add_css_class( header_container, "header-container" );
+    gtk_widget_set_name( header_container, "header-container" );
+    gtk_box_append( ( GTK_BOX( upper_left_container ) ), header_container );
+
     ui->lcd_canvas = gtk_drawing_area_new();
     gtk_widget_add_css_class( ui->lcd_canvas, "lcd" );
     gtk_widget_set_name( ui->lcd_canvas, "lcd" );

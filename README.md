@@ -67,6 +67,7 @@ For reference here is a tree of the css selectors defined by the application:
 - window.background
   - box#window-container
     - box#upper-left-container
+      - box#header-container
       - box#display-container
         - box#annunciators-container
           - label.annunciator
