@@ -66,6 +66,9 @@ window.background
     border-bottom-style: outset;
 }
 
+.top-labels-container {
+        min-height: 1.1em;
+}
 .key {
     background-image: none;
     padding: 0px;

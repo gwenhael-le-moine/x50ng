@@ -18,6 +18,7 @@
 
     --color-label-key-light: #ffffff;
     --color-label-key-dark: #3f3f3f;
+    --color-label-below: #8b0000;
 }
 window {
     background-color: var( --color-faceplate );
@@ -81,7 +82,7 @@ window {
     color: var( --color-key-shift-right );
 }
 .label-below {
-    color: var( --color-label-key-light );
+    color: var( --color-label-below );
 }
 .label-letter {
     color: var( --color-key-alpha );
