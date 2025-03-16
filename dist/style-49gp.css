@@ -1,45 +1,66 @@
 @import "style-common.css";
 
+:root {
+    --color-faceplate: #f5deb3;
+    --color-border: #f7ffe5;
+    --color-display: #dcdcdc;
+    --color-border-display: #012321;
+
+    --color-key-enter: #088080;
+    --color-key-menu: #a9a9a9;
+    --color-key-function: #696969;
+    --color-key-arrow: #e0e0e0;
+    --color-key-alpha: #67c184;
+    --color-key-shift-left: #82b1ff;
+    --color-key-shift-right: #ff8a80;
+    --color-key-core: #3f3f3f;
+    --color-key-number: #3f3f3f;
+
+    --color-label-key-light: #ffffff;
+    --color-label-key-dark: #3f3f3f;
+}
 window {
-    background-color: #f5deb3;
+    background-color: var( --color-faceplate );
 }
 
 #display-container {
-    border-color: #f7ffe5;
-    /* background-color: #a9d0b2; */
-    background-color: #f5f5f5;
+    border-color: var( --color-border-display );
+    background-color: var( --color-display );
 }
 
 #window-container,
 .keyboard-container,
 #high-keyboard-container > .row-container:first-child {
-    border-color: #f7ffe5;
+    border-color: var( --color-border );
 }
 
 .key.enter {
-    background-color: #088080;
+    background-color: var( --color-key-enter );
 }
 .key.menu {
-    background-color: #a9a9a9;
+    background-color: var( --color-key-menu );
 }
 .key.function {
-    background-color: #696969;
+    background-color: var( --color-key-function );
 }
 .key.arrow {
-    background-color: #e0e0e0;
+    background-color: var( --color-key-arrow );
 }
 .key.alpha {
-    background-color: #fae82c;
+    background-color: var( --color-key-alpha );
 }
 .key.shift-left {
-    background-color: #4060a4;
+    background-color: var( --color-key-shift-left);
 }
 .key.shift-right {
-    background-color: #8e2518;
+    background-color: var( --color-key-shift-right );
 }
-.key.core,
+.key.core {
+    background-color: var( --color-key-core );
+}
+
 .key.core-number {
-    background-color: #080808;
+    background-color: var( --color-key-number );
 }
 
 .annunciator,
@@ -48,20 +69,20 @@ window {
 .key.menu .label-key,
 .key.shift-left .label-key,
 .key.shift-right .label-key {
-    color: #080808;
+    color: var( --color-label-key-dark );
 }
 .label-key {
-    color: #ffffff;
+    color: var( --color-label-key-light );
 }
 .label-left {
-    color: #4060a4;
+    color: var( --color-key-shift-left );
 }
 .label-right {
-    color: #c06e60;
+    color: var( --color-key-shift-right );
 }
 .label-below {
-    color: #4060a4;
+    color: var( --color-label-key-light );
 }
 .label-letter {
-    color: #fae82c;
+    color: var( --color-key-alpha );
 }
