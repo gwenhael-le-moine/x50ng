@@ -1401,13 +1401,6 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     x49gp_ui_t* ui = module->user_data;
 
     // create window and widgets/stuff
-    ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
-    ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
-    ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
-    ui->ui_ann_battery = _ui_load__create_annunciator_widget( ui, "🪫" );
-    ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
-    ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
-
     ui->window = gtk_window_new();
     gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
     gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
@@ -1468,6 +1461,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
     gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
+
+    ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
+    ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
+    ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
+    ui->ui_ann_battery = _ui_load__create_annunciator_widget( ui, "🪫" );
+    ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
+    ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
 
     gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_left );
     gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_right );
