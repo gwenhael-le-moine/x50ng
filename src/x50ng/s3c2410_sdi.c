@@ -649,7 +649,7 @@ int s3c2410_sdi_is_mounted( x49gp_t* x49gp )
     return ( sdi->bs != NULL ) || ( sdi->fd >= 0 );
 }
 
-int s3c2410_sdi_get_path( x49gp_t* x49gp, char** path )
+void s3c2410_sdi_get_path( x49gp_t* x49gp, char** path )
 {
     s3c2410_sdi_t* sdi = x49gp->s3c2410_sdi;
 

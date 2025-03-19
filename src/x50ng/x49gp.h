@@ -114,7 +114,7 @@ extern int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, c
 extern void s3c2410_sdi_unmount( x49gp_t* x49gp );
 extern int s3c2410_sdi_mount( x49gp_t* x49gp, char* filename );
 extern int s3c2410_sdi_is_mounted( x49gp_t* x49gp );
-extern int s3c2410_sdi_get_path( x49gp_t* x49gp, char** filename );
+extern void s3c2410_sdi_get_path( x49gp_t* x49gp, char** filename );
 
 extern int x49gp_modules_init( x49gp_t* );
 extern int x49gp_modules_exit( x49gp_t* );
