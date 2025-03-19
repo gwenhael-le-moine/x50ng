@@ -863,7 +863,13 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
     g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), x49gp );
     if ( s3c2410_sdi_is_mounted( x49gp ) )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
-    g_menu_append( menu, "Unmount SD", "app.unmount_SD" );
+    char* sd_path;
+    s3c2410_sdi_get_path( x49gp, &sd_path );
+    char* unmount_label;
+    asprintf( &unmount_label, "Unmount SD (%s)", sd_path );
+    g_menu_append( menu, unmount_label, "app.unmount_SD" );
+    free( sd_path );
+    free( unmount_label );
 
     g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
     g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( do_start_gdb_server ), x49gp );

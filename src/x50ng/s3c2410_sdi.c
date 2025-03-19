@@ -649,6 +649,13 @@ int s3c2410_sdi_is_mounted( x49gp_t* x49gp )
     return ( sdi->bs != NULL ) || ( sdi->fd >= 0 );
 }
 
+int s3c2410_sdi_get_path( x49gp_t* x49gp, char** path )
+{
+    s3c2410_sdi_t* sdi = x49gp->s3c2410_sdi;
+
+    *path = sdi->filename;
+}
+
 static int s3c2410_sdi_load( x49gp_module_t* module, GKeyFile* key )
 {
     x49gp_t* x49gp = module->x49gp;
