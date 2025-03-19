@@ -771,19 +771,13 @@ static void react_to_button_right_click_release( gpointer user_data, GtkGesture*
     X50NG_PRESS_KEY( x49gp, key );
 }
 
-static void mount_sd_folder_file_chooser_callback( GtkDialog* dialog, int response, gpointer user_data )
+static void mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x49gp_t* x49gp )
 {
-    if ( response == GTK_RESPONSE_ACCEPT ) {
-        x49gp_t* x49gp = user_data;
-        GtkFileChooser* chooser = GTK_FILE_CHOOSER( dialog );
+    g_autoptr( GError ) error = NULL;
+    g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, &error );
 
-        g_autoptr( GFile ) file = gtk_file_chooser_get_file( chooser ); /* FIXME: deprecated */
-
-        if ( file != NULL )
-            s3c2410_sdi_mount( x49gp, g_file_get_path( file ) );
-    }
-
-    gtk_window_destroy( GTK_WINDOW( dialog ) );
+    if ( file != NULL )
+        s3c2410_sdi_mount( x49gp, ( char* )g_file_peek_path( file ) );
 }
 
 static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuitem )
@@ -791,14 +785,11 @@ static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuit
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
-    /* FIXME: deprecated */
-    GtkWidget* dialog = gtk_file_chooser_dialog_new( "Choose SD folder…", GTK_WINDOW( ui->window ), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                                     "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL );
-    gtk_file_chooser_set_select_multiple( GTK_FILE_CHOOSER( dialog ), false ); /* FIXME: deprecated */
+    g_autoptr( GtkFileDialog ) dialog =
+        g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
 
-    gtk_window_present( GTK_WINDOW( dialog ) );
-
-    g_signal_connect( dialog, "response", G_CALLBACK( mount_sd_folder_file_chooser_callback ), x49gp );
+    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( ui->window ), NULL, ( GAsyncReadyCallback )mount_sd_folder_file_dialog_callback,
+                                   x49gp );
 }
 
 static void do_start_gdb_server( GMenuItem* menuitem, gpointer user_data )
