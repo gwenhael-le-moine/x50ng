@@ -1371,7 +1371,7 @@ static inline void _ui_load__newrplify_ui_keys()
     ui_keys[ HPKEY_ENTER ].left = "";
 }
 
-static GtkWidget* _ui_load__create_annunciator_widget( x49gp_ui_t* ui, const char* label )
+static GtkWidget* _ui_load__create_annunciator_widget( const char* label )
 {
     GtkWidget* ui_ann = gtk_label_new( NULL );
     gtk_widget_add_css_class( ui_ann, "annunciator" );
@@ -1461,12 +1461,12 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
-    ui->ui_ann_left = _ui_load__create_annunciator_widget( ui, "⮢" );
-    ui->ui_ann_right = _ui_load__create_annunciator_widget( ui, "⮣" );
-    ui->ui_ann_alpha = _ui_load__create_annunciator_widget( ui, "α" );
-    ui->ui_ann_battery = _ui_load__create_annunciator_widget( ui, "🪫" );
-    ui->ui_ann_busy = _ui_load__create_annunciator_widget( ui, "⌛" );
-    ui->ui_ann_io = _ui_load__create_annunciator_widget( ui, "⇄" );
+    ui->ui_ann_left = _ui_load__create_annunciator_widget( "⮢" );
+    ui->ui_ann_right = _ui_load__create_annunciator_widget( "⮣" );
+    ui->ui_ann_alpha = _ui_load__create_annunciator_widget( "α" );
+    ui->ui_ann_battery = _ui_load__create_annunciator_widget( "🪫" );
+    ui->ui_ann_busy = _ui_load__create_annunciator_widget( "⌛" );
+    ui->ui_ann_io = _ui_load__create_annunciator_widget( "⇄" );
 
     gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_left );
     gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_right );
