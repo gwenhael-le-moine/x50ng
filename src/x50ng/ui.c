@@ -732,9 +732,8 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
     return GDK_EVENT_STOP;
 }
 
-static void react_to_button_press( GtkGesture* gesture, int n_press, double x, double y, gpointer user_data )
+static void react_to_button_press( GtkGesture* _gesture, int _n_press, double _x, double _y, x49gp_ui_button_t* button )
 {
-    x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
     x49gp_t* x49gp = button->x49gp;
 
@@ -746,9 +745,8 @@ static void react_to_button_press( GtkGesture* gesture, int n_press, double x, d
     X50NG_PRESS_KEY( x49gp, key );
 }
 
-static void react_to_button_release( GtkGesture* gesture, int n_press, double x, double y, gpointer user_data )
+static void react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, x49gp_ui_button_t* button )
 {
-    x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
 
     if ( opt.verbose )
@@ -757,9 +755,8 @@ static void react_to_button_release( GtkGesture* gesture, int n_press, double x,
     ui_release_button( button );
 }
 
-static void react_to_button_right_click_release( gpointer user_data, GtkGesture* gesture, int n_press, double x, double y )
+static void react_to_button_right_click_release( x49gp_ui_button_t* button, GtkGesture* _gesture, int _n_press, double _x, double _y )
 {
-    x49gp_ui_button_t* button = user_data;
     const x49gp_ui_key_t* key = button->key;
     x49gp_t* x49gp = button->x49gp;
 
@@ -773,16 +770,14 @@ static void react_to_button_right_click_release( gpointer user_data, GtkGesture*
 
 static void mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x49gp_t* x49gp )
 {
-    g_autoptr( GError ) error = NULL;
-    g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, &error );
+    g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
     if ( file != NULL )
         s3c2410_sdi_mount( x49gp, ( char* )g_file_peek_path( file ) );
 }
 
-static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuitem )
+static void do_select_and_mount_sd_folder( x49gp_t* x49gp, GMenuItem* _menuitem )
 {
-    x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
     g_autoptr( GtkFileDialog ) dialog =
@@ -792,30 +787,24 @@ static void do_select_and_mount_sd_folder( gpointer user_data, GMenuItem* menuit
                                    x49gp );
 }
 
-static void do_start_gdb_server( GMenuItem* menuitem, gpointer user_data )
+static void do_start_gdb_server( GMenuItem* _menuitem, x49gp_t* x49gp )
 {
-    x49gp_t* x49gp = user_data;
-
     if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
         gdbserver_start( opt.debug_port );
         gdb_handlesig( x49gp->env, 0 );
     }
 }
 
-static void do_reset( gpointer user_data, GMenuItem* widget )
+static void do_reset( x49gp_t* x49gp, GMenuItem* _menuitem )
 {
-    x49gp_t* x49gp = user_data;
-
     x49gp_modules_reset( x49gp, X49GP_RESET_POWER_ON );
     cpu_reset( x49gp->env );
     x49gp_set_idle( x49gp, 0 );
 }
 
 #ifdef TEST_PASTE
-static void do_paste( gpointer user_data, GtkWidget* widget )
+static void do_paste( x49gp_t* x49gp, GtkWidget* _menuitem )
 {
-    x49gp_t* x49gp = user_data;
-
     GdkClipboard* clip = gdk_clipboard_get_content( GDK_SELECTION_CLIPBOARD );
     gchar* text = gtk_clipboard_wait_for_text( clip );
     fprintf( stderr, "clipboard: %s\n", text );
@@ -825,12 +814,7 @@ static void do_paste( gpointer user_data, GtkWidget* widget )
 }
 #endif
 
-static void do_quit( gpointer user_data, GtkWidget* widget )
-{
-    x49gp_t* x49gp = user_data;
-
-    x49gp->arm_exit++;
-}
+static void do_quit( x49gp_t* x49gp, GtkWidget* _menuitem ) { x49gp->arm_exit++; }
 
 static void open_menu( int x, int y, x49gp_t* x49gp )
 {
@@ -897,10 +881,9 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
 
 #define KEY_PRESS 1
 #define KEY_RELEASE 2
-static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data,
+static bool react_to_key_event( GtkEventControllerKey* _controller, guint keyval, guint _keycode, GdkModifierType _state, x49gp_t* x49gp,
                                 int event_type )
 {
-    x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
 
     /* We want to know the keyval as interpreted without modifiers. */
@@ -1186,15 +1169,14 @@ static bool react_to_key_event( GtkEventControllerKey* controller, guint keyval,
     return GDK_EVENT_STOP;
 }
 
-static bool react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data )
+static bool react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, x49gp_t* x49gp )
 {
-    return react_to_key_event( controller, keyval, keycode, state, user_data, KEY_PRESS );
+    return react_to_key_event( controller, keyval, keycode, state, x49gp, KEY_PRESS );
 }
 
-static bool react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                  gpointer user_data )
+static bool react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, x49gp_t* x49gp )
 {
-    return react_to_key_event( controller, keyval, keycode, state, user_data, KEY_RELEASE );
+    return react_to_key_event( controller, keyval, keycode, state, x49gp, KEY_RELEASE );
 }
 
 #ifdef TEST_PASTE
@@ -1262,15 +1244,12 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 }
 #endif
 
-static void react_to_display_click( gpointer user_data, GtkEventController* gesture, gdouble x, gdouble y )
-
+static void react_to_display_click( x49gp_t* x49gp, GtkEventController* _gesture, gdouble x, gdouble y )
 {
-    x49gp_t* x49gp = user_data;
-
     open_menu( ( int )x, ( int )y, x49gp );
 }
 
-static void redraw_lcd( GtkDrawingArea* widget, cairo_t* cr, int width, int height, gpointer user_data )
+static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int _width, int _height, gpointer user_data )
 {
     x49gp_t* x49gp = user_data;
     x49gp_ui_t* ui = x49gp->ui;
@@ -1305,9 +1284,9 @@ static int ui_init( x49gp_module_t* module )
     return 0;
 }
 
-static int ui_exit( x49gp_module_t* module ) { return 0; }
+static int ui_exit( x49gp_module_t* _module ) { return 0; }
 
-static int ui_reset( x49gp_module_t* module, x49gp_reset_t reset ) { return 0; }
+static int ui_reset( x49gp_module_t* _module, x49gp_reset_t _reset ) { return 0; }
 
 static inline void _ui_load__newrplify_ui_keys()
 {
@@ -1394,7 +1373,7 @@ static GtkWidget* _ui_load__create_label( const char* css_class, const char* tex
     return ui_label;
 }
 
-static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
+static int ui_load( x49gp_module_t* module, GKeyFile* _keyfile )
 {
     x49gp_t* x49gp = module->x49gp;
     x49gp_ui_t* ui = module->user_data;
@@ -1647,7 +1626,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* keyfile )
     return 0;
 }
 
-static int ui_save( x49gp_module_t* module, GKeyFile* keyfile ) { return 0; }
+static int ui_save( x49gp_module_t* module, GKeyFile* _keyfile ) { return 0; }
 
 static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, int opacity )
 {
