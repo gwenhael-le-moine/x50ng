@@ -12,7 +12,7 @@ INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
 INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
 
 #
-DEBUG_CFLAGS = -g # -pg
+DEBUG_CFLAGS = -g # -fsanitize=leak -pg
 OPTIM ?= 2
 
 LUA_VERSION ?= lua
