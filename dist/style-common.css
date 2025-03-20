@@ -61,31 +61,34 @@ window.background
 #low-keyboard-container {
     border-width: 0 3px 3px 3px;
 }
-#high-keyboard-container > .row-container:first-child {
-    border-bottom-width: 3px;
+#high-keyboard-container > .row-container:first-child,
+#high-keyboard-container > .row-container:nth-child(3) {
+    border-bottom-width: 2px;
     border-bottom-style: outset;
 }
 
-.top-labels-container {
-        min-height: 1.1em;
-}
 .key {
     background-image: none;
     padding: 0px;
     margin: 2px 0px;
     min-height: 40px;
     border-style: outset;
+    border-width: 3px;
 }
-.key.key-down {
+.key-down {
     border-style: inset;
 }
 
-.key.enter {
+.enter {
     margin: 0 1px;
     min-height: 46px;
 }
-.key.arrow {
+.arrow {
     border-radius: 33%;
+}
+
+.top-labels-container {
+    min-height: 1.1em;
 }
 
 .label-key,
@@ -105,16 +108,16 @@ window.background
     font-size: 0.75em;            /* typically 0.75 * base font size */
 }
 
-.key.shift-left .label-key,
-.key.shift-right .label-key {
+.shift-left .label-key,
+.shift-right .label-key {
     font-size: 2em;            /* typically 2 * base font size */
 }
-.key.core-number .label-key,
-.key.arrow .label-key,
+.core-number .label-key,
+.arrow .label-key,
 .annunciator {
     font-size: 1.75em;            /* typically 1.75 * base font size */
 }
-.key.alpha .label-key,
-.key.enter .label-key {
+.alpha .label-key,
+.enter .label-key {
     font-size: 1.25em;            /* typically 2 * base font size */
 }
