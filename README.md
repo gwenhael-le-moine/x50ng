@@ -59,7 +59,7 @@ On first run *x50ng* will flash the default bootloader and default firmware. See
 
 ## Styling
 
-You can apply your own styling using a CSS file ( [gtk+3 css documentation](https://docs.gtk.org/gtk3/css-overview.html) ).
+You can apply your own styling using a CSS file ( [gtk4 css documentation](https://docs.gtk.org/gtk4/css-overview.html) ).
 You can access gtk's UI by running `GTK_DEBUG=interactive x50ng`. In it you can see the classes and names of each components.
 
 For reference here is a tree of the css selectors defined by the application:

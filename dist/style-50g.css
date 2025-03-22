@@ -54,7 +54,7 @@ window {
 
 #window-container,
 .keyboard-container,
-#high-keyboard-container > .row-container:first-child {
+#high-keyboard-container > .row-container {
     /* border-color: var( --color-border ); */
     border-color: @color-border;
 }
