@@ -1285,7 +1285,7 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
 static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int _width, int _height, gpointer _user_data )
 {
     cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( lcd_surface );
-    cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_NEAREST );
+    cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_FAST );
     cairo_scale( cr, opt.zoom, opt.zoom );
     cairo_set_source( cr, lcd_pattern );
 

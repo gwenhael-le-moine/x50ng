@@ -30,7 +30,7 @@ struct options opt = {
     .newrpl_keyboard = false,
     .legacy_keyboard = false,
     .name = NULL,
-    .zoom = 2,
+    .zoom = 2.0,
     .netbook = false,
     .netbook_pivot_line = 3,
 };
@@ -102,7 +102,7 @@ static char* config_to_string( void )
               "-- This is a comment\n"
               "name = \"%s\"  -- this customize the title of the window\n"
               "style = \"%s\" -- CSS file (relative to this file)\n"
-              "zoom = %i -- integer only\n"
+              "zoom = %f\n"
               "netbook = %s\n"
               "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard\n"
               "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
@@ -159,7 +159,7 @@ void config_init( char* progname, int argc, char* argv[] )
     char* clopt_name = NULL;
     int clopt_newrpl_keyboard = -1;
     int clopt_legacy_keyboard = -1;
-    int clopt_zoom = -1;
+    double clopt_zoom = -1.0;
     int clopt_netbook = -1;
     int clopt_netbook_pivot_line = -1;
 
@@ -215,7 +215,7 @@ void config_init( char* progname, int argc, char* argv[] )
                          "\n"
                          "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
-                         "-z --zoom[=X]                scale LCD by X (default: 2)\n"
+                         "-z --zoom[=X]                scale LCD by X (default: 2.0)\n"
                          "--netbook                    horizontal window (default: false)\n"
                          "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
                          "--newrpl-keyboard            label keyboard for newRPL\n"
@@ -271,7 +271,7 @@ void config_init( char* progname, int argc, char* argv[] )
                 clopt_style_filename = strdup( optarg );
                 break;
             case 'z':
-                clopt_zoom = atoi( optarg );
+                clopt_zoom = atof( optarg );
                 break;
             case 'v':
                 fprintf( stderr, "%i.%i.%i\n", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
@@ -314,7 +314,7 @@ void config_init( char* progname, int argc, char* argv[] )
             opt.name = strdup( lua_name );
 
         lua_getglobal( config_lua_values, "zoom" );
-        opt.zoom = luaL_optinteger( config_lua_values, -1, opt.zoom );
+        opt.zoom = luaL_optnumber( config_lua_values, -1, opt.zoom );
 
         lua_getglobal( config_lua_values, "netbook" );
         opt.netbook = lua_toboolean( config_lua_values, -1 );

@@ -37,7 +37,7 @@ struct options {
     bool newrpl_keyboard;
     bool legacy_keyboard;
     char* name;
-    int zoom;
+    double zoom;
     bool netbook;
     int netbook_pivot_line;
 };

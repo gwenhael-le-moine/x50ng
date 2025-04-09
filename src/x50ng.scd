@@ -61,7 +61,7 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 *-s* *--style*[=_filename_]        css filename in <datadir> (default: style-50g.css)
 
-*-z* *--zoom*[=_X_]                scale LCD by X (default: 2)
+*-z* *--zoom*[=_X_]                scale LCD by X (default: 2.0)
 
 *--netbook*                    horizontal window (default: false)
 
@@ -115,7 +115,7 @@ The general configuration file of *x50ng*. Content reflecting default values (as
 -- Configuration file for x50ng
 -- This is a comment
 style = "style-50g.css" -- CSS file (relative to this file)
-zoom = 2 -- integer only
+zoom = 2.0
 netbook = false
 netbook-pivot-line = 3
 newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use
