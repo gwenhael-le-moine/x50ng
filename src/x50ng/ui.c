@@ -1266,11 +1266,11 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
     gtk_popover_popup( GTK_POPOVER( popup ) );
 }
 
-static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int _width, int _height, gpointer _user_data )
+static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, int height, gpointer _user_data )
 {
     cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( lcd_surface );
     cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_FAST );
-    cairo_scale( cr, opt.zoom, opt.zoom );
+    cairo_scale( cr, ( double )width / ( double )LCD_WIDTH, ( double )height / ( double )LCD_HEIGHT );
     cairo_set_source( cr, lcd_pattern );
 
     cairo_paint( cr );
