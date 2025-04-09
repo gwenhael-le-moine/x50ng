@@ -87,7 +87,6 @@ X49GP_DEBUG = \
 	-DDEBUG_X49GP_UI
 
 X49GP_INCLUDES = -I./src/x50ng/ \
-	-I./src/x50ng/bitmaps/ \
 	-I./src/qemu-git/ \
 	$(QEMU_INCLUDES)
 
@@ -191,11 +190,16 @@ depend-and-build: depend
 depend: depend-libs
 	$(MAKEDEPEND) $(X49GP_CFLAGS) $(SRCS) >.depend
 
+# for clangd
+compile_commands.json: distclean
+	bear -- make dist/$(TARGET)
+
 # Cleaning
 clean:
 	rm -f ./src/x50ng/*.o core *~ .depend
 
 distclean: clean clean-qemu
+	rm -f compile_commands.json
 	rm -f dist/$(TARGET) dist/$(TARGET).desktop dist/$(TARGET).man
 
 mrproper: distclean
