@@ -22,10 +22,10 @@
 
 // #define TEST_PASTE true
 
-#define KB_NB_ROWS 10
+#define KB_NB_ROWS ( 10 )
 
-#define LCD_WIDTH ( 131 * opt.zoom )
-#define LCD_HEIGHT ( 80 * opt.zoom )
+#define LCD_WIDTH ( 131 )
+#define LCD_HEIGHT ( 80 )
 
 typedef enum {
     HPKEY_A = 0,
@@ -1120,7 +1120,7 @@ static bool react_to_key_event( int keyval, x49gp_t* x49gp, int event_type )
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            open_menu( LCD_WIDTH / 2, LCD_HEIGHT / 2, x49gp );
+            open_menu( ( LCD_WIDTH * opt.zoom ) / 2, ( LCD_HEIGHT * opt.zoom ) / 2, x49gp );
             return GDK_EVENT_STOP;
 
         default:
@@ -1269,7 +1269,6 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
     g_menu_append( menu, "Quit", "app.quit" );
 
     GtkWidget* popup = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
-    // g_signal_connect( G_OBJECT( view ), "destroy", G_CALLBACK( popover_close ), popup );
     gtk_widget_insert_action_group( popup, "app", G_ACTION_GROUP( action_group ) );
 
     GdkRectangle rect;
@@ -1285,7 +1284,11 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
 
 static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int _width, int _height, gpointer _user_data )
 {
-    cairo_set_source_surface( cr, lcd_surface, 0, 0 );
+    cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( lcd_surface );
+    cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_NEAREST );
+    cairo_scale( cr, opt.zoom, opt.zoom );
+    cairo_set_source( cr, lcd_pattern );
+
     cairo_paint( cr );
 }
 
@@ -1433,8 +1436,8 @@ static int ui_load( x49gp_t* x49gp )
     gtk_widget_add_css_class( lcd_canvas, "lcd" );
     gtk_widget_set_name( lcd_canvas, "lcd" );
 
-    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( lcd_canvas ), LCD_WIDTH );
-    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( lcd_canvas ), LCD_HEIGHT );
+    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( lcd_canvas ), ( LCD_WIDTH * opt.zoom ) );
+    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( lcd_canvas ), ( LCD_HEIGHT * opt.zoom ) );
     gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( lcd_canvas ), redraw_lcd, x49gp, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -1442,8 +1445,7 @@ static int ui_load( x49gp_t* x49gp )
     gtk_widget_add_css_class( lcd_container, "lcd-container" );
     gtk_widget_set_name( lcd_container, "lcd-container" );
 
-    gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
-    gtk_widget_set_margin_bottom( lcd_container, 3 );
+    gtk_widget_set_size_request( lcd_container, ( LCD_WIDTH * opt.zoom ), ( LCD_HEIGHT * opt.zoom ) );
     gtk_box_append( GTK_BOX( lcd_container ), lcd_canvas );
     gtk_widget_set_halign( GTK_WIDGET( lcd_canvas ), GTK_ALIGN_CENTER );
     gtk_widget_set_hexpand( GTK_WIDGET( lcd_canvas ), false );
@@ -1638,17 +1640,6 @@ static int ui_load( x49gp_t* x49gp )
     return 0;
 }
 
-static inline void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, int opacity )
-{
-    cairo_t* cr = cairo_create( target );
-
-    cairo_set_source_rgba( cr, 0, 0, 0, opacity / 15.0 );
-    cairo_rectangle( cr, x, y, w, h );
-    cairo_fill( cr );
-
-    cairo_destroy( cr );
-}
-
 /********************/
 /* Public functions */
 /********************/
@@ -1657,22 +1648,30 @@ void gui_update_lcd( x49gp_t* x49gp )
 {
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
 
-    if ( lcd->lcdcon1 & 1 ) {
-        gtk_widget_set_opacity( ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) );
-        gtk_widget_set_opacity( ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) );
-        gtk_widget_set_opacity( ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) );
-        gtk_widget_set_opacity( ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) );
-        gtk_widget_set_opacity( ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
-        gtk_widget_set_opacity( ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
+    if ( !( lcd->lcdcon1 & 1 ) )
+        return;
 
-        if ( NULL != lcd_surface )
-            g_free( lcd_surface );
-        lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
+    gtk_widget_set_opacity( ui_ann_left, x49gp_get_pixel_color( lcd, LCD_WIDTH, 1 ) );
+    gtk_widget_set_opacity( ui_ann_right, x49gp_get_pixel_color( lcd, LCD_WIDTH, 2 ) );
+    gtk_widget_set_opacity( ui_ann_alpha, x49gp_get_pixel_color( lcd, LCD_WIDTH, 3 ) );
+    gtk_widget_set_opacity( ui_ann_battery, x49gp_get_pixel_color( lcd, LCD_WIDTH, 4 ) );
+    gtk_widget_set_opacity( ui_ann_busy, x49gp_get_pixel_color( lcd, LCD_WIDTH, 5 ) );
+    gtk_widget_set_opacity( ui_ann_io, x49gp_get_pixel_color( lcd, LCD_WIDTH, 0 ) );
 
-        for ( int y = 0; y < ( LCD_HEIGHT / opt.zoom ); y++ )
-            for ( int x = 0; x < ( LCD_WIDTH / opt.zoom ); x++ )
-                _draw_pixel( lcd_surface, opt.zoom * x, opt.zoom * y, opt.zoom, opt.zoom, x49gp_get_pixel_color( lcd, x, y ) );
+    if ( NULL != lcd_surface )
+        g_free( lcd_surface );
+    lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
+    cairo_t* cr = cairo_create( lcd_surface );
+
+    for ( int y = 0; y < LCD_HEIGHT; y++ ) {
+        for ( int x = 0; x < LCD_WIDTH; x++ ) {
+            cairo_set_source_rgba( cr, 0, 0, 0, x49gp_get_pixel_color( lcd, x, y ) / 15.0 );
+            cairo_rectangle( cr, x, y, 1.0, 1.0 );
+            cairo_fill( cr );
+        }
     }
+
+    cairo_destroy( cr );
 
     gtk_widget_queue_draw( lcd_canvas );
 }
