@@ -209,15 +209,6 @@ pretty-code:
 pull-firmware:
 	make -C dist/firmware/
 
-# Create an sdcard file
-sdcard:
-ifeq ($(shell uname),Darwin)
-	rm -f sdcard.dmg
-	hdiutil create $@ -megabytes 64 -fs MS-DOS -volname $(TARGET)
-else
-	/sbin/mkdosfs -v -C -S 512 -f 2 -F 16 -r 512 -R 2 -n "$(TARGET)" $@ 65536
-endif
-
 # Installation
 dist/$(TARGET).desktop: src/$(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" < $^ >$@
