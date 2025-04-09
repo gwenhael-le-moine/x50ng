@@ -784,9 +784,6 @@ static void open_menu( int x, int y, x49gp_t* x49gp );
 /*************/
 static inline void x50ng_set_key_state( x49gp_t* x49gp, const x49gp_ui_key_t* key, bool state )
 {
-    if ( opt.verbose )
-        fprintf( stderr, "%s -> %s\n", key->label, state ? "true" : "false" );
-
     if ( key->rowbit )
         s3c2410_io_port_g_update( x49gp, key->column, key->row, key->columnbit, key->rowbit, state );
     else
@@ -802,9 +799,6 @@ static void ui_release_button( x49gp_ui_button_t* button )
 
     x49gp_t* x49gp = button->x49gp;
     const x49gp_ui_key_t* key = button->key;
-
-    if ( opt.verbose )
-        fprintf( stderr, "Releasing button %s\n", key->label );
 
     button->down = false;
     button->hold = false;
@@ -826,8 +820,6 @@ static bool ui_press_button( x49gp_ui_button_t* button, bool hold )
         } else
             return GDK_EVENT_PROPAGATE;
     }
-    if ( opt.verbose )
-        fprintf( stderr, "Pressing button %s\n", key->label );
 
     button->down = true;
     button->hold = hold;
@@ -844,9 +836,6 @@ static void react_to_button_press( GtkGesture* _gesture, int _n_press, double _x
     const x49gp_ui_key_t* key = button->key;
     x49gp_t* x49gp = button->x49gp;
 
-    if ( opt.verbose )
-        fprintf( stderr, "UI Pressing button %s\n", key->label );
-
     ui_press_button( button, false );
 
     X50NG_PRESS_KEY( x49gp, key );
@@ -854,11 +843,6 @@ static void react_to_button_press( GtkGesture* _gesture, int _n_press, double _x
 
 static void react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, x49gp_ui_button_t* button )
 {
-    const x49gp_ui_key_t* key = button->key;
-
-    if ( opt.verbose )
-        fprintf( stderr, "UI Releasing button %s\n", key->label );
-
     ui_release_button( button );
 }
 
