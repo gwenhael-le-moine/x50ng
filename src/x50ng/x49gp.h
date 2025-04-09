@@ -81,8 +81,6 @@ struct __x49gp_s__ {
     x49gp_arm_idle_t arm_idle;
     int arm_exit;
 
-    x49gp_ui_t* ui;
-
     GKeyFile* state;
     const char* progname;
     const char* progpath;

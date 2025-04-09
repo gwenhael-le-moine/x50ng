@@ -1,4 +1,3 @@
-#include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,7 +6,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/times.h>
-#include <errno.h>
 
 #include <gtk/gtk.h>
 #include <glib.h>
@@ -28,6 +26,95 @@
 
 #define LCD_WIDTH ( 131 * opt.zoom )
 #define LCD_HEIGHT ( 80 * opt.zoom )
+
+typedef enum {
+    HPKEY_A = 0,
+    HPKEY_B,
+    HPKEY_C,
+    HPKEY_D,
+    HPKEY_E,
+    HPKEY_F,
+
+    HPKEY_G,
+    HPKEY_H,
+    HPKEY_I,
+    HPKEY_UP,
+    HPKEY_J, /* 10 */
+
+    HPKEY_K,
+    HPKEY_L,
+    HPKEY_LEFT,
+    HPKEY_DOWN,
+    HPKEY_RIGHT,
+
+    HPKEY_M,
+    HPKEY_N,
+    HPKEY_O,
+    HPKEY_P,
+    HPKEY_BACKSPACE, /* 20 */
+
+    HPKEY_Q,
+    HPKEY_R,
+    HPKEY_S,
+    HPKEY_T,
+    HPKEY_U,
+
+    HPKEY_ENTER,
+    HPKEY_V,
+    HPKEY_W,
+    HPKEY_X,
+    HPKEY_Y, /* 30 */
+
+    HPKEY_ALPHA,
+    HPKEY_7,
+    HPKEY_8,
+    HPKEY_9,
+    HPKEY_Z,
+
+    HPKEY_SHIFT_LEFT,
+    HPKEY_4,
+    HPKEY_5,
+    HPKEY_6,
+    HPKEY_MULTIPLY, /* 40 */
+
+    HPKEY_SHIFT_RIGHT,
+    HPKEY_1,
+    HPKEY_2,
+    HPKEY_3,
+    HPKEY_MINUS,
+
+    HPKEY_ON,
+    HPKEY_0,
+    HPKEY_PERIOD,
+    HPKEY_SPACE,
+    HPKEY_PLUS, /* 50 */
+
+    NB_KEYS
+} x49gp_ui_hpkey_t;
+
+typedef struct {
+    const char* css_class;
+    const char* css_id;
+    const char* label;
+    const char* letter;
+    const char* left;
+    const char* right;
+    const char* below;
+
+    int column;
+    int row;
+    unsigned char columnbit;
+    unsigned char rowbit;
+    int eint;
+} x49gp_ui_key_t;
+
+typedef struct {
+    x49gp_t* x49gp;
+    const x49gp_ui_key_t* key;
+    GtkWidget* button;
+    bool down;
+    bool hold;
+} x49gp_ui_button_t;
 
 static x49gp_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",
@@ -673,6 +760,20 @@ static int keys_order_legacy[ NB_KEYS ] = {
 
 #define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
 
+static GtkWidget* window;
+
+static x49gp_ui_button_t* buttons;
+
+static GtkWidget* lcd_canvas;
+static cairo_surface_t* lcd_surface;
+
+static GtkWidget* ui_ann_left;
+static GtkWidget* ui_ann_right;
+static GtkWidget* ui_ann_alpha;
+static GtkWidget* ui_ann_battery;
+static GtkWidget* ui_ann_busy;
+static GtkWidget* ui_ann_io;
+
 /*************************/
 /* functions' prototypes */
 /*************************/
@@ -778,7 +879,7 @@ static void react_to_button_right_click_release( x49gp_ui_button_t* button, GtkG
 #define KEY_RELEASE 2
 static bool react_to_key_event( int keyval, x49gp_t* x49gp, int event_type )
 {
-    x49gp_ui_t* ui = x49gp->ui;
+    // x49gp_ui_t* ui = x49gp->ui;
 
     int hpkey;
     switch ( keyval ) {
@@ -1039,7 +1140,7 @@ static bool react_to_key_event( int keyval, x49gp_t* x49gp, int event_type )
     /* } */
 
     // Using GUI buttons:
-    x49gp_ui_button_t* button = &ui->buttons[ hpkey ];
+    x49gp_ui_button_t* button = &buttons[ hpkey ];
 
     switch ( event_type ) {
         case KEY_PRESS:
@@ -1065,13 +1166,10 @@ static void mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncR
 
 static void do_select_and_mount_sd_folder( x49gp_t* x49gp, GMenuItem* _menuitem )
 {
-    x49gp_ui_t* ui = x49gp->ui;
-
     g_autoptr( GtkFileDialog ) dialog =
         g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
 
-    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( ui->window ), NULL, ( GAsyncReadyCallback )mount_sd_folder_file_dialog_callback,
-                                   x49gp );
+    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( window ), NULL, ( GAsyncReadyCallback )mount_sd_folder_file_dialog_callback, x49gp );
 }
 
 static void do_start_gdb_server( GMenuItem* _menuitem, x49gp_t* x49gp )
@@ -1100,8 +1198,6 @@ static void x50g_string_to_keys_sequence( x49gp_t* x49gp, const char* input )
 
 static void paste_callback( GdkClipboard* source, GAsyncResult* result, x49gp_t* x49gp )
 {
-    // x49gp_ui_t* ui = x49gp->ui;
-
     g_autofree char* text = NULL;
     g_autoptr( GError ) error = NULL;
 
@@ -1182,49 +1278,16 @@ static void open_menu( int x, int y, x49gp_t* x49gp )
     rect.width = rect.height = 1;
     gtk_popover_set_pointing_to( GTK_POPOVER( popup ), &rect );
 
-    gtk_widget_set_parent( GTK_WIDGET( popup ), x49gp->ui->window );
+    gtk_widget_set_parent( GTK_WIDGET( popup ), window );
     gtk_popover_set_position( GTK_POPOVER( popup ), GTK_POS_BOTTOM );
     gtk_popover_popup( GTK_POPOVER( popup ) );
 }
 
-static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int _width, int _height, gpointer user_data )
+static void redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int _width, int _height, gpointer _user_data )
 {
-    x49gp_t* x49gp = user_data;
-    x49gp_ui_t* ui = x49gp->ui;
-
-    cairo_set_source_surface( cr, ui->lcd_surface, 0, 0 );
+    cairo_set_source_surface( cr, lcd_surface, 0, 0 );
     cairo_paint( cr );
 }
-
-static int ui_init( x49gp_module_t* module )
-{
-    x49gp_t* x49gp = module->x49gp;
-    x49gp_ui_t* ui;
-
-    ui = malloc( sizeof( x49gp_ui_t ) );
-    if ( NULL == ui ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", x49gp->progname, __FUNCTION__, __LINE__ );
-        return -ENOMEM;
-    }
-    memset( ui, 0, sizeof( x49gp_ui_t ) );
-
-    ui->buttons = malloc( NB_KEYS * sizeof( x49gp_ui_button_t ) );
-    if ( NULL == ui->buttons ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", x49gp->progname, __FUNCTION__, __LINE__ );
-        free( ui );
-        return -ENOMEM;
-    }
-    memset( ui->buttons, 0, NB_KEYS * sizeof( x49gp_ui_button_t ) );
-
-    module->user_data = ui;
-    x49gp->ui = ui;
-
-    return 0;
-}
-
-static int ui_exit( x49gp_module_t* _module ) { return 0; }
-
-static int ui_reset( x49gp_module_t* _module, x49gp_reset_t _reset ) { return 0; }
 
 static bool react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, x49gp_t* x49gp )
 {
@@ -1326,31 +1389,28 @@ static GtkWidget* _ui_load__create_label( const char* css_class, const char* tex
     return ui_label;
 }
 
-static int ui_load( x49gp_module_t* module, GKeyFile* _keyfile )
+static int ui_load( x49gp_t* x49gp )
 {
-    x49gp_t* x49gp = module->x49gp;
-    x49gp_ui_t* ui = module->user_data;
-
     // create window and widgets/stuff
-    ui->window = gtk_window_new();
-    gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
-    gtk_window_set_resizable( GTK_WINDOW( ui->window ), true );
-    gtk_window_set_title( GTK_WINDOW( ui->window ), opt.name );
-    gtk_window_set_decorated( GTK_WINDOW( ui->window ), true );
+    window = gtk_window_new();
+    gtk_window_set_decorated( GTK_WINDOW( window ), true );
+    gtk_window_set_resizable( GTK_WINDOW( window ), true );
+    gtk_window_set_title( GTK_WINDOW( window ), opt.name );
+    gtk_window_set_decorated( GTK_WINDOW( window ), true );
     g_set_application_name( opt.name );
 
     GtkWidget* window_container = gtk_box_new( opt.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( window_container, "window-container" );
     gtk_widget_set_name( window_container, "window-container" );
 
-    gtk_window_set_child( ( GtkWindow* )ui->window, window_container );
+    gtk_window_set_child( ( GtkWindow* )window, window_container );
 
-    g_signal_connect_swapped( G_OBJECT( ui->window ), "destroy", G_CALLBACK( do_quit ), x49gp );
+    g_signal_connect_swapped( G_OBJECT( window ), "destroy", G_CALLBACK( do_quit ), x49gp );
 
     GtkEventController* keys_controller = gtk_event_controller_key_new();
     g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( react_to_key_press ), x49gp );
     g_signal_connect( keys_controller, "key-released", G_CALLBACK( react_to_key_release ), x49gp );
-    gtk_widget_add_controller( ui->window, keys_controller );
+    gtk_widget_add_controller( window, keys_controller );
 
     /* for --netbook */
     GtkWidget* upper_left_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
@@ -1369,13 +1429,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* _keyfile )
     gtk_widget_set_name( header_container, "header-container" );
     gtk_box_append( ( GTK_BOX( upper_left_container ) ), header_container );
 
-    ui->lcd_canvas = gtk_drawing_area_new();
-    gtk_widget_add_css_class( ui->lcd_canvas, "lcd" );
-    gtk_widget_set_name( ui->lcd_canvas, "lcd" );
+    lcd_canvas = gtk_drawing_area_new();
+    gtk_widget_add_css_class( lcd_canvas, "lcd" );
+    gtk_widget_set_name( lcd_canvas, "lcd" );
 
-    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( ui->lcd_canvas ), LCD_WIDTH );
-    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( ui->lcd_canvas ), LCD_HEIGHT );
-    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( ui->lcd_canvas ), redraw_lcd, x49gp, NULL );
+    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( lcd_canvas ), LCD_WIDTH );
+    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( lcd_canvas ), LCD_HEIGHT );
+    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( lcd_canvas ), redraw_lcd, x49gp, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_widget_set_halign( lcd_container, GTK_ALIGN_CENTER );
@@ -1384,28 +1444,28 @@ static int ui_load( x49gp_module_t* module, GKeyFile* _keyfile )
 
     gtk_widget_set_size_request( lcd_container, LCD_WIDTH, LCD_HEIGHT + 3 );
     gtk_widget_set_margin_bottom( lcd_container, 3 );
-    gtk_box_append( GTK_BOX( lcd_container ), ui->lcd_canvas );
-    gtk_widget_set_halign( GTK_WIDGET( ui->lcd_canvas ), GTK_ALIGN_CENTER );
-    gtk_widget_set_hexpand( GTK_WIDGET( ui->lcd_canvas ), false );
+    gtk_box_append( GTK_BOX( lcd_container ), lcd_canvas );
+    gtk_widget_set_halign( GTK_WIDGET( lcd_canvas ), GTK_ALIGN_CENTER );
+    gtk_widget_set_hexpand( GTK_WIDGET( lcd_canvas ), false );
 
     GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
     gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
-    ui->ui_ann_left = _ui_load__create_annunciator_widget( "⮢" );
-    ui->ui_ann_right = _ui_load__create_annunciator_widget( "⮣" );
-    ui->ui_ann_alpha = _ui_load__create_annunciator_widget( "α" );
-    ui->ui_ann_battery = _ui_load__create_annunciator_widget( "🪫" );
-    ui->ui_ann_busy = _ui_load__create_annunciator_widget( "⌛" );
-    ui->ui_ann_io = _ui_load__create_annunciator_widget( "⇄" );
+    ui_ann_left = _ui_load__create_annunciator_widget( "⮢" );
+    ui_ann_right = _ui_load__create_annunciator_widget( "⮣" );
+    ui_ann_alpha = _ui_load__create_annunciator_widget( "α" );
+    ui_ann_battery = _ui_load__create_annunciator_widget( "🪫" );
+    ui_ann_busy = _ui_load__create_annunciator_widget( "⌛" );
+    ui_ann_io = _ui_load__create_annunciator_widget( "⇄" );
 
-    gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_left );
-    gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_right );
-    gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_alpha );
-    gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_battery );
-    gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_busy );
-    gtk_box_append( GTK_BOX( annunciators_container ), ui->ui_ann_io );
+    gtk_box_append( GTK_BOX( annunciators_container ), ui_ann_left );
+    gtk_box_append( GTK_BOX( annunciators_container ), ui_ann_right );
+    gtk_box_append( GTK_BOX( annunciators_container ), ui_ann_alpha );
+    gtk_box_append( GTK_BOX( annunciators_container ), ui_ann_battery );
+    gtk_box_append( GTK_BOX( annunciators_container ), ui_ann_busy );
+    gtk_box_append( GTK_BOX( annunciators_container ), ui_ann_io );
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( annunciators_container, "display-container" );
@@ -1480,7 +1540,7 @@ static int ui_load( x49gp_module_t* module, GKeyFile* _keyfile )
             if ( row == 1 && column == 3 )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
-            button = &ui->buttons[ NORMALIZED_KEYS_ORDER( key_index ) ];
+            button = &buttons[ NORMALIZED_KEYS_ORDER( key_index ) ];
             button->x49gp = x49gp;
             button->key = &ui_keys[ NORMALIZED_KEYS_ORDER( key_index ) ];
 
@@ -1572,15 +1632,13 @@ static int ui_load( x49gp_module_t* module, GKeyFile* _keyfile )
     free( style_full_path );
 
     // finally show the window
-    gtk_widget_realize( ui->window );
-    gtk_window_present( GTK_WINDOW( ui->window ) );
+    gtk_widget_realize( window );
+    gtk_window_present( GTK_WINDOW( window ) );
 
     return 0;
 }
 
-static int ui_save( x49gp_module_t* module, GKeyFile* _keyfile ) { return 0; }
-
-static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, int opacity )
+static inline void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, int opacity )
 {
     cairo_t* cr = cairo_create( target );
 
@@ -1597,35 +1655,38 @@ static void _draw_pixel( cairo_surface_t* target, int x, int y, int w, int h, in
 
 void gui_update_lcd( x49gp_t* x49gp )
 {
-    x49gp_ui_t* ui = x49gp->ui;
     s3c2410_lcd_t* lcd = x49gp->s3c2410_lcd;
 
     if ( lcd->lcdcon1 & 1 ) {
-        gtk_widget_set_opacity( ui->ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) );
-        gtk_widget_set_opacity( ui->ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) );
-        gtk_widget_set_opacity( ui->ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) );
-        gtk_widget_set_opacity( ui->ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) );
-        gtk_widget_set_opacity( ui->ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
-        gtk_widget_set_opacity( ui->ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
+        gtk_widget_set_opacity( ui_ann_left, x49gp_get_pixel_color( lcd, 131, 1 ) );
+        gtk_widget_set_opacity( ui_ann_right, x49gp_get_pixel_color( lcd, 131, 2 ) );
+        gtk_widget_set_opacity( ui_ann_alpha, x49gp_get_pixel_color( lcd, 131, 3 ) );
+        gtk_widget_set_opacity( ui_ann_battery, x49gp_get_pixel_color( lcd, 131, 4 ) );
+        gtk_widget_set_opacity( ui_ann_busy, x49gp_get_pixel_color( lcd, 131, 5 ) );
+        gtk_widget_set_opacity( ui_ann_io, x49gp_get_pixel_color( lcd, 131, 0 ) );
 
-        if ( NULL != ui->lcd_surface )
-            g_free( ui->lcd_surface );
-        ui->lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
+        if ( NULL != lcd_surface )
+            g_free( lcd_surface );
+        lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
 
         for ( int y = 0; y < ( LCD_HEIGHT / opt.zoom ); y++ )
             for ( int x = 0; x < ( LCD_WIDTH / opt.zoom ); x++ )
-                _draw_pixel( ui->lcd_surface, opt.zoom * x, opt.zoom * y, opt.zoom, opt.zoom, x49gp_get_pixel_color( lcd, x, y ) );
+                _draw_pixel( lcd_surface, opt.zoom * x, opt.zoom * y, opt.zoom, opt.zoom, x49gp_get_pixel_color( lcd, x, y ) );
     }
 
-    gtk_widget_queue_draw( ui->lcd_canvas );
+    gtk_widget_queue_draw( lcd_canvas );
 }
 
 int gui_init( x49gp_t* x49gp )
 {
-    x49gp_module_t* module;
+    buttons = malloc( NB_KEYS * sizeof( x49gp_ui_button_t ) );
+    if ( NULL == buttons ) {
+        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        return -ENOMEM;
+    }
+    memset( buttons, 0, NB_KEYS * sizeof( x49gp_ui_button_t ) );
 
-    if ( x49gp_module_init( x49gp, "gui", ui_init, ui_exit, ui_reset, ui_load, ui_save, NULL, &module ) )
-        return -1;
+    ui_load( x49gp );
 
-    return x49gp_module_register( module );
+    return 0;
 }
