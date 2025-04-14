@@ -17,3 +17,4 @@
 /dist/firmware/boot-*.bin
 /dist/firmware/hp4950v215/
 /dist/firmware/newrpl-latest/
+/compile_commands.json
