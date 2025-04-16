@@ -175,19 +175,9 @@ void x49gp_set_idle( x49gp_t* x49gp, x49gp_arm_idle_t idle )
     }
 }
 
-static void arm_sighnd( int sig )
-{
-    switch ( sig ) {
-        case SIGUSR1:
-            //		stop_simulator = 1;
-            //		x49gp->arm->CallDebug ^= 1;
-            break;
-        default:
-            fprintf( stderr, "%s: sig %u\n", __FUNCTION__, sig );
-            break;
-    }
-}
-
+/**********/
+/* timers */
+/**********/
 void x49gp_gtk_timer( void* data )
 {
     while ( g_main_context_pending( NULL ) )
@@ -210,6 +200,9 @@ void x49gp_lcd_timer( void* data )
     x49gp_mod_timer( x49gp->lcd_timer, expires );
 }
 
+/*******************/
+/* signal handlers */
+/*******************/
 void ui_sighnd( int sig )
 {
     switch ( sig ) {
@@ -222,12 +215,23 @@ void ui_sighnd( int sig )
     }
 }
 
+static void arm_sighnd( int sig )
+{
+    switch ( sig ) {
+        case SIGUSR1:
+            //		stop_simulator = 1;
+            //		x49gp->arm->CallDebug ^= 1;
+            break;
+        default:
+            fprintf( stderr, "%s: sig %u\n", __FUNCTION__, sig );
+            break;
+    }
+}
+
 int main( int argc, char** argv )
 {
     char* progname = g_path_get_basename( argv[ 0 ] );
     char* progpath = g_path_get_dirname( argv[ 0 ] );
-
-    gtk_init();
 
     config_init( progname, argc, argv );
 
@@ -265,8 +269,6 @@ int main( int argc, char** argv )
     x49gp->gtk_timer = x49gp_new_timer( X49GP_TIMER_REALTIME, x49gp_gtk_timer, x49gp );
     x49gp->lcd_timer = x49gp_new_timer( X49GP_TIMER_VIRTUAL, x49gp_lcd_timer, x49gp );
 
-    gui_init( x49gp );
-
     x49gp_s3c2410_arm_init( x49gp );
     x49gp_flash_init( x49gp );
     x49gp_sram_init( x49gp );
@@ -301,7 +303,15 @@ int main( int argc, char** argv )
         gdb_handlesig( x49gp->env, 0 );
     }
 
+    gui_init( x49gp );          /* return gtk_application here ? */
+    //GtkApplication* app = gtk_application_new ("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+    //g_signal_connect (app, "activate", G_CALLBACK (gui_init), x49gp);
+
+    /* run gtk_application here ? */
+    //int status = g_application_run (G_APPLICATION (app), 0, NULL);
+
     x49gp_main_loop( x49gp );
+    //g_object_unref (app);
 
     x49gp_modules_save( x49gp );
     if ( !opt.haz_config_file )

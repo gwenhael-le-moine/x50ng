@@ -1376,9 +1376,10 @@ static GtkWidget* _ui_load__create_label( const char* css_class, const char* tex
     return ui_label;
 }
 
-static int ui_load( x49gp_t* x49gp )
+static int ui_load( /* GtkApplication* app, */ x49gp_t* x49gp )
 {
     // create window and widgets/stuff
+    //window = gtk_application_window_new( app );
     window = gtk_window_new();
     gtk_window_set_decorated( GTK_WINDOW( window ), true );
     gtk_window_set_resizable( GTK_WINDOW( window ), true );
@@ -1663,7 +1664,7 @@ void gui_update_lcd( x49gp_t* x49gp )
     gtk_widget_queue_draw( lcd_canvas );
 }
 
-int gui_init( x49gp_t* x49gp )
+int gui_init( /* GtkApplication* app, */ x49gp_t* x49gp )
 {
     buttons = malloc( NB_KEYS * sizeof( x49gp_ui_button_t ) );
     if ( NULL == buttons ) {
@@ -1672,7 +1673,9 @@ int gui_init( x49gp_t* x49gp )
     }
     memset( buttons, 0, NB_KEYS * sizeof( x49gp_ui_button_t ) );
 
-    ui_load( x49gp );
+    gtk_init();
+
+    ui_load( /* app, */ x49gp );
 
     return 0;
 }
