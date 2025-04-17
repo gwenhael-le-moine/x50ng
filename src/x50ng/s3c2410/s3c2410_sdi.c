@@ -673,6 +673,7 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     sdi->bs = NULL;
     sdi->filename = NULL;
 
+    /* Here we could check a filename passed to cli options */
     error = x50ng_module_get_filename( module, key, "filename", "", &filename, &filepath );
     if ( strcmp( filename, "" ) ) {
         error2 = s3c2410_sdi_mount( x50ng, filepath );

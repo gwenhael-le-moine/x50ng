@@ -107,9 +107,6 @@ int x50ng_modules_load( x50ng_t* x50ng )
         return error;
     }
 
-    /* copy_file_from_global_datadir_to_user_datadir( "style-50g.css" ); */
-    /* copy_file_from_global_datadir_to_user_datadir( "style-49gp.css" ); */
-
     x50ng->state = g_key_file_new();
     if ( NULL == x50ng->state ) {
         fprintf( stderr, "%s:%u: g_key_file_new: Out of memory\n", __FUNCTION__, __LINE__ );
