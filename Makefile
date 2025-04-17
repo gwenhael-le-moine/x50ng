@@ -49,8 +49,8 @@ QEMU_OBJS = \
 	$(QEMU_DIR)/arm-softmmu/iwmmxt_helper.o \
 	$(QEMU_DIR)/arm-softmmu/neon_helper.o
 QEMU_INCLUDES = \
-	-I$(QEMU_DIR)/target-arm \
 	-I$(QEMU_DIR) \
+	-I$(QEMU_DIR)/target-arm \
 	-I$(QEMU_DIR)/fpu \
 	-I$(QEMU_DIR)/arm-softmmu
 
@@ -162,9 +162,6 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 
 %.o: %.c
 	$(CC) $(X49GP_CFLAGS) -o $@ -c $<
-
-./src/x50ng/s3c2410/block-vvfat.o: ./src/x50ng/s3c2410/block-vvfat.c
-	$(CC) $(X49GP_CFLAGS) -fno-aggressive-loop-optimizations -o $@ -c $<
 
 # Compilation of qemu-git
 $(QEMU_DIR)/config-host.h:

@@ -511,8 +511,12 @@ static inline uint8_t fat_chksum( const direntry_t* entry )
     uint8_t chksum = 0;
     int i;
 
-    for ( i = 0; i < 11; i++ )
+    /* Was 11 but entry->name size is 8 and it assumed that in memory extension was directly after */
+    /* Instead we explicitly make 2 loops, first for name then for extension */
+    for ( i = 0; i < 8; i++ )
         chksum = ( ( ( chksum & 0xfe ) >> 1 ) | ( ( chksum & 0x01 ) ? 0x80 : 0 ) ) + ( unsigned char )entry->name[ i ];
+    for ( i = 0; i < 3; i++ )
+        chksum = ( ( ( chksum & 0xfe ) >> 1 ) | ( ( chksum & 0x01 ) ? 0x80 : 0 ) ) + ( unsigned char )entry->extension[ i ];
 
     return chksum;
 }
