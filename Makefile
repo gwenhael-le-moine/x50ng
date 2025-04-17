@@ -28,12 +28,14 @@ GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4) -lz -lm
 
 # Embedded qemu
 QEMU_DIR = src/qemu-git
-QEMU_DEFINES = -DTARGET_ARM -DX49GP \
+QEMU_DEFINES = \
+	-DTARGET_ARM -DX49GP \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-D_LARGEFILE_SOURCE \
 	-DNEED_CPU_H \
 	-fno-strict-aliasing
-QEMU_OBJS = $(QEMU_DIR)/arm-softmmu/exec.o \
+QEMU_OBJS = \
+	$(QEMU_DIR)/arm-softmmu/exec.o \
 	$(QEMU_DIR)/arm-softmmu/translate-all.o \
 	$(QEMU_DIR)/arm-softmmu/cpu-exec.o \
 	$(QEMU_DIR)/arm-softmmu/translate.o \
@@ -46,7 +48,8 @@ QEMU_OBJS = $(QEMU_DIR)/arm-softmmu/exec.o \
 	$(QEMU_DIR)/arm-softmmu/tcg/tcg.o \
 	$(QEMU_DIR)/arm-softmmu/iwmmxt_helper.o \
 	$(QEMU_DIR)/arm-softmmu/neon_helper.o
-QEMU_INCLUDES=-I$(QEMU_DIR)/target-arm \
+QEMU_INCLUDES = \
+	-I$(QEMU_DIR)/target-arm \
 	-I$(QEMU_DIR) \
 	-I$(QEMU_DIR)/fpu \
 	-I$(QEMU_DIR)/arm-softmmu
@@ -73,25 +76,20 @@ X49GP_DEBUG = \
 	-DDEBUG_X49GP_SYSCALL \
 	-DDEBUG_X49GP_FLASH_READ \
 	-DDEBUG_X49GP_FLASH_WRITE \
-	-UDEBUG_X49GP_SYSRAM_READ \
-	-UDEBUG_X49GP_SYSRAM_WRITE \
-	-UDEBUG_X49GP_ERAM_READ \
-	-UDEBUG_X49GP_ERAM_WRITE \
-	-UDEBUG_X49GP_IRAM_READ \
-	-UDEBUG_X49GP_IRAM_WRITE \
 	-DDEBUG_X49GP_TIMER_IDLE \
 	-DDEBUG_X49GP_ARM_IDLE \
 	-DDEBUG_X49GP_ENABLE_IRQ \
 	-DDEBUG_X49GP_BLOCK \
-	-DDEBUG_X49GP_MAIN \
-	-DDEBUG_X49GP_UI
+	-DDEBUG_X49GP_MAIN
 
-X49GP_INCLUDES = -I./src/x50ng/ \
+X49GP_INCLUDES = \
+	-I./src/x50ng/ \
 	-I./src/x50ng/s3c2410/ \
 	-I./src/qemu-git/ \
 	$(QEMU_INCLUDES)
 
-X49GP_CFLAGS = $(CFLAGS) \
+X49GP_CFLAGS = \
+	$(CFLAGS) \
 	-O$(OPTIM) \
 	-Wall \
 	$(DEBUG_CFLAGS) \
@@ -112,7 +110,8 @@ endif
 X49GP_LDFLAGS = $(DEBUG_CFLAGS) $(LDFLAGS)
 X49GP_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(LUALIBS)
 
-SRCS = ./src/x50ng/s3c2410/s3c2410.c \
+SRCS = \
+	./src/x50ng/s3c2410/s3c2410.c \
 	./src/x50ng/s3c2410/s3c2410_sram.c \
 	./src/x50ng/s3c2410/s3c2410_memc.c \
 	./src/x50ng/s3c2410/s3c2410_intc.c \
@@ -142,7 +141,8 @@ SRCS = ./src/x50ng/s3c2410/s3c2410.c \
 OBJS = $(SRCS:.c=.o)
 
 # TEMPO hack
-VVFATOBJS =	$(QEMU_DIR)/cutils.o \
+VVFATOBJS =	\
+	$(QEMU_DIR)/cutils.o \
 	./src/x50ng/s3c2410/block-vvfat.o \
 	./src/x50ng/s3c2410/block-qcow.o \
 	./src/x50ng/s3c2410/block-raw.o
