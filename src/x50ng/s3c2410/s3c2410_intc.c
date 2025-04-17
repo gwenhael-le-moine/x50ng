@@ -120,7 +120,7 @@ static void intmod_put_word( s3c2410_intc_t* intc, uint32_t data )
 
 static void intmsk_put_word( s3c2410_intc_t* intc, uint32_t data )
 {
-#ifdef DEBUG_X49GP_ENABLE_IRQ
+#ifdef DEBUG_X50NG_ENABLE_IRQ
     uint32_t change;
     int i;
 
@@ -129,7 +129,7 @@ static void intmsk_put_word( s3c2410_intc_t* intc, uint32_t data )
 
     intc->intmsk = data | 0x01000040;
 
-#ifdef DEBUG_X49GP_ENABLE_IRQ
+#ifdef DEBUG_X50NG_ENABLE_IRQ
     for ( i = 0; i < 32; i++ ) {
         if ( ( change & ( 1 << i ) ) && !( intc->intmsk & ( 1 << i ) ) ) {
             printf( "INTC: Enable IRQ %u\n", i );
@@ -526,7 +526,7 @@ static int s3c2410_intc_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -558,7 +558,7 @@ static int s3c2410_intc_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -583,11 +583,11 @@ static int s3c2410_intc_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    if ( reset == X49GP_RESET_POWER_OFF ) {
+    if ( reset == X50NG_RESET_POWER_OFF ) {
         return 0;
     }
 
@@ -612,7 +612,7 @@ static int s3c2410_intc_init( x50ng_module_t* module )
     s3c2410_intc_t* intc;
     int iotype;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -643,7 +643,7 @@ static int s3c2410_intc_exit( x50ng_module_t* module )
 {
     s3c2410_intc_t* intc;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

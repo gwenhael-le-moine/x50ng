@@ -101,7 +101,7 @@ static int s3c2410_lcd_load( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int error = 0;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -123,7 +123,7 @@ static int s3c2410_lcd_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -144,7 +144,7 @@ static int s3c2410_lcd_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -169,7 +169,7 @@ static int s3c2410_lcd_init( x50ng_module_t* module )
     s3c2410_lcd_t* lcd;
     int iotype;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -200,7 +200,7 @@ static int s3c2410_lcd_exit( x50ng_module_t* module )
 {
     s3c2410_lcd_t* lcd;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -220,7 +220,7 @@ static int s3c2410_lcd_exit( x50ng_module_t* module )
 void s3c2410_schedule_lcd_update( x50ng_t* x50ng )
 {
     if ( !x50ng_timer_pending( x50ng->lcd_timer ) )
-        x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + X49GP_LCD_REFRESH_INTERVAL );
+        x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + X50NG_LCD_REFRESH_INTERVAL );
 }
 
 int x50ng_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )

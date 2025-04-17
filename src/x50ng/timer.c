@@ -29,8 +29,8 @@ struct x50ng_timer_s {
 
 typedef x50ng_timer_cb_t QEMUTimerCB;
 typedef void* QEMUClock;
-QEMUClock* rt_clock = ( void* )X49GP_TIMER_REALTIME;
-QEMUClock* vm_clock = ( void* )X49GP_TIMER_VIRTUAL;
+QEMUClock* rt_clock = ( void* )X50NG_TIMER_REALTIME;
+QEMUClock* vm_clock = ( void* )X50NG_TIMER_VIRTUAL;
 int64_t ticks_per_sec = 1000000;
 
 static x50ng_timer_t* x50ng_timer_lists[ 2 ];
@@ -168,8 +168,8 @@ static void x50ng_run_timers( x50ng_timer_t** ptimer_head, int64_t current_time 
 
 static void x50ng_alarm_handler( int sig )
 {
-    if ( x50ng_timer_expired( x50ng_timer_lists[ X49GP_TIMER_VIRTUAL ], x50ng_get_clock() ) ||
-         x50ng_timer_expired( x50ng_timer_lists[ X49GP_TIMER_REALTIME ], x50ng_get_clock() ) ) {
+    if ( x50ng_timer_expired( x50ng_timer_lists[ X50NG_TIMER_VIRTUAL ], x50ng_get_clock() ) ||
+         x50ng_timer_expired( x50ng_timer_lists[ X50NG_TIMER_REALTIME ], x50ng_get_clock() ) ) {
         if ( cpu_single_env && !cpu_single_env->exit_request ) {
             cpu_exit( cpu_single_env );
         }
@@ -185,11 +185,11 @@ static void x50ng_main_loop_wait( x50ng_t* x50ng, int timeout )
     } else
         poll( NULL, 0, timeout );
 
-    if ( x50ng->arm_idle != X49GP_ARM_OFF ) {
-        x50ng_run_timers( &x50ng_timer_lists[ X49GP_TIMER_VIRTUAL ], x50ng_get_clock() );
+    if ( x50ng->arm_idle != X50NG_ARM_OFF ) {
+        x50ng_run_timers( &x50ng_timer_lists[ X50NG_TIMER_VIRTUAL ], x50ng_get_clock() );
     }
 
-    x50ng_run_timers( &x50ng_timer_lists[ X49GP_TIMER_REALTIME ], x50ng_get_clock() );
+    x50ng_run_timers( &x50ng_timer_lists[ X50NG_TIMER_REALTIME ], x50ng_get_clock() );
 
     // printf("%s: done\n", __FUNCTION__);
 }
@@ -202,12 +202,12 @@ int x50ng_main_loop( x50ng_t* x50ng )
     while ( !x50ng->arm_exit ) {
         prev_idle = x50ng->arm_idle;
 
-        if ( x50ng->arm_idle == X49GP_ARM_RUN ) {
-#ifdef DEBUG_X49GP_TIMER_IDLE
+        if ( x50ng->arm_idle == X50NG_ARM_RUN ) {
+#ifdef DEBUG_X50NG_TIMER_IDLE
             printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )x50ng_get_clock(), __FUNCTION__, x50ng->env );
 #endif
             ret = cpu_exec( x50ng->env );
-#ifdef DEBUG_X49GP_TIMER_IDLE
+#ifdef DEBUG_X50NG_TIMER_IDLE
             printf( "%lld: %s: cpu_exec(): %d, PC %08x\n", ( unsigned long long )x50ng_get_clock(), __FUNCTION__, ret,
                     x50ng->env->regs[ 15 ] );
 #endif
@@ -225,7 +225,7 @@ int x50ng_main_loop( x50ng_t* x50ng )
             }
 
             if ( x50ng->arm_idle != prev_idle ) {
-                if ( x50ng->arm_idle == X49GP_ARM_OFF ) {
+                if ( x50ng->arm_idle == X50NG_ARM_OFF ) {
                     gui_update_lcd( x50ng );
                     cpu_reset( x50ng->env );
                 }
@@ -251,8 +251,8 @@ int x50ng_timer_init( x50ng_t* x50ng )
     struct sigaction sa;
     struct itimerval it;
 
-    x50ng_timer_lists[ X49GP_TIMER_VIRTUAL ] = NULL;
-    x50ng_timer_lists[ X49GP_TIMER_REALTIME ] = NULL;
+    x50ng_timer_lists[ X50NG_TIMER_VIRTUAL ] = NULL;
+    x50ng_timer_lists[ X50NG_TIMER_REALTIME ] = NULL;
 
     sigfillset( &sa.sa_mask );
     sa.sa_flags = SA_RESTART;

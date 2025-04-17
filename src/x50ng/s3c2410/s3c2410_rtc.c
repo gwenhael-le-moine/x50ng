@@ -306,7 +306,7 @@ static int s3c2410_rtc_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -332,7 +332,7 @@ static int s3c2410_rtc_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -354,7 +354,7 @@ static int s3c2410_rtc_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -381,7 +381,7 @@ static int s3c2410_rtc_init( x50ng_module_t* module )
     s3c2410_rtc_t* rtc;
     int iotype;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -398,8 +398,8 @@ static int s3c2410_rtc_init( x50ng_module_t* module )
     module->user_data = rtc;
     rtc->x50ng = module->x50ng;
 
-    rtc->tick_timer = x50ng_new_timer( X49GP_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
-    rtc->alarm_timer = x50ng_new_timer( X49GP_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
+    rtc->tick_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
+    rtc->alarm_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
 
     iotype = cpu_register_io_memory( s3c2410_rtc_readfn, s3c2410_rtc_writefn, rtc );
 #ifdef DEBUG_S3C2410_RTC
@@ -414,7 +414,7 @@ static int s3c2410_rtc_exit( x50ng_module_t* module )
 {
     s3c2410_rtc_t* rtc;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
