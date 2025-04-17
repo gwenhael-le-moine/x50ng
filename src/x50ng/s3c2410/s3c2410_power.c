@@ -92,13 +92,13 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
                 printf( "POWER: enter POWER_OFF\n" );
 #endif
 
-                x50ng_modules_reset( x50ng, X50NG_RESET_POWER_OFF );
+                x50ng_modules_reset( x50ng, X49GP_RESET_POWER_OFF );
 
                 //			if (x50ng->arm->NresetSig != LOW) {
                 //				x50ng->arm->NresetSig = LOW;
                 //				x50ng->arm->Exception++;
                 //			}
-                x50ng_set_idle( x50ng, X50NG_ARM_OFF );
+                x50ng_set_idle( x50ng, X49GP_ARM_OFF );
                 return;
             }
 
@@ -107,7 +107,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
 #ifdef DEBUG_S3C2410_POWER
                 printf( "POWER: enter IDLE\n" );
 #endif
-                x50ng_set_idle( x50ng, X50NG_ARM_SLEEP );
+                x50ng_set_idle( x50ng, X49GP_ARM_SLEEP );
                 return;
             }
 
@@ -188,7 +188,7 @@ static int s3c2410_power_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -216,7 +216,7 @@ static int s3c2410_power_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -238,7 +238,7 @@ static int s3c2410_power_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -263,7 +263,7 @@ static int s3c2410_power_init( x50ng_module_t* module )
     s3c2410_power_t* power;
     int iotype;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -292,7 +292,7 @@ static int s3c2410_power_exit( x50ng_module_t* module )
 {
     s3c2410_power_t* power;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

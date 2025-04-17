@@ -313,7 +313,7 @@ const char *lookup_symbol(target_ulong orig_addr)
     return symbol;
 }
 
-#ifndef X50NG
+#ifndef X49GP
 #if !defined(CONFIG_USER_ONLY)
 
 #include "monitor.h"
@@ -412,5 +412,5 @@ void monitor_disas(Monitor *mon, CPUState *env,
         pc += count;
     }
 }
-#endif /* !X50NG */
+#endif /* !X49GP */
 #endif

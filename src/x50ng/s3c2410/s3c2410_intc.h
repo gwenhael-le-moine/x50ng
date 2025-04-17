@@ -1,5 +1,5 @@
-#ifndef _X50NG_S3C2410_INTC_H
-#define _X50NG_S3C2410_INTC_H 1
+#ifndef _X49GP_S3C2410_INTC_H
+#define _X49GP_S3C2410_INTC_H 1
 
 #define INT_ADC 31
 #define INT_RTC 30
@@ -66,4 +66,4 @@ void s3c2410_intc_sub_deassert( x50ng_t* x50ng, int sub_irq );
 void s3c2410_intc_assert( x50ng_t* x50ng, int irq, int level );
 void s3c2410_intc_deassert( x50ng_t* x50ng, int irq );
 
-#endif /* !(_X50NG_S3C2410_INTC_H) */
+#endif /* !(_X49GP_S3C2410_INTC_H) */

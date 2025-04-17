@@ -32,7 +32,7 @@
 
 #ifndef _WIN32
 
-#  ifdef X50NG
+#  ifdef X49GP
 #    define QEMU_TOOL
 #  endif
 

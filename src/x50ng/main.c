@@ -124,7 +124,7 @@ uint32_t do_arm_semihosting( CPUState* env )
             break;
 
         case 0:
-#ifdef DEBUG_X50NG_SYSCALL
+#ifdef DEBUG_X49GP_SYSCALL
             printf( "%s: SWI LR %08x: syscall %u: args %08x %08x %08x %08x %08x %08x %08x\n", __FUNCTION__, env->regs[ 14 ], env->regs[ 0 ],
                     env->regs[ 1 ], env->regs[ 2 ], env->regs[ 3 ], env->regs[ 4 ], env->regs[ 5 ], env->regs[ 6 ], env->regs[ 7 ] );
 #endif
@@ -160,7 +160,7 @@ uint32_t do_arm_semihosting( CPUState* env )
 
 void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
 {
-#ifdef DEBUG_X50NG_ARM_IDLE
+#ifdef DEBUG_X49GP_ARM_IDLE
     if ( idle != x50ng->arm_idle ) {
         printf( "%s: arm_idle %u, idle %u\n", __FUNCTION__, x50ng->arm_idle, idle );
     }
@@ -168,7 +168,7 @@ void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
 
     x50ng->arm_idle = idle;
 
-    if ( x50ng->arm_idle == X50NG_ARM_RUN )
+    if ( x50ng->arm_idle == X49GP_ARM_RUN )
         x50ng->env->halted = 0;
     else {
         x50ng->env->halted = 1;
@@ -184,7 +184,7 @@ void x50ng_gtk_timer( void* data )
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
 
-    x50ng_mod_timer( x50ng->gtk_timer, x50ng_get_clock() + X50NG_GTK_REFRESH_INTERVAL );
+    x50ng_mod_timer( x50ng->gtk_timer, x50ng_get_clock() + X49GP_GTK_REFRESH_INTERVAL );
 }
 
 void x50ng_lcd_timer( void* data )
@@ -196,7 +196,7 @@ void x50ng_lcd_timer( void* data )
     gdk_display_flush( gdk_display_get_default() );
 
     now = x50ng_get_clock();
-    expires = now + X50NG_LCD_REFRESH_INTERVAL;
+    expires = now + X49GP_LCD_REFRESH_INTERVAL;
 
     x50ng_mod_timer( x50ng->lcd_timer, expires );
 }
@@ -243,7 +243,7 @@ int main( int argc, char** argv )
     }
     memset( x50ng, 0, sizeof( x50ng_t ) );
 
-#ifdef DEBUG_X50NG_MAIN
+#ifdef DEBUG_X49GP_MAIN
     fprintf( stderr, "_SC_PAGE_SIZE: %08lx\n", sysconf( _SC_PAGE_SIZE ) );
 
     printf( "%s:%u: x50ng: %p\n", __FUNCTION__, __LINE__, x50ng );
@@ -267,8 +267,8 @@ int main( int argc, char** argv )
 
     x50ng_timer_init( x50ng );
 
-    x50ng->gtk_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, x50ng_gtk_timer, x50ng );
-    x50ng->lcd_timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, x50ng_lcd_timer, x50ng );
+    x50ng->gtk_timer = x50ng_new_timer( X49GP_TIMER_REALTIME, x50ng_gtk_timer, x50ng );
+    x50ng->lcd_timer = x50ng_new_timer( X49GP_TIMER_VIRTUAL, x50ng_lcd_timer, x50ng );
 
     x50ng_s3c2410_arm_init( x50ng );
     x50ng_flash_init( x50ng );
@@ -279,11 +279,11 @@ int main( int argc, char** argv )
         exit( EXIT_FAILURE );
 
     int error = x50ng_modules_load( x50ng );
-    if ( error || opt.reinit >= X50NG_REINIT_REBOOT_ONLY ) {
+    if ( error || opt.reinit >= X49GP_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
 
-        x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
+        x50ng_modules_reset( x50ng, X49GP_RESET_POWER_ON );
     }
 
     signal( SIGINT, ui_sighnd );

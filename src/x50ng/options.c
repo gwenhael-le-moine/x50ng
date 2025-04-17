@@ -25,7 +25,7 @@ struct options opt = {
     .start_debugger = false,
     .bootloader = "firmware/boot-50g.bin",
     .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
-    .reinit = X50NG_REINIT_NONE,
+    .reinit = X49GP_REINIT_NONE,
 
     .newrpl_keyboard = false,
     .legacy_keyboard = false,
@@ -264,8 +264,8 @@ void config_init( char* progname, int argc, char* argv[] )
                 clopt_name = strdup( optarg );
                 break;
             case 'r':
-                if ( opt.reinit < X50NG_REINIT_REBOOT_ONLY )
-                    opt.reinit = X50NG_REINIT_REBOOT_ONLY;
+                if ( opt.reinit < X49GP_REINIT_REBOOT_ONLY )
+                    opt.reinit = X49GP_REINIT_REBOOT_ONLY;
                 break;
             case 's':
                 clopt_style_filename = strdup( optarg );
@@ -374,10 +374,10 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.start_debugger = do_start_debugger;
     }
     if ( do_flash ) {
-        if ( opt.reinit < X50NG_REINIT_FLASH )
-            opt.reinit = X50NG_REINIT_FLASH;
+        if ( opt.reinit < X49GP_REINIT_FLASH )
+            opt.reinit = X49GP_REINIT_FLASH;
 
         if ( do_flash_full )
-            opt.reinit = X50NG_REINIT_FLASH_FULL;
+            opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
 }

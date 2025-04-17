@@ -227,7 +227,7 @@ static void flash_put_halfword( x50ng_flash_t* flash, uint32_t offset, uint32_t 
             temp = lduw_p( datap + offset );
             stw_p( datap + offset, data & temp );
 
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
             printf( "write FLASH 2 (state %u) at offset %08x: %04x, result: %04x\n", flash->state, offset, data, lduw_p( datap + offset ) );
 #endif
 
@@ -237,26 +237,26 @@ static void flash_put_halfword( x50ng_flash_t* flash, uint32_t offset, uint32_t 
         case FLASH_STATE_ERASE3:
             switch ( data & 0xff ) {
                 case 0x10: /* Chip Erase */
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
                     printf( "erase FLASH %08x %08x\n", 0, SST29VF160_SIZE );
 #endif
                     memset( datap, 0xff, SST29VF160_SIZE );
                     break;
 
                 case 0x30: /* Sector Erase */
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
                     printf( "erase FLASH %08x %08x\n", ( offset & ~( flash->sector_size - 1 ) ), flash->sector_size );
 #endif
                     memset( datap + ( offset & ~( flash->sector_size - 1 ) ), 0xff, flash->sector_size );
 
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
                     printf( "erase FLASH %08x: %04x, %08x: %04x, %08x: %04x\n", offset, lduw_p( datap + offset ), offset + 0x800,
                             lduw_p( datap + offset + 0x800 ), offset + 0xffc, lduw_p( datap + offset + 0xffc ) );
 #endif
                     break;
 
                 case 0x50: /* Block Erase */
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
                     printf( "erase FLASH %08x %08x\n", ( offset & ~( flash->block_size - 1 ) ), flash->block_size );
 #endif
                     memset( datap + ( offset & ~( flash->block_size - 1 ) ), 0xff, flash->block_size );
@@ -286,7 +286,7 @@ static uint32_t flash_readb( void* opaque, target_phys_addr_t offset )
         data = ( temp >> shift ) & 0xff;
     }
 
-#ifdef DEBUG_X50NG_FLASH_READ
+#ifdef DEBUG_X49GP_FLASH_READ
     printf( "read  FLASH 1 (state %u) at offset %08lx: %02x\n", flash->state, ( unsigned long )offset, data );
 #endif
 
@@ -305,7 +305,7 @@ static uint32_t flash_readw( void* opaque, target_phys_addr_t offset )
         data = flash_get_halfword( flash, offset );
     }
 
-#ifdef DEBUG_X50NG_FLASH_READ
+#ifdef DEBUG_X49GP_FLASH_READ
     printf( "read  FLASH 2 (state %u) at offset %08lx: %04x\n", flash->state, ( unsigned long )offset, data );
 #endif
 
@@ -324,7 +324,7 @@ static uint32_t flash_readl( void* opaque, target_phys_addr_t offset )
         data = ( flash_get_halfword( flash, offset + 2 ) << 16 ) | ( flash_get_halfword( flash, offset + 0 ) << 0 );
     }
 
-#ifdef DEBUG_X50NG_FLASH_READ
+#ifdef DEBUG_X49GP_FLASH_READ
     printf( "read  FLASH 4 (state %u) at offset %08lx: %08x\n", flash->state, ( unsigned long )offset, data );
 #endif
 
@@ -338,7 +338,7 @@ static void flash_writeb( void* opaque, target_phys_addr_t offset, uint32_t data
 
     data &= 0xff;
 
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
     printf( "write FLASH 1 (state %u) at offset %08lx: %02x\n", flash->state, offset, data );
 #endif
 
@@ -357,7 +357,7 @@ static void flash_writew( void* opaque, target_phys_addr_t offset, uint32_t data
 
     data &= 0xffff;
 
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
     printf( "write FLASH 2 (state %u) at offset %08lx: %04x\n", flash->state, offset, data );
 #endif
 
@@ -368,7 +368,7 @@ static void flash_writel( void* opaque, target_phys_addr_t offset, uint32_t data
 {
     x50ng_flash_t* flash = opaque;
 
-#ifdef DEBUG_X50NG_FLASH_WRITE
+#ifdef DEBUG_X49GP_FLASH_WRITE
     printf( "write FLASH 4 (state %u) at offset %08lx: %08x\n", flash->state, offset, data );
 #endif
 
@@ -389,7 +389,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
     char bank_marker[ 5 ] = { 0xf0, 0x02, 0x00, 0x00, 0x00 };
     int bytes_read;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -434,11 +434,11 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
 
     if ( flash->size > st.st_size ) {
         fprintf( stderr, "Flash too small, rebuilding\n" );
-        opt.reinit = X50NG_REINIT_FLASH_FULL;
+        opt.reinit = X49GP_REINIT_FLASH_FULL;
     }
-    if ( opt.reinit >= X50NG_REINIT_FLASH ) {
+    if ( opt.reinit >= X49GP_REINIT_FLASH ) {
 
-        if ( opt.reinit == X50NG_REINIT_FLASH_FULL )
+        if ( opt.reinit == X49GP_REINIT_FLASH_FULL )
             memset( phys_ram_base + flash->offset, 0xff, flash->size - st.st_size );
 
         if ( opt.bootloader == NULL ) {
@@ -474,7 +474,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
         close( bootfd );
         g_free( bootfile );
 
-        if ( opt.reinit == X50NG_REINIT_FLASH_FULL ) {
+        if ( opt.reinit == X49GP_REINIT_FLASH_FULL ) {
             /* The stock firmware expects special markers in certain
                spots across the flash. Without these, the user banks
                act up and are not usable, and PINIT apparently won't
@@ -586,7 +586,7 @@ static int flash_save( x50ng_module_t* module, GKeyFile* key )
     x50ng_flash_t* flash = module->user_data;
     int error;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -611,7 +611,7 @@ static int flash_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     x50ng_flash_t* flash = module->user_data;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -627,7 +627,7 @@ static int flash_init( x50ng_module_t* module )
 {
     x50ng_flash_t* flash;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -663,7 +663,7 @@ static int flash_exit( x50ng_module_t* module )
 {
     x50ng_flash_t* flash;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

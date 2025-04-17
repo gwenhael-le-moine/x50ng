@@ -23,7 +23,7 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
     char* filename;
     int error;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -68,7 +68,7 @@ static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
     filemap_t* filemap = module->user_data;
     int error;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -91,7 +91,7 @@ static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
 
 static int s3c2410_sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -102,7 +102,7 @@ static int s3c2410_sram_init( x50ng_module_t* module )
 {
     filemap_t* filemap;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -130,7 +130,7 @@ static int s3c2410_sram_exit( x50ng_module_t* module )
 {
     filemap_t* filemap;
 
-#ifdef DEBUG_X50NG_MODULES
+#ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
