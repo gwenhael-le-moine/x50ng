@@ -16,6 +16,7 @@
 
 #include <memory.h>
 
+#include "list.h"
 #include "x49gp.h"
 #include "ui.h"
 #include "s3c2410.h"
