@@ -13,7 +13,6 @@
 
 #include "x49gp_types.h"
 #include "x49gp_timer.h"
-#include "s3c2410_mmu.h"
 #include "list.h"
 
 /* LD TEMPO HACK */
