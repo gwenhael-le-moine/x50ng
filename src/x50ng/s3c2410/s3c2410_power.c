@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 #include "s3c2410_power.h"
 
@@ -22,7 +22,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x49gp_t* x49gp;
+    x50ng_t* x50ng;
 } s3c2410_power_t;
 
 static int s3c2410_power_data_init( s3c2410_power_t* power )
@@ -68,7 +68,7 @@ static uint32_t s3c2410_power_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_power_t* power = opaque;
-    x49gp_t* x49gp = power->x49gp;
+    x50ng_t* x50ng = power->x50ng;
     s3c2410_offset_t* reg;
     uint32_t mMdiv, mPdiv, mSdiv;
     uint32_t uMdiv, uPdiv, uSdiv;
@@ -92,13 +92,13 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
                 printf( "POWER: enter POWER_OFF\n" );
 #endif
 
-                x49gp_modules_reset( x49gp, X49GP_RESET_POWER_OFF );
+                x50ng_modules_reset( x50ng, X49GP_RESET_POWER_OFF );
 
-                //			if (x49gp->arm->NresetSig != LOW) {
-                //				x49gp->arm->NresetSig = LOW;
-                //				x49gp->arm->Exception++;
+                //			if (x50ng->arm->NresetSig != LOW) {
+                //				x50ng->arm->NresetSig = LOW;
+                //				x50ng->arm->Exception++;
                 //			}
-                x49gp_set_idle( x49gp, X49GP_ARM_OFF );
+                x50ng_set_idle( x50ng, X49GP_ARM_OFF );
                 return;
             }
 
@@ -107,7 +107,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
 #ifdef DEBUG_S3C2410_POWER
                 printf( "POWER: enter IDLE\n" );
 #endif
-                x49gp_set_idle( x49gp, X49GP_ARM_SLEEP );
+                x50ng_set_idle( x50ng, X49GP_ARM_SLEEP );
                 return;
             }
 
@@ -126,62 +126,62 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
     mMdiv = ( power->mpllcon >> 12 ) & 0xff;
     mPdiv = ( power->mpllcon >> 4 ) & 0x3f;
     mSdiv = ( power->mpllcon >> 0 ) & 0x03;
-    x49gp->MCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( mMdiv + 8 ) ) ) / ( ( u64 )( ( mPdiv + 2 ) * ( 1 << mSdiv ) ) );
+    x50ng->MCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( mMdiv + 8 ) ) ) / ( ( u64 )( ( mPdiv + 2 ) * ( 1 << mSdiv ) ) );
 
     uMdiv = ( power->upllcon >> 12 ) & 0xff;
     uPdiv = ( power->upllcon >> 4 ) & 0x3f;
     uSdiv = ( power->upllcon >> 0 ) & 0x03;
-    x49gp->UCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( uMdiv + 8 ) ) ) / ( ( u64 )( ( uPdiv + 2 ) * ( 1 << uSdiv ) ) );
+    x50ng->UCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( uMdiv + 8 ) ) ) / ( ( u64 )( ( uPdiv + 2 ) * ( 1 << uSdiv ) ) );
 
     slow_bit = ( power->clkslow & 0x10 );
     if ( slow_bit ) {
         slow_val = ( power->clkslow >> 0 ) & 0x07;
         if ( 0 == slow_val )
-            x49gp->FCLK = EXTCLK;
+            x50ng->FCLK = EXTCLK;
         else
-            x49gp->FCLK = EXTCLK / ( 2 * slow_val );
+            x50ng->FCLK = EXTCLK / ( 2 * slow_val );
     } else {
-        x49gp->FCLK = x49gp->MCLK;
+        x50ng->FCLK = x50ng->MCLK;
     }
 
     if ( power->clkdivn & 4 ) {
-        x49gp->HCLK = x49gp->FCLK / 4;
-        x49gp->PCLK = x49gp->FCLK / 4;
-        x49gp->PCLK_ratio = 4;
+        x50ng->HCLK = x50ng->FCLK / 4;
+        x50ng->PCLK = x50ng->FCLK / 4;
+        x50ng->PCLK_ratio = 4;
     } else {
         switch ( power->clkdivn & 3 ) {
             case 0:
-                x49gp->HCLK = x49gp->FCLK;
-                x49gp->PCLK = x49gp->HCLK;
-                x49gp->PCLK_ratio = 1;
+                x50ng->HCLK = x50ng->FCLK;
+                x50ng->PCLK = x50ng->HCLK;
+                x50ng->PCLK_ratio = 1;
                 break;
             case 1:
-                x49gp->HCLK = x49gp->FCLK;
-                x49gp->PCLK = x49gp->HCLK / 2;
-                x49gp->PCLK_ratio = 2;
+                x50ng->HCLK = x50ng->FCLK;
+                x50ng->PCLK = x50ng->HCLK / 2;
+                x50ng->PCLK_ratio = 2;
                 break;
             case 2:
-                x49gp->HCLK = x49gp->FCLK / 2;
-                x49gp->PCLK = x49gp->HCLK;
-                x49gp->PCLK_ratio = 2;
+                x50ng->HCLK = x50ng->FCLK / 2;
+                x50ng->PCLK = x50ng->HCLK;
+                x50ng->PCLK_ratio = 2;
                 break;
             case 3:
-                x49gp->HCLK = x49gp->FCLK / 2;
-                x49gp->PCLK = x49gp->HCLK / 2;
-                x49gp->PCLK_ratio = 4;
+                x50ng->HCLK = x50ng->FCLK / 2;
+                x50ng->PCLK = x50ng->HCLK / 2;
+                x50ng->PCLK_ratio = 4;
                 break;
         }
     }
 
 #ifdef DEBUG_S3C2410_POWER
-    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: MCLK %u\n", __FUNCTION__, EXTCLK, mMdiv, mPdiv, mSdiv, x49gp->MCLK );
-    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: UCLK %u\n", __FUNCTION__, EXTCLK, uMdiv, uPdiv, uSdiv, x49gp->UCLK );
-    printf( "%s: FCLK %s: %u\n", __FUNCTION__, slow_bit ? "(slow)" : "", x49gp->FCLK );
-    printf( "%s: HCLK %u, PCLK %u\n", __FUNCTION__, x49gp->HCLK, x49gp->PCLK );
+    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: MCLK %u\n", __FUNCTION__, EXTCLK, mMdiv, mPdiv, mSdiv, x50ng->MCLK );
+    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: UCLK %u\n", __FUNCTION__, EXTCLK, uMdiv, uPdiv, uSdiv, x50ng->UCLK );
+    printf( "%s: FCLK %s: %u\n", __FUNCTION__, slow_bit ? "(slow)" : "", x50ng->FCLK );
+    printf( "%s: HCLK %u, PCLK %u\n", __FUNCTION__, x50ng->HCLK, x50ng->PCLK );
 #endif
 }
 
-static int s3c2410_power_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_power_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_power_t* power = module->user_data;
     s3c2410_offset_t* reg;
@@ -198,7 +198,7 @@ static int s3c2410_power_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -210,7 +210,7 @@ static int s3c2410_power_load( x49gp_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_power_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_power_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_power_t* power = module->user_data;
     s3c2410_offset_t* reg;
@@ -226,13 +226,13 @@ static int s3c2410_power_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_power_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_power_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_power_t* power = module->user_data;
     s3c2410_offset_t* reg;
@@ -258,7 +258,7 @@ static CPUReadMemoryFunc* s3c2410_power_readfn[] = { s3c2410_power_read, s3c2410
 
 static CPUWriteMemoryFunc* s3c2410_power_writefn[] = { s3c2410_power_write, s3c2410_power_write, s3c2410_power_write };
 
-static int s3c2410_power_init( x49gp_module_t* module )
+static int s3c2410_power_init( x50ng_module_t* module )
 {
     s3c2410_power_t* power;
     int iotype;
@@ -278,7 +278,7 @@ static int s3c2410_power_init( x49gp_module_t* module )
     }
 
     module->user_data = power;
-    power->x49gp = module->x49gp;
+    power->x50ng = module->x50ng;
 
     iotype = cpu_register_io_memory( s3c2410_power_readfn, s3c2410_power_writefn, power );
 #ifdef DEBUG_S3C2410_POWER
@@ -288,7 +288,7 @@ static int s3c2410_power_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_power_exit( x49gp_module_t* module )
+static int s3c2410_power_exit( x50ng_module_t* module )
 {
     s3c2410_power_t* power;
 
@@ -303,20 +303,20 @@ static int s3c2410_power_exit( x49gp_module_t* module )
         free( power );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_power_init( x49gp_t* x49gp )
+int x50ng_s3c2410_power_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-power", s3c2410_power_init, s3c2410_power_exit, s3c2410_power_reset, s3c2410_power_load,
+    if ( x50ng_module_init( x50ng, "s3c2410-power", s3c2410_power_init, s3c2410_power_exit, s3c2410_power_reset, s3c2410_power_load,
                             s3c2410_power_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

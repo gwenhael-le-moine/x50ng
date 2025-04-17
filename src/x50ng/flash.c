@@ -8,7 +8,7 @@
 
 #include <memory.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "options.h"
 
 #define FLASH_STATE_NORMAL 0
@@ -44,7 +44,7 @@ typedef struct {
 
     uint32_t iotype;
     uint32_t offset;
-} x49gp_flash_t;
+} x50ng_flash_t;
 
 #define SST29VF160_VENDOR_ID 0x00bf
 #define SST29VF160_DEVICE_ID 0x2782
@@ -66,7 +66,7 @@ static const unsigned short sst29vf160_cfi_data[] = {
     [0x2e] = 0x0001, [0x2f] = 0x0010, [0x30] = 0x0000, [0x31] = 0x003f, [0x32] = 0x0000, [0x33] = 0x0000, [0x34] = 0x0001 };
 #define SST29VF160_CFI_SIZE ( sizeof( sst29vf160_cfi_data ) / sizeof( sst29vf160_cfi_data[ 0 ] ) )
 
-static void flash_state_reset( x49gp_flash_t* flash )
+static void flash_state_reset( x50ng_flash_t* flash )
 {
     if ( flash->state != FLASH_STATE_NORMAL ) {
         cpu_register_physical_memory( 0x00000000, SST29VF160_SIZE, flash->offset | flash->iotype | IO_MEM_ROMD );
@@ -74,7 +74,7 @@ static void flash_state_reset( x49gp_flash_t* flash )
     }
 }
 
-static uint32_t flash_get_halfword( x49gp_flash_t* flash, uint32_t offset )
+static uint32_t flash_get_halfword( x50ng_flash_t* flash, uint32_t offset )
 {
     uint8_t* datap = flash->data;
     uint16_t data;
@@ -108,7 +108,7 @@ static uint32_t flash_get_halfword( x49gp_flash_t* flash, uint32_t offset )
     return data;
 }
 
-static void flash_put_halfword( x49gp_flash_t* flash, uint32_t offset, uint32_t data )
+static void flash_put_halfword( x50ng_flash_t* flash, uint32_t offset, uint32_t data )
 {
     uint8_t* datap = flash->data;
     uint16_t temp;
@@ -272,7 +272,7 @@ static void flash_put_halfword( x49gp_flash_t* flash, uint32_t offset, uint32_t 
 
 static uint32_t flash_readb( void* opaque, target_phys_addr_t offset )
 {
-    x49gp_flash_t* flash = opaque;
+    x50ng_flash_t* flash = opaque;
     uint8_t* datap = flash->data;
     unsigned short temp;
     uint32_t shift;
@@ -295,7 +295,7 @@ static uint32_t flash_readb( void* opaque, target_phys_addr_t offset )
 
 static uint32_t flash_readw( void* opaque, target_phys_addr_t offset )
 {
-    x49gp_flash_t* flash = opaque;
+    x50ng_flash_t* flash = opaque;
     uint8_t* datap = flash->data;
     uint32_t data;
 
@@ -314,7 +314,7 @@ static uint32_t flash_readw( void* opaque, target_phys_addr_t offset )
 
 static uint32_t flash_readl( void* opaque, target_phys_addr_t offset )
 {
-    x49gp_flash_t* flash = opaque;
+    x50ng_flash_t* flash = opaque;
     uint8_t* datap = flash->data;
     uint32_t data;
 
@@ -333,7 +333,7 @@ static uint32_t flash_readl( void* opaque, target_phys_addr_t offset )
 
 static void flash_writeb( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
-    x49gp_flash_t* flash = opaque;
+    x50ng_flash_t* flash = opaque;
     uint32_t shift;
 
     data &= 0xff;
@@ -353,7 +353,7 @@ static void flash_writeb( void* opaque, target_phys_addr_t offset, uint32_t data
 
 static void flash_writew( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
-    x49gp_flash_t* flash = opaque;
+    x50ng_flash_t* flash = opaque;
 
     data &= 0xffff;
 
@@ -366,7 +366,7 @@ static void flash_writew( void* opaque, target_phys_addr_t offset, uint32_t data
 
 static void flash_writel( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
-    x49gp_flash_t* flash = opaque;
+    x50ng_flash_t* flash = opaque;
 
 #ifdef DEBUG_X49GP_FLASH_WRITE
     printf( "write FLASH 4 (state %u) at offset %08lx: %08x\n", flash->state, offset, data );
@@ -376,9 +376,9 @@ static void flash_writel( void* opaque, target_phys_addr_t offset, uint32_t data
     flash_put_halfword( flash, offset + 0, ( data >> 0 ) & 0xffff );
 }
 
-static int flash_load( x49gp_module_t* module, GKeyFile* key )
+static int flash_load( x50ng_module_t* module, GKeyFile* key )
 {
-    x49gp_flash_t* flash = module->user_data;
+    x50ng_flash_t* flash = module->user_data;
     char* filename;
     struct stat st;
     char* bootfile;
@@ -393,7 +393,7 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    error = x49gp_module_get_filename( module, key, "filename", "flash", &( flash->filename ), &filename );
+    error = x50ng_module_get_filename( module, key, "filename", "flash", &( flash->filename ), &filename );
 
     flash->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( flash->fd < 0 ) {
@@ -450,7 +450,7 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
             exit( -1 );
         }
 
-        bootfd = x49gp_module_open_rodata( module, opt.bootloader, &bootfile );
+        bootfd = x50ng_module_open_rodata( module, opt.bootloader, &bootfile );
 
         if ( bootfd < 0 ) {
             g_free( filename );
@@ -491,7 +491,7 @@ static int flash_load( x49gp_module_t* module, GKeyFile* key )
         }
 
 retry:
-        fwfd = x49gp_module_open_rodata( module, opt.firmware, &firmwarefile );
+        fwfd = x50ng_module_open_rodata( module, opt.firmware, &firmwarefile );
         if ( fwfd < 0 ) {
             fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, firmwarefile, strerror( errno ) );
             /* Mark firmware as invalid if there is one */
@@ -581,16 +581,16 @@ retry:
     return error;
 }
 
-static int flash_save( x49gp_module_t* module, GKeyFile* key )
+static int flash_save( x50ng_module_t* module, GKeyFile* key )
 {
-    x49gp_flash_t* flash = module->user_data;
+    x50ng_flash_t* flash = module->user_data;
     int error;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    x49gp_module_set_filename( module, key, "filename", flash->filename );
+    x50ng_module_set_filename( module, key, "filename", flash->filename );
 
     error = msync( flash->data, flash->size, MS_ASYNC );
     if ( error ) {
@@ -607,9 +607,9 @@ static int flash_save( x49gp_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int flash_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int flash_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
-    x49gp_flash_t* flash = module->user_data;
+    x50ng_flash_t* flash = module->user_data;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -623,20 +623,20 @@ static CPUReadMemoryFunc* flash_readfn[] = { flash_readb, flash_readw, flash_rea
 
 static CPUWriteMemoryFunc* flash_writefn[] = { flash_writeb, flash_writew, flash_writel };
 
-static int flash_init( x49gp_module_t* module )
+static int flash_init( x50ng_module_t* module )
 {
-    x49gp_flash_t* flash;
+    x50ng_flash_t* flash;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    flash = malloc( sizeof( x49gp_flash_t ) );
+    flash = malloc( sizeof( x50ng_flash_t ) );
     if ( NULL == flash ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
         return -1;
     }
-    memset( flash, 0, sizeof( x49gp_flash_t ) );
+    memset( flash, 0, sizeof( x50ng_flash_t ) );
 
     flash->vendor_ID = SST29VF160_VENDOR_ID;
     flash->device_ID = SST29VF160_DEVICE_ID;
@@ -659,9 +659,9 @@ static int flash_init( x49gp_module_t* module )
     return 0;
 }
 
-static int flash_exit( x49gp_module_t* module )
+static int flash_exit( x50ng_module_t* module )
 {
-    x49gp_flash_t* flash;
+    x50ng_flash_t* flash;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -680,19 +680,19 @@ static int flash_exit( x49gp_module_t* module )
         free( flash );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_flash_init( x49gp_t* x49gp )
+int x50ng_flash_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) ) {
+    if ( x50ng_module_init( x50ng, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

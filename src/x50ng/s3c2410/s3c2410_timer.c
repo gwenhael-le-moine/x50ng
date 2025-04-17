@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 #include "s3c2410_timer.h"
 #include "s3c2410_intc.h"
@@ -28,7 +28,7 @@ struct __s3c2410_timer_s__ {
     uint32_t tcon;
     uint32_t prev_tcon;
 
-    x49gp_t* x49gp;
+    x50ng_t* x50ng;
 
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
@@ -45,7 +45,7 @@ struct __s3c2410_timer_s__ {
         s3c2410_timer_t* main;
 
         unsigned long interval;
-        x49gp_timer_t* timer;
+        x50ng_timer_t* timer;
     } timeout[ 5 ];
 };
 
@@ -95,14 +95,14 @@ static void s3c2410_timer_timeout( void* data )
 {
     struct s3c2410_timeout* t = data;
     s3c2410_timer_t* timer = t->main;
-    x49gp_t* x49gp = timer->x49gp;
+    x50ng_t* x50ng = timer->x50ng;
     int64_t timeout;
 
 #ifdef DEBUG_S3C2410_TIMER
     printf( "s3c2410-timer: assert TIMER%u interrupt\n", t->index );
 #endif
 
-    s3c2410_intc_assert( timer->x49gp, t->tconfig->irq, 0 );
+    s3c2410_intc_assert( timer->x50ng, t->tconfig->irq, 0 );
 
     if ( timer->tcon & t->tconfig->reload_bit ) {
         t->tcnt = t->tcntb;
@@ -112,22 +112,22 @@ static void s3c2410_timer_timeout( void* data )
         return;
     }
 
-    timeout = 1000000LL * t->tcnt * t->interval / x49gp->PCLK;
+    timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
     printf( "s3c2410-timer: reload TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval, ( unsigned long long )timeout );
 #endif
-    x49gp_mod_timer( t->timer, x49gp_get_clock() + timeout );
+    x50ng_mod_timer( t->timer, x50ng_get_clock() + timeout );
 }
 
-unsigned long s3c2410_timer_next_interrupt( x49gp_t* x49gp )
+unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
 {
-    s3c2410_timer_t* timer = x49gp->s3c2410_timer;
+    s3c2410_timer_t* timer = x50ng->s3c2410_timer;
     struct s3c2410_timeout* t;
     unsigned long irq, next;
     unsigned long ticks;
     int i;
 
-    ticks = x49gp_get_clock();
+    ticks = x50ng_get_clock();
 
     next = ~( 0 );
     for ( i = 0; i < 5; i++ ) {
@@ -136,8 +136,8 @@ unsigned long s3c2410_timer_next_interrupt( x49gp_t* x49gp )
         if ( !( timer->tcon & t->tconfig->start_bit ) )
             continue;
 
-        if ( x49gp_timer_pending( t->timer ) ) {
-            irq = x49gp_timer_expires( t->timer ) - ticks;
+        if ( x50ng_timer_pending( t->timer ) ) {
+            irq = x50ng_timer_expires( t->timer ) - ticks;
         } else {
             irq = 0;
         }
@@ -155,7 +155,7 @@ unsigned long s3c2410_timer_next_interrupt( x49gp_t* x49gp )
 
 #ifdef DEBUG_S3C2410_TIMER
         printf( "s3c2410-timer: TIMER%u: tcnt %u, interval %lu, pending %u, next irq %lu\n", t->index, t->tcnt, t->interval,
-                x49gp_timer_pending( t->timer ), irq );
+                x50ng_timer_pending( t->timer ), irq );
 #endif
     }
 
@@ -165,7 +165,7 @@ unsigned long s3c2410_timer_next_interrupt( x49gp_t* x49gp )
 static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 {
     struct s3c2410_timeout* t;
-    x49gp_t* x49gp = timer->x49gp;
+    x50ng_t* x50ng = timer->x50ng;
     uint32_t pre, mux;
     int64_t timeout;
     int i;
@@ -186,13 +186,13 @@ static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 #ifdef DEBUG_S3C2410_TIMER
         printf( "s3c2410-timer: TIMER%u: pre %u, mux %u, tick %lu PCLKs\n", t->index, pre, mux, t->interval );
 #endif
-        if ( x49gp_timer_pending( t->timer ) ) {
-            timeout = 1000000LL * t->tcnt * t->interval / x49gp->PCLK;
+        if ( x50ng_timer_pending( t->timer ) ) {
+            timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
             printf( "s3c2410-timer: mod TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval,
                     ( unsigned long long )timeout );
 #endif
-            x49gp_mod_timer( t->timer, x49gp_get_clock() + timeout );
+            x50ng_mod_timer( t->timer, x50ng_get_clock() + timeout );
         }
     }
 }
@@ -200,7 +200,7 @@ static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 {
     struct s3c2410_timeout* t;
-    x49gp_t* x49gp = timer->x49gp;
+    x50ng_t* x50ng = timer->x50ng;
     int64_t timeout;
     uint32_t change;
     int i;
@@ -222,14 +222,14 @@ static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 
         if ( change & t->tconfig->start_bit ) {
             if ( timer->tcon & t->tconfig->start_bit ) {
-                timeout = 1000000LL * t->tcnt * t->interval / x49gp->PCLK;
+                timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
                 printf( "s3c2410-timer: start TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval,
                         ( unsigned long long )timeout );
 #endif
-                x49gp_mod_timer( t->timer, x49gp_get_clock() + timeout );
+                x50ng_mod_timer( t->timer, x50ng_get_clock() + timeout );
             } else {
-                x49gp_del_timer( t->timer );
+                x50ng_del_timer( t->timer );
 #ifdef DEBUG_S3C2410_TIMER
                 printf( "s3c2410-timer: stop TIMER%u\n", t->index );
 #endif
@@ -241,21 +241,21 @@ static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 static uint32_t s3c2410_read_tcnt( s3c2410_timer_t* timer, int index )
 {
     struct s3c2410_timeout* t = &timer->timeout[ index ];
-    x49gp_t* x49gp = timer->x49gp;
+    x50ng_t* x50ng = timer->x50ng;
     int64_t now, expires, timeout;
 
     if ( !( timer->tcon & t->tconfig->start_bit ) )
         return t->tcnt;
 
-    if ( x49gp_timer_pending( t->timer ) ) {
-        now = x49gp_get_clock();
-        expires = x49gp_timer_expires( t->timer );
+    if ( x50ng_timer_pending( t->timer ) ) {
+        now = x50ng_get_clock();
+        expires = x50ng_timer_expires( t->timer );
 
         timeout = expires - now;
         if ( timeout <= 0 )
             return 0;
 
-        t->tcnt = timeout * x49gp->PCLK / ( 1000000LL * t->interval );
+        t->tcnt = timeout * x50ng->PCLK / ( 1000000LL * t->interval );
     }
 
     return t->tcnt;
@@ -342,7 +342,7 @@ static void s3c2410_timer_write( void* opaque, target_phys_addr_t offset, uint32
     }
 }
 
-static int s3c2410_timer_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_timer_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_timer_t* timer = module->user_data;
     s3c2410_offset_t* reg;
@@ -359,7 +359,7 @@ static int s3c2410_timer_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -369,7 +369,7 @@ static int s3c2410_timer_load( x49gp_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_timer_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_timer_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_timer_t* timer = module->user_data;
     s3c2410_offset_t* reg;
@@ -385,13 +385,13 @@ static int s3c2410_timer_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_timer_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_timer_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_timer_t* timer = module->user_data;
     s3c2410_offset_t* reg;
@@ -420,7 +420,7 @@ static CPUReadMemoryFunc* s3c2410_timer_readfn[] = { s3c2410_timer_read, s3c2410
 
 static CPUWriteMemoryFunc* s3c2410_timer_writefn[] = { s3c2410_timer_write, s3c2410_timer_write, s3c2410_timer_write };
 
-static int s3c2410_timer_init( x49gp_module_t* module )
+static int s3c2410_timer_init( x50ng_module_t* module )
 {
     s3c2410_timer_t* timer;
     struct s3c2410_timeout* t;
@@ -433,7 +433,7 @@ static int s3c2410_timer_init( x49gp_module_t* module )
 
     timer = malloc( sizeof( s3c2410_timer_t ) );
     if ( NULL == timer ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x49gp->progname, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __FUNCTION__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_timer_data_init( timer ) ) {
@@ -443,8 +443,8 @@ static int s3c2410_timer_init( x49gp_module_t* module )
 
     module->user_data = timer;
 
-    timer->x49gp = module->x49gp;
-    module->x49gp->s3c2410_timer = timer;
+    timer->x50ng = module->x50ng;
+    module->x50ng->s3c2410_timer = timer;
 
     for ( i = 0; i < 5; i++ ) {
         t = &timer->timeout[ i ];
@@ -454,7 +454,7 @@ static int s3c2410_timer_init( x49gp_module_t* module )
 
         t->main = timer;
 
-        t->timer = x49gp_new_timer( X49GP_TIMER_VIRTUAL, s3c2410_timer_timeout, t );
+        t->timer = x50ng_new_timer( X49GP_TIMER_VIRTUAL, s3c2410_timer_timeout, t );
     }
 
     iotype = cpu_register_io_memory( s3c2410_timer_readfn, s3c2410_timer_writefn, timer );
@@ -465,7 +465,7 @@ static int s3c2410_timer_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_timer_exit( x49gp_module_t* module )
+static int s3c2410_timer_exit( x50ng_module_t* module )
 {
     s3c2410_timer_t* timer;
 
@@ -480,20 +480,20 @@ static int s3c2410_timer_exit( x49gp_module_t* module )
         free( timer );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_timer_init( x49gp_t* x49gp )
+int x50ng_s3c2410_timer_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-timer", s3c2410_timer_init, s3c2410_timer_exit, s3c2410_timer_reset, s3c2410_timer_load,
+    if ( x50ng_module_init( x50ng, "s3c2410-timer", s3c2410_timer_init, s3c2410_timer_exit, s3c2410_timer_reset, s3c2410_timer_load,
                             s3c2410_timer_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

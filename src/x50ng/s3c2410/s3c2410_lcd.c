@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 
 static int s3c2410_lcd_data_init( s3c2410_lcd_t* lcd )
@@ -70,7 +70,7 @@ static uint32_t s3c2410_lcd_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_lcd_t* lcd = opaque;
-    x49gp_t* x49gp = lcd->x49gp;
+    x50ng_t* x50ng = lcd->x50ng;
     s3c2410_offset_t* reg;
 
     if ( !S3C2410_OFFSET_OK( lcd, offset ) )
@@ -85,7 +85,7 @@ static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t
     switch ( offset ) {
         case S3C2410_LCD_LCDCON1:
             if ( ( lcd->lcdcon1 ^ data ) & 1 )
-                s3c2410_schedule_lcd_update( x49gp );
+                s3c2410_schedule_lcd_update( x50ng );
 
             lcd->lcdcon1 = ( lcd->lcdcon1 & ( 0x3ff << 18 ) ) | ( data & ~( 0x3ff << 18 ) );
             break;
@@ -95,7 +95,7 @@ static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t
     }
 }
 
-static int s3c2410_lcd_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_lcd_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
@@ -111,14 +111,14 @@ static int s3c2410_lcd_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
     return error;
 }
 
-static int s3c2410_lcd_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_lcd_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
@@ -133,13 +133,13 @@ static int s3c2410_lcd_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_lcd_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_lcd_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
@@ -164,7 +164,7 @@ static CPUReadMemoryFunc* s3c2410_lcd_readfn[] = { s3c2410_lcd_read, s3c2410_lcd
 
 static CPUWriteMemoryFunc* s3c2410_lcd_writefn[] = { s3c2410_lcd_write, s3c2410_lcd_write, s3c2410_lcd_write };
 
-static int s3c2410_lcd_init( x49gp_module_t* module )
+static int s3c2410_lcd_init( x50ng_module_t* module )
 {
     s3c2410_lcd_t* lcd;
     int iotype;
@@ -184,8 +184,8 @@ static int s3c2410_lcd_init( x49gp_module_t* module )
     }
 
     module->user_data = lcd;
-    module->x49gp->s3c2410_lcd = lcd;
-    lcd->x49gp = module->x49gp;
+    module->x50ng->s3c2410_lcd = lcd;
+    lcd->x50ng = module->x50ng;
 
     iotype = cpu_register_io_memory( s3c2410_lcd_readfn, s3c2410_lcd_writefn, lcd );
 #ifdef DEBUG_S3C2410_LCD
@@ -196,7 +196,7 @@ static int s3c2410_lcd_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_lcd_exit( x49gp_module_t* module )
+static int s3c2410_lcd_exit( x50ng_module_t* module )
 {
     s3c2410_lcd_t* lcd;
 
@@ -211,19 +211,19 @@ static int s3c2410_lcd_exit( x49gp_module_t* module )
         free( lcd );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-void s3c2410_schedule_lcd_update( x49gp_t* x49gp )
+void s3c2410_schedule_lcd_update( x50ng_t* x50ng )
 {
-    if ( !x49gp_timer_pending( x49gp->lcd_timer ) )
-        x49gp_mod_timer( x49gp->lcd_timer, x49gp_get_clock() + X49GP_LCD_REFRESH_INTERVAL );
+    if ( !x50ng_timer_pending( x50ng->lcd_timer ) )
+        x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + X49GP_LCD_REFRESH_INTERVAL );
 }
 
-int x49gp_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
+int x50ng_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
 {
     uint32_t bank, addr, data, offset, pixel_offset;
     int bits_per_pixel = lcd->lcdcon5 > 2 ? 1 : 4 >> lcd->lcdcon5;
@@ -248,13 +248,13 @@ int x49gp_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
     }
 }
 
-int x49gp_s3c2410_lcd_init( x49gp_t* x49gp )
+int x50ng_s3c2410_lcd_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-lcd", s3c2410_lcd_init, s3c2410_lcd_exit, s3c2410_lcd_reset, s3c2410_lcd_load, s3c2410_lcd_save,
+    if ( x50ng_module_init( x50ng, "s3c2410-lcd", s3c2410_lcd_init, s3c2410_lcd_exit, s3c2410_lcd_reset, s3c2410_lcd_load, s3c2410_lcd_save,
                             NULL, &module ) )
         return -1;
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

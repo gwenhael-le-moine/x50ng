@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 #include "s3c2410_intc.h"
 
@@ -26,7 +26,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x49gp_t* x49gp;
+    x50ng_t* x50ng;
 } s3c2410_spi_t;
 
 static int s3c2410_spi_data_init( s3c2410_spi_t* spi )
@@ -86,7 +86,7 @@ uint32_t s3c2410_spi_read( void* opaque, target_phys_addr_t offset )
 void s3c2410_spi_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_spi_t* spi = opaque;
-    x49gp_t* x49gp = spi->x49gp;
+    x50ng_t* x50ng = spi->x50ng;
     s3c2410_offset_t* reg;
 
     if ( !S3C2410_OFFSET_OK( spi, offset ) ) {
@@ -104,17 +104,17 @@ void s3c2410_spi_write( void* opaque, target_phys_addr_t offset, uint32_t data )
     switch ( offset ) {
         case S3C2410_SPI_SPTDAT0:
             spi->spista0 |= 1;
-            s3c2410_intc_assert( x49gp, INT_SPI0, 0 );
+            s3c2410_intc_assert( x50ng, INT_SPI0, 0 );
             break;
 
         case S3C2410_SPI_SPTDAT1:
             spi->spista1 |= 1;
-            s3c2410_intc_assert( x49gp, INT_SPI1, 0 );
+            s3c2410_intc_assert( x50ng, INT_SPI1, 0 );
             break;
     }
 }
 
-static int s3c2410_spi_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_spi_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_spi_t* spi = module->user_data;
     s3c2410_offset_t* reg;
@@ -131,14 +131,14 @@ static int s3c2410_spi_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
     return error;
 }
 
-static int s3c2410_spi_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_spi_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_spi_t* spi = module->user_data;
     s3c2410_offset_t* reg;
@@ -154,13 +154,13 @@ static int s3c2410_spi_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_spi_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_spi_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_spi_t* spi = module->user_data;
     s3c2410_offset_t* reg;
@@ -186,7 +186,7 @@ static CPUReadMemoryFunc* s3c2410_spi_readfn[] = { s3c2410_spi_read, s3c2410_spi
 
 static CPUWriteMemoryFunc* s3c2410_spi_writefn[] = { s3c2410_spi_write, s3c2410_spi_write, s3c2410_spi_write };
 
-static int s3c2410_spi_init( x49gp_module_t* module )
+static int s3c2410_spi_init( x50ng_module_t* module )
 {
     s3c2410_spi_t* spi;
     int iotype;
@@ -206,7 +206,7 @@ static int s3c2410_spi_init( x49gp_module_t* module )
     }
 
     module->user_data = spi;
-    spi->x49gp = module->x49gp;
+    spi->x50ng = module->x50ng;
 
     iotype = cpu_register_io_memory( s3c2410_spi_readfn, s3c2410_spi_writefn, spi );
 #ifdef DEBUG_S3C2410_SPI
@@ -216,7 +216,7 @@ static int s3c2410_spi_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_spi_exit( x49gp_module_t* module )
+static int s3c2410_spi_exit( x50ng_module_t* module )
 {
     s3c2410_spi_t* spi;
 
@@ -231,20 +231,20 @@ static int s3c2410_spi_exit( x49gp_module_t* module )
         free( spi );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_spi_init( x49gp_t* x49gp )
+int x50ng_s3c2410_spi_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-spi", s3c2410_spi_init, s3c2410_spi_exit, s3c2410_spi_reset, s3c2410_spi_load, s3c2410_spi_save,
+    if ( x50ng_module_init( x50ng, "s3c2410-spi", s3c2410_spi_init, s3c2410_spi_exit, s3c2410_spi_reset, s3c2410_spi_load, s3c2410_spi_save,
                             NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

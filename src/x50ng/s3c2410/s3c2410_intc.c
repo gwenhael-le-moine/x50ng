@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 #include "s3c2410_intc.h"
 
@@ -60,7 +60,7 @@ typedef struct {
 
     s3c2410_arb_data_t arb_data[ INTC_NR_ARB ];
 
-    x49gp_t* x49gp;
+    x50ng_t* x50ng;
 
     uint32_t src_pending;
     uint32_t subsrc_pending;
@@ -233,7 +233,7 @@ void s3c2410_IRQ( CPUState* env ) { cpu_interrupt( env, CPU_INTERRUPT_HARD ); }
 
 static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 {
-    x49gp_t* x49gp = intc->x49gp;
+    x50ng_t* x50ng = intc->x50ng;
     uint32_t fiq, service;
     int offset[ 6 ], index;
     const s3c2410_arb_t* arb;
@@ -253,12 +253,12 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #ifdef DEBUG_S3C2410_INTC
         printf( "INTC: vector to %08x\n", 0x1c );
 #endif
-        cpu_interrupt( x49gp->env, CPU_INTERRUPT_FIQ );
+        cpu_interrupt( x50ng->env, CPU_INTERRUPT_FIQ );
 
-        x49gp_set_idle( x49gp, 0 );
+        x50ng_set_idle( x50ng, 0 );
         return;
     } else {
-        cpu_reset_interrupt( x49gp->env, CPU_INTERRUPT_FIQ );
+        cpu_reset_interrupt( x50ng->env, CPU_INTERRUPT_FIQ );
     }
 
 #ifdef DEBUG_S3C2410_INTC0
@@ -272,9 +272,9 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #ifdef DEBUG_S3C2410_INTC
         printf( "INTC: vector to %08x\n", 0x18 );
 #endif
-        cpu_interrupt( x49gp->env, CPU_INTERRUPT_HARD );
+        cpu_interrupt( x50ng->env, CPU_INTERRUPT_HARD );
 
-        x49gp_set_idle( x49gp, 0 );
+        x50ng_set_idle( x50ng, 0 );
         return;
     }
 
@@ -289,7 +289,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #endif
 
     if ( 0 == service ) {
-        cpu_reset_interrupt( x49gp->env, CPU_INTERRUPT_HARD );
+        cpu_reset_interrupt( x50ng->env, CPU_INTERRUPT_HARD );
         return;
     }
 
@@ -323,9 +323,9 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #ifdef DEBUG_S3C2410_INTC
         printf( "INTC: vector to %08x\n", 0x18 );
 #endif
-        cpu_interrupt( x49gp->env, CPU_INTERRUPT_HARD );
+        cpu_interrupt( x50ng->env, CPU_INTERRUPT_HARD );
 
-        x49gp_set_idle( x49gp, 0 );
+        x50ng_set_idle( x50ng, 0 );
         return;
     }
 
@@ -333,12 +333,12 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
     printf( "INTC: No irq pending\n" );
 #endif
 
-    cpu_reset_interrupt( x49gp->env, CPU_INTERRUPT_HARD );
+    cpu_reset_interrupt( x50ng->env, CPU_INTERRUPT_HARD );
 }
 
-void s3c2410_intc_assert( x49gp_t* x49gp, int irq, int level )
+void s3c2410_intc_assert( x50ng_t* x50ng, int irq, int level )
 {
-    s3c2410_intc_t* intc = x49gp->s3c2410_intc;
+    s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
     if ( irq > 31 )
         return;
@@ -355,15 +355,15 @@ void s3c2410_intc_assert( x49gp_t* x49gp, int irq, int level )
         s3c2410_intc_gen_int( intc );
     }
 
-    if ( x49gp->arm_idle == 2 ) {
+    if ( x50ng->arm_idle == 2 ) {
         if ( irq == EINT0 || irq == INT_RTC )
-            x49gp_set_idle( x49gp, 0 );
+            x50ng_set_idle( x50ng, 0 );
     }
 }
 
-void s3c2410_intc_deassert( x49gp_t* x49gp, int irq )
+void s3c2410_intc_deassert( x50ng_t* x50ng, int irq )
 {
-    s3c2410_intc_t* intc = x49gp->s3c2410_intc;
+    s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
     if ( irq > 31 )
         return;
@@ -377,7 +377,7 @@ void s3c2410_intc_deassert( x49gp_t* x49gp, int irq )
 
 static void s3c2410_intc_gen_int_from_sub_int( s3c2410_intc_t* intc )
 {
-    x49gp_t* x49gp = intc->x49gp;
+    x50ng_t* x50ng = intc->x50ng;
     uint32_t service;
 
     service = intc->subsrcpnd & ~( intc->intsubmsk );
@@ -387,35 +387,35 @@ static void s3c2410_intc_gen_int_from_sub_int( s3c2410_intc_t* intc )
 #endif
 
     if ( service & ( ( 1 << SUB_INT_ERR0 ) | ( 1 << SUB_INT_TXD0 ) | ( 1 << SUB_INT_RXD0 ) ) ) {
-        s3c2410_intc_assert( x49gp, INT_UART0, 1 );
+        s3c2410_intc_assert( x50ng, INT_UART0, 1 );
     } else {
-        s3c2410_intc_deassert( x49gp, INT_UART0 );
+        s3c2410_intc_deassert( x50ng, INT_UART0 );
     }
 
     if ( service & ( ( 1 << SUB_INT_ERR1 ) | ( 1 << SUB_INT_TXD1 ) | ( 1 << SUB_INT_RXD1 ) ) ) {
-        s3c2410_intc_assert( x49gp, INT_UART1, 1 );
+        s3c2410_intc_assert( x50ng, INT_UART1, 1 );
     } else {
-        s3c2410_intc_deassert( x49gp, INT_UART1 );
+        s3c2410_intc_deassert( x50ng, INT_UART1 );
     }
 
     if ( service & ( ( 1 << SUB_INT_ERR2 ) | ( 1 << SUB_INT_TXD2 ) | ( 1 << SUB_INT_RXD2 ) ) ) {
-        s3c2410_intc_assert( x49gp, INT_UART2, 1 );
+        s3c2410_intc_assert( x50ng, INT_UART2, 1 );
     } else {
-        s3c2410_intc_deassert( x49gp, INT_UART2 );
+        s3c2410_intc_deassert( x50ng, INT_UART2 );
     }
 
     if ( service & ( ( 1 << SUB_INT_ADC ) | ( 1 << SUB_INT_TC ) ) ) {
-        s3c2410_intc_assert( x49gp, INT_ADC, 1 );
+        s3c2410_intc_assert( x50ng, INT_ADC, 1 );
     } else {
-        s3c2410_intc_deassert( x49gp, INT_ADC );
+        s3c2410_intc_deassert( x50ng, INT_ADC );
     }
 
     intc->subsrcpnd = intc->subsrc_pending;
 }
 
-void s3c2410_intc_sub_assert( x49gp_t* x49gp, int sub_irq, int level )
+void s3c2410_intc_sub_assert( x50ng_t* x50ng, int sub_irq, int level )
 {
-    s3c2410_intc_t* intc = x49gp->s3c2410_intc;
+    s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
     if ( sub_irq > 31 )
         return;
@@ -433,9 +433,9 @@ void s3c2410_intc_sub_assert( x49gp_t* x49gp, int sub_irq, int level )
     }
 }
 
-void s3c2410_intc_sub_deassert( x49gp_t* x49gp, int sub_irq )
+void s3c2410_intc_sub_deassert( x50ng_t* x50ng, int sub_irq )
 {
-    s3c2410_intc_t* intc = x49gp->s3c2410_intc;
+    s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
     if ( sub_irq > 31 )
         return;
@@ -519,7 +519,7 @@ static void s3c2410_intc_write( void* opaque, target_phys_addr_t offset, uint32_
     }
 }
 
-static int s3c2410_intc_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_intc_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
@@ -536,7 +536,7 @@ static int s3c2410_intc_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -552,7 +552,7 @@ static int s3c2410_intc_load( x49gp_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_intc_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_intc_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
@@ -571,13 +571,13 @@ static int s3c2410_intc_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_intc_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_intc_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
@@ -607,7 +607,7 @@ static CPUReadMemoryFunc* s3c2410_intc_readfn[] = { s3c2410_intc_read, s3c2410_i
 
 static CPUWriteMemoryFunc* s3c2410_intc_writefn[] = { s3c2410_intc_write, s3c2410_intc_write, s3c2410_intc_write };
 
-static int s3c2410_intc_init( x49gp_module_t* module )
+static int s3c2410_intc_init( x50ng_module_t* module )
 {
     s3c2410_intc_t* intc;
     int iotype;
@@ -628,8 +628,8 @@ static int s3c2410_intc_init( x49gp_module_t* module )
 
     module->user_data = intc;
 
-    intc->x49gp = module->x49gp;
-    intc->x49gp->s3c2410_intc = intc;
+    intc->x50ng = module->x50ng;
+    intc->x50ng->s3c2410_intc = intc;
 
     iotype = cpu_register_io_memory( s3c2410_intc_readfn, s3c2410_intc_writefn, intc );
 #ifdef DEBUG_S3C2410_INTC
@@ -639,7 +639,7 @@ static int s3c2410_intc_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_intc_exit( x49gp_module_t* module )
+static int s3c2410_intc_exit( x50ng_module_t* module )
 {
     s3c2410_intc_t* intc;
 
@@ -654,20 +654,20 @@ static int s3c2410_intc_exit( x49gp_module_t* module )
         free( intc );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_intc_init( x49gp_t* x49gp )
+int x50ng_s3c2410_intc_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-intc", s3c2410_intc_init, s3c2410_intc_exit, s3c2410_intc_reset, s3c2410_intc_load,
+    if ( x50ng_module_init( x50ng, "s3c2410-intc", s3c2410_intc_init, s3c2410_intc_exit, s3c2410_intc_reset, s3c2410_intc_load,
                             s3c2410_intc_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

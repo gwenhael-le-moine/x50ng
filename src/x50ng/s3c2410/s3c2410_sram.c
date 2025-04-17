@@ -6,7 +6,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 
 typedef struct {
@@ -17,7 +17,7 @@ typedef struct {
     size_t size;
 } filemap_t;
 
-static int s3c2410_sram_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
 {
     filemap_t* filemap = module->user_data;
     char* filename;
@@ -27,7 +27,7 @@ static int s3c2410_sram_load( x49gp_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    error = x49gp_module_get_filename( module, key, "filename", "s3c2410-sram", &( filemap->filename ), &filename );
+    error = x50ng_module_get_filename( module, key, "filename", "s3c2410-sram", &( filemap->filename ), &filename );
 
     filemap->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( filemap->fd < 0 ) {
@@ -59,11 +59,11 @@ static int s3c2410_sram_load( x49gp_module_t* module, GKeyFile* key )
 
     g_free( filename );
 
-    s3c2410_schedule_lcd_update( module->x49gp );
+    s3c2410_schedule_lcd_update( module->x50ng );
     return error;
 }
 
-static int s3c2410_sram_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
 {
     filemap_t* filemap = module->user_data;
     int error;
@@ -72,7 +72,7 @@ static int s3c2410_sram_save( x49gp_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    x49gp_module_set_filename( module, key, "filename", filemap->filename );
+    x50ng_module_set_filename( module, key, "filename", filemap->filename );
 
     error = msync( filemap->data, filemap->size, MS_ASYNC );
     if ( error ) {
@@ -89,7 +89,7 @@ static int s3c2410_sram_save( x49gp_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_sram_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -98,7 +98,7 @@ static int s3c2410_sram_reset( x49gp_module_t* module, x49gp_reset_t reset )
     return 0;
 }
 
-static int s3c2410_sram_init( x49gp_module_t* module )
+static int s3c2410_sram_init( x50ng_module_t* module )
 {
     filemap_t* filemap;
 
@@ -126,7 +126,7 @@ static int s3c2410_sram_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_sram_exit( x49gp_module_t* module )
+static int s3c2410_sram_exit( x50ng_module_t* module )
 {
     filemap_t* filemap;
 
@@ -147,20 +147,20 @@ static int s3c2410_sram_exit( x49gp_module_t* module )
         free( filemap );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_sram_init( x49gp_t* x49gp )
+int x50ng_s3c2410_sram_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-sram", s3c2410_sram_init, s3c2410_sram_exit, s3c2410_sram_reset, s3c2410_sram_load,
+    if ( x50ng_module_init( x50ng, "s3c2410-sram", s3c2410_sram_init, s3c2410_sram_exit, s3c2410_sram_reset, s3c2410_sram_load,
                             s3c2410_sram_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 #include "s3c2410_intc.h"
 
@@ -32,9 +32,9 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x49gp_t* x49gp;
-    x49gp_timer_t* tick_timer;
-    x49gp_timer_t* alarm_timer;
+    x50ng_t* x50ng;
+    x50ng_timer_t* tick_timer;
+    x50ng_timer_t* alarm_timer;
     int64_t interval; /* us */
     int64_t expires;  /* us */
 } s3c2410_rtc_t;
@@ -72,7 +72,7 @@ static __inline__ uint32_t bcd2bin( uint32_t bcd ) { return ( ( bcd >> 4 ) * 10 
 static void s3c2410_rtc_timeout( void* user_data )
 {
     s3c2410_rtc_t* rtc = user_data;
-    x49gp_t* x49gp = rtc->x49gp;
+    x50ng_t* x50ng = rtc->x50ng;
     int64_t now, us;
 
     if ( !( rtc->ticnt & 0x80 ) ) {
@@ -83,9 +83,9 @@ static void s3c2410_rtc_timeout( void* user_data )
     printf( "RTC: assert TICK interrupt\n" );
 #endif
 
-    s3c2410_intc_assert( x49gp, INT_TICK, 0 );
+    s3c2410_intc_assert( x50ng, INT_TICK, 0 );
 
-    now = x49gp_get_clock();
+    now = x50ng_get_clock();
     while ( rtc->expires <= now ) {
         rtc->expires += rtc->interval;
     }
@@ -98,15 +98,15 @@ static void s3c2410_rtc_timeout( void* user_data )
     printf( "RTC: restart TICK timer (%llu us)\n", ( unsigned long long )us );
 #endif
 
-    x49gp_mod_timer( rtc->tick_timer, rtc->expires );
+    x50ng_mod_timer( rtc->tick_timer, rtc->expires );
 }
 
 static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
 {
     int64_t now, us;
 
-    if ( x49gp_timer_pending( rtc->tick_timer ) ) {
-        x49gp_del_timer( rtc->tick_timer );
+    if ( x50ng_timer_pending( rtc->tick_timer ) ) {
+        x50ng_del_timer( rtc->tick_timer );
 #ifdef DEBUG_S3C2410_RTC
         printf( "RTC: stop TICK timer\n" );
 #endif
@@ -122,7 +122,7 @@ static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
     if ( rtc->interval < 1000 )
         rtc->interval = 1000;
 
-    now = x49gp_get_clock();
+    now = x50ng_get_clock();
     rtc->expires = now + rtc->interval;
 
     us = rtc->expires - now;
@@ -133,14 +133,14 @@ static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
     printf( "RTC: start TICK timer (%lld us)\n", ( unsigned long long )us );
 #endif
 
-    x49gp_mod_timer( rtc->tick_timer, rtc->expires );
+    x50ng_mod_timer( rtc->tick_timer, rtc->expires );
     return 0;
 }
 
 static void s3c2410_rtc_alarm( void* user_data )
 {
     s3c2410_rtc_t* rtc = user_data;
-    x49gp_t* x49gp = rtc->x49gp;
+    x50ng_t* x50ng = rtc->x50ng;
     struct tm* tm;
     struct timeval tv;
     int64_t now, us;
@@ -153,7 +153,7 @@ static void s3c2410_rtc_alarm( void* user_data )
     gettimeofday( &tv, NULL );
     tm = localtime( &tv.tv_sec );
 
-    now = x49gp_get_clock();
+    now = x50ng_get_clock();
     us = 1000000LL - tv.tv_usec;
 
     if ( match && ( rtc->rtcalm & 0x01 ) ) {
@@ -185,14 +185,14 @@ static void s3c2410_rtc_alarm( void* user_data )
 #ifdef DEBUG_S3C2410_RTC
         printf( "RTC: assert ALARM interrupt\n" );
 #endif
-        s3c2410_intc_assert( x49gp, INT_RTC, 0 );
+        s3c2410_intc_assert( x50ng, INT_RTC, 0 );
     }
 
 #ifdef DEBUG_S3C2410_RTC
     printf( "RTC: reload ALARM timer (%lld us)\n", ( unsigned long long )us );
 #endif
 
-    x49gp_mod_timer( rtc->alarm_timer, now + us );
+    x50ng_mod_timer( rtc->alarm_timer, now + us );
 }
 
 static int s3c2410_rtc_set_rtcalm( s3c2410_rtc_t* rtc )
@@ -201,20 +201,20 @@ static int s3c2410_rtc_set_rtcalm( s3c2410_rtc_t* rtc )
     int64_t now, us;
 
     if ( !( rtc->rtcalm & 0x40 ) ) {
-        x49gp_del_timer( rtc->alarm_timer );
+        x50ng_del_timer( rtc->alarm_timer );
         return 0;
     }
 
     gettimeofday( &tv, NULL );
 
-    now = x49gp_get_clock();
+    now = x50ng_get_clock();
     us = 1000000LL - tv.tv_usec;
 
 #ifdef DEBUG_S3C2410_RTC
     printf( "RTC: start ALARM timer (%lld us)\n", ( unsigned long long )us );
 #endif
 
-    x49gp_mod_timer( rtc->alarm_timer, now + us );
+    x50ng_mod_timer( rtc->alarm_timer, now + us );
     return 0;
 }
 
@@ -299,7 +299,7 @@ static void s3c2410_rtc_write( void* opaque, target_phys_addr_t offset, uint32_t
     }
 }
 
-static int s3c2410_rtc_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_rtc_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_rtc_t* rtc = module->user_data;
     s3c2410_offset_t* reg;
@@ -316,7 +316,7 @@ static int s3c2410_rtc_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -326,7 +326,7 @@ static int s3c2410_rtc_load( x49gp_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_rtc_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_rtc_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_rtc_t* rtc = module->user_data;
     s3c2410_offset_t* reg;
@@ -342,13 +342,13 @@ static int s3c2410_rtc_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_rtc_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_rtc_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_rtc_t* rtc = module->user_data;
     s3c2410_offset_t* reg;
@@ -376,7 +376,7 @@ static CPUReadMemoryFunc* s3c2410_rtc_readfn[] = { s3c2410_rtc_read, s3c2410_rtc
 
 static CPUWriteMemoryFunc* s3c2410_rtc_writefn[] = { s3c2410_rtc_write, s3c2410_rtc_write, s3c2410_rtc_write };
 
-static int s3c2410_rtc_init( x49gp_module_t* module )
+static int s3c2410_rtc_init( x50ng_module_t* module )
 {
     s3c2410_rtc_t* rtc;
     int iotype;
@@ -387,7 +387,7 @@ static int s3c2410_rtc_init( x49gp_module_t* module )
 
     rtc = malloc( sizeof( s3c2410_rtc_t ) );
     if ( NULL == rtc ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x49gp->progname, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __FUNCTION__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_rtc_data_init( rtc ) ) {
@@ -396,10 +396,10 @@ static int s3c2410_rtc_init( x49gp_module_t* module )
     }
 
     module->user_data = rtc;
-    rtc->x49gp = module->x49gp;
+    rtc->x50ng = module->x50ng;
 
-    rtc->tick_timer = x49gp_new_timer( X49GP_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
-    rtc->alarm_timer = x49gp_new_timer( X49GP_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
+    rtc->tick_timer = x50ng_new_timer( X49GP_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
+    rtc->alarm_timer = x50ng_new_timer( X49GP_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
 
     iotype = cpu_register_io_memory( s3c2410_rtc_readfn, s3c2410_rtc_writefn, rtc );
 #ifdef DEBUG_S3C2410_RTC
@@ -410,7 +410,7 @@ static int s3c2410_rtc_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_rtc_exit( x49gp_module_t* module )
+static int s3c2410_rtc_exit( x50ng_module_t* module )
 {
     s3c2410_rtc_t* rtc;
 
@@ -425,20 +425,20 @@ static int s3c2410_rtc_exit( x49gp_module_t* module )
         free( rtc );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_rtc_init( x49gp_t* x49gp )
+int x50ng_s3c2410_rtc_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-rtc", s3c2410_rtc_init, s3c2410_rtc_exit, s3c2410_rtc_reset, s3c2410_rtc_load, s3c2410_rtc_save,
+    if ( x50ng_module_init( x50ng, "s3c2410-rtc", s3c2410_rtc_init, s3c2410_rtc_exit, s3c2410_rtc_reset, s3c2410_rtc_load, s3c2410_rtc_save,
                             NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

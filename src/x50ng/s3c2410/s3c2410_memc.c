@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 #include "s3c2410.h"
 
 typedef struct {
@@ -26,7 +26,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x49gp_t* x49gp;
+    x50ng_t* x50ng;
 } s3c2410_memc_t;
 
 static int s3c2410_memc_data_init( s3c2410_memc_t* memc )
@@ -98,11 +98,11 @@ static void s3c2410_memc_write( void* opaque, target_phys_addr_t offset, uint32_
     *( reg->datap ) = data;
 
 #ifdef DEBUG_S3C2410_MEMC
-    printf( "%s:%u: env %p\n", __FUNCTION__, __LINE__, memc->x49gp->env );
+    printf( "%s:%u: env %p\n", __FUNCTION__, __LINE__, memc->x50ng->env );
 #endif
 }
 
-static int s3c2410_memc_load( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_memc_load( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
@@ -119,14 +119,14 @@ static int s3c2410_memc_load( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x49gp_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
     return error;
 }
 
-static int s3c2410_memc_save( x49gp_module_t* module, GKeyFile* key )
+static int s3c2410_memc_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
@@ -142,13 +142,13 @@ static int s3c2410_memc_save( x49gp_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x49gp_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
 }
 
-static int s3c2410_memc_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int s3c2410_memc_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
@@ -174,7 +174,7 @@ static CPUReadMemoryFunc* s3c2410_memc_readfn[] = { s3c2410_memc_read, s3c2410_m
 
 static CPUWriteMemoryFunc* s3c2410_memc_writefn[] = { s3c2410_memc_write, s3c2410_memc_write, s3c2410_memc_write };
 
-static int s3c2410_memc_init( x49gp_module_t* module )
+static int s3c2410_memc_init( x50ng_module_t* module )
 {
     s3c2410_memc_t* memc;
     int iotype;
@@ -194,7 +194,7 @@ static int s3c2410_memc_init( x49gp_module_t* module )
     }
 
     module->user_data = memc;
-    memc->x49gp = module->x49gp;
+    memc->x50ng = module->x50ng;
 
     iotype = cpu_register_io_memory( s3c2410_memc_readfn, s3c2410_memc_writefn, memc );
 #ifdef DEBUG_S3C2410_MEMC
@@ -204,7 +204,7 @@ static int s3c2410_memc_init( x49gp_module_t* module )
     return 0;
 }
 
-static int s3c2410_memc_exit( x49gp_module_t* module )
+static int s3c2410_memc_exit( x50ng_module_t* module )
 {
     s3c2410_memc_t* memc;
 
@@ -219,20 +219,20 @@ static int s3c2410_memc_exit( x49gp_module_t* module )
         free( memc );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_s3c2410_memc_init( x49gp_t* x49gp )
+int x50ng_s3c2410_memc_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "s3c2410-memc", s3c2410_memc_init, s3c2410_memc_exit, s3c2410_memc_reset, s3c2410_memc_load,
+    if ( x50ng_module_init( x50ng, "s3c2410-memc", s3c2410_memc_init, s3c2410_memc_exit, s3c2410_memc_reset, s3c2410_memc_load,
                             s3c2410_memc_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

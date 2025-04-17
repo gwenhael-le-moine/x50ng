@@ -60,10 +60,10 @@
 #define ARB6_SEL_SHIFT 19
 #define ARBx_SEL_MASK 3
 
-void s3c2410_intc_sub_assert( x49gp_t* x49gp, int sub_irq, int level );
-void s3c2410_intc_sub_deassert( x49gp_t* x49gp, int sub_irq );
+void s3c2410_intc_sub_assert( x50ng_t* x50ng, int sub_irq, int level );
+void s3c2410_intc_sub_deassert( x50ng_t* x50ng, int sub_irq );
 
-void s3c2410_intc_assert( x49gp_t* x49gp, int irq, int level );
-void s3c2410_intc_deassert( x49gp_t* x49gp, int irq );
+void s3c2410_intc_assert( x50ng_t* x50ng, int irq, int level );
+void s3c2410_intc_deassert( x50ng_t* x50ng, int irq );
 
 #endif /* !(_X49GP_S3C2410_INTC_H) */

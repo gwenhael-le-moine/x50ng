@@ -8,7 +8,7 @@
 
 #include <memory.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 
 typedef struct {
     void* data;
@@ -17,8 +17,8 @@ typedef struct {
     int fd;
     size_t size;
     uint32_t offset;
-    x49gp_t* x49gp;
-} x49gp_sram_t;
+    x50ng_t* x50ng;
+} x50ng_sram_t;
 
 #define S3C2410_SRAM_BASE 0x08000000
 #define S3C2410_SRAM_SIZE 0x00080000
@@ -31,9 +31,9 @@ typedef struct {
     uint8_t s;
 } hp_real_t;
 
-static int sram_load( x49gp_module_t* module, GKeyFile* key )
+static int sram_load( x50ng_module_t* module, GKeyFile* key )
 {
-    x49gp_sram_t* sram = module->user_data;
+    x50ng_sram_t* sram = module->user_data;
     char* filename;
     int error;
 
@@ -41,7 +41,7 @@ static int sram_load( x49gp_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    error = x49gp_module_get_filename( module, key, "filename", "sram", &( sram->filename ), &filename );
+    error = x50ng_module_get_filename( module, key, "filename", "sram", &( sram->filename ), &filename );
 
     sram->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( sram->fd < 0 ) {
@@ -82,22 +82,22 @@ static int sram_load( x49gp_module_t* module, GKeyFile* key )
         return error;
     }
 
-    sram->x49gp->sram = phys_ram_base + sram->offset;
+    sram->x50ng->sram = phys_ram_base + sram->offset;
 
     g_free( filename );
     return error;
 }
 
-static int sram_save( x49gp_module_t* module, GKeyFile* key )
+static int sram_save( x50ng_module_t* module, GKeyFile* key )
 {
-    x49gp_sram_t* sram = module->user_data;
+    x50ng_sram_t* sram = module->user_data;
     int error;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    x49gp_module_set_filename( module, key, "filename", sram->filename );
+    x50ng_module_set_filename( module, key, "filename", sram->filename );
 
     error = msync( sram->data, sram->size, MS_ASYNC );
     if ( error ) {
@@ -114,7 +114,7 @@ static int sram_save( x49gp_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int sram_reset( x49gp_module_t* module, x49gp_reset_t reset )
+static int sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -123,25 +123,25 @@ static int sram_reset( x49gp_module_t* module, x49gp_reset_t reset )
     return 0;
 }
 
-static int sram_init( x49gp_module_t* module )
+static int sram_init( x50ng_module_t* module )
 {
-    x49gp_sram_t* sram;
+    x50ng_sram_t* sram;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    sram = malloc( sizeof( x49gp_sram_t ) );
+    sram = malloc( sizeof( x50ng_sram_t ) );
     if ( NULL == sram ) {
         fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
         return -ENOMEM;
     }
-    memset( sram, 0, sizeof( x49gp_sram_t ) );
+    memset( sram, 0, sizeof( x50ng_sram_t ) );
 
     sram->fd = -1;
 
     module->user_data = sram;
-    sram->x49gp = module->x49gp;
+    sram->x50ng = module->x50ng;
 
     sram->data = ( void* )-1;
     sram->shadow = ( void* )-1;
@@ -156,9 +156,9 @@ static int sram_init( x49gp_module_t* module )
     return 0;
 }
 
-static int sram_exit( x49gp_module_t* module )
+static int sram_exit( x50ng_module_t* module )
 {
-    x49gp_sram_t* sram;
+    x50ng_sram_t* sram;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -180,19 +180,19 @@ static int sram_exit( x49gp_module_t* module )
         free( sram );
     }
 
-    x49gp_module_unregister( module );
+    x50ng_module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x49gp_sram_init( x49gp_t* x49gp )
+int x50ng_sram_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    if ( x49gp_module_init( x49gp, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) ) {
+    if ( x50ng_module_init( x50ng, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) ) {
         return -1;
     }
 
-    return x49gp_module_register( module );
+    return x50ng_module_register( module );
 }

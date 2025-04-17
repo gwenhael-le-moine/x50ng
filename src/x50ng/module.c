@@ -10,14 +10,14 @@
 #include <gio/gio.h>
 
 #include "list.h"
-#include "x49gp.h"
+#include "x50ng.h"
 #include "options.h"
 
 #define STATE_FILE_NAME "state"
 
-int x49gp_modules_init( x49gp_t* x49gp )
+int x50ng_modules_init( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
     int error;
 
 #ifdef DEBUG_X49GP_MODULES
@@ -26,7 +26,7 @@ int x49gp_modules_init( x49gp_t* x49gp )
 
     phys_ram_size = 0;
 
-    list_for_each_entry( module, &x49gp->modules, list )
+    list_for_each_entry( module, &x50ng->modules, list )
     {
         error = module->init( module );
         if ( error )
@@ -46,22 +46,22 @@ int x49gp_modules_init( x49gp_t* x49gp )
     phys_ram_dirty = qemu_vmalloc( phys_ram_size >> TARGET_PAGE_BITS );
     memset( phys_ram_dirty, 0xff, phys_ram_size >> TARGET_PAGE_BITS );
 
-    ram_addr_t x49gp_ram_alloc( ram_addr_t size, uint8_t* base );
-    x49gp_ram_alloc( phys_ram_size, phys_ram_base );
+    ram_addr_t x50ng_ram_alloc( ram_addr_t size, uint8_t* base );
+    x50ng_ram_alloc( phys_ram_size, phys_ram_base );
 
     return 0;
 }
 
-int x49gp_modules_exit( x49gp_t* x49gp )
+int x50ng_modules_exit( x50ng_t* x50ng )
 {
-    x49gp_module_t *module, *next;
+    x50ng_module_t *module, *next;
     int error;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
-    list_for_each_entry_safe_reverse( module, next, &x49gp->modules, list )
+    list_for_each_entry_safe_reverse( module, next, &x50ng->modules, list )
     {
         error = module->exit( module );
         if ( error )
@@ -71,16 +71,16 @@ int x49gp_modules_exit( x49gp_t* x49gp )
     return 0;
 }
 
-int x49gp_modules_reset( x49gp_t* x49gp, x49gp_reset_t reset )
+int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
     int error;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
-    list_for_each_entry( module, &x49gp->modules, list )
+    list_for_each_entry( module, &x50ng->modules, list )
     {
         error = module->reset( module, reset );
         if ( error )
@@ -90,9 +90,9 @@ int x49gp_modules_reset( x49gp_t* x49gp, x49gp_reset_t reset )
     return 0;
 }
 
-int x49gp_modules_load( x49gp_t* x49gp )
+int x50ng_modules_load( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
     GError* gerror = NULL;
     int error, result;
     const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
@@ -110,24 +110,24 @@ int x49gp_modules_load( x49gp_t* x49gp )
     /* copy_file_from_global_datadir_to_user_datadir( "style-50g.css" ); */
     /* copy_file_from_global_datadir_to_user_datadir( "style-49gp.css" ); */
 
-    x49gp->state = g_key_file_new();
-    if ( NULL == x49gp->state ) {
+    x50ng->state = g_key_file_new();
+    if ( NULL == x50ng->state ) {
         fprintf( stderr, "%s:%u: g_key_file_new: Out of memory\n", __FUNCTION__, __LINE__ );
         return -ENOMEM;
     }
 
-    if ( !g_key_file_load_from_file( x49gp->state, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
+    if ( !g_key_file_load_from_file( x50ng->state, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
          !g_error_matches( gerror, G_FILE_ERROR, G_FILE_ERROR_NOENT ) ) {
         fprintf( stderr, "%s:%u: g_key_file_load_from_file: %s\n", __FUNCTION__, __LINE__, gerror->message );
-        g_key_file_free( x49gp->state );
+        g_key_file_free( x50ng->state );
         return -EIO;
     }
 
     result = 0;
 
-    list_for_each_entry( module, &x49gp->modules, list )
+    list_for_each_entry( module, &x50ng->modules, list )
     {
-        error = module->load( module, x49gp->state );
+        error = module->load( module, x50ng->state );
         if ( error ) {
             if ( error == -EAGAIN )
                 result = -EAGAIN;
@@ -149,9 +149,9 @@ int x49gp_modules_load( x49gp_t* x49gp )
     return result;
 }
 
-int x49gp_modules_save( x49gp_t* x49gp )
+int x50ng_modules_save( x50ng_t* x50ng )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
     GError* gerror = NULL;
     gchar* data;
     gsize length;
@@ -163,14 +163,14 @@ int x49gp_modules_save( x49gp_t* x49gp )
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
-    list_for_each_entry( module, &x49gp->modules, list )
+    list_for_each_entry( module, &x50ng->modules, list )
     {
-        error = module->save( module, x49gp->state );
+        error = module->save( module, x50ng->state );
         if ( error )
             return error;
     }
 
-    data = g_key_file_to_data( x49gp->state, &length, &gerror );
+    data = g_key_file_to_data( x50ng->state, &length, &gerror );
     if ( NULL == data ) {
         fprintf( stderr, "%s:%u: g_key_file_to_data: %s\n", __FUNCTION__, __LINE__, gerror->message );
         return -ENOMEM;
@@ -198,20 +198,20 @@ int x49gp_modules_save( x49gp_t* x49gp )
     return 0;
 }
 
-int x49gp_module_register( x49gp_module_t* module )
+int x50ng_module_register( x50ng_module_t* module )
 {
-    x49gp_t* x49gp = module->x49gp;
+    x50ng_t* x50ng = module->x50ng;
 
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s:%u: %s\n", __FUNCTION__, __LINE__, module->name );
 #endif
 
-    list_add_tail( &module->list, &x49gp->modules );
+    list_add_tail( &module->list, &x50ng->modules );
 
     return 0;
 }
 
-int x49gp_module_unregister( x49gp_module_t* module )
+int x50ng_module_unregister( x50ng_module_t* module )
 {
 #ifdef DEBUG_X49GP_MODULES
     printf( "%s:%u: %s\n", __FUNCTION__, __LINE__, module->name );
@@ -222,11 +222,11 @@ int x49gp_module_unregister( x49gp_module_t* module )
     return 0;
 }
 
-int x49gp_module_get_filename( x49gp_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep, char** path )
+int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep, char** path )
 {
     int error;
 
-    error = x49gp_module_get_string( module, key, name, reset, valuep );
+    error = x50ng_module_get_string( module, key, name, reset, valuep );
 
     if ( g_path_is_absolute( *valuep ) ) {
         *path = g_strdup( *valuep );
@@ -243,17 +243,17 @@ int x49gp_module_get_filename( x49gp_module_t* module, GKeyFile* key, const char
     return error;
 }
 
-int x49gp_module_set_filename( x49gp_module_t* module, GKeyFile* key, const char* name, const char* value )
+int x50ng_module_set_filename( x50ng_module_t* module, GKeyFile* key, const char* name, const char* value )
 {
-    return x49gp_module_set_string( module, key, name, value );
+    return x50ng_module_set_string( module, key, name, value );
 }
 
-int x49gp_module_get_int( x49gp_module_t* module, GKeyFile* key, const char* name, int reset, int* valuep )
+int x50ng_module_get_int( x50ng_module_t* module, GKeyFile* key, const char* name, int reset, int* valuep )
 {
-    return x49gp_module_get_u32( module, key, name, reset, ( uint32_t* )valuep );
+    return x50ng_module_get_u32( module, key, name, reset, ( uint32_t* )valuep );
 }
 
-int x49gp_module_set_int( x49gp_module_t* module, GKeyFile* key, const char* name, int value )
+int x50ng_module_set_int( x50ng_module_t* module, GKeyFile* key, const char* name, int value )
 {
     char data[ 16 ];
 
@@ -264,12 +264,12 @@ int x49gp_module_set_int( x49gp_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x49gp_module_get_uint( x49gp_module_t* module, GKeyFile* key, const char* name, unsigned int reset, unsigned int* valuep )
+int x50ng_module_get_uint( x50ng_module_t* module, GKeyFile* key, const char* name, unsigned int reset, unsigned int* valuep )
 {
-    return x49gp_module_get_u32( module, key, name, reset, valuep );
+    return x50ng_module_get_u32( module, key, name, reset, valuep );
 }
 
-int x49gp_module_set_uint( x49gp_module_t* module, GKeyFile* key, const char* name, unsigned int value )
+int x50ng_module_set_uint( x50ng_module_t* module, GKeyFile* key, const char* name, unsigned int value )
 {
     char data[ 16 ];
 
@@ -280,7 +280,7 @@ int x49gp_module_set_uint( x49gp_module_t* module, GKeyFile* key, const char* na
     return 0;
 }
 
-int x49gp_module_get_u32( x49gp_module_t* module, GKeyFile* key, const char* name, uint32_t reset, uint32_t* valuep )
+int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile* key, const char* name, uint32_t reset, uint32_t* valuep )
 {
     GError* gerror = NULL;
     char *data, *end;
@@ -306,7 +306,7 @@ int x49gp_module_get_u32( x49gp_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x49gp_module_set_u32( x49gp_module_t* module, GKeyFile* key, const char* name, uint32_t value )
+int x50ng_module_set_u32( x50ng_module_t* module, GKeyFile* key, const char* name, uint32_t value )
 {
     char data[ 16 ];
 
@@ -317,7 +317,7 @@ int x49gp_module_set_u32( x49gp_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x49gp_module_set_u64( x49gp_module_t* module, GKeyFile* key, const char* name, uint64_t value )
+int x50ng_module_set_u64( x50ng_module_t* module, GKeyFile* key, const char* name, uint64_t value )
 {
     char data[ 32 ];
 
@@ -328,7 +328,7 @@ int x49gp_module_set_u64( x49gp_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x49gp_module_get_u64( x49gp_module_t* module, GKeyFile* key, const char* name, uint64_t reset, uint64_t* valuep )
+int x50ng_module_get_u64( x50ng_module_t* module, GKeyFile* key, const char* name, uint64_t reset, uint64_t* valuep )
 {
     GError* gerror = NULL;
     char *data, *end;
@@ -354,7 +354,7 @@ int x49gp_module_get_u64( x49gp_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x49gp_module_get_string( x49gp_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep )
+int x50ng_module_get_string( x50ng_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep )
 {
     GError* gerror = NULL;
     char* data;
@@ -370,16 +370,16 @@ int x49gp_module_get_string( x49gp_module_t* module, GKeyFile* key, const char* 
     return 0;
 }
 
-int x49gp_module_set_string( x49gp_module_t* module, GKeyFile* key, const char* name, const char* value )
+int x50ng_module_set_string( x50ng_module_t* module, GKeyFile* key, const char* name, const char* value )
 {
     g_key_file_set_value( key, module->name, name, value );
 
     return 0;
 }
 
-int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** path )
+int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** path )
 {
-    x49gp_t* x49gp = module->x49gp;
+    x50ng_t* x50ng = module->x50ng;
     int fd;
     int error;
 
@@ -395,7 +395,7 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
 
-        *path = g_build_filename( x49gp->progpath, name, NULL );
+        *path = g_build_filename( x50ng->progpath, name, NULL );
         if ( opt.verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
@@ -444,18 +444,18 @@ int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** p
     return fd;
 }
 
-int x49gp_module_init( x49gp_t* x49gp, const char* name, int ( *init )( x49gp_module_t* ), int ( *exit )( x49gp_module_t* ),
-                       int ( *reset )( x49gp_module_t*, x49gp_reset_t ), int ( *load )( x49gp_module_t*, GKeyFile* ),
-                       int ( *save )( x49gp_module_t*, GKeyFile* ), void* user_data, x49gp_module_t** modulep )
+int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( x50ng_module_t* ), int ( *exit )( x50ng_module_t* ),
+                       int ( *reset )( x50ng_module_t*, x50ng_reset_t ), int ( *load )( x50ng_module_t*, GKeyFile* ),
+                       int ( *save )( x50ng_module_t*, GKeyFile* ), void* user_data, x50ng_module_t** modulep )
 {
-    x49gp_module_t* module;
+    x50ng_module_t* module;
 
-    module = malloc( sizeof( x49gp_module_t ) );
+    module = malloc( sizeof( x50ng_module_t ) );
     if ( NULL == module ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", name, __FUNCTION__, __LINE__ );
         return -1;
     }
-    memset( module, 0, sizeof( x49gp_module_t ) );
+    memset( module, 0, sizeof( x50ng_module_t ) );
 
     module->name = name;
 
@@ -468,7 +468,7 @@ int x49gp_module_init( x49gp_t* x49gp, const char* name, int ( *init )( x49gp_mo
     module->user_data = user_data;
 
     //	module->mutex = g_mutex_new();
-    module->x49gp = x49gp;
+    module->x50ng = x50ng;
 
     *modulep = module;
     return 0;

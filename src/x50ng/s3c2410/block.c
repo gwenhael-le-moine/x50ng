@@ -97,7 +97,7 @@ void get_tmp_filename( char* filename, int size )
     int fd;
 
     /* XXX: race condition possible */
-    pstrcpy( filename, size, "/tmp/x49gp.XXXXXX" );
+    pstrcpy( filename, size, "/tmp/x50ng.XXXXXX" );
     fd = mkstemp( filename );
     close( fd );
 }

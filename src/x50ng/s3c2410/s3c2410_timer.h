@@ -41,7 +41,7 @@
 #define TCON_TIMER0_UPDATE 0x00000002
 #define TCON_TIMER0_START 0x00000001
 
-void s3c2410_run_timers( x49gp_t* x49gp );
-clock_t s3c2410_next_timer( x49gp_t* x49gp );
+void s3c2410_run_timers( x50ng_t* x50ng );
+clock_t s3c2410_next_timer( x50ng_t* x50ng );
 
 #endif /* !(_S3C2410_TIMER_H) */

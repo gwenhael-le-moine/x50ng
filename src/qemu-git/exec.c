@@ -2409,8 +2409,8 @@ void qemu_unregister_coalesced_mmio(target_phys_addr_t addr, ram_addr_t size)
 }
 
 #ifdef X49GP
-ram_addr_t x49gp_ram_alloc(ram_addr_t size, uint8_t *base);
-ram_addr_t x49gp_ram_alloc(ram_addr_t size, uint8_t *base)
+ram_addr_t x50ng_ram_alloc(ram_addr_t size, uint8_t *base);
+ram_addr_t x50ng_ram_alloc(ram_addr_t size, uint8_t *base)
 {
     RAMBlock *new_block;
 

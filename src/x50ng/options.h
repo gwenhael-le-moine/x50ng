@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "x49gp.h"
+#include "x50ng.h"
 
 #ifndef VERSION_MAJOR
 #  define VERSION_MAJOR 0
@@ -18,7 +18,7 @@
 #ifdef X49GP_DATADIR
 #  define GLOBAL_DATADIR X49GP_DATADIR
 #else
-#  define GLOBAL_DATADIR x49gp->progpath
+#  define GLOBAL_DATADIR x50ng->progpath
 #endif
 
 struct options {
@@ -32,7 +32,7 @@ struct options {
     int start_debugger;
     char* bootloader;
     char* firmware;
-    x49gp_reinit_t reinit;
+    x50ng_reinit_t reinit;
 
     bool newrpl_keyboard;
     bool legacy_keyboard;
