@@ -29,7 +29,7 @@ GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4) -lz -lm
 # Embedded qemu
 QEMU_DIR = src/qemu-git
 QEMU_DEFINES = \
-	-DTARGET_ARM -DX49GP \
+	-DTARGET_ARM \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-D_LARGEFILE_SOURCE \
 	-DNEED_CPU_H \
@@ -166,7 +166,7 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 # Compilation of qemu-git
 $(QEMU_DIR)/config-host.h:
 	+( cd $(QEMU_DIR); \
-	./configure-small --extra-cflags=-DX49GP; \
+	./configure-small; \
 	$(MAKE) -f Makefile-small )
 
 $(QEMU_OBJS): qemu-objs
