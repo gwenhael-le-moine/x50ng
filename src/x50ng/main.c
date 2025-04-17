@@ -303,15 +303,15 @@ int main( int argc, char** argv )
         gdb_handlesig( x49gp->env, 0 );
     }
 
-    gui_init( x49gp );          /* return gtk_application here ? */
-    //GtkApplication* app = gtk_application_new ("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
-    //g_signal_connect (app, "activate", G_CALLBACK (gui_init), x49gp);
+    gui_init( x49gp ); /* return gtk_application here ? */
+    // GtkApplication* app = gtk_application_new ("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+    // g_signal_connect (app, "activate", G_CALLBACK (gui_init), x49gp);
 
     /* run gtk_application here ? */
-    //int status = g_application_run (G_APPLICATION (app), 0, NULL);
+    // int status = g_application_run (G_APPLICATION (app), 0, NULL);
 
     x49gp_main_loop( x49gp );
-    //g_object_unref (app);
+    // g_object_unref (app);
 
     x49gp_modules_save( x49gp );
     if ( !opt.haz_config_file )

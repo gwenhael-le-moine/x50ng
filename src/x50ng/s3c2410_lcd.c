@@ -5,10 +5,8 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/mman.h>
-#include <errno.h>
 
 #include "x49gp.h"
-#include "ui.h"
 #include "s3c2410.h"
 
 static int s3c2410_lcd_data_init( s3c2410_lcd_t* lcd )

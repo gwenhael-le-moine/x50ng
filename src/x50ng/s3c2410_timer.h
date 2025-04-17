@@ -1,6 +1,8 @@
 #ifndef _S3C2410_TIMER_H
 #define _S3C2410_TIMER_H 1
 
+#include <time.h>
+
 #include "x49gp_types.h"
 
 #define TCFG0_DEAD_SHIFT 16

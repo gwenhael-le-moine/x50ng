@@ -4,7 +4,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/mman.h>
-#include <errno.h>
 
 #include "x49gp.h"
 #include "s3c2410.h"

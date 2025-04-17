@@ -1379,7 +1379,7 @@ static GtkWidget* _ui_load__create_label( const char* css_class, const char* tex
 static int ui_load( /* GtkApplication* app, */ x49gp_t* x49gp )
 {
     // create window and widgets/stuff
-    //window = gtk_application_window_new( app );
+    // window = gtk_application_window_new( app );
     window = gtk_window_new();
     gtk_window_set_decorated( GTK_WINDOW( window ), true );
     gtk_window_set_resizable( GTK_WINDOW( window ), true );

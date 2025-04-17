@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <limits.h>
-#include <time.h>
 #include <sys/time.h>
 #include <signal.h>
 #include <poll.h>

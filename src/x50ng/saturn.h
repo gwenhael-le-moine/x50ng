@@ -1,6 +1,8 @@
 #ifndef SATURN_H
 #define SATURN_H 1
 
+#include <stdint.h>
+
 #define NB_RSTK 8
 
 typedef uint64_t saturn_reg_t;
