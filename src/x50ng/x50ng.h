@@ -1,5 +1,5 @@
-#ifndef _X49GP_H
-#define _X49GP_H
+#ifndef _X50NG_H
+#define _X50NG_H
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -19,9 +19,9 @@
 extern uint8_t* phys_ram_base;
 extern int phys_ram_size;
 
-typedef enum { X49GP_ARM_RUN = 0, X49GP_ARM_SLEEP, X49GP_ARM_OFF } x50ng_arm_idle_t;
+typedef enum { X50NG_ARM_RUN = 0, X50NG_ARM_SLEEP, X50NG_ARM_OFF } x50ng_arm_idle_t;
 
-typedef enum { X49GP_RESET_POWER_ON = 0, X49GP_RESET_POWER_OFF, X49GP_RESET_WATCHDOG } x50ng_reset_t;
+typedef enum { X50NG_RESET_POWER_ON = 0, X50NG_RESET_POWER_OFF, X50NG_RESET_WATCHDOG } x50ng_reset_t;
 
 struct __x50ng_module_s__;
 typedef struct __x50ng_module_s__ x50ng_module_t;
@@ -43,7 +43,7 @@ struct __x50ng_module_s__ {
     struct list_head list;
 };
 
-typedef enum { X49GP_REINIT_NONE = 0, X49GP_REINIT_REBOOT_ONLY, X49GP_REINIT_FLASH, X49GP_REINIT_FLASH_FULL } x50ng_reinit_t;
+typedef enum { X50NG_REINIT_NONE = 0, X50NG_REINIT_REBOOT_ONLY, X50NG_REINIT_FLASH, X50NG_REINIT_FLASH_FULL } x50ng_reinit_t;
 
 struct __x50ng_s__ {
     CPUARMState* env;
@@ -128,4 +128,4 @@ extern int x50ng_flash_init( x50ng_t* );
 /* sram.c */
 extern int x50ng_sram_init( x50ng_t* );
 
-#endif /* !(_X49GP_H) */
+#endif /* !(_X50NG_H) */

@@ -104,7 +104,7 @@ time_t mktimegm(struct tm *tm)
         m += 12;
         y--;
     }
-    t = 86400 * (d + (153 * m - 457) / 5 + 365 * y + y / 4 - y / 100 + 
+    t = 86400 * (d + (153 * m - 457) / 5 + 365 * y + y / 4 - y / 100 +
                  y / 400 - 719469);
     t += 3600 * tm->tm_hour + 60 * tm->tm_min + tm->tm_sec;
     return t;
@@ -131,107 +131,107 @@ int qemu_fdatasync(int fd)
 #endif
 }
 
-#ifndef X49GP
-/* io vectors */
+/* #ifndef X50NG */
+/* /\* io vectors *\/ */
 
-void qemu_iovec_init(QEMUIOVector *qiov, int alloc_hint)
-{
-    qiov->iov = qemu_malloc(alloc_hint * sizeof(struct iovec));
-    qiov->niov = 0;
-    qiov->nalloc = alloc_hint;
-    qiov->size = 0;
-}
+/* void qemu_iovec_init(QEMUIOVector *qiov, int alloc_hint) */
+/* { */
+/*     qiov->iov = qemu_malloc(alloc_hint * sizeof(struct iovec)); */
+/*     qiov->niov = 0; */
+/*     qiov->nalloc = alloc_hint; */
+/*     qiov->size = 0; */
+/* } */
 
-void qemu_iovec_init_external(QEMUIOVector *qiov, struct iovec *iov, int niov)
-{
-    int i;
+/* void qemu_iovec_init_external(QEMUIOVector *qiov, struct iovec *iov, int niov) */
+/* { */
+/*     int i; */
 
-    qiov->iov = iov;
-    qiov->niov = niov;
-    qiov->nalloc = -1;
-    qiov->size = 0;
-    for (i = 0; i < niov; i++)
-        qiov->size += iov[i].iov_len;
-}
+/*     qiov->iov = iov; */
+/*     qiov->niov = niov; */
+/*     qiov->nalloc = -1; */
+/*     qiov->size = 0; */
+/*     for (i = 0; i < niov; i++) */
+/*         qiov->size += iov[i].iov_len; */
+/* } */
 
-void qemu_iovec_add(QEMUIOVector *qiov, void *base, size_t len)
-{
-    assert(qiov->nalloc != -1);
+/* void qemu_iovec_add(QEMUIOVector *qiov, void *base, size_t len) */
+/* { */
+/*     assert(qiov->nalloc != -1); */
 
-    if (qiov->niov == qiov->nalloc) {
-        qiov->nalloc = 2 * qiov->nalloc + 1;
-        qiov->iov = qemu_realloc(qiov->iov, qiov->nalloc * sizeof(struct iovec));
-    }
-    qiov->iov[qiov->niov].iov_base = base;
-    qiov->iov[qiov->niov].iov_len = len;
-    qiov->size += len;
-    ++qiov->niov;
-}
+/*     if (qiov->niov == qiov->nalloc) { */
+/*         qiov->nalloc = 2 * qiov->nalloc + 1; */
+/*         qiov->iov = qemu_realloc(qiov->iov, qiov->nalloc * sizeof(struct iovec)); */
+/*     } */
+/*     qiov->iov[qiov->niov].iov_base = base; */
+/*     qiov->iov[qiov->niov].iov_len = len; */
+/*     qiov->size += len; */
+/*     ++qiov->niov; */
+/* } */
 
-/*
- * Copies iovecs from src to the end dst until src is completely copied or the
- * total size of the copied iovec reaches size. The size of the last copied
- * iovec is changed in order to fit the specified total size if it isn't a
- * perfect fit already.
- */
-void qemu_iovec_concat(QEMUIOVector *dst, QEMUIOVector *src, size_t size)
-{
-    int i;
-    size_t done;
+/* /\* */
+/*  * Copies iovecs from src to the end dst until src is completely copied or the */
+/*  * total size of the copied iovec reaches size. The size of the last copied */
+/*  * iovec is changed in order to fit the specified total size if it isn't a */
+/*  * perfect fit already. */
+/*  *\/ */
+/* void qemu_iovec_concat(QEMUIOVector *dst, QEMUIOVector *src, size_t size) */
+/* { */
+/*     int i; */
+/*     size_t done; */
 
-    assert(dst->nalloc != -1);
+/*     assert(dst->nalloc != -1); */
 
-    done = 0;
-    for (i = 0; (i < src->niov) && (done != size); i++) {
-        if (done + src->iov[i].iov_len > size) {
-            qemu_iovec_add(dst, src->iov[i].iov_base, size - done);
-            break;
-        } else {
-            qemu_iovec_add(dst, src->iov[i].iov_base, src->iov[i].iov_len);
-        }
-        done += src->iov[i].iov_len;
-    }
-}
+/*     done = 0; */
+/*     for (i = 0; (i < src->niov) && (done != size); i++) { */
+/*         if (done + src->iov[i].iov_len > size) { */
+/*             qemu_iovec_add(dst, src->iov[i].iov_base, size - done); */
+/*             break; */
+/*         } else { */
+/*             qemu_iovec_add(dst, src->iov[i].iov_base, src->iov[i].iov_len); */
+/*         } */
+/*         done += src->iov[i].iov_len; */
+/*     } */
+/* } */
 
-void qemu_iovec_destroy(QEMUIOVector *qiov)
-{
-    assert(qiov->nalloc != -1);
+/* void qemu_iovec_destroy(QEMUIOVector *qiov) */
+/* { */
+/*     assert(qiov->nalloc != -1); */
 
-    qemu_free(qiov->iov);
-}
+/*     qemu_free(qiov->iov); */
+/* } */
 
-void qemu_iovec_reset(QEMUIOVector *qiov)
-{
-    assert(qiov->nalloc != -1);
+/* void qemu_iovec_reset(QEMUIOVector *qiov) */
+/* { */
+/*     assert(qiov->nalloc != -1); */
 
-    qiov->niov = 0;
-    qiov->size = 0;
-}
+/*     qiov->niov = 0; */
+/*     qiov->size = 0; */
+/* } */
 
-void qemu_iovec_to_buffer(QEMUIOVector *qiov, void *buf)
-{
-    uint8_t *p = (uint8_t *)buf;
-    int i;
+/* void qemu_iovec_to_buffer(QEMUIOVector *qiov, void *buf) */
+/* { */
+/*     uint8_t *p = (uint8_t *)buf; */
+/*     int i; */
 
-    for (i = 0; i < qiov->niov; ++i) {
-        memcpy(p, qiov->iov[i].iov_base, qiov->iov[i].iov_len);
-        p += qiov->iov[i].iov_len;
-    }
-}
+/*     for (i = 0; i < qiov->niov; ++i) { */
+/*         memcpy(p, qiov->iov[i].iov_base, qiov->iov[i].iov_len); */
+/*         p += qiov->iov[i].iov_len; */
+/*     } */
+/* } */
 
-void qemu_iovec_from_buffer(QEMUIOVector *qiov, const void *buf, size_t count)
-{
-    const uint8_t *p = (const uint8_t *)buf;
-    size_t copy;
-    int i;
+/* void qemu_iovec_from_buffer(QEMUIOVector *qiov, const void *buf, size_t count) */
+/* { */
+/*     const uint8_t *p = (const uint8_t *)buf; */
+/*     size_t copy; */
+/*     int i; */
 
-    for (i = 0; i < qiov->niov && count; ++i) {
-        copy = count;
-        if (copy > qiov->iov[i].iov_len)
-            copy = qiov->iov[i].iov_len;
-        memcpy(qiov->iov[i].iov_base, p, copy);
-        p     += copy;
-        count -= copy;
-    }
-}
-#endif
+/*     for (i = 0; i < qiov->niov && count; ++i) { */
+/*         copy = count; */
+/*         if (copy > qiov->iov[i].iov_len) */
+/*             copy = qiov->iov[i].iov_len; */
+/*         memcpy(qiov->iov[i].iov_base, p, copy); */
+/*         p     += copy; */
+/*         count -= copy; */
+/*     } */
+/* } */
+/* #endif */

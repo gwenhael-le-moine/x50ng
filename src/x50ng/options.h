@@ -15,8 +15,8 @@
 #  define PATCHLEVEL 0
 #endif
 
-#ifdef X49GP_DATADIR
-#  define GLOBAL_DATADIR X49GP_DATADIR
+#ifdef X50NG_DATADIR
+#  define GLOBAL_DATADIR X50NG_DATADIR
 #else
 #  define GLOBAL_DATADIR x50ng->progpath
 #endif

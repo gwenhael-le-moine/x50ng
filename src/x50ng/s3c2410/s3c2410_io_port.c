@@ -496,7 +496,7 @@ static int s3c2410_io_port_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -519,7 +519,7 @@ static int s3c2410_io_port_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -541,11 +541,11 @@ static int s3c2410_io_port_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    if ( reset == X49GP_RESET_POWER_OFF ) {
+    if ( reset == X50NG_RESET_POWER_OFF ) {
         io->gstatus2 = 2;
         return 0;
     }
@@ -559,7 +559,7 @@ static int s3c2410_io_port_reset( x50ng_module_t* module, x50ng_reset_t reset )
         *( reg->datap ) = reg->reset;
     }
 
-    if ( reset == X49GP_RESET_WATCHDOG ) {
+    if ( reset == X50NG_RESET_WATCHDOG ) {
         io->gstatus2 = 4;
     }
 
@@ -575,7 +575,7 @@ static int s3c2410_io_port_init( x50ng_module_t* module )
     s3c2410_io_port_t* io;
     int iotype;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -605,7 +605,7 @@ static int s3c2410_io_port_exit( x50ng_module_t* module )
 {
     s3c2410_io_port_t* io;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

@@ -94,7 +94,7 @@ static int s3c2410_adc_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -117,7 +117,7 @@ static int s3c2410_adc_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -139,7 +139,7 @@ static int s3c2410_adc_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -164,7 +164,7 @@ static int s3c2410_adc_init( x50ng_module_t* module )
     s3c2410_adc_t* adc;
     int iotype;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -193,7 +193,7 @@ static int s3c2410_adc_exit( x50ng_module_t* module )
 {
     s3c2410_adc_t* adc;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

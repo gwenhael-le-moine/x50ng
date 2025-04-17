@@ -29,7 +29,7 @@ GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4) -lz -lm
 # Embedded qemu
 QEMU_DIR = src/qemu-git
 QEMU_DEFINES = \
-	-DTARGET_ARM -DX49GP \
+	-DTARGET_ARM -DX50NG \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-D_LARGEFILE_SOURCE \
 	-DNEED_CPU_H \

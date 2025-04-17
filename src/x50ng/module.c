@@ -20,7 +20,7 @@ int x50ng_modules_init( x50ng_t* x50ng )
     x50ng_module_t* module;
     int error;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
@@ -39,7 +39,7 @@ int x50ng_modules_init( x50ng_t* x50ng )
         exit( EXIT_FAILURE );
     }
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: phys_ram_base: %p\n", __FUNCTION__, phys_ram_base );
 #endif
 
@@ -57,7 +57,7 @@ int x50ng_modules_exit( x50ng_t* x50ng )
     x50ng_module_t *module, *next;
     int error;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
@@ -76,7 +76,7 @@ int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
     x50ng_module_t* module;
     int error;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
@@ -97,7 +97,7 @@ int x50ng_modules_load( x50ng_t* x50ng )
     int error, result;
     const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
@@ -136,7 +136,7 @@ int x50ng_modules_load( x50ng_t* x50ng )
         }
     }
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     {
         extern unsigned char* phys_ram_base;
 
@@ -159,7 +159,7 @@ int x50ng_modules_save( x50ng_t* x50ng )
     int fd;
     const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
 #endif
 
@@ -202,7 +202,7 @@ int x50ng_module_register( x50ng_module_t* module )
 {
     x50ng_t* x50ng = module->x50ng;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u: %s\n", __FUNCTION__, __LINE__, module->name );
 #endif
 
@@ -213,7 +213,7 @@ int x50ng_module_register( x50ng_module_t* module )
 
 int x50ng_module_unregister( x50ng_module_t* module )
 {
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u: %s\n", __FUNCTION__, __LINE__, module->name );
 #endif
 
@@ -418,11 +418,11 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
         fd = open( *path, O_RDONLY );
     }
 
-#ifdef X49GP_DATADIR
+#ifdef X50NG_DATADIR
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
 
-        *path = g_build_filename( X49GP_DATADIR, name, NULL );
+        *path = g_build_filename( X50NG_DATADIR, name, NULL );
         if ( opt.verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {

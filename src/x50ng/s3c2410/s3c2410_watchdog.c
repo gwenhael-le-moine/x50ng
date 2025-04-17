@@ -76,7 +76,7 @@ static void s3c2410_watchdog_tick( void* data )
         printf( "WATCHDOG: assert internal RESET\n" );
 #endif
 
-        x50ng_modules_reset( x50ng, X49GP_RESET_WATCHDOG );
+        x50ng_modules_reset( x50ng, X50NG_RESET_WATCHDOG );
         cpu_reset( x50ng->env );
 
         //		if (x50ng->arm->NresetSig != LOW) {
@@ -199,7 +199,7 @@ static int s3c2410_watchdog_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -224,7 +224,7 @@ static int s3c2410_watchdog_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -246,7 +246,7 @@ static int s3c2410_watchdog_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -273,7 +273,7 @@ static int s3c2410_watchdog_init( x50ng_module_t* module )
     s3c2410_watchdog_t* watchdog;
     int iotype;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -292,7 +292,7 @@ static int s3c2410_watchdog_init( x50ng_module_t* module )
     watchdog->x50ng = module->x50ng;
     module->x50ng->s3c2410_watchdog = watchdog;
 
-    watchdog->timer = x50ng_new_timer( X49GP_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
+    watchdog->timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
 
     iotype = cpu_register_io_memory( s3c2410_watchdog_readfn, s3c2410_watchdog_writefn, watchdog );
 #ifdef DEBUG_S3C2410_WATCHDOG
@@ -306,7 +306,7 @@ static int s3c2410_watchdog_exit( x50ng_module_t* module )
 {
     s3c2410_watchdog_t* watchdog;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

@@ -16,7 +16,7 @@ static int s3c2410_arm_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -140,7 +140,7 @@ static int s3c2410_arm_save( x50ng_module_t* module, GKeyFile* key )
     char name[ 32 ];
     int i;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -211,7 +211,7 @@ static int s3c2410_arm_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     struct CPUARMState* env = module->user_data;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -225,7 +225,7 @@ static int s3c2410_arm_init( x50ng_module_t* module )
 {
     x50ng_t* x50ng = module->x50ng;
 
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
@@ -235,7 +235,7 @@ static int s3c2410_arm_init( x50ng_module_t* module )
 
 static int s3c2410_arm_exit( x50ng_module_t* module )
 {
-#ifdef DEBUG_X49GP_MODULES
+#ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 

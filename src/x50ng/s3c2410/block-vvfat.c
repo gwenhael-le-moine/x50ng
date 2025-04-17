@@ -76,7 +76,7 @@ void nonono( const char* file, int line, const char* msg )
 
 #endif
 
-#define VOLUME_LABEL "X49GP-VVFAT"
+#define VOLUME_LABEL "X50NG-VVFAT"
 
 /* dynamic array functions */
 typedef struct array_t {
@@ -1004,7 +1004,7 @@ static int init_directories( BDRVVVFATState* s, const char* dirname )
         memcpy( bootsector->u.fat16.boot_code, dummy_boot_code, BOOTCODE_SIZE );
     }
 
-    memcpy( bootsector->name, "X49GP   ", 8 );
+    memcpy( bootsector->name, "X50NG   ", 8 );
     bootsector->sector_size = cpu_to_le16( 0x200 );
     bootsector->sectors_per_cluster = s->sectors_per_cluster;
     bootsector->reserved_sectors = cpu_to_le16( 1 );

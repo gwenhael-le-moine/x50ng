@@ -411,7 +411,7 @@ void cpu_arm_set_cp_io(CPUARMState *env, int cpnum,
 #define cpu_signal_handler cpu_arm_signal_handler
 #define cpu_list arm_cpu_list
 
-#ifndef X49GP
+#ifndef X50NG
 #define CPU_SAVE_VERSION 2
 #endif
 

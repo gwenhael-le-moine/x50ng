@@ -1,5 +1,5 @@
-#ifndef _X49GP_S3C2410_H
-#define _X49GP_S3C2410_H 1
+#ifndef _X50NG_S3C2410_H
+#define _X50NG_S3C2410_H 1
 
 #include <stdint.h>
 
@@ -371,4 +371,4 @@ extern int x50ng_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
 extern unsigned long s3c2410_timer_next_interrupt(x50ng_t *x50ng);
 extern unsigned long s3c2410_watchdog_next_interrupt(x50ng_t *x50ng);
 
-#endif /* !(_X49GP_S3C2410_H) */
+#endif /* !(_X50NG_S3C2410_H) */

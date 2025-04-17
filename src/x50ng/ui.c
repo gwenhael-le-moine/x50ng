@@ -1091,7 +1091,7 @@ static bool react_to_key_event( int keyval, x50ng_t* x50ng, int event_type )
         case GDK_KEY_F12:
             switch ( event_type ) {
                 case KEY_PRESS:
-                    x50ng_modules_reset( x50ng, X49GP_RESET_POWER_ON );
+                    x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
                     cpu_reset( x50ng->env );
                     x50ng_set_idle( x50ng, 1 );
                     break;
@@ -1166,7 +1166,7 @@ static void do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
 
 static void do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
 {
-    x50ng_modules_reset( x50ng, X49GP_RESET_POWER_ON );
+    x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
     cpu_reset( x50ng->env );
     x50ng_set_idle( x50ng, 0 );
 }
