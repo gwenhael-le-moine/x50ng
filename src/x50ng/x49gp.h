@@ -12,7 +12,7 @@
 #include "target-arm/cpu.h"
 
 #include "x49gp_types.h"
-#include "x49gp_timer.h"
+#include "timer.h"
 #include "list.h"
 
 /* LD TEMPO HACK */
@@ -85,8 +85,16 @@ struct __x49gp_s__ {
     const char* progpath;
 };
 
+/* main.c */
 extern void x49gp_set_idle( x49gp_t*, x49gp_arm_idle_t idle );
 
+/* s3c2410/s3c2410_sdi.c */
+extern void s3c2410_sdi_unmount( x49gp_t* x49gp );
+extern int s3c2410_sdi_mount( x49gp_t* x49gp, char* filename );
+extern int s3c2410_sdi_is_mounted( x49gp_t* x49gp );
+extern void s3c2410_sdi_get_path( x49gp_t* x49gp, char** filename );
+
+/* module.c */
 extern int x49gp_module_init( x49gp_t* x49gp, const char* name, int ( *init )( x49gp_module_t* ), int ( *exit )( x49gp_module_t* ),
                               int ( *reset )( x49gp_module_t*, x49gp_reset_t ), int ( *load )( x49gp_module_t*, GKeyFile* ),
                               int ( *save )( x49gp_module_t*, GKeyFile* ), void* user_data, x49gp_module_t** module );
@@ -108,18 +116,16 @@ extern int x49gp_module_get_string( x49gp_module_t* module, GKeyFile*, const cha
 extern int x49gp_module_set_string( x49gp_module_t* module, GKeyFile*, const char*, const char* );
 extern int x49gp_module_open_rodata( x49gp_module_t* module, const char* name, char** path );
 
-extern void s3c2410_sdi_unmount( x49gp_t* x49gp );
-extern int s3c2410_sdi_mount( x49gp_t* x49gp, char* filename );
-extern int s3c2410_sdi_is_mounted( x49gp_t* x49gp );
-extern void s3c2410_sdi_get_path( x49gp_t* x49gp, char** filename );
-
 extern int x49gp_modules_init( x49gp_t* );
 extern int x49gp_modules_exit( x49gp_t* );
 extern int x49gp_modules_reset( x49gp_t*, x49gp_reset_t );
 extern int x49gp_modules_load( x49gp_t* );
 extern int x49gp_modules_save( x49gp_t* );
 
+/* flash.c */
 extern int x49gp_flash_init( x49gp_t* );
+
+/* sram.c */
 extern int x49gp_sram_init( x49gp_t* );
 
 #endif /* !(_X49GP_H) */

@@ -10,7 +10,7 @@
 #include <poll.h>
 
 #include "x49gp.h"
-#include "x49gp_timer.h"
+#include "timer.h"
 #include "ui.h"
 
 #include "gdbstub.h"

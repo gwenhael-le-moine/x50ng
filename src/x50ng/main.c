@@ -19,7 +19,7 @@
 #include "x49gp.h"
 #include "ui.h"
 #include "s3c2410.h"
-#include "x49gp_timer.h"
+#include "timer.h"
 #include "gdbstub.h"
 #include "options.h"
 
