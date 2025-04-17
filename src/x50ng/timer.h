@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "x49gp_types.h"
+#include "types.h"
 
 #define X49GP_TIMER_VIRTUAL 0
 #define X49GP_TIMER_REALTIME 1

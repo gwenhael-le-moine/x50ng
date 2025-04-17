@@ -11,7 +11,7 @@
 
 #include "target-arm/cpu.h"
 
-#include "x49gp_types.h"
+#include "types.h"
 #include "timer.h"
 #include "list.h"
 

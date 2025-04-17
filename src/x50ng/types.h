@@ -1,5 +1,5 @@
-#ifndef _X49GP_TYPES_H
-#define _X49GP_TYPES_H 1
+#ifndef _TYPES_H
+#define _TYPES_H 1
 
 typedef signed char s8;
 typedef signed short s16;
@@ -14,4 +14,4 @@ typedef unsigned long long u64;
 struct __x49gp_s__;
 typedef struct __x49gp_s__ x49gp_t;
 
-#endif /* !(_X49GP_TYPES_H) */
+#endif /* !(_TYPES_H) */

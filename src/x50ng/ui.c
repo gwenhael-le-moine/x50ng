@@ -18,7 +18,7 @@
 #include "s3c2410.h"
 
 #include "gdbstub.h"
-#include "x49gp_types.h"
+#include "types.h"
 
 // #define TEST_PASTE true
 

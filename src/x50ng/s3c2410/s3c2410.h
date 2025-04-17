@@ -3,12 +3,12 @@
 
 #include <stdint.h>
 
-#include "x49gp_types.h"
+#include "types.h"
 
 typedef struct {
-	const char	*name;
-	uint32_t	reset;
-	uint32_t	*datap;
+    const char	*name;
+    uint32_t	reset;
+    uint32_t	*datap;
 } s3c2410_offset_t;
 
 typedef struct {
@@ -38,10 +38,10 @@ typedef struct {
 } s3c2410_lcd_t;
 
 #define S3C2410_OFFSET(module, name, reset, data) \
-	[S3C2410_ ## module ## _ ## name >> 2] = { #name, reset, &(data) }
+    [S3C2410_ ## module ## _ ## name >> 2] = { #name, reset, &(data) }
 
 #define S3C2410_OFFSET_OK(p, offset) \
-	((((offset) >> 2) < (p)->nr_regs) && (p)->regs[(offset) >> 2].name)
+    ((((offset) >> 2) < (p)->nr_regs) && (p)->regs[(offset) >> 2].name)
 
 #define S3C2410_OFFSET_ENTRY(p, offset)	&((p)->regs[(offset) >> 2])
 

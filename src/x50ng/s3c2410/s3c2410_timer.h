@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-#include "x49gp_types.h"
+#include "types.h"
 
 #define TCFG0_DEAD_SHIFT 16
 #define TCFG0_DEAD_MASK 0xff
