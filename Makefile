@@ -129,23 +129,23 @@ SRCS = ./src/x50ng/s3c2410/s3c2410.c \
 	./src/x50ng/s3c2410/s3c2410_spi.c \
 	./src/x50ng/s3c2410/s3c2410_sdi.c \
 	./src/x50ng/s3c2410/s3c2410_arm.c \
-	./src/x50ng/main.c \
+	./src/x50ng/s3c2410/block.c \
 	./src/x50ng/module.c \
 	./src/x50ng/flash.c \
 	./src/x50ng/sram.c \
 	./src/x50ng/ui.c \
 	./src/x50ng/timer.c \
 	./src/x50ng/gdbstub.c \
-	./src/x50ng/block.c \
-	./src/x50ng/options.c
+	./src/x50ng/options.c \
+	./src/x50ng/main.c
 
 OBJS = $(SRCS:.c=.o)
 
 # TEMPO hack
 VVFATOBJS =	$(QEMU_DIR)/cutils.o \
-	./src/x50ng/block-vvfat.o \
-	./src/x50ng/block-qcow.o \
-	./src/x50ng/block-raw.o
+	./src/x50ng/s3c2410/block-vvfat.o \
+	./src/x50ng/s3c2410/block-qcow.o \
+	./src/x50ng/s3c2410/block-raw.o
 
 all: do-it-all
 
@@ -163,7 +163,7 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 %.o: %.c
 	$(CC) $(X49GP_CFLAGS) -o $@ -c $<
 
-./src/x50ng/block-vvfat.o: ./src/x50ng/block-vvfat.c
+./src/x50ng/s3c2410/block-vvfat.o: ./src/x50ng/s3c2410/block-vvfat.c
 	$(CC) $(X49GP_CFLAGS) -fno-aggressive-loop-optimizations -o $@ -c $<
 
 # Compilation of qemu-git
