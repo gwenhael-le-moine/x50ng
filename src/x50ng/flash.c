@@ -89,19 +89,17 @@ static uint32_t flash_get_halfword( x50ng_flash_t* flash, uint32_t offset )
             break;
 
         case FLASH_STATE_SOFTWARE_ID:
-            if ( offset & 2 ) {
+            if ( offset & 2 )
                 data = flash->device_ID;
-            } else {
+            else
                 data = flash->vendor_ID;
-            }
             break;
 
         case FLASH_STATE_CFI_QUERY:
-            if ( ( offset >> 1 ) < flash->cfi_size ) {
+            if ( ( offset >> 1 ) < flash->cfi_size )
                 data = flash->cfi_data[ offset >> 1 ];
-            } else {
+            else
                 data = 0x0000;
-            }
             break;
     }
 
@@ -128,11 +126,10 @@ static void flash_put_halfword( x50ng_flash_t* flash, uint32_t offset, uint32_t 
             break;
 
         case FLASH_STATE_UNLOCK1:
-            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) ) {
+            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) )
                 flash->state = FLASH_STATE_UNLOCK2;
-            } else {
+            else
                 flash_state_reset( flash );
-            }
             break;
 
         case FLASH_STATE_UNLOCK2:
@@ -154,73 +151,64 @@ static void flash_put_halfword( x50ng_flash_t* flash, uint32_t offset, uint32_t 
                         flash_state_reset( flash );
                         break;
                 }
-            } else {
+            } else
                 flash_state_reset( flash );
-            }
             break;
 
         case FLASH_STATE_ERASE1:
-            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xaa ) ) {
+            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xaa ) )
                 flash->state = FLASH_STATE_ERASE2;
-            } else {
+            else
                 flash_state_reset( flash );
-            }
             break;
 
         case FLASH_STATE_ERASE2:
-            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) ) {
+            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) )
                 flash->state = FLASH_STATE_ERASE3;
-            } else {
+            else
                 flash_state_reset( flash );
-            }
             break;
 
         case FLASH_STATE_SOFTWARE_EXIT1:
-            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) ) {
+            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) )
                 flash->state = FLASH_STATE_SOFTWARE_EXIT2;
-            } else {
+            else
                 flash->state = FLASH_STATE_SOFTWARE_ID;
-            }
             break;
 
         case FLASH_STATE_SOFTWARE_EXIT2:
-            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xf0 ) ) {
+            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xf0 ) )
                 flash_state_reset( flash );
-            } else {
+            else
                 flash->state = FLASH_STATE_SOFTWARE_ID;
-            }
             break;
 
         case FLASH_STATE_CFI_QUERY_EXIT1:
-            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) ) {
+            if ( ( ( offset >> 1 ) == 0x2aaa ) && ( ( data & 0xff ) == 0x55 ) )
                 flash->state = FLASH_STATE_CFI_QUERY_EXIT2;
-            } else {
+            else
                 flash->state = FLASH_STATE_CFI_QUERY;
-            }
             break;
 
         case FLASH_STATE_CFI_QUERY_EXIT2:
-            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xf0 ) ) {
+            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xf0 ) )
                 flash_state_reset( flash );
-            } else {
+            else
                 flash->state = FLASH_STATE_CFI_QUERY;
-            }
             break;
 
         case FLASH_STATE_SOFTWARE_ID:
-            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xaa ) ) {
+            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xaa ) )
                 flash->state = FLASH_STATE_SOFTWARE_EXIT1;
-            } else if ( ( data & 0xff ) == 0xf0 ) {
+            else if ( ( data & 0xff ) == 0xf0 )
                 flash_state_reset( flash );
-            }
             break;
 
         case FLASH_STATE_CFI_QUERY:
-            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xaa ) ) {
+            if ( ( ( offset >> 1 ) == 0x5555 ) && ( ( data & 0xff ) == 0xaa ) )
                 flash->state = FLASH_STATE_CFI_QUERY_EXIT1;
-            } else if ( ( data & 0xff ) == 0xf0 ) {
+            else if ( ( data & 0xff ) == 0xf0 )
                 flash_state_reset( flash );
-            }
             break;
 
         case FLASH_STATE_WORD_PROG:
@@ -278,9 +266,9 @@ static uint32_t flash_readb( void* opaque, target_phys_addr_t offset )
     uint32_t shift;
     unsigned char data;
 
-    if ( flash->state == FLASH_STATE_NORMAL ) {
+    if ( flash->state == FLASH_STATE_NORMAL )
         data = *( datap + offset );
-    } else {
+    else {
         temp = flash_get_halfword( flash, offset & ~( 1 ) );
         shift = ( offset & 1 ) << 3;
         data = ( temp >> shift ) & 0xff;
@@ -299,11 +287,10 @@ static uint32_t flash_readw( void* opaque, target_phys_addr_t offset )
     uint8_t* datap = flash->data;
     uint32_t data;
 
-    if ( flash->state == FLASH_STATE_NORMAL ) {
+    if ( flash->state == FLASH_STATE_NORMAL )
         data = lduw_p( datap + offset );
-    } else {
+    else
         data = flash_get_halfword( flash, offset );
-    }
 
 #ifdef DEBUG_X50NG_FLASH_READ
     printf( "read  FLASH 2 (state %u) at offset %08lx: %04x\n", flash->state, ( unsigned long )offset, data );
@@ -318,11 +305,10 @@ static uint32_t flash_readl( void* opaque, target_phys_addr_t offset )
     uint8_t* datap = flash->data;
     uint32_t data;
 
-    if ( flash->state == FLASH_STATE_NORMAL ) {
+    if ( flash->state == FLASH_STATE_NORMAL )
         data = ldl_p( datap + offset );
-    } else {
+    else
         data = ( flash_get_halfword( flash, offset + 2 ) << 16 ) | ( flash_get_halfword( flash, offset + 0 ) << 0 );
-    }
 
 #ifdef DEBUG_X50NG_FLASH_READ
     printf( "read  FLASH 4 (state %u) at offset %08lx: %08x\n", flash->state, ( unsigned long )offset, data );
@@ -670,12 +656,11 @@ static int flash_exit( x50ng_module_t* module )
     if ( module->user_data ) {
         flash = module->user_data;
 
-        if ( flash->data != ( void* )-1 ) {
+        if ( flash->data != ( void* )-1 )
             munmap( flash->data, flash->size );
-        }
-        if ( flash->fd ) {
+
+        if ( flash->fd )
             close( flash->fd );
-        }
 
         free( flash );
     }
@@ -690,9 +675,8 @@ int x50ng_flash_init( x50ng_t* x50ng )
 {
     x50ng_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) ) {
+    if ( x50ng_module_init( x50ng, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

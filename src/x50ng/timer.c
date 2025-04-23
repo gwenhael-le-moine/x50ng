@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,23 +39,19 @@ static x50ng_timer_t* x50ng_timer_lists[ 2 ];
 int64_t x50ng_get_clock( void )
 {
     struct timeval tv;
-    int64_t us;
 
     gettimeofday( &tv, NULL );
 
-    us = tv.tv_sec * 1000000LL + tv.tv_usec;
-
-    return us;
+    return ( tv.tv_sec * 1000000LL + tv.tv_usec );
 }
 
 x50ng_timer_t* x50ng_new_timer( long type, x50ng_timer_cb_t cb, void* user_data )
 {
-    x50ng_timer_t* ts;
+    x50ng_timer_t* ts = malloc( sizeof( x50ng_timer_t ) );
 
-    ts = malloc( sizeof( x50ng_timer_t ) );
-    if ( NULL == ts ) {
+    if ( NULL == ts )
         return NULL;
-    }
+
     memset( ts, 0, sizeof( x50ng_timer_t ) );
 
     ts->type = type;
@@ -72,7 +69,7 @@ void x50ng_del_timer( x50ng_timer_t* ts )
 
     // printf("%s: ts %p\n", __FUNCTION__, ts);
     pt = &x50ng_timer_lists[ ts->type ];
-    while ( 1 ) {
+    while ( true ) {
         t = *pt;
         if ( NULL == t )
             break;
@@ -91,9 +88,8 @@ void x50ng_mod_timer( x50ng_timer_t* ts, int64_t expires )
 
     x50ng_del_timer( ts );
 
-    // printf("%s: ts %p, expires %lld\n", __FUNCTION__, ts, expires);
     pt = &x50ng_timer_lists[ ts->type ];
-    while ( 1 ) {
+    while ( true ) {
         t = *pt;
         if ( NULL == t )
             break;
@@ -107,16 +103,13 @@ void x50ng_mod_timer( x50ng_timer_t* ts, int64_t expires )
     *pt = ts;
 }
 
-int x50ng_timer_pending( x50ng_timer_t* ts )
+bool x50ng_timer_pending( x50ng_timer_t* ts )
 {
-    x50ng_timer_t* t;
-
-    for ( t = x50ng_timer_lists[ ts->type ]; t; t = t->next ) {
+    for ( x50ng_timer_t* t = x50ng_timer_lists[ ts->type ]; t; t = t->next )
         if ( t == ts )
-            return 1;
-    }
+            return true;
 
-    return 0;
+    return false;
 }
 
 int64_t x50ng_timer_expires( x50ng_timer_t* ts ) { return ts->expires; }
@@ -125,6 +118,7 @@ static int x50ng_timer_expired( x50ng_timer_t* timer_head, int64_t current_time 
 {
     if ( NULL == timer_head )
         return 0;
+
     return ( timer_head->expires <= current_time );
 }
 
@@ -149,8 +143,7 @@ static void x50ng_run_timers( x50ng_timer_t** ptimer_head, int64_t current_time 
 {
     x50ng_timer_t* ts;
 
-    // printf("%s: now %lld\n", __FUNCTION__, current_time);
-    while ( 1 ) {
+    while ( true ) {
         ts = *ptimer_head;
         if ( NULL == ts || ts->expires > current_time )
             break;
@@ -158,43 +151,32 @@ static void x50ng_run_timers( x50ng_timer_t** ptimer_head, int64_t current_time 
         *ptimer_head = ts->next;
         ts->next = NULL;
 
-        // printf("%s: call ts %p\n", __FUNCTION__, ts);
         ts->cb( ts->user_data );
-        // printf("%s: ts %p done\n", __FUNCTION__, ts);
     }
-
-    // printf("%s: timers done\n", __FUNCTION__);
 }
 
 static void x50ng_alarm_handler( int sig )
 {
-    if ( x50ng_timer_expired( x50ng_timer_lists[ X50NG_TIMER_VIRTUAL ], x50ng_get_clock() ) ||
-         x50ng_timer_expired( x50ng_timer_lists[ X50NG_TIMER_REALTIME ], x50ng_get_clock() ) ) {
-        if ( cpu_single_env && !cpu_single_env->exit_request ) {
-            cpu_exit( cpu_single_env );
-        }
-    }
+    if ( ( x50ng_timer_expired( x50ng_timer_lists[ X50NG_TIMER_VIRTUAL ], x50ng_get_clock() ) ||
+           x50ng_timer_expired( x50ng_timer_lists[ X50NG_TIMER_REALTIME ], x50ng_get_clock() ) ) &&
+         ( cpu_single_env && !cpu_single_env->exit_request ) )
+        cpu_exit( cpu_single_env );
 }
 
 static void x50ng_main_loop_wait( x50ng_t* x50ng, int timeout )
 {
-    // printf("%s: timeout: %d\n", __FUNCTION__, timeout);
-
-    if ( gdb_poll( x50ng->env ) ) {
+    if ( gdb_poll( x50ng->env ) )
         gdb_handlesig( x50ng->env, 0 );
-    } else
+    else
         poll( NULL, 0, timeout );
 
-    if ( x50ng->arm_idle != X50NG_ARM_OFF ) {
+    if ( x50ng->arm_idle != X50NG_ARM_OFF )
         x50ng_run_timers( &x50ng_timer_lists[ X50NG_TIMER_VIRTUAL ], x50ng_get_clock() );
-    }
 
     x50ng_run_timers( &x50ng_timer_lists[ X50NG_TIMER_REALTIME ], x50ng_get_clock() );
-
-    // printf("%s: done\n", __FUNCTION__);
 }
 
-int x50ng_main_loop( x50ng_t* x50ng )
+void x50ng_main_loop( x50ng_t* x50ng )
 {
     int prev_idle;
     int ret, timeout;
@@ -224,29 +206,20 @@ int x50ng_main_loop( x50ng_t* x50ng )
                 continue;
             }
 
-            if ( x50ng->arm_idle != prev_idle ) {
-                if ( x50ng->arm_idle == X50NG_ARM_OFF ) {
-                    gui_update_lcd( x50ng );
-                    cpu_reset( x50ng->env );
-                }
+            if ( ( x50ng->arm_idle != prev_idle ) && ( x50ng->arm_idle == X50NG_ARM_OFF ) ) {
+                ui_update_lcd( x50ng );
+                cpu_reset( x50ng->env );
             }
 
-            if ( ret == EXCP_HALTED ) {
-                timeout = 10;
-            } else {
-                timeout = 0;
-            }
-        } else {
+            timeout = ( ret == EXCP_HALTED ) ? 10 : 0;
+        } else
             timeout = 1;
-        }
 
         x50ng_main_loop_wait( x50ng, timeout );
     }
-
-    return 0;
 }
 
-int x50ng_timer_init( x50ng_t* x50ng )
+void x50ng_timer_init( x50ng_t* x50ng )
 {
     struct sigaction sa;
     struct itimerval it;
@@ -265,5 +238,4 @@ int x50ng_timer_init( x50ng_t* x50ng )
     it.it_value.tv_usec = 1000;
 
     setitimer( ITIMER_REAL, &it, NULL );
-    return 0;
 }

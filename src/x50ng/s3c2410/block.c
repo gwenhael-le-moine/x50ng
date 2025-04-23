@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -21,13 +22,13 @@ static BlockDriver* first_drv;
 
 static void bdrv_close( BlockDriverState* bs );
 
-static int path_is_absolute( const char* path )
+static bool path_is_absolute( const char* path )
 {
     const char* p;
 #ifdef _WIN32
     /* specific case for names like: "\\.\d:" */
     if ( *path == '/' || *path == '\\' )
-        return 1;
+        return true;
 #endif
     p = strchr( path, ':' );
     if ( p )
@@ -110,13 +111,15 @@ static int is_windows_drive_prefix( const char* filename )
              filename[ 1 ] == ':' );
 }
 
-static int is_windows_drive( const char* filename )
+static bool is_windows_drive( const char* filename )
 {
     if ( is_windows_drive_prefix( filename ) && filename[ 2 ] == '\0' )
-        return 1;
+        return true;
+
     if ( strstart( filename, "\\\\.\\", NULL ) || strstart( filename, "//./", NULL ) )
-        return 1;
-    return 0;
+        return true;
+
+    return false;
 }
 #endif
 

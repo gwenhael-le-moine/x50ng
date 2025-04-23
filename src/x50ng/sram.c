@@ -167,15 +167,14 @@ static int sram_exit( x50ng_module_t* module )
     if ( module->user_data ) {
         sram = module->user_data;
 
-        if ( sram->shadow != ( void* )-1 ) {
+        if ( sram->shadow != ( void* )-1 )
             munmap( sram->shadow, sram->size );
-        }
-        if ( sram->data != ( void* )-1 ) {
+
+        if ( sram->data != ( void* )-1 )
             munmap( sram->data, sram->size );
-        }
-        if ( sram->fd >= 0 ) {
+
+        if ( sram->fd >= 0 )
             close( sram->fd );
-        }
 
         free( sram );
     }
@@ -190,9 +189,8 @@ int x50ng_sram_init( x50ng_t* x50ng )
 {
     x50ng_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) ) {
+    if ( x50ng_module_init( x50ng, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

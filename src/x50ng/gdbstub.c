@@ -17,6 +17,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -143,11 +144,11 @@ static enum {
 
 /* If gdb is connected when the first semihosting syscall occurs then use
    remote gdb syscalls.  Otherwise use native file IO.  */
-int use_gdb_syscalls( void )
+bool use_gdb_syscalls( void )
 {
-    if ( gdb_syscall_mode == GDB_SYS_UNKNOWN ) {
+    if ( gdb_syscall_mode == GDB_SYS_UNKNOWN )
         gdb_syscall_mode = ( gdbserver_state ? GDB_SYS_ENABLED : GDB_SYS_DISABLED );
-    }
+
     return gdb_syscall_mode == GDB_SYS_ENABLED;
 }
 
@@ -437,11 +438,10 @@ static int gdb_read_register( CPUState* env, uint8_t* mem_buf, int reg )
     if ( reg < NUM_CORE_REGS )
         return cpu_gdb_read_register( env, mem_buf, reg );
 
-    for ( r = env->gdb_regs; r; r = r->next ) {
-        if ( r->base_reg <= reg && reg < r->base_reg + r->num_regs ) {
+    for ( r = env->gdb_regs; r; r = r->next )
+        if ( r->base_reg <= reg && reg < r->base_reg + r->num_regs )
             return r->get_reg( env, mem_buf, reg - r->base_reg );
-        }
-    }
+
     return 0;
 }
 
@@ -452,11 +452,10 @@ static int gdb_write_register( CPUState* env, uint8_t* mem_buf, int reg )
     if ( reg < NUM_CORE_REGS )
         return cpu_gdb_write_register( env, mem_buf, reg );
 
-    for ( r = env->gdb_regs; r; r = r->next ) {
-        if ( r->base_reg <= reg && reg < r->base_reg + r->num_regs ) {
+    for ( r = env->gdb_regs; r; r = r->next )
+        if ( r->base_reg <= reg && reg < r->base_reg + r->num_regs )
             return r->set_reg( env, mem_buf, reg - r->base_reg );
-        }
-    }
+
     return 0;
 }
 
@@ -595,11 +594,9 @@ static CPUState* find_cpu( uint32_t thread_id )
 {
     CPUState* env;
 
-    for ( env = first_cpu; env != NULL; env = env->next_cpu ) {
-        if ( gdb_id( env ) == thread_id ) {
+    for ( env = first_cpu; env != NULL; env = env->next_cpu )
+        if ( gdb_id( env ) == thread_id )
             return env;
-        }
-    }
 
     return NULL;
 }
@@ -1102,17 +1099,17 @@ static void gdb_read_byte( GDBState* s, int ch )
     }
 }
 
-int gdb_queuesig( void )
-{
-    GDBState* s;
+/* int gdb_queuesig( void ) */
+/* { */
+/*     GDBState* s; */
 
-    s = gdbserver_state;
+/*     s = gdbserver_state; */
 
-    if ( gdbserver_fd < 0 || s->fd < 0 )
-        return 0;
-    else
-        return 1;
-}
+/*     if ( gdbserver_fd < 0 || s->fd < 0 ) */
+/*         return 0; */
+/*     else */
+/*         return 1; */
+/* } */
 
 int gdb_handlesig( CPUState* env, int sig )
 {
@@ -1169,13 +1166,13 @@ int gdb_handlesig( CPUState* env, int sig )
     return sig;
 }
 
-int gdb_poll( CPUState* env )
+bool gdb_poll( CPUState* env )
 {
     GDBState* s;
     struct pollfd pfd;
 
     if ( gdbserver_fd < 0 )
-        return 0;
+        return false;
 
     s = gdbserver_state;
 
@@ -1183,9 +1180,9 @@ int gdb_poll( CPUState* env )
     pfd.events = POLLIN | POLLHUP;
 
     if ( poll( &pfd, 1, 0 ) <= 0 ) {
-        if ( errno != EAGAIN )
-            return 0;
-        return 0;
+        /* if ( errno != EAGAIN ) */
+        /*     return false; */
+        return false;
     }
 
 #ifdef DEBUG_GDB
@@ -1194,9 +1191,9 @@ int gdb_poll( CPUState* env )
 #endif
 
     if ( pfd.revents & ( POLLIN | POLLHUP ) )
-        return 1;
+        return true;
 
-    return 0;
+    return false;
 }
 
 /* Tell the remote gdb that the process has exited.  */
@@ -1326,4 +1323,4 @@ void gdbserver_fork( CPUState* env )
     cpu_watchpoint_remove_all( env, BP_GDB );
 }
 
-int gdbserver_isactive() { return ( gdbserver_fd >= 0 ); }
+bool gdbserver_isactive() { return ( gdbserver_fd >= 0 ); }

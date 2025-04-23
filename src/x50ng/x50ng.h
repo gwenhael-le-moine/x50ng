@@ -74,7 +74,7 @@ struct __x50ng_s__ {
     unsigned char keybycol[ 8 ];
     unsigned char keybyrow[ 8 ];
 
-    x50ng_timer_t* gtk_timer;
+    x50ng_timer_t* ui_timer;
     x50ng_timer_t* lcd_timer;
 
     x50ng_arm_idle_t arm_idle;
@@ -91,7 +91,7 @@ extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
 /* s3c2410/s3c2410_sdi.c */
 extern void s3c2410_sdi_unmount( x50ng_t* x50ng );
 extern int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename );
-extern int s3c2410_sdi_is_mounted( x50ng_t* x50ng );
+extern bool s3c2410_sdi_is_mounted( x50ng_t* x50ng );
 extern void s3c2410_sdi_get_path( x50ng_t* x50ng, char** filename );
 
 /* module.c */

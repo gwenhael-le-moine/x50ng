@@ -100,18 +100,16 @@ static int sdcard_read( s3c2410_sdi_t* sdi )
     sdi->nr_read_data = 0;
     sdi->read_index = 0;
 
-    if ( ( sdi->fd < 0 ) && ( sdi->bs == NULL ) ) {
+    if ( ( sdi->fd < 0 ) && ( sdi->bs == NULL ) )
         return -ENODEV;
-    }
 
     sdi->read_data = malloc( size );
-    if ( NULL == sdi->read_data ) {
+    if ( NULL == sdi->read_data )
         return -ENOMEM;
-    }
 
-    if ( sdi->bs ) {
+    if ( sdi->bs )
         sdi->nr_read_data = bdrv_pread( sdi->bs, offset, sdi->read_data, size );
-    } else {
+    else {
         if ( sdi->read_offset != lseek( sdi->fd, offset, SEEK_SET ) ) {
             error = errno;
             sdi->nr_read_data = 0;
@@ -167,9 +165,9 @@ static int sdcard_write( s3c2410_sdi_t* sdi )
 
     sdi->write_index = 0;
 
-    if ( sdi->bs ) {
+    if ( sdi->bs )
         error = bdrv_pwrite( sdi->bs, offset, sdi->write_data, size );
-    } else {
+    else {
         if ( sdi->fd < 0 ) {
             free( sdi->write_data );
             sdi->write_data = NULL;
@@ -204,9 +202,8 @@ static uint32_t s3c2410_sdi_read( void* opaque, target_phys_addr_t offset )
     s3c2410_offset_t* reg;
     unsigned int read_avail, write_avail;
 
-    if ( !S3C2410_OFFSET_OK( sdi, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( sdi, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( sdi, offset );
 
@@ -216,15 +213,14 @@ static uint32_t s3c2410_sdi_read( void* opaque, target_phys_addr_t offset )
                 read_avail = sdi->nr_read_data - sdi->read_index;
                 if ( read_avail > 0 ) {
                     *( reg->datap ) = sdi->read_data[ sdi->read_index++ ] << ( ( sdi->sdicon & 0x10 ) ? 24 : 0 );
-                    if ( ( sdi->nr_read_data - sdi->read_index ) > 0 ) {
+                    if ( ( sdi->nr_read_data - sdi->read_index ) > 0 )
                         *( reg->datap ) |= sdi->read_data[ sdi->read_index++ ] << ( ( sdi->sdicon & 0x10 ) ? 16 : 8 );
-                    }
-                    if ( ( sdi->nr_read_data - sdi->read_index ) > 0 ) {
+
+                    if ( ( sdi->nr_read_data - sdi->read_index ) > 0 )
                         *( reg->datap ) |= sdi->read_data[ sdi->read_index++ ] << ( ( sdi->sdicon & 0x10 ) ? 8 : 16 );
-                    }
-                    if ( ( sdi->nr_read_data - sdi->read_index ) > 0 ) {
+
+                    if ( ( sdi->nr_read_data - sdi->read_index ) > 0 )
                         *( reg->datap ) |= sdi->read_data[ sdi->read_index++ ] << ( ( sdi->sdicon & 0x10 ) ? 0 : 24 );
-                    }
 
                     if ( sdi->read_index >= sdi->nr_read_data ) {
                         sdi->read_index = 0;
@@ -271,14 +267,12 @@ static uint32_t s3c2410_sdi_read( void* opaque, target_phys_addr_t offset )
                 sdi->sdidcon &= ~0x3000; // BACK TO READY STATE
             }
             read_avail = sdi->nr_read_data - sdi->read_index;
-            if ( ( ( sdi->sdidcon & 0x3000 ) == 0x2000 ) && read_avail ) {
+            if ( ( ( sdi->sdidcon & 0x3000 ) == 0x2000 ) && read_avail )
                 *( reg->datap ) |= ( 1 << 0 );
-            }
 
             write_avail = sdi->nr_write_data - sdi->write_index;
-            if ( ( ( sdi->sdidcon & 0x3000 ) == 0x3000 ) && write_avail ) {
+            if ( ( ( sdi->sdidcon & 0x3000 ) == 0x3000 ) && write_avail )
                 *( reg->datap ) |= ( 1 << 1 );
-            }
     }
 
 #ifdef DEBUG_S3C2410_SDI
@@ -295,9 +289,8 @@ static void s3c2410_sdi_write( void* opaque, target_phys_addr_t offset, uint32_t
     s3c2410_offset_t* reg;
     unsigned int read_avail, write_avail;
 
-    if ( !S3C2410_OFFSET_OK( sdi, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( sdi, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( sdi, offset );
 
@@ -318,9 +311,9 @@ static void s3c2410_sdi_write( void* opaque, target_phys_addr_t offset, uint32_t
                     ( data >> 10 ) & 1 ? "long" : "short", ( data >> 9 ) & 1, ( data >> 11 ) & 1, ( data >> 12 ) & 1 );
 #endif
 
-            if ( data & ( 1 << 8 ) ) {
+            if ( data & ( 1 << 8 ) )
                 sdi->sdicsta |= ( 1 << 11 );
-            } else {
+            else {
                 sdi->sdicsta = 0;
                 sdi->sdirsp0 = 0;
                 sdi->sdirsp1 = 0;
@@ -531,15 +524,14 @@ static void s3c2410_sdi_write( void* opaque, target_phys_addr_t offset, uint32_t
                 write_avail = sdi->nr_write_data - sdi->write_index;
                 if ( write_avail > 0 ) {
                     sdi->write_data[ sdi->write_index++ ] = ( *( reg->datap ) >> ( ( sdi->sdicon & 0x10 ) ? 24 : 0 ) ) & 0xff;
-                    if ( ( sdi->nr_write_data - sdi->write_index ) > 0 ) {
+                    if ( ( sdi->nr_write_data - sdi->write_index ) > 0 )
                         sdi->write_data[ sdi->write_index++ ] = ( *( reg->datap ) >> ( ( sdi->sdicon & 0x10 ) ? 16 : 8 ) ) & 0xff;
-                    }
-                    if ( ( sdi->nr_write_data - sdi->write_index ) > 0 ) {
+
+                    if ( ( sdi->nr_write_data - sdi->write_index ) > 0 )
                         sdi->write_data[ sdi->write_index++ ] = ( *( reg->datap ) >> ( ( sdi->sdicon & 0x10 ) ? 8 : 16 ) ) & 0xff;
-                    }
-                    if ( ( sdi->nr_write_data - sdi->write_index ) > 0 ) {
+
+                    if ( ( sdi->nr_write_data - sdi->write_index ) > 0 )
                         sdi->write_data[ sdi->write_index++ ] = ( *( reg->datap ) >> ( ( sdi->sdicon & 0x10 ) ? 0 : 24 ) ) & 0xff;
-                    }
 
                     if ( sdi->write_index >= sdi->nr_write_data ) {
                         sdcard_write( sdi );
@@ -602,6 +594,13 @@ void s3c2410_sdi_unmount( x50ng_t* x50ng )
     s3c2410_io_port_f_set_bit( x50ng, 3, 0 );
 }
 
+bool s3c2410_sdi_is_mounted( x50ng_t* x50ng )
+{
+    s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
+
+    return ( sdi->bs != NULL ) || ( sdi->fd >= 0 );
+}
+
 int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
 {
     s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
@@ -627,26 +626,14 @@ int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
             }
         } else {
             sdi->fd = open( filename, O_RDWR );
-            if ( sdi->fd < 0 ) {
+            if ( sdi->fd < 0 )
                 fprintf( stderr, "%s:%u: open %s: %s\n", __FUNCTION__, __LINE__, filename, strerror( errno ) );
-            }
         }
     }
 
-    if ( ( sdi->bs != NULL ) || ( sdi->fd >= 0 ) ) {
-        s3c2410_io_port_f_set_bit( x50ng, 3, 1 );
-    } else {
-        s3c2410_io_port_f_set_bit( x50ng, 3, 0 );
-    }
+    s3c2410_io_port_f_set_bit( x50ng, 3, s3c2410_sdi_is_mounted( x50ng ) ? 1 : 0 );
 
     return error;
-}
-
-int s3c2410_sdi_is_mounted( x50ng_t* x50ng )
-{
-    s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
-
-    return ( sdi->bs != NULL ) || ( sdi->fd >= 0 );
 }
 
 void s3c2410_sdi_get_path( x50ng_t* x50ng, char** path )
@@ -679,9 +666,9 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
         error2 = s3c2410_sdi_mount( x50ng, filepath );
         if ( 0 == error )
             error = error2;
-    } else {
+    } else
         s3c2410_sdi_unmount( x50ng );
-    }
+
     g_free( sdi->filename );
     sdi->filename = filename;
 

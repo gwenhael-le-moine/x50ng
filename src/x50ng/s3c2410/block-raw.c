@@ -412,15 +412,15 @@ static int raw_is_inserted( BlockDriverState* bs )
         case FTYPE_CD:
             ret = ioctl( s->fd, CDROM_DRIVE_STATUS, CDSL_CURRENT );
             if ( ret == CDS_DISC_OK )
-                return 1;
+                return true;
             else
-                return 0;
+                return false;
             break;
         case FTYPE_FD:
             ret = fd_open( bs );
             return ( ret >= 0 );
         default:
-            return 1;
+            return true;
     }
 }
 
@@ -504,9 +504,9 @@ static int raw_set_locked( BlockDriverState* bs, int locked )
 
 #  else
 
-static int raw_is_inserted( BlockDriverState* bs ) { return 1; }
+static bool raw_is_inserted( BlockDriverState* bs ) { return true; }
 
-static int raw_media_changed( BlockDriverState* bs ) { return -ENOTSUP; }
+static bool raw_media_changed( BlockDriverState* bs ) { return -ENOTSUP; }
 
 static int raw_eject( BlockDriverState* bs, int eject_flag ) { return -ENOTSUP; }
 

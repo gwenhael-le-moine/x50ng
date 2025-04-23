@@ -179,12 +179,12 @@ void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
 /**********/
 /* timers */
 /**********/
-void x50ng_gtk_timer( void* data )
+void x50ng_ui_timer( void* data )
 {
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
 
-    x50ng_mod_timer( x50ng->gtk_timer, x50ng_get_clock() + X50NG_GTK_REFRESH_INTERVAL );
+    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() + X50NG_UI_REFRESH_INTERVAL );
 }
 
 void x50ng_lcd_timer( void* data )
@@ -192,7 +192,7 @@ void x50ng_lcd_timer( void* data )
     x50ng_t* x50ng = data;
     int64_t now, expires;
 
-    gui_update_lcd( x50ng );
+    ui_update_lcd( x50ng );
     gdk_display_flush( gdk_display_get_default() );
 
     now = x50ng_get_clock();
@@ -267,7 +267,7 @@ int main( int argc, char** argv )
 
     x50ng_timer_init( x50ng );
 
-    x50ng->gtk_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, x50ng_gtk_timer, x50ng );
+    x50ng->ui_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, x50ng_ui_timer, x50ng );
     x50ng->lcd_timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, x50ng_lcd_timer, x50ng );
 
     x50ng_s3c2410_arm_init( x50ng );
@@ -296,7 +296,7 @@ int main( int argc, char** argv )
 
     // stl_phys(0x08000a1c, 0x55555555);
 
-    x50ng_mod_timer( x50ng->gtk_timer, x50ng_get_clock() );
+    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() );
     x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() );
 
     if ( opt.debug_port != 0 && opt.start_debugger ) {
@@ -304,15 +304,21 @@ int main( int argc, char** argv )
         gdb_handlesig( x50ng->env, 0 );
     }
 
-    gui_init( x50ng ); /* return gtk_application here ? */
-    // GtkApplication* app = gtk_application_new ("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
-    // g_signal_connect (app, "activate", G_CALLBACK (gui_init), x50ng);
+#ifdef USE_GTK_APPLICATION
+    GtkApplication* app = gtk_application_new( "org.gtk.example", G_APPLICATION_DEFAULT_FLAGS );
+    g_signal_connect( app, "activate", G_CALLBACK( ui_init ), x50ng );
 
     /* run gtk_application here ? */
-    // int status = g_application_run (G_APPLICATION (app), 0, NULL);
+    int status = g_application_run( G_APPLICATION( app ), 0, NULL );
+#else
+    ui_init( x50ng );
+#endif
 
     x50ng_main_loop( x50ng );
-    // g_object_unref (app);
+
+#ifdef USE_GTK_APPLICATION
+    g_object_unref( app );
+#endif
 
     x50ng_modules_save( x50ng );
     if ( !opt.haz_config_file )

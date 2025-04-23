@@ -1376,11 +1376,18 @@ static GtkWidget* _ui_load__create_label( const char* css_class, const char* tex
     return ui_label;
 }
 
-static int ui_load( /* GtkApplication* app, */ x50ng_t* x50ng )
+#ifdef USE_GTK_APPLICATION
+static int ui_load( GtkApplication* app, x50ng_t* x50ng )
+#else
+static int ui_load( x50ng_t* x50ng )
+#endif
 {
     // create window and widgets/stuff
-    // window = gtk_application_window_new( app );
+#ifdef USE_GTK_APPLICATION
+    window = gtk_application_window_new( app );
+#else
     window = gtk_window_new();
+#endif
     gtk_window_set_decorated( GTK_WINDOW( window ), true );
     gtk_window_set_resizable( GTK_WINDOW( window ), true );
     gtk_window_set_title( GTK_WINDOW( window ), opt.name );
@@ -1632,7 +1639,7 @@ static int ui_load( /* GtkApplication* app, */ x50ng_t* x50ng )
 /* Public functions */
 /********************/
 
-void gui_update_lcd( x50ng_t* x50ng )
+void ui_update_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
@@ -1664,18 +1671,24 @@ void gui_update_lcd( x50ng_t* x50ng )
     gtk_widget_queue_draw( lcd_canvas );
 }
 
-int gui_init( /* GtkApplication* app, */ x50ng_t* x50ng )
+#ifdef USE_GTK_APPLICATION
+void ui_init( GtkApplication* app, x50ng_t* x50ng )
+#else
+void ui_init( x50ng_t* x50ng )
+#endif
 {
     buttons = malloc( NB_KEYS * sizeof( x50ng_ui_button_t ) );
     if ( NULL == buttons ) {
         fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
-        return -ENOMEM;
+        return;
     }
     memset( buttons, 0, NB_KEYS * sizeof( x50ng_ui_button_t ) );
 
     gtk_init();
 
-    ui_load( /* app, */ x50ng );
-
-    return 0;
+#ifdef USE_GTK_APPLICATION
+    ui_load( app, x50ng );
+#else
+    ui_load( x50ng );
+#endif
 }
