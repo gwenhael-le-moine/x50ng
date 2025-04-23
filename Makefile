@@ -171,7 +171,7 @@ $(QEMU_DIR)/config-host.h:
 
 $(QEMU_OBJS): qemu-objs
 
-qemu-objs:
+qemu-objs: $(QEMU_DIR)/config-host.h
 	+$(MAKE) -C $(QEMU_DIR) -f Makefile-small
 
 clean-qemu:
