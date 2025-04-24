@@ -436,9 +436,8 @@ int x50ng_s3c2410_rtc_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-rtc", s3c2410_rtc_init, s3c2410_rtc_exit, s3c2410_rtc_reset, s3c2410_rtc_load, s3c2410_rtc_save,
-                            NULL, &module ) ) {
+                            NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

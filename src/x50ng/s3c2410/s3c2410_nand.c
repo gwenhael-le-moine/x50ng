@@ -47,9 +47,8 @@ uint32_t s3c2410_nand_read( void* opaque, target_phys_addr_t offset )
     s3c2410_nand_t* nand = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( nand, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( nand, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( nand, offset );
 
@@ -65,9 +64,8 @@ void s3c2410_nand_write( void* opaque, target_phys_addr_t offset, uint32_t data 
     s3c2410_nand_t* nand = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( nand, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( nand, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( nand, offset );
 
@@ -205,9 +203,8 @@ int x50ng_s3c2410_nand_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-nand", s3c2410_nand_init, s3c2410_nand_exit, s3c2410_nand_reset, s3c2410_nand_load,
-                            s3c2410_nand_save, NULL, &module ) ) {
+                            s3c2410_nand_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

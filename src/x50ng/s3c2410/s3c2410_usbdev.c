@@ -128,9 +128,8 @@ static uint32_t s3c2410_usbdev_read( void* opaque, target_phys_addr_t offset )
     s3c2410_usbdev_t* usbdev = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( usbdev, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( usbdev, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( usbdev, offset );
 
@@ -147,9 +146,8 @@ static void s3c2410_usbdev_write( void* opaque, target_phys_addr_t offset, uint3
     s3c2410_usbdev_t* usbdev = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( usbdev, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( usbdev, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( usbdev, offset );
 
@@ -287,9 +285,8 @@ int x50ng_s3c2410_usbdev_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-usbdev", s3c2410_usbdev_init, s3c2410_usbdev_exit, s3c2410_usbdev_reset, s3c2410_usbdev_load,
-                            s3c2410_usbdev_save, NULL, &module ) ) {
+                            s3c2410_usbdev_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

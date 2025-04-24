@@ -627,9 +627,8 @@ int x50ng_s3c2410_io_port_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-io-port", s3c2410_io_port_init, s3c2410_io_port_exit, s3c2410_io_port_reset,
-                            s3c2410_io_port_load, s3c2410_io_port_save, NULL, &module ) ) {
+                            s3c2410_io_port_load, s3c2410_io_port_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

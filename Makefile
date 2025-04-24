@@ -132,7 +132,7 @@ SRCS = \
 	./src/x50ng/module.c \
 	./src/x50ng/flash.c \
 	./src/x50ng/sram.c \
-	./src/x50ng/ui.c \
+	./src/x50ng/gui.c \
 	./src/x50ng/timer.c \
 	./src/x50ng/gdbstub.c \
 	./src/x50ng/options.c \

@@ -136,15 +136,14 @@ unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
         if ( !( timer->tcon & t->tconfig->start_bit ) )
             continue;
 
-        if ( x50ng_timer_pending( t->timer ) ) {
+        if ( x50ng_timer_pending( t->timer ) )
             irq = x50ng_timer_expires( t->timer ) - ticks;
-        } else {
+        else
             irq = 0;
-        }
 
-        if ( t->tcnt ) {
+        if ( t->tcnt )
             irq += ( t->tcnt - 1 ) * t->interval;
-        } else {
+        else {
             if ( !( timer->tcon & t->tconfig->reload_bit ) )
                 continue;
             irq += t->tcntb * t->interval;
@@ -267,9 +266,8 @@ static uint32_t s3c2410_timer_read( void* opaque, target_phys_addr_t offset )
     s3c2410_offset_t* reg;
     uint32_t data;
 
-    if ( !S3C2410_OFFSET_OK( timer, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( timer, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( timer, offset );
 
@@ -306,9 +304,8 @@ static void s3c2410_timer_write( void* opaque, target_phys_addr_t offset, uint32
     s3c2410_timer_t* timer = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( timer, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( timer, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( timer, offset );
 
@@ -491,9 +488,8 @@ int x50ng_s3c2410_timer_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-timer", s3c2410_timer_init, s3c2410_timer_exit, s3c2410_timer_reset, s3c2410_timer_load,
-                            s3c2410_timer_save, NULL, &module ) ) {
+                            s3c2410_timer_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

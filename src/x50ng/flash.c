@@ -262,15 +262,13 @@ static uint32_t flash_readb( void* opaque, target_phys_addr_t offset )
 {
     x50ng_flash_t* flash = opaque;
     uint8_t* datap = flash->data;
-    unsigned short temp;
-    uint32_t shift;
     unsigned char data;
 
     if ( flash->state == FLASH_STATE_NORMAL )
         data = *( datap + offset );
     else {
-        temp = flash_get_halfword( flash, offset & ~( 1 ) );
-        shift = ( offset & 1 ) << 3;
+        unsigned short temp = flash_get_halfword( flash, offset & ~( 1 ) );
+        uint32_t shift = ( offset & 1 ) << 3;
         data = ( temp >> shift ) & 0xff;
     }
 

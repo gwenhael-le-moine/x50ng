@@ -59,9 +59,8 @@ uint32_t s3c2410_spi_read( void* opaque, target_phys_addr_t offset )
     s3c2410_spi_t* spi = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( spi, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( spi, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( spi, offset );
 
@@ -89,9 +88,8 @@ void s3c2410_spi_write( void* opaque, target_phys_addr_t offset, uint32_t data )
     x50ng_t* x50ng = spi->x50ng;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( spi, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( spi, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( spi, offset );
 
@@ -242,9 +240,8 @@ int x50ng_s3c2410_spi_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-spi", s3c2410_spi_init, s3c2410_spi_exit, s3c2410_spi_reset, s3c2410_spi_load, s3c2410_spi_save,
-                            NULL, &module ) ) {
+                            NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }

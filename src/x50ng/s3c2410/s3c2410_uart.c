@@ -396,28 +396,25 @@ int x50ng_s3c2410_uart_init( x50ng_t* x50ng )
     uart->uart[ 2 ].x50ng = x50ng;
 
     if ( x50ng_module_init( x50ng, "s3c2410-uart0", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
-                            s3c2410_uart_save, &uart->uart[ 0 ], &module ) ) {
+                            s3c2410_uart_save, &uart->uart[ 0 ], &module ) )
         return -1;
-    }
-    if ( x50ng_module_register( module ) ) {
+
+    if ( x50ng_module_register( module ) )
         return -1;
-    }
 
     if ( x50ng_module_init( x50ng, "s3c2410-uart1", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
-                            s3c2410_uart_save, &uart->uart[ 1 ], &module ) ) {
+                            s3c2410_uart_save, &uart->uart[ 1 ], &module ) )
         return -1;
-    }
-    if ( x50ng_module_register( module ) ) {
+
+    if ( x50ng_module_register( module ) )
         return -1;
-    }
 
     if ( x50ng_module_init( x50ng, "s3c2410-uart2", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
-                            s3c2410_uart_save, &uart->uart[ 2 ], &module ) ) {
+                            s3c2410_uart_save, &uart->uart[ 2 ], &module ) )
         return -1;
-    }
-    if ( x50ng_module_register( module ) ) {
+
+    if ( x50ng_module_register( module ) )
         return -1;
-    }
 
     return 0;
 }

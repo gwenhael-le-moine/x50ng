@@ -48,11 +48,10 @@ static void s3c2410_watchdog_tick( void* data )
     s3c2410_watchdog_t* watchdog = data;
     x50ng_t* x50ng = watchdog->x50ng;
 
-    if ( watchdog->wtcnt > 0 ) {
+    if ( watchdog->wtcnt > 0 )
         watchdog->wtcnt--;
-    } else {
+    else
         watchdog->wtcnt = watchdog->wtdat;
-    }
 
     if ( watchdog->wtcnt > 0 ) {
         //		watchdog->timer.expires += watchdog->interval;
@@ -98,21 +97,18 @@ unsigned long s3c2410_watchdog_next_interrupt( x50ng_t* x50ng )
 
     ticks = x50ng_get_clock();
 
-    if ( !( watchdog->wtcon & 0x0020 ) ) {
+    if ( !( watchdog->wtcon & 0x0020 ) )
         return ~( 0 );
-    }
 
-    if ( x50ng_timer_pending( watchdog->timer ) ) {
+    if ( x50ng_timer_pending( watchdog->timer ) )
         irq = x50ng_timer_expires( watchdog->timer ) - ticks;
-    } else {
+    else
         irq = 0;
-    }
 
-    if ( watchdog->wtcnt ) {
+    if ( watchdog->wtcnt )
         irq += ( watchdog->wtcnt - 1 ) * watchdog->interval;
-    } else {
+    else
         irq += watchdog->wtdat * watchdog->interval;
-    }
 
 #ifdef DEBUG_S3C2410_WATCHDOG
     printf( "WATCHDOG: wtcnt %u, interval %lu, expires %llu, next irq %lu\n", watchdog->wtcnt, watchdog->interval,
@@ -143,6 +139,7 @@ static int s3c2410_watchdog_update( s3c2410_watchdog_t* watchdog )
     printf( "WATCHDOG: start tick (%lu PCLKs)\n", watchdog->interval );
 #endif
     x50ng_mod_timer( watchdog->timer, x50ng_get_clock() + watchdog->interval );
+
     return 0;
 }
 
@@ -151,9 +148,8 @@ static uint32_t s3c2410_watchdog_read( void* opaque, target_phys_addr_t offset )
     s3c2410_watchdog_t* watchdog = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( watchdog, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( watchdog, offset ) )
         return ~( 0 );
-    }
 
     reg = S3C2410_OFFSET_ENTRY( watchdog, offset );
 
@@ -170,9 +166,8 @@ static void s3c2410_watchdog_write( void* opaque, target_phys_addr_t offset, uin
     s3c2410_watchdog_t* watchdog = opaque;
     s3c2410_offset_t* reg;
 
-    if ( !S3C2410_OFFSET_OK( watchdog, offset ) ) {
+    if ( !S3C2410_OFFSET_OK( watchdog, offset ) )
         return;
-    }
 
     reg = S3C2410_OFFSET_ENTRY( watchdog, offset );
 
@@ -328,9 +323,8 @@ int x50ng_s3c2410_watchdog_init( x50ng_t* x50ng )
     x50ng_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-watchdog", s3c2410_watchdog_init, s3c2410_watchdog_exit, s3c2410_watchdog_reset,
-                            s3c2410_watchdog_load, s3c2410_watchdog_save, NULL, &module ) ) {
+                            s3c2410_watchdog_load, s3c2410_watchdog_save, NULL, &module ) )
         return -1;
-    }
 
     return x50ng_module_register( module );
 }
