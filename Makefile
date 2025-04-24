@@ -4,12 +4,12 @@ VERSION_MAJOR = 2
 VERSION_MINOR = 3
 PATCHLEVEL = 2
 
-INSTALL_PREFIX = /usr
-INSTALL_BINARY_DIR = "$(INSTALL_PREFIX)"/bin
-INSTALL_DATA_DIR = "$(INSTALL_PREFIX)"/share/$(TARGET)
-INSTALL_DOC_DIR = "$(INSTALL_PREFIX)"/doc/$(TARGET)
-INSTALL_MENU_DIR = "$(INSTALL_PREFIX)"/share/applications
-INSTALL_MAN_DIR = "$(INSTALL_PREFIX)/share/man/man1"
+PREFIX = /usr
+BINDIR = $(PREFIX)/bin
+DATADIR = $(PREFIX)/share/$(TARGET)
+DOCDIR = $(PREFIX)/doc/$(TARGET)
+MENUDIR = $(PREFIX)/share/applications
+MANDIR = $(PREFIX)/share/man/man1
 
 #
 DEBUG_CFLAGS = -g # -fsanitize=leak -pg
@@ -101,7 +101,7 @@ X50NG_CFLAGS = \
 	-DVERSION_MAJOR=$(VERSION_MAJOR) \
 	-DVERSION_MINOR=$(VERSION_MINOR) \
 	-DPATCHLEVEL=$(PATCHLEVEL) \
-	-DX50NG_DATADIR=\"$(INSTALL_DATA_DIR)\"
+	-DX50NG_DATADIR=\"$(DATADIR)\"
 
 ifeq ($(DEBUG), yes)
 	X50NG_CFLAGS += $(X50NG_DEBUG)
@@ -219,12 +219,14 @@ dist/$(TARGET).man: src/$(TARGET).scd
 	scdoc < $^ > $@
 
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
-	mkdir -p "$(DESTDIR)$(INSTALL_BINARY_DIR)/"
-	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(INSTALL_BINARY_DIR)/$(TARGET)"
-	mkdir -p "$(DESTDIR)$(INSTALL_MENU_DIR)/"
-	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(INSTALL_MENU_DIR)/$(TARGET).desktop"
-	mkdir -p "$(DESTDIR)$(INSTALL_MAN_DIR)/"
-	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(INSTALL_MAN_DIR)/$(TARGET).1"
-	mkdir -p "$(DESTDIR)$(INSTALL_DATA_DIR)/"
-	cp -R dist/firmware/ "$(DESTDIR)$(INSTALL_DATA_DIR)/firmware"
-	cp dist/*.css "$(DESTDIR)$(INSTALL_DATA_DIR)/"
+	mkdir -p "$(DESTDIR)$(BINDIR)/"
+	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(BINDIR)/$(TARGET)"
+	mkdir -p "$(DESTDIR)$(MENUDIR)/"
+	install -D -m 644 dist/$(TARGET).desktop "$(DESTDIR)$(MENUDIR)/$(TARGET).desktop"
+	mkdir -p "$(DESTDIR)$(MANDIR)/"
+	install -D -m 644 dist/$(TARGET).man "$(DESTDIR)$(MANDIR)/$(TARGET).1"
+	mkdir -p "$(DESTDIR)$(DATADIR)/"
+	cp -R dist/firmware/ "$(DESTDIR)$(DATADIR)/firmware"
+	cp dist/*.css "$(DESTDIR)$(DATADIR)/"
+	mkdir -p "$(DESTDIR)$(DOCDIR)/"
+	cp -R docs/ README.* screenshot*.png "$(DESTDIR)$(DOCDIR)/"
