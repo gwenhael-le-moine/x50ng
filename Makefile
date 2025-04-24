@@ -27,7 +27,7 @@ GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4)
 GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4) -lz -lm
 
 # Embedded qemu
-QEMU_DIR = src/qemu-git
+QEMU_DIR = src/qemu
 QEMU_DEFINES = \
 	-DTARGET_ARM \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
@@ -83,9 +83,9 @@ X50NG_DEBUG = \
 	-DDEBUG_X50NG_MAIN
 
 X50NG_INCLUDES = \
-	-I./src/x50ng/ \
-	-I./src/x50ng/s3c2410/ \
-	-I./src/qemu-git/ \
+	-I./src/ \
+	-I./src/s3c2410/ \
+	-I./${QEMU_DIR}/ \
 	$(QEMU_INCLUDES)
 
 X50NG_CFLAGS = \
@@ -111,41 +111,41 @@ X50NG_LDFLAGS = $(DEBUG_CFLAGS) $(LDFLAGS)
 X50NG_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(LUALIBS)
 
 SRCS = \
-	./src/x50ng/s3c2410/s3c2410.c \
-	./src/x50ng/s3c2410/s3c2410_sram.c \
-	./src/x50ng/s3c2410/s3c2410_memc.c \
-	./src/x50ng/s3c2410/s3c2410_intc.c \
-	./src/x50ng/s3c2410/s3c2410_power.c \
-	./src/x50ng/s3c2410/s3c2410_lcd.c \
-	./src/x50ng/s3c2410/s3c2410_nand.c \
-	./src/x50ng/s3c2410/s3c2410_uart.c \
-	./src/x50ng/s3c2410/s3c2410_timer.c \
-	./src/x50ng/s3c2410/s3c2410_usbdev.c \
-	./src/x50ng/s3c2410/s3c2410_watchdog.c \
-	./src/x50ng/s3c2410/s3c2410_io_port.c \
-	./src/x50ng/s3c2410/s3c2410_rtc.c \
-	./src/x50ng/s3c2410/s3c2410_adc.c \
-	./src/x50ng/s3c2410/s3c2410_spi.c \
-	./src/x50ng/s3c2410/s3c2410_sdi.c \
-	./src/x50ng/s3c2410/s3c2410_arm.c \
-	./src/x50ng/s3c2410/block.c \
-	./src/x50ng/module.c \
-	./src/x50ng/flash.c \
-	./src/x50ng/sram.c \
-	./src/x50ng/gui.c \
-	./src/x50ng/timer.c \
-	./src/x50ng/gdbstub.c \
-	./src/x50ng/options.c \
-	./src/x50ng/main.c
+	./src/s3c2410/s3c2410.c \
+	./src/s3c2410/s3c2410_sram.c \
+	./src/s3c2410/s3c2410_memc.c \
+	./src/s3c2410/s3c2410_intc.c \
+	./src/s3c2410/s3c2410_power.c \
+	./src/s3c2410/s3c2410_lcd.c \
+	./src/s3c2410/s3c2410_nand.c \
+	./src/s3c2410/s3c2410_uart.c \
+	./src/s3c2410/s3c2410_timer.c \
+	./src/s3c2410/s3c2410_usbdev.c \
+	./src/s3c2410/s3c2410_watchdog.c \
+	./src/s3c2410/s3c2410_io_port.c \
+	./src/s3c2410/s3c2410_rtc.c \
+	./src/s3c2410/s3c2410_adc.c \
+	./src/s3c2410/s3c2410_spi.c \
+	./src/s3c2410/s3c2410_sdi.c \
+	./src/s3c2410/s3c2410_arm.c \
+	./src/s3c2410/block.c \
+	./src/module.c \
+	./src/flash.c \
+	./src/sram.c \
+	./src/gui.c \
+	./src/timer.c \
+	./src/gdbstub.c \
+	./src/options.c \
+	./src/main.c
 
 OBJS = $(SRCS:.c=.o)
 
 # TEMPO hack
 VVFATOBJS =	\
 	$(QEMU_DIR)/cutils.o \
-	./src/x50ng/s3c2410/block-vvfat.o \
-	./src/x50ng/s3c2410/block-qcow.o \
-	./src/x50ng/s3c2410/block-raw.o
+	./src/s3c2410/block-vvfat.o \
+	./src/s3c2410/block-qcow.o \
+	./src/s3c2410/block-raw.o
 
 all: do-it-all
 
@@ -163,7 +163,7 @@ dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
 %.o: %.c
 	$(CC) $(X50NG_CFLAGS) -o $@ -c $<
 
-# Compilation of qemu-git
+# Compilation of qemu
 $(QEMU_DIR)/config-host.h:
 	+( cd $(QEMU_DIR); \
 	./configure-small; \
@@ -194,7 +194,7 @@ compile_commands.json: distclean
 
 # Cleaning
 clean:
-	rm -f ./src/x50ng/*.o ./src/x50ng/s3c2410/*.o core *~ .depend
+	rm -f ./src/*.o ./src/s3c2410/*.o core *~ .depend
 
 distclean: clean clean-qemu
 	rm -f compile_commands.json
@@ -205,7 +205,7 @@ mrproper: distclean
 
 # auto-format code
 pretty-code:
-	clang-format -i ./src/x50ng/*.c ./src/x50ng/*.h ./src/x50ng/s3c2410/*.c $(shell ls ./src/x50ng/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
+	clang-format -i ./src/*.c ./src/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
 
 # Populate dist/firmware/ from hpcalc.org
 pull-firmware:

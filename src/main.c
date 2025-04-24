@@ -37,7 +37,7 @@ uint8_t* phys_ram_base;
 int phys_ram_size;
 ram_addr_t ram_size = 0x80000; // LD ???
 
-/* for qemu-git */
+/* for qemu */
 int singlestep;
 
 #if !( defined( __APPLE__ ) || defined( _POSIX_C_SOURCE ) && !defined( __sun__ ) )
