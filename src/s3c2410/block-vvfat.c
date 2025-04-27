@@ -831,10 +831,10 @@ static inline off_t cluster2sector( BDRVVVFATState* s, uint32_t cluster_num )
     return s->faked_sectors + s->sectors_per_cluster * cluster_num;
 }
 
-static inline uint32_t sector_offset_in_cluster( BDRVVVFATState* s, off_t sector_num )
-{
-    return ( sector_num - s->first_sectors_number - 2 * s->sectors_per_fat ) % s->sectors_per_cluster;
-}
+/* static inline uint32_t sector_offset_in_cluster( BDRVVVFATState* s, off_t sector_num ) */
+/* { */
+/*     return ( sector_num - s->first_sectors_number - 2 * s->sectors_per_fat ) % s->sectors_per_cluster; */
+/* } */
 
 #ifdef DBG
 static direntry_t* get_direntry_for_mapping( BDRVVVFATState* s, mapping_t* mapping )
@@ -1205,16 +1205,16 @@ static inline mapping_t* find_mapping_for_cluster( BDRVVVFATState* s, unsigned i
  * This function simply compares path == mapping->path. Since the mappings
  * are sorted by cluster, this is expensive: O(n).
  */
-static inline mapping_t* find_mapping_for_path( BDRVVVFATState* s, const char* path )
-{
-    for ( unsigned int i = 0; i < s->mapping.next; i++ ) {
-        mapping_t* mapping = array_get( &( s->mapping ), i );
-        if ( mapping->first_mapping_index < 0 && !strcmp( path, mapping->path ) )
-            return mapping;
-    }
+/* static inline mapping_t* find_mapping_for_path( BDRVVVFATState* s, const char* path ) */
+/* { */
+/*     for ( unsigned int i = 0; i < s->mapping.next; i++ ) { */
+/*         mapping_t* mapping = array_get( &( s->mapping ), i ); */
+/*         if ( mapping->first_mapping_index < 0 && !strcmp( path, mapping->path ) ) */
+/*             return mapping; */
+/*     } */
 
-    return NULL;
-}
+/*     return NULL; */
+/* } */
 
 static int open_file( BDRVVVFATState* s, mapping_t* mapping )
 {
