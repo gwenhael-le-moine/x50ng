@@ -107,7 +107,7 @@ static int s3c2410_memc_load( x50ng_module_t* module, GKeyFile* key )
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
     int error = 0;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -130,7 +130,7 @@ static int s3c2410_memc_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -152,7 +152,7 @@ static int s3c2410_memc_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );

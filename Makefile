@@ -91,7 +91,8 @@ X50NG_INCLUDES = \
 X50NG_CFLAGS = \
 	$(CFLAGS) \
 	-O$(OPTIM) \
-	-Wall \
+	-W -Wall \
+	-Wno-unused-parameter \
 	$(DEBUG_CFLAGS) \
 	$(X50NG_INCLUDES) \
 	$(QEMU_DEFINES) \
@@ -104,7 +105,9 @@ X50NG_CFLAGS = \
 	-DX50NG_DATADIR=\"$(DATADIR)\"
 
 ifeq ($(DEBUG), yes)
-	X50NG_CFLAGS += $(X50NG_DEBUG)
+	X50NG_CFLAGS += \
+	-Wextra \
+	$(X50NG_DEBUG)
 endif
 
 X50NG_LDFLAGS = $(DEBUG_CFLAGS) $(LDFLAGS)

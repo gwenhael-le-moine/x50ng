@@ -105,7 +105,7 @@ static int s3c2410_lcd_load( x50ng_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    for ( int i = 0; i < lcd->nr_regs; i++ ) {
+    for ( unsigned int i = 0; i < lcd->nr_regs; i++ ) {
         reg = &lcd->regs[ i ];
 
         if ( NULL == reg->name )
@@ -127,7 +127,7 @@ static int s3c2410_lcd_save( x50ng_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    for ( int i = 0; i < lcd->nr_regs; i++ ) {
+    for ( unsigned int i = 0; i < lcd->nr_regs; i++ ) {
         reg = &lcd->regs[ i ];
 
         if ( NULL == reg->name )
@@ -148,7 +148,7 @@ static int s3c2410_lcd_reset( x50ng_module_t* module, x50ng_reset_t reset )
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
 #endif
 
-    for ( int i = 0; i < lcd->nr_regs; i++ ) {
+    for ( unsigned int i = 0; i < lcd->nr_regs; i++ ) {
         reg = &lcd->regs[ i ];
 
         if ( NULL == reg->name )

@@ -128,7 +128,7 @@ int save_config( void )
     }
 
     char* data = config_to_string();
-    if ( write( fd, data, strlen( data ) ) != strlen( data ) ) {
+    if ( write( fd, data, strlen( data ) ) != ( ssize_t )strlen( data ) ) {
         error = -errno;
         fprintf( stderr, "%s:%u: write %s: %s\n", __FUNCTION__, __LINE__, config_lua_filename, strerror( errno ) );
         close( fd );

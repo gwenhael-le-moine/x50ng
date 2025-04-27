@@ -416,7 +416,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
         return error;
     }
 
-    if ( flash->size > st.st_size ) {
+    if ( ( long int )( flash->size ) > st.st_size ) {
         fprintf( stderr, "Flash too small, rebuilding\n" );
         opt.reinit = X50NG_REINIT_FLASH_FULL;
     }

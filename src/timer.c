@@ -178,7 +178,7 @@ static void x50ng_main_loop_wait( x50ng_t* x50ng, int timeout )
 
 void x50ng_main_loop( x50ng_t* x50ng )
 {
-    int prev_idle;
+    x50ng_arm_idle_t prev_idle;
     int ret, timeout;
 
     while ( !x50ng->arm_exit ) {

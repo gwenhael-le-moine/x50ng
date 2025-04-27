@@ -74,7 +74,7 @@ static void s3c2410_intc_gen_int_from_sub_int( s3c2410_intc_t* intc );
 
 static int s3c2410_intc_data_init( s3c2410_intc_t* intc )
 {
-    int i;
+    unsigned int i;
 
     s3c2410_offset_t regs[] = {
         S3C2410_OFFSET( INTC, SRCPND, 0x00000000, intc->srcpnd ),       S3C2410_OFFSET( INTC, INTMOD, 0x00000000, intc->intmod ),
@@ -144,7 +144,7 @@ static uint32_t priority_get_word( s3c2410_intc_t* intc )
 {
     const s3c2410_arb_t* arb;
     s3c2410_arb_data_t* arb_data;
-    int i;
+    unsigned int i;
 
     intc->priority = 0;
 
@@ -162,7 +162,7 @@ static void priority_put_word( s3c2410_intc_t* intc, uint32_t data )
 {
     const s3c2410_arb_t* arb;
     s3c2410_arb_data_t* arb_data;
-    int i;
+    unsigned int i;
 
     intc->priority = data & 0x001fffff;
 
@@ -524,7 +524,7 @@ static int s3c2410_intc_load( x50ng_module_t* module, GKeyFile* key )
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
     int error = 0;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -556,7 +556,7 @@ static int s3c2410_intc_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -581,7 +581,7 @@ static int s3c2410_intc_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );

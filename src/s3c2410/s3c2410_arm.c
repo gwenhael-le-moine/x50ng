@@ -14,7 +14,7 @@ static int s3c2410_arm_load( x50ng_module_t* module, GKeyFile* key )
     struct CPUARMState* env = module->user_data;
     char name[ 32 ];
     int error = 0;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -138,7 +138,7 @@ static int s3c2410_arm_save( x50ng_module_t* module, GKeyFile* key )
 {
     struct CPUARMState* env = module->user_data;
     char name[ 32 ];
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );

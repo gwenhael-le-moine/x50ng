@@ -127,7 +127,7 @@ static BlockDriver* find_protocol( const char* filename )
 {
     BlockDriver* drv1;
     char protocol[ 128 ];
-    int len;
+    unsigned int len;
     const char* p;
 
 #ifdef _WIN32

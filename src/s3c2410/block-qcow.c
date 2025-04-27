@@ -79,7 +79,7 @@ static int qcow_probe( const uint8_t* buf, int buf_size, const char* filename )
 {
     const QCowHeader* cow_header = ( const void* )buf;
 
-    if ( buf_size >= sizeof( QCowHeader ) && be32_to_cpu( cow_header->magic ) == QCOW_MAGIC &&
+    if ( ( long unsigned int )buf_size >= sizeof( QCowHeader ) && be32_to_cpu( cow_header->magic ) == QCOW_MAGIC &&
          be32_to_cpu( cow_header->version ) == QCOW_VERSION )
         return 100;
     else
@@ -128,7 +128,8 @@ static int qcow_open( BlockDriverState* bs, const char* filename, int flags )
     s->l1_table = qemu_malloc( s->l1_size * sizeof( uint64_t ) );
     if ( !s->l1_table )
         goto fail;
-    if ( bdrv_pread( s->hd, s->l1_table_offset, s->l1_table, s->l1_size * sizeof( uint64_t ) ) != s->l1_size * sizeof( uint64_t ) )
+    if ( ( uint64_t )bdrv_pread( s->hd, s->l1_table_offset, s->l1_table, s->l1_size * sizeof( uint64_t ) ) !=
+         s->l1_size * sizeof( uint64_t ) )
         goto fail;
     for ( i = 0; i < s->l1_size; i++ ) {
         be64_to_cpus( &s->l1_table[ i ] );
@@ -227,10 +228,10 @@ static uint64_t get_cluster_offset( BlockDriverState* bs, uint64_t offset, int a
     l2_table = s->l2_cache + ( min_index << s->l2_bits );
     if ( new_l2_table ) {
         memset( l2_table, 0, s->l2_size * sizeof( uint64_t ) );
-        if ( bdrv_pwrite( s->hd, l2_offset, l2_table, s->l2_size * sizeof( uint64_t ) ) != s->l2_size * sizeof( uint64_t ) )
+        if ( ( uint64_t )bdrv_pwrite( s->hd, l2_offset, l2_table, s->l2_size * sizeof( uint64_t ) ) != s->l2_size * sizeof( uint64_t ) )
             return 0;
     } else {
-        if ( bdrv_pread( s->hd, l2_offset, l2_table, s->l2_size * sizeof( uint64_t ) ) != s->l2_size * sizeof( uint64_t ) )
+        if ( ( uint64_t )bdrv_pread( s->hd, l2_offset, l2_table, s->l2_size * sizeof( uint64_t ) ) != s->l2_size * sizeof( uint64_t ) )
             return 0;
     }
     s->l2_cache_offsets[ min_index ] = l2_offset;

@@ -181,7 +181,7 @@ int x50ng_modules_save( x50ng_t* x50ng )
         return error;
     }
 
-    if ( write( fd, data, length ) != length ) {
+    if ( ( gsize )write( fd, data, length ) != length ) {
         error = -errno;
         fprintf( stderr, "%s:%u: write %s: %s\n", __FUNCTION__, __LINE__, filename, strerror( errno ) );
         close( fd );

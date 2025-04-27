@@ -154,7 +154,7 @@ static int sdcard_write( s3c2410_sdi_t* sdi )
 {
     uint32_t offset;
     uint32_t size;
-    int error;
+    unsigned int error;
 
     offset = sdi->write_offset;
     size = sdi->nr_write_data;
@@ -650,7 +650,7 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
     char *filename, *filepath;
     int error, error2;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -689,7 +689,7 @@ static int s3c2410_sdi_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -713,7 +713,7 @@ static int s3c2410_sdi_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );

@@ -151,14 +151,14 @@ static inline void* array_insert( array_t* array, unsigned int index, unsigned i
 
 /* this performs a "roll", so that the element which was at index_from becomes
  * index_to, but the order of all other elements is preserved. */
-static inline int array_roll( array_t* array, int index_to, int index_from, int count )
+static inline int array_roll( array_t* array, unsigned int index_to, unsigned int index_from, int count )
 {
     unsigned char* buf;
     unsigned char* from;
     unsigned char* to;
     int is;
 
-    if ( !array || index_to < 0 || index_to >= array->next || index_from < 0 || index_from >= array->next )
+    if ( !array || /* index_to < 0 ||  */ index_to >= array->next || /* index_from < 0 ||  */ index_from >= array->next )
         return -1;
 
     if ( index_to == index_from )
@@ -182,10 +182,10 @@ static inline int array_roll( array_t* array, int index_to, int index_from, int 
     return 0;
 }
 
-static inline int array_remove_slice( array_t* array, int index, int count )
+static inline int array_remove_slice( array_t* array, unsigned int index, unsigned int count )
 {
-    assert( index >= 0 );
-    assert( count > 0 );
+    /* assert( index >= 0 ); */
+    /* assert( count > 0 ); */
     assert( index + count <= array->next );
     if ( array_roll( array, array->next - 1, index, count ) )
         return -1;
@@ -708,7 +708,7 @@ static int read_directory( BDRVVVFATState* s, int mapping_index )
     int first_cluster = mapping->begin;
     int parent_index = mapping->info.dir.parent_mapping_index;
     mapping_t* parent_mapping = ( mapping_t* )( parent_index >= 0 ? array_get( &( s->mapping ), parent_index ) : 0 );
-    int first_cluster_of_parent = parent_mapping ? parent_mapping->begin : -1;
+    int first_cluster_of_parent = parent_mapping ? ( int )( parent_mapping->begin ) : -1;
 
     DIR* dir = opendir( dirname );
     struct dirent* entry;
@@ -921,7 +921,7 @@ static int init_directories( BDRVVVFATState* s, const char* dirname )
     s->path = mapping->path;
 
     for ( i = 0, cluster = 0; i < s->mapping.next; i++ ) {
-        int j;
+        unsigned int j;
         /* MS-DOS expects the FAT to be 0 for the root directory
          * (except for the media byte). */
         /* LATER TODO: still true for FAT32? */
@@ -1164,9 +1164,9 @@ static inline void vvfat_close_current_file( BDRVVVFATState* s )
 /* mappings between index1 and index2-1 are supposed to be ordered
  * return value is the index of the last mapping for which end>cluster_num
  */
-static inline int find_mapping_for_cluster_aux( BDRVVVFATState* s, int cluster_num, int index1, int index2 )
+static inline int find_mapping_for_cluster_aux( BDRVVVFATState* s, unsigned int cluster_num, unsigned int index1, unsigned int index2 )
 {
-    int index3 = index1 + 1;
+    unsigned int index3 = index1 + 1;
     while ( 1 ) {
         mapping_t* mapping;
         index3 = ( index1 + index2 ) / 2;
@@ -1188,9 +1188,9 @@ static inline int find_mapping_for_cluster_aux( BDRVVVFATState* s, int cluster_n
     }
 }
 
-static inline mapping_t* find_mapping_for_cluster( BDRVVVFATState* s, int cluster_num )
+static inline mapping_t* find_mapping_for_cluster( BDRVVVFATState* s, unsigned int cluster_num )
 {
-    int index = find_mapping_for_cluster_aux( s, cluster_num, 0, s->mapping.next );
+    unsigned int index = find_mapping_for_cluster_aux( s, cluster_num, 0, s->mapping.next );
     mapping_t* mapping;
     if ( index >= s->mapping.next )
         return 0;
@@ -1207,9 +1207,7 @@ static inline mapping_t* find_mapping_for_cluster( BDRVVVFATState* s, int cluste
  */
 static inline mapping_t* find_mapping_for_path( BDRVVVFATState* s, const char* path )
 {
-    int i;
-
-    for ( i = 0; i < s->mapping.next; i++ ) {
+    for ( unsigned int i = 0; i < s->mapping.next; i++ ) {
         mapping_t* mapping = array_get( &( s->mapping ), i );
         if ( mapping->first_mapping_index < 0 && !strcmp( path, mapping->path ) )
             return mapping;
@@ -1234,7 +1232,7 @@ static int open_file( BDRVVVFATState* s, mapping_t* mapping )
     return 0;
 }
 
-static inline int read_cluster( BDRVVVFATState* s, int cluster_num )
+static inline int read_cluster( BDRVVVFATState* s, unsigned int cluster_num )
 {
     if ( s->current_cluster != cluster_num ) {
         int result = 0;
@@ -1455,9 +1453,8 @@ typedef struct commit_t {
 
 static void clear_commits( BDRVVVFATState* s )
 {
-    int i;
     DLOG( fprintf( stderr, "clear_commits (%d commits)\n", s->commits.next ) );
-    for ( i = 0; i < s->commits.next; i++ ) {
+    for ( unsigned int i = 0; i < s->commits.next; i++ ) {
         commit_t* commit = array_get( &( s->commits ), i );
         assert( commit->path || commit->action == ACTION_WRITEOUT );
         if ( commit->action != ACTION_WRITEOUT ) {
@@ -1619,12 +1616,12 @@ static inline uint32_t modified_fat_get( BDRVVVFATState* s, unsigned int cluster
 static inline int cluster_was_modified( BDRVVVFATState* s, uint32_t cluster_num )
 {
     int was_modified = 0;
-    int i, dummy;
+    int dummy;
 
     if ( s->qcow == NULL )
         return 0;
 
-    for ( i = 0; !was_modified && i < s->sectors_per_cluster; i++ )
+    for ( unsigned int i = 0; !was_modified && i < s->sectors_per_cluster; i++ )
         was_modified = s->qcow->drv->bdrv_is_allocated( s->qcow, cluster2sector( s, cluster_num ) + i, 1, &dummy );
 
     return was_modified;
@@ -1757,7 +1754,8 @@ static uint32_t get_cluster_count_for_direntry( BDRVVVFATState* s, direntry_t* d
             }
 
             if ( copy_it ) {
-                int i, dummy;
+                unsigned int i;
+                int dummy;
                 /*
                  * This is horribly inefficient, but that is okay, since
                  * it is rarely executed, if at all.
@@ -1830,7 +1828,7 @@ static int check_directory_consistency( BDRVVVFATState* s, int cluster_num, cons
 
     lfn_init( &lfn );
     do {
-        int i;
+        unsigned int i;
         int subret = 0;
 
         ret++;
@@ -1851,7 +1849,7 @@ fail:
         }
 
         for ( i = 0; i < 0x10 * s->sectors_per_cluster; i++ ) {
-            int cluster_count;
+            unsigned int cluster_count;
 
             DLOG( if ( !is_free( direntries + i ) ) {
                 fprintf( stderr, "check direntry %d: \n", i );
@@ -1959,7 +1957,7 @@ static int is_consistent( BDRVVVFATState* s )
     /* mark every mapped file/directory as deleted.
      * (check_directory_consistency() will unmark those still present). */
     if ( s->qcow ) {
-        for ( i = 0; i < s->mapping.next; i++ ) {
+        for ( i = 0; ( unsigned int )i < s->mapping.next; i++ ) {
             mapping_t* mapping = array_get( &( s->mapping ), i );
             if ( mapping->first_mapping_index < 0 ) {
                 DLOG( fprintf( stderr, "%s:%u: mark delete: ", __FUNCTION__, __LINE__ ); print_mapping( mapping ) );
@@ -2002,9 +2000,7 @@ static int is_consistent( BDRVVVFATState* s )
 
 static inline void adjust_mapping_indices( BDRVVVFATState* s, int offset, int adjust )
 {
-    int i;
-
-    for ( i = 0; i < s->mapping.next; i++ ) {
+    for ( unsigned int i = 0; i < s->mapping.next; i++ ) {
         mapping_t* mapping = array_get( &( s->mapping ), i );
 
 #define ADJUST_MAPPING_INDEX( name )                                                                                                       \
@@ -2027,7 +2023,7 @@ static mapping_t* insert_mapping( BDRVVVFATState* s, uint32_t begin, uint32_t en
      * - else: adjust
      * - replace name
      */
-    int index = find_mapping_for_cluster_aux( s, begin, 0, s->mapping.next );
+    unsigned int index = find_mapping_for_cluster_aux( s, begin, 0, s->mapping.next );
     mapping_t* mapping = NULL;
     mapping_t* first_mapping = array_get( &( s->mapping ), 0 );
 
@@ -2081,10 +2077,10 @@ static int remove_mapping( BDRVVVFATState* s, int mapping_index )
 
 static void adjust_dirindices( BDRVVVFATState* s, int offset, int adjust )
 {
-    int i;
+    unsigned int i;
     for ( i = 0; i < s->mapping.next; i++ ) {
         mapping_t* mapping = array_get( &( s->mapping ), i );
-        if ( mapping->dir_index >= offset )
+        if ( mapping->dir_index >= ( unsigned int )offset )
             mapping->dir_index += adjust;
         if ( ( mapping->mode & MODE_DIRECTORY ) && mapping->info.dir.first_dir_index >= offset )
             mapping->info.dir.first_dir_index += adjust;
@@ -2152,7 +2148,7 @@ static int commit_mappings( BDRVVVFATState* s, uint32_t first_cluster, int dir_i
         mapping->end = c;
 
         if ( !fat_eof( s, c1 ) ) {
-            int i = find_mapping_for_cluster_aux( s, c1, 0, s->mapping.next );
+            unsigned int i = find_mapping_for_cluster_aux( s, c1, 0, s->mapping.next );
             mapping_t* next_mapping = i >= s->mapping.next ? NULL : array_get( &( s->mapping ), i );
 
             if ( next_mapping == NULL || next_mapping->begin > c1 ) {
@@ -2205,7 +2201,7 @@ static int commit_direntries( BDRVVVFATState* s, int dir_index, int parent_mappi
     assert( direntry );
     assert( mapping );
     assert( mapping->begin == first_cluster );
-    assert( mapping->info.dir.first_dir_index < s->directory.next );
+    assert( ( unsigned int )( mapping->info.dir.first_dir_index ) < s->directory.next );
     assert( mapping->mode & MODE_DIRECTORY );
     assert( dir_index == 0 || is_directory( direntry ) );
 
@@ -2387,7 +2383,7 @@ static void check2( BDRVVVFATState* s, const char* where )
 
 static int handle_renames_and_mkdirs( BDRVVVFATState* s )
 {
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG
     fprintf( stderr, "handle_renames\n" );
@@ -2444,7 +2440,7 @@ static int handle_renames_and_mkdirs( BDRVVVFATState* s )
             continue;
         } else if ( commit->action == ACTION_MKDIR ) {
             mapping_t* mapping;
-            int j, parent_path_len;
+            unsigned int j, parent_path_len;
 
 #ifdef __MINGW32__
             if ( mkdir( commit->path ) )
@@ -2490,7 +2486,7 @@ static int handle_renames_and_mkdirs( BDRVVVFATState* s )
  */
 static int handle_commits( BDRVVVFATState* s )
 {
-    int i, fail = 0;
+    unsigned int i, fail = 0;
 
     vvfat_close_current_file( s );
 
@@ -2519,10 +2515,10 @@ static int handle_commits( BDRVVVFATState* s )
                 }
             case ACTION_NEW_FILE:
                 {
-                    int begin = commit->param.new_file.first_cluster;
+                    unsigned int begin = commit->param.new_file.first_cluster;
                     mapping_t* mapping = find_mapping_for_cluster( s, begin );
                     direntry_t* entry;
-                    int i;
+                    unsigned int i;
 
                     /* find direntry */
                     for ( i = 0; i < s->directory.next; i++ ) {
@@ -2567,7 +2563,7 @@ static int handle_commits( BDRVVVFATState* s )
 
 static int handle_deletes( BDRVVVFATState* s )
 {
-    int i, deferred = 1, deleted = 1;
+    unsigned int i, deferred = 1, deleted = 1;
 
     /* delete files corresponding to mappings marked as deleted */
     /* handle DELETEs and unused mappings (modified_fat_get(s, mapping->begin) == 0) */
@@ -2585,7 +2581,8 @@ static int handle_deletes( BDRVVVFATState* s )
                 if ( is_free( entry ) ) {
                     /* remove file/directory */
                     if ( mapping->mode & MODE_DIRECTORY ) {
-                        int j, next_dir_index = s->directory.next, first_dir_index = mapping->info.dir.first_dir_index;
+                        unsigned int j;
+                        int next_dir_index = s->directory.next, first_dir_index = mapping->info.dir.first_dir_index;
 
                         if ( rmdir( mapping->path ) < 0 ) {
                             if ( errno == ENOTEMPTY ) {
@@ -2622,9 +2619,7 @@ static int handle_deletes( BDRVVVFATState* s )
 
 static int have_deletes( BDRVVVFATState* s )
 {
-    int i;
-
-    for ( i = 0; i < s->mapping.next; i++ ) {
+    for ( unsigned int i = 0; i < s->mapping.next; i++ ) {
         mapping_t* mapping = array_get( &( s->mapping ), i );
         if ( mapping->mode & MODE_DELETED ) {
             return 1;

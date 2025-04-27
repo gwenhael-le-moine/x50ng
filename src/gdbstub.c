@@ -47,8 +47,7 @@ static int gdb_signal_table[] = { -1, -1, TARGET_SIGINT, -1, -1, TARGET_SIGTRAP 
 
 static int target_signal_to_gdb( int sig )
 {
-    int i;
-    for ( i = 0; i < ARRAY_SIZE( gdb_signal_table ); i++ )
+    for ( long unsigned int i = 0; i < ARRAY_SIZE( gdb_signal_table ); i++ )
         if ( gdb_signal_table[ i ] == sig )
             return i;
     return GDB_SIGNAL_UNKNOWN;
@@ -56,7 +55,7 @@ static int target_signal_to_gdb( int sig )
 
 static int gdb_signal_to_target( int sig )
 {
-    if ( sig < ARRAY_SIZE( gdb_signal_table ) )
+    if ( ( long unsigned int )sig < ARRAY_SIZE( gdb_signal_table ) )
         return gdb_signal_table[ sig ];
     else
         return -1;
@@ -360,7 +359,7 @@ static int cpu_gdb_write_register( CPUState* env, uint8_t* mem_buf, int n )
     return 0;
 }
 
-static int num_g_regs = NUM_CORE_REGS;
+static unsigned int num_g_regs = NUM_CORE_REGS;
 
 #ifdef GDB_CORE_XML
 /* Encode data using the encoding for 'x' packets.  */
@@ -595,7 +594,7 @@ static CPUState* find_cpu( uint32_t thread_id )
     CPUState* env;
 
     for ( env = first_cpu; env != NULL; env = env->next_cpu )
-        if ( gdb_id( env ) == thread_id )
+        if ( gdb_id( env ) == ( int )thread_id )
             return env;
 
     return NULL;
@@ -836,7 +835,7 @@ static int gdb_handle_packet( GDBState* s, const char* line_buf )
         case 'H':
             type = *p++;
             thread = strtoull( p, ( char** )&p, 16 );
-            if ( thread == -1 || thread == 0 ) {
+            if ( ( int )thread == -1 || ( int )thread == 0 ) {
                 put_packet( s, "OK" );
                 break;
             }
@@ -1066,7 +1065,7 @@ static void gdb_read_byte( GDBState* s, int ch )
             case RS_GETLINE:
                 if ( ch == '#' ) {
                     s->state = RS_CHKSUM1;
-                } else if ( s->line_buf_index >= sizeof( s->line_buf ) - 1 ) {
+                } else if ( ( long unsigned int )( s->line_buf_index ) >= sizeof( s->line_buf ) - 1 ) {
                     s->state = RS_IDLE;
                 } else {
                     s->line_buf[ s->line_buf_index++ ] = ch;

@@ -157,27 +157,27 @@ static void s3c2410_rtc_alarm( void* user_data )
     us = 1000000LL - tv.tv_usec;
 
     if ( match && ( rtc->rtcalm & 0x01 ) ) {
-        if ( tm->tm_sec != bcd2bin( rtc->almsec ) )
+        if ( tm->tm_sec != ( int )bcd2bin( rtc->almsec ) )
             match = 0;
     }
     if ( match && ( rtc->rtcalm & 0x02 ) ) {
-        if ( tm->tm_min != bcd2bin( rtc->almmin ) )
+        if ( tm->tm_min != ( int )bcd2bin( rtc->almmin ) )
             match = 0;
     }
     if ( match && ( rtc->rtcalm & 0x04 ) ) {
-        if ( tm->tm_hour != bcd2bin( rtc->almhour ) )
+        if ( tm->tm_hour != ( int )bcd2bin( rtc->almhour ) )
             match = 0;
     }
     if ( match && ( rtc->rtcalm & 0x08 ) ) {
-        if ( tm->tm_mday != bcd2bin( rtc->almdate ) )
+        if ( tm->tm_mday != ( int )bcd2bin( rtc->almdate ) )
             match = 0;
     }
     if ( match && ( rtc->rtcalm & 0x10 ) ) {
-        if ( ( tm->tm_mon + 1 ) != bcd2bin( rtc->almmon ) )
+        if ( ( tm->tm_mon + 1 ) != ( int )bcd2bin( rtc->almmon ) )
             match = 0;
     }
     if ( match && ( rtc->rtcalm & 0x20 ) ) {
-        if ( ( tm->tm_year % 100 ) != bcd2bin( rtc->almyear ) )
+        if ( ( tm->tm_year % 100 ) != ( int )bcd2bin( rtc->almyear ) )
             match = 0;
     }
 
@@ -304,7 +304,7 @@ static int s3c2410_rtc_load( x50ng_module_t* module, GKeyFile* key )
     s3c2410_rtc_t* rtc = module->user_data;
     s3c2410_offset_t* reg;
     int error = 0;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
@@ -330,7 +330,7 @@ static int s3c2410_rtc_save( x50ng_module_t* module, GKeyFile* key )
 {
     s3c2410_rtc_t* rtc = module->user_data;
     s3c2410_offset_t* reg;
-    int i;
+    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
