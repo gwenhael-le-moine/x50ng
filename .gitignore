@@ -3,11 +3,11 @@
 .depend
 *.o
 *.d
-/src/qemu-git/arm-softmmu
-/src/qemu-git/libhw32
-/src/qemu-git/libhw64
-/src/qemu-git/config-host.*
-/src/qemu-git/config-all-devices.mak
+/src/qemu/arm-softmmu
+/src/qemu/libhw32
+/src/qemu/libhw64
+/src/qemu/config-host.*
+/src/qemu/config-all-devices.mak
 /dist/x50ng
 /dist/sdcard
 /dist/x50ng.desktop
