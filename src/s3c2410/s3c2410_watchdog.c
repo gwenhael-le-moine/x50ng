@@ -33,7 +33,7 @@ static int s3c2410_watchdog_data_init( s3c2410_watchdog_t* watchdog )
 
     watchdog->regs = malloc( sizeof( regs ) );
     if ( NULL == watchdog->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -195,7 +195,7 @@ static int s3c2410_watchdog_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < watchdog->nr_regs; i++ ) {
@@ -220,7 +220,7 @@ static int s3c2410_watchdog_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < watchdog->nr_regs; i++ ) {
@@ -242,7 +242,7 @@ static int s3c2410_watchdog_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < watchdog->nr_regs; i++ ) {
@@ -269,12 +269,12 @@ static int s3c2410_watchdog_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     watchdog = malloc( sizeof( s3c2410_watchdog_t ) );
     if ( NULL == watchdog ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_watchdog_data_init( watchdog ) ) {
@@ -291,7 +291,7 @@ static int s3c2410_watchdog_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_watchdog_readfn, s3c2410_watchdog_writefn, watchdog );
 #ifdef DEBUG_S3C2410_WATCHDOG
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_WATCHDOG_BASE, S3C2410_MAP_SIZE, iotype );
     return 0;
@@ -302,7 +302,7 @@ static int s3c2410_watchdog_exit( x50ng_module_t* module )
     s3c2410_watchdog_t* watchdog;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

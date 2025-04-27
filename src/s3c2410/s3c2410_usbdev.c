@@ -113,7 +113,7 @@ static int s3c2410_usbdev_data_init( s3c2410_usbdev_t* usbdev )
 
     usbdev->regs = malloc( sizeof( regs ) );
     if ( NULL == usbdev->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -166,7 +166,7 @@ static int s3c2410_usbdev_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < usbdev->nr_regs; i++ ) {
@@ -189,7 +189,7 @@ static int s3c2410_usbdev_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < usbdev->nr_regs; i++ ) {
@@ -211,7 +211,7 @@ static int s3c2410_usbdev_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < usbdev->nr_regs; i++ ) {
@@ -236,12 +236,12 @@ static int s3c2410_usbdev_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     usbdev = malloc( sizeof( s3c2410_usbdev_t ) );
     if ( NULL == usbdev ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_usbdev_data_init( usbdev ) ) {
@@ -253,7 +253,7 @@ static int s3c2410_usbdev_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_usbdev_readfn, s3c2410_usbdev_writefn, usbdev );
 #ifdef DEBUG_S3C2410_USBDEV
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_USBDEV_BASE, S3C2410_MAP_SIZE, iotype );
     return 0;
@@ -264,7 +264,7 @@ static int s3c2410_usbdev_exit( x50ng_module_t* module )
     s3c2410_usbdev_t* usbdev;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

@@ -81,7 +81,7 @@ static int s3c2410_timer_data_init( s3c2410_timer_t* timer )
 
     timer->regs = malloc( sizeof( regs ) );
     if ( NULL == timer->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -347,7 +347,7 @@ static int s3c2410_timer_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < timer->nr_regs; i++ ) {
@@ -373,7 +373,7 @@ static int s3c2410_timer_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < timer->nr_regs; i++ ) {
@@ -395,7 +395,7 @@ static int s3c2410_timer_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < timer->nr_regs; i++ ) {
@@ -425,12 +425,12 @@ static int s3c2410_timer_init( x50ng_module_t* module )
     int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     timer = malloc( sizeof( s3c2410_timer_t ) );
     if ( NULL == timer ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_timer_data_init( timer ) ) {
@@ -456,7 +456,7 @@ static int s3c2410_timer_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_timer_readfn, s3c2410_timer_writefn, timer );
 #ifdef DEBUG_S3C2410_TIMER
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_TIMER_BASE, S3C2410_MAP_SIZE, iotype );
     return 0;
@@ -467,7 +467,7 @@ static int s3c2410_timer_exit( x50ng_module_t* module )
     s3c2410_timer_t* timer;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

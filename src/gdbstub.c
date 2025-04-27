@@ -1047,7 +1047,7 @@ static void gdb_read_byte( GDBState* s, int ch )
     uint8_t reply;
 
 #ifdef DEBUG_GDB
-    printf( "%s: state %u, byte %02x (%c)\n", __FUNCTION__, s->state, ch, ch );
+    printf( "%s: state %u, byte %02x (%c)\n", __func__, s->state, ch, ch );
     fflush( stdout );
 #endif
 
@@ -1121,7 +1121,7 @@ int gdb_handlesig( CPUState* env, int sig )
         return sig;
 
 #ifdef DEBUG_GDB
-    printf( "%s: sig: %u\n", __FUNCTION__, sig );
+    printf( "%s: sig: %u\n", __func__, sig );
     fflush( stdout );
 #endif
 
@@ -1147,7 +1147,7 @@ int gdb_handlesig( CPUState* env, int sig )
             int i;
 
 #ifdef DEBUG_GDB
-            printf( "%s: read: %d\n", __FUNCTION__, n );
+            printf( "%s: read: %d\n", __func__, n );
             fflush( stdout );
 #endif
 
@@ -1185,7 +1185,7 @@ bool gdb_poll( CPUState* env )
     }
 
 #ifdef DEBUG_GDB
-    printf( "%s: revents: %08x\n", __FUNCTION__, pfd.revents );
+    printf( "%s: revents: %08x\n", __func__, pfd.revents );
     fflush( stdout );
 #endif
 

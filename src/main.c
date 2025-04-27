@@ -125,14 +125,13 @@ uint32_t do_arm_semihosting( CPUState* env )
 
         case 0:
 #ifdef DEBUG_X50NG_SYSCALL
-            printf( "%s: SWI LR %08x: syscall %u: args %08x %08x %08x %08x %08x %08x %08x\n", __FUNCTION__, env->regs[ 14 ], env->regs[ 0 ],
+            printf( "%s: SWI LR %08x: syscall %u: args %08x %08x %08x %08x %08x %08x %08x\n", __func__, env->regs[ 14 ], env->regs[ 0 ],
                     env->regs[ 1 ], env->regs[ 2 ], env->regs[ 3 ], env->regs[ 4 ], env->regs[ 5 ], env->regs[ 6 ], env->regs[ 7 ] );
 #endif
 
             switch ( env->regs[ 0 ] ) {
                 case 305: /* Beep */
-                    printf( "%s: BEEP: frequency %u, time %u, override %u\n", __FUNCTION__, env->regs[ 1 ], env->regs[ 2 ],
-                            env->regs[ 3 ] );
+                    printf( "%s: BEEP: frequency %u, time %u, override %u\n", __func__, env->regs[ 1 ], env->regs[ 2 ], env->regs[ 3 ] );
 
                     gdk_display_beep( gdk_display_get_default() );
                     env->regs[ 0 ] = 0;
@@ -162,7 +161,7 @@ void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
 {
 #ifdef DEBUG_X50NG_ARM_IDLE
     if ( idle != x50ng->arm_idle ) {
-        printf( "%s: arm_idle %u, idle %u\n", __FUNCTION__, x50ng->arm_idle, idle );
+        printf( "%s: arm_idle %u, idle %u\n", __func__, x50ng->arm_idle, idle );
     }
 #endif
 
@@ -224,7 +223,7 @@ static void arm_sighnd( int sig )
             //		x50ng->arm->CallDebug ^= 1;
             break;
         default:
-            fprintf( stderr, "%s: sig %u\n", __FUNCTION__, sig );
+            fprintf( stderr, "%s: sig %u\n", __func__, sig );
             break;
     }
 }
@@ -238,7 +237,7 @@ int main( int argc, char** argv )
 
     x50ng = malloc( sizeof( x50ng_t ) );
     if ( NULL == x50ng ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", progname, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", progname, __func__, __LINE__ );
         exit( EXIT_FAILURE );
     }
     memset( x50ng, 0, sizeof( x50ng_t ) );
@@ -246,7 +245,7 @@ int main( int argc, char** argv )
 #ifdef DEBUG_X50NG_MAIN
     fprintf( stderr, "_SC_PAGE_SIZE: %08lx\n", sysconf( _SC_PAGE_SIZE ) );
 
-    printf( "%s:%u: x50ng: %p\n", __FUNCTION__, __LINE__, x50ng );
+    printf( "%s:%u: x50ng: %p\n", __func__, __LINE__, x50ng );
 #endif
 
     INIT_LIST_HEAD( &x50ng->modules );

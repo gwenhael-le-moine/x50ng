@@ -67,7 +67,7 @@ void x50ng_del_timer( x50ng_timer_t* ts )
 {
     x50ng_timer_t **pt, *t;
 
-    // printf("%s: ts %p\n", __FUNCTION__, ts);
+    // printf("%s: ts %p\n", __func__, ts);
     pt = &x50ng_timer_lists[ ts->type ];
     while ( true ) {
         t = *pt;
@@ -129,11 +129,11 @@ QEMUTimer* qemu_new_timer( QEMUClock* clock, QEMUTimerCB cb, void* opaque )
     return ( void* )x50ng_new_timer( ( long )clock, cb, opaque );
 }
 
-void qemu_free_timer( QEMUTimer* ts ) { return x50ng_free_timer( ( void* )ts ); }
+void qemu_free_timer( QEMUTimer* ts ) { /* return */ x50ng_free_timer( ( void* )ts ); }
 
-void qemu_mod_timer( QEMUTimer* ts, int64_t expire_time ) { return x50ng_mod_timer( ( void* )ts, expire_time ); }
+void qemu_mod_timer( QEMUTimer* ts, int64_t expire_time ) { /* return */ x50ng_mod_timer( ( void* )ts, expire_time ); }
 
-void qemu_del_timer( QEMUTimer* ts ) { return x50ng_del_timer( ( void* )ts ); }
+void qemu_del_timer( QEMUTimer* ts ) { /* return */ x50ng_del_timer( ( void* )ts ); }
 
 int qemu_timer_pending( QEMUTimer* ts ) { return x50ng_timer_pending( ( void* )ts ); }
 
@@ -186,12 +186,11 @@ void x50ng_main_loop( x50ng_t* x50ng )
 
         if ( x50ng->arm_idle == X50NG_ARM_RUN ) {
 #ifdef DEBUG_X50NG_TIMER_IDLE
-            printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )x50ng_get_clock(), __FUNCTION__, x50ng->env );
+            printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )x50ng_get_clock(), __func__, x50ng->env );
 #endif
             ret = cpu_exec( x50ng->env );
 #ifdef DEBUG_X50NG_TIMER_IDLE
-            printf( "%lld: %s: cpu_exec(): %d, PC %08x\n", ( unsigned long long )x50ng_get_clock(), __FUNCTION__, ret,
-                    x50ng->env->regs[ 15 ] );
+            printf( "%lld: %s: cpu_exec(): %d, PC %08x\n", ( unsigned long long )x50ng_get_clock(), __func__, ret, x50ng->env->regs[ 15 ] );
 #endif
 
             if ( x50ng->env->regs[ 15 ] == 0x8620 ) {

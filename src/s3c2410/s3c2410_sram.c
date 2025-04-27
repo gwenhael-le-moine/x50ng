@@ -24,7 +24,7 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     error = x50ng_module_get_filename( module, key, "filename", "s3c2410-sram", &( filemap->filename ), &filename );
@@ -32,7 +32,7 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
     filemap->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( filemap->fd < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         return error;
     }
@@ -40,7 +40,7 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
     filemap->size = S3C2410_SRAM_SIZE;
     if ( ftruncate( filemap->fd, filemap->size ) < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: ftruncate %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: ftruncate %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         close( filemap->fd );
         filemap->fd = -1;
@@ -50,7 +50,7 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
     filemap->data = mmap( phys_ram_base + filemap->offset, filemap->size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED, filemap->fd, 0 );
     if ( filemap->data == ( void* )-1 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: mmap %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: mmap %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         close( filemap->fd );
         filemap->fd = -1;
@@ -69,20 +69,20 @@ static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     x50ng_module_set_filename( module, key, "filename", filemap->filename );
 
     error = msync( filemap->data, filemap->size, MS_ASYNC );
     if ( error ) {
-        fprintf( stderr, "%s:%u: msync: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
+        fprintf( stderr, "%s:%u: msync: %s\n", __func__, __LINE__, strerror( errno ) );
         return error;
     }
 
     error = fsync( filemap->fd );
     if ( error ) {
-        fprintf( stderr, "%s:%u: fsync: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
+        fprintf( stderr, "%s:%u: fsync: %s\n", __func__, __LINE__, strerror( errno ) );
         return error;
     }
 
@@ -92,7 +92,7 @@ static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
 static int s3c2410_sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
 {
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     return 0;
@@ -103,12 +103,12 @@ static int s3c2410_sram_init( x50ng_module_t* module )
     filemap_t* filemap;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     filemap = malloc( sizeof( filemap_t ) );
     if ( NULL == filemap ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -131,7 +131,7 @@ static int s3c2410_sram_exit( x50ng_module_t* module )
     filemap_t* filemap;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

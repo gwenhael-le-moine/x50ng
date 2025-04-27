@@ -51,7 +51,7 @@ static int s3c2410_memc_data_init( s3c2410_memc_t* memc )
 
     memc->regs = malloc( sizeof( regs ) );
     if ( NULL == memc->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -98,7 +98,7 @@ static void s3c2410_memc_write( void* opaque, target_phys_addr_t offset, uint32_
     *( reg->datap ) = data;
 
 #ifdef DEBUG_S3C2410_MEMC
-    printf( "%s:%u: env %p\n", __FUNCTION__, __LINE__, memc->x50ng->env );
+    printf( "%s:%u: env %p\n", __func__, __LINE__, memc->x50ng->env );
 #endif
 }
 
@@ -110,7 +110,7 @@ static int s3c2410_memc_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < memc->nr_regs; i++ ) {
@@ -133,7 +133,7 @@ static int s3c2410_memc_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < memc->nr_regs; i++ ) {
@@ -155,7 +155,7 @@ static int s3c2410_memc_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < memc->nr_regs; i++ ) {
@@ -180,12 +180,12 @@ static int s3c2410_memc_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     memc = malloc( sizeof( s3c2410_memc_t ) );
     if ( NULL == memc ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_memc_data_init( memc ) ) {
@@ -198,7 +198,7 @@ static int s3c2410_memc_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_memc_readfn, s3c2410_memc_writefn, memc );
 #ifdef DEBUG_S3C2410_MEMC
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_MEMC_BASE, S3C2410_MAP_SIZE, iotype );
     return 0;
@@ -209,7 +209,7 @@ static int s3c2410_memc_exit( x50ng_module_t* module )
     s3c2410_memc_t* memc;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

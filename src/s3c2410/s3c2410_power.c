@@ -36,7 +36,7 @@ static int s3c2410_power_data_init( s3c2410_power_t* power )
 
     power->regs = malloc( sizeof( regs ) );
     if ( NULL == power->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -174,10 +174,10 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
     }
 
 #ifdef DEBUG_S3C2410_POWER
-    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: MCLK %u\n", __FUNCTION__, EXTCLK, mMdiv, mPdiv, mSdiv, x50ng->MCLK );
-    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: UCLK %u\n", __FUNCTION__, EXTCLK, uMdiv, uPdiv, uSdiv, x50ng->UCLK );
-    printf( "%s: FCLK %s: %u\n", __FUNCTION__, slow_bit ? "(slow)" : "", x50ng->FCLK );
-    printf( "%s: HCLK %u, PCLK %u\n", __FUNCTION__, x50ng->HCLK, x50ng->PCLK );
+    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: MCLK %u\n", __func__, EXTCLK, mMdiv, mPdiv, mSdiv, x50ng->MCLK );
+    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: UCLK %u\n", __func__, EXTCLK, uMdiv, uPdiv, uSdiv, x50ng->UCLK );
+    printf( "%s: FCLK %s: %u\n", __func__, slow_bit ? "(slow)" : "", x50ng->FCLK );
+    printf( "%s: HCLK %u, PCLK %u\n", __func__, x50ng->HCLK, x50ng->PCLK );
 #endif
 }
 
@@ -189,7 +189,7 @@ static int s3c2410_power_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < power->nr_regs; i++ ) {
@@ -217,7 +217,7 @@ static int s3c2410_power_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < power->nr_regs; i++ ) {
@@ -239,7 +239,7 @@ static int s3c2410_power_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < power->nr_regs; i++ ) {
@@ -264,12 +264,12 @@ static int s3c2410_power_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     power = malloc( sizeof( s3c2410_power_t ) );
     if ( NULL == power ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_power_data_init( power ) ) {
@@ -282,7 +282,7 @@ static int s3c2410_power_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_power_readfn, s3c2410_power_writefn, power );
 #ifdef DEBUG_S3C2410_POWER
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_POWER_BASE, S3C2410_MAP_SIZE, iotype );
     return 0;
@@ -293,7 +293,7 @@ static int s3c2410_power_exit( x50ng_module_t* module )
     s3c2410_power_t* power;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

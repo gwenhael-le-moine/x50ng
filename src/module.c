@@ -21,7 +21,7 @@ int x50ng_modules_init( x50ng_t* x50ng )
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
+    printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
     phys_ram_size = 0;
@@ -35,12 +35,12 @@ int x50ng_modules_init( x50ng_t* x50ng )
 
     phys_ram_base = mmap( 0, phys_ram_size, PROT_NONE, MAP_SHARED | MAP_ANON, -1, 0 );
     if ( phys_ram_base == ( uint8_t* )-1 ) {
-        fprintf( stderr, "%s: can't mmap %08x anonymous bytes\n", __FUNCTION__, phys_ram_size );
+        fprintf( stderr, "%s: can't mmap %08x anonymous bytes\n", __func__, phys_ram_size );
         exit( EXIT_FAILURE );
     }
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: phys_ram_base: %p\n", __FUNCTION__, phys_ram_base );
+    printf( "%s: phys_ram_base: %p\n", __func__, phys_ram_base );
 #endif
 
     phys_ram_dirty = qemu_vmalloc( phys_ram_size >> TARGET_PAGE_BITS );
@@ -58,7 +58,7 @@ int x50ng_modules_exit( x50ng_t* x50ng )
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
+    printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
     list_for_each_entry_safe_reverse( module, next, &x50ng->modules, list )
@@ -77,7 +77,7 @@ int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
+    printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
     list_for_each_entry( module, &x50ng->modules, list )
@@ -98,24 +98,24 @@ int x50ng_modules_load( x50ng_t* x50ng )
     const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
+    printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
     if ( g_mkdir_with_parents( opt.datadir, 0755 ) ) {
         error = -errno;
-        fprintf( stderr, "%s:%u: g_mkdir_with_parents: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
+        fprintf( stderr, "%s:%u: g_mkdir_with_parents: %s\n", __func__, __LINE__, strerror( errno ) );
         return error;
     }
 
     x50ng->state = g_key_file_new();
     if ( NULL == x50ng->state ) {
-        fprintf( stderr, "%s:%u: g_key_file_new: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: g_key_file_new: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
     if ( !g_key_file_load_from_file( x50ng->state, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
          !g_error_matches( gerror, G_FILE_ERROR, G_FILE_ERROR_NOENT ) ) {
-        fprintf( stderr, "%s:%u: g_key_file_load_from_file: %s\n", __FUNCTION__, __LINE__, gerror->message );
+        fprintf( stderr, "%s:%u: g_key_file_load_from_file: %s\n", __func__, __LINE__, gerror->message );
         g_key_file_free( x50ng->state );
         return -EIO;
     }
@@ -137,7 +137,7 @@ int x50ng_modules_load( x50ng_t* x50ng )
     {
         extern unsigned char* phys_ram_base;
 
-        printf( "%s: phys_ram_base: %p\n", __FUNCTION__, phys_ram_base );
+        printf( "%s: phys_ram_base: %p\n", __func__, phys_ram_base );
         printf( "\t%02x %02x %02x %02x %02x %02x %02x %02x\n", phys_ram_base[ 0 ], phys_ram_base[ 1 ], phys_ram_base[ 2 ],
                 phys_ram_base[ 3 ], phys_ram_base[ 4 ], phys_ram_base[ 5 ], phys_ram_base[ 6 ], phys_ram_base[ 7 ] );
     }
@@ -157,7 +157,7 @@ int x50ng_modules_save( x50ng_t* x50ng )
     const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u:\n", __FUNCTION__, __LINE__ );
+    printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
     list_for_each_entry( module, &x50ng->modules, list )
@@ -169,21 +169,21 @@ int x50ng_modules_save( x50ng_t* x50ng )
 
     data = g_key_file_to_data( x50ng->state, &length, &gerror );
     if ( NULL == data ) {
-        fprintf( stderr, "%s:%u: g_key_file_to_data: %s\n", __FUNCTION__, __LINE__, gerror->message );
+        fprintf( stderr, "%s:%u: g_key_file_to_data: %s\n", __func__, __LINE__, gerror->message );
         return -ENOMEM;
     }
 
     fd = open( filename, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
     if ( fd < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s:%u: open %s: %s\n", __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s:%u: open %s: %s\n", __func__, __LINE__, filename, strerror( errno ) );
         g_free( data );
         return error;
     }
 
     if ( ( gsize )write( fd, data, length ) != length ) {
         error = -errno;
-        fprintf( stderr, "%s:%u: write %s: %s\n", __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s:%u: write %s: %s\n", __func__, __LINE__, filename, strerror( errno ) );
         close( fd );
         g_free( data );
         return error;
@@ -200,7 +200,7 @@ int x50ng_module_register( x50ng_module_t* module )
     x50ng_t* x50ng = module->x50ng;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u: %s\n", __FUNCTION__, __LINE__, module->name );
+    printf( "%s:%u: %s\n", __func__, __LINE__, module->name );
 #endif
 
     list_add_tail( &module->list, &x50ng->modules );
@@ -211,7 +211,7 @@ int x50ng_module_register( x50ng_module_t* module )
 int x50ng_module_unregister( x50ng_module_t* module )
 {
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s:%u: %s\n", __FUNCTION__, __LINE__, module->name );
+    printf( "%s:%u: %s\n", __func__, __LINE__, module->name );
 #endif
 
     list_del( &module->list );
@@ -232,7 +232,7 @@ int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile* key, const char
 
     *path = g_build_filename( opt.datadir, *valuep, NULL );
     if ( NULL == path ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
         g_free( *valuep );
         *valuep = NULL;
     }
@@ -285,7 +285,7 @@ int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile* key, const char* nam
 
     data = g_key_file_get_value( key, module->name, name, &gerror );
     if ( NULL == data ) {
-        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __FUNCTION__, __LINE__, name );
+        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __func__, __LINE__, name );
         *valuep = reset;
         return -EAGAIN;
     }
@@ -333,7 +333,7 @@ int x50ng_module_get_u64( x50ng_module_t* module, GKeyFile* key, const char* nam
 
     data = g_key_file_get_value( key, module->name, name, &gerror );
     if ( NULL == data ) {
-        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __FUNCTION__, __LINE__, name );
+        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __func__, __LINE__, name );
         *valuep = reset;
         return -EAGAIN;
     }
@@ -358,7 +358,7 @@ int x50ng_module_get_string( x50ng_module_t* module, GKeyFile* key, const char* 
 
     data = g_key_file_get_value( key, module->name, name, &gerror );
     if ( NULL == data ) {
-        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __FUNCTION__, __LINE__, name );
+        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __func__, __LINE__, name );
         *valuep = g_strdup( reset );
         return -EAGAIN;
     }
@@ -384,7 +384,7 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
     if ( opt.verbose )
         fprintf( stderr, "reading %s\n", *path );
     if ( NULL == *path ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
         return -ENOMEM;
     }
     fd = open( *path, O_RDONLY );
@@ -396,7 +396,7 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
         if ( opt.verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
-            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
             return -ENOMEM;
         }
         fd = open( *path, O_RDONLY );
@@ -409,7 +409,7 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
         if ( opt.verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
-            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
             return -ENOMEM;
         }
         fd = open( *path, O_RDONLY );
@@ -423,7 +423,7 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
         if ( opt.verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
-            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
             return -ENOMEM;
         }
         fd = open( *path, O_RDONLY );
@@ -432,7 +432,7 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
 
     if ( fd < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, *path, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, *path, strerror( errno ) );
         g_free( *path );
         *path = NULL;
         return error;
@@ -449,7 +449,7 @@ int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( x50ng_mo
 
     module = malloc( sizeof( x50ng_module_t ) );
     if ( NULL == module ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", name, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", name, __func__, __LINE__ );
         return -1;
     }
     memset( module, 0, sizeof( x50ng_module_t ) );

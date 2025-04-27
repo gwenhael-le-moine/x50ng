@@ -144,17 +144,17 @@ static BlockDriver* find_protocol( const char* filename )
     protocol[ len ] = '\0';
     for ( drv1 = first_drv; drv1 != NULL; drv1 = drv1->next ) {
 #ifdef DEBUG_X50NG_BLOCK
-        fprintf( stderr, "%s:%u: protocol '%s', drv->protocol_name '%s'\n", __FUNCTION__, __LINE__, protocol, drv1->protocol_name );
+        fprintf( stderr, "%s:%u: protocol '%s', drv->protocol_name '%s'\n", __func__, __LINE__, protocol, drv1->protocol_name );
 #endif
         if ( drv1->protocol_name && !strcmp( drv1->protocol_name, protocol ) ) {
 #ifdef DEBUG_X50NG_BLOCK
-            fprintf( stderr, "%s:%u: protocol '%s', drv %p\n", __FUNCTION__, __LINE__, protocol, drv1 );
+            fprintf( stderr, "%s:%u: protocol '%s', drv %p\n", __func__, __LINE__, protocol, drv1 );
 #endif
             return drv1;
         }
     }
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: protocol '%s', NULL\n", __FUNCTION__, __LINE__, protocol );
+    fprintf( stderr, "%s:%u: protocol '%s', NULL\n", __func__, __LINE__, protocol );
 #endif
     return NULL;
 }
@@ -260,7 +260,7 @@ int bdrv_file_open( BlockDriverState** pbs, const char* filename, int flags )
     BlockDriverState* bs;
     int ret;
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: filename '%s'\n", __FUNCTION__, __LINE__, filename );
+    fprintf( stderr, "%s:%u: filename '%s'\n", __func__, __LINE__, filename );
 #endif
 
     bs = bdrv_new( "" );
@@ -270,13 +270,13 @@ int bdrv_file_open( BlockDriverState** pbs, const char* filename, int flags )
     if ( ret < 0 ) {
         bdrv_delete( bs );
 #ifdef DEBUG_X50NG_BLOCK
-        fprintf( stderr, "%s:%u: '%s': %d\n", __FUNCTION__, __LINE__, filename, ret );
+        fprintf( stderr, "%s:%u: '%s': %d\n", __func__, __LINE__, filename, ret );
 #endif
         return ret;
     }
     *pbs = bs;
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: return 0\n", __FUNCTION__, __LINE__ );
+    fprintf( stderr, "%s:%u: return 0\n", __func__, __LINE__ );
 #endif
     return 0;
 }
@@ -288,7 +288,7 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
     BlockDriver* drv = NULL;
 
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: filename '%s'\n", __FUNCTION__, __LINE__, filename );
+    fprintf( stderr, "%s:%u: filename '%s'\n", __func__, __LINE__, filename );
 #endif
 
     bs->read_only = 0;
@@ -300,7 +300,7 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
         drv = find_protocol( filename );
         if ( !drv ) {
 #ifdef DEBUG_X50NG_BLOCK
-            fprintf( stderr, "%s:%u: drv: %p\n", __FUNCTION__, __LINE__, drv );
+            fprintf( stderr, "%s:%u: drv: %p\n", __func__, __LINE__, drv );
 #endif
             return -ENOENT;
         }
@@ -309,7 +309,7 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
             drv = find_image_format( filename );
             if ( !drv ) {
 #ifdef DEBUG_X50NG_BLOCK
-                fprintf( stderr, "%s:%u: drv: %p\n", __FUNCTION__, __LINE__, drv );
+                fprintf( stderr, "%s:%u: drv: %p\n", __func__, __LINE__, drv );
 #endif
                 return -1;
             }
@@ -317,13 +317,13 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
     }
 
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: drv: %p\n", __FUNCTION__, __LINE__, drv );
+    fprintf( stderr, "%s:%u: drv: %p\n", __func__, __LINE__, drv );
 #endif
     bs->drv = drv;
     bs->opaque = qemu_mallocz( drv->instance_size );
     if ( bs->opaque == NULL && drv->instance_size > 0 ) {
 #ifdef DEBUG_X50NG_BLOCK
-        fprintf( stderr, "%s:%u: no opaque\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: no opaque\n", __func__, __LINE__ );
 #endif
         return -1;
     }
@@ -335,7 +335,7 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
         open_flags = flags & ~( BDRV_O_FILE );
     ret = drv->bdrv_open( bs, filename, open_flags );
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: drv->bdrv_open: %d\n", __FUNCTION__, __LINE__, ret );
+    fprintf( stderr, "%s:%u: drv->bdrv_open: %d\n", __func__, __LINE__, ret );
 #endif
     if ( ret == -EACCES && !( flags & BDRV_O_FILE ) ) {
         ret = drv->bdrv_open( bs, filename, BDRV_O_RDONLY );
@@ -346,7 +346,7 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
         bs->opaque = NULL;
         bs->drv = NULL;
 #ifdef DEBUG_X50NG_BLOCK
-        fprintf( stderr, "%s:%u: return %d\n", __FUNCTION__, __LINE__, ret );
+        fprintf( stderr, "%s:%u: return %d\n", __func__, __LINE__, ret );
 #endif
         return ret;
     }
@@ -365,20 +365,20 @@ int bdrv_open( BlockDriverState* bs, const char* filename, int flags )
 fail:
             bdrv_close( bs );
 #ifdef DEBUG_X50NG_BLOCK
-            fprintf( stderr, "%s:%u: return -ENOMEM\n", __FUNCTION__, __LINE__ );
+            fprintf( stderr, "%s:%u: return -ENOMEM\n", __func__, __LINE__ );
 #endif
             return -ENOMEM;
         }
 #ifdef DEBUG_X50NG_BLOCK
-        fprintf( stderr, "%s:%u: combine '%s' '%s'\n", __FUNCTION__, __LINE__, filename, bs->backing_file );
+        fprintf( stderr, "%s:%u: combine '%s' '%s'\n", __func__, __LINE__, filename, bs->backing_file );
 #endif
         path_combine( backing_filename, sizeof( backing_filename ), filename, bs->backing_file );
 #ifdef DEBUG_X50NG_BLOCK
-        fprintf( stderr, "%s:%u: combine: '%s'\n", __FUNCTION__, __LINE__, backing_filename );
+        fprintf( stderr, "%s:%u: combine: '%s'\n", __func__, __LINE__, backing_filename );
 #endif
         if ( bdrv_open( bs->backing_hd, backing_filename, 0 ) < 0 ) {
 #ifdef DEBUG_X50NG_BLOCK
-            fprintf( stderr, "%s:%u: backing fail\n", __FUNCTION__, __LINE__ );
+            fprintf( stderr, "%s:%u: backing fail\n", __func__, __LINE__ );
 #endif
             goto fail;
         }
@@ -390,7 +390,7 @@ fail:
         bs->change_cb( bs->change_opaque );
 
 #ifdef DEBUG_X50NG_BLOCK
-    fprintf( stderr, "%s:%u: return 0\n", __FUNCTION__, __LINE__ );
+    fprintf( stderr, "%s:%u: return 0\n", __func__, __LINE__ );
 #endif
     return 0;
 }

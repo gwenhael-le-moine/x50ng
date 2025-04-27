@@ -72,18 +72,18 @@ static int s3c2410_uart_data_init( s3c2410_uart_t* uart )
 
     uart->uart[ 0 ].regs = malloc( sizeof( regs0 ) );
     if ( NULL == uart->uart[ 0 ].regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     uart->uart[ 1 ].regs = malloc( sizeof( regs1 ) );
     if ( NULL == uart->uart[ 1 ].regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         free( uart->uart[ 0 ].regs );
         return -ENOMEM;
     }
     uart->uart[ 2 ].regs = malloc( sizeof( regs2 ) );
     if ( NULL == uart->uart[ 2 ].regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         free( uart->uart[ 0 ].regs );
         free( uart->uart[ 1 ].regs );
         return -ENOMEM;
@@ -272,7 +272,7 @@ static int s3c2410_uart_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < uart_regs->nr_regs; i++ ) {
@@ -295,7 +295,7 @@ static int s3c2410_uart_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < uart_regs->nr_regs; i++ ) {
@@ -317,7 +317,7 @@ static int s3c2410_uart_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < uart_regs->nr_regs; i++ ) {
@@ -342,12 +342,12 @@ static int s3c2410_uart_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     iotype = cpu_register_io_memory( s3c2410_uart_readfn, s3c2410_uart_writefn, uart_regs );
 #ifdef DEBUG_S3C2410_UART
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_UART0_BASE, S3C2410_MAP_SIZE, iotype );
 
@@ -359,7 +359,7 @@ static int s3c2410_uart_exit( x50ng_module_t* module )
     s3c2410_uart_reg_t* uart_regs;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {
@@ -381,7 +381,7 @@ int x50ng_s3c2410_uart_init( x50ng_t* x50ng )
 
     uart = malloc( sizeof( s3c2410_uart_t ) );
     if ( NULL == uart ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     memset( uart, 0, sizeof( s3c2410_uart_t ) );

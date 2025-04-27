@@ -106,7 +106,7 @@ static int s3c2410_io_port_data_init( s3c2410_io_port_t* io )
 
     io->regs = malloc( sizeof( regs ) );
     if ( NULL == io->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -166,7 +166,7 @@ static uint32_t s3c2410_io_port_read( void* opaque, target_phys_addr_t offset )
     s3c2410_offset_t* reg;
 
     if ( !S3C2410_OFFSET_OK( io, offset ) ) {
-        fprintf( stderr, "%s:%u: offset %08lx not OK\n", __FUNCTION__, __LINE__, ( unsigned long )offset );
+        fprintf( stderr, "%s:%u: offset %08lx not OK\n", __func__, __LINE__, ( unsigned long )offset );
         abort();
         return ~( 0 );
     }
@@ -497,7 +497,7 @@ static int s3c2410_io_port_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < io->nr_regs; i++ ) {
@@ -520,7 +520,7 @@ static int s3c2410_io_port_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < io->nr_regs; i++ ) {
@@ -542,7 +542,7 @@ static int s3c2410_io_port_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( reset == X50NG_RESET_POWER_OFF ) {
@@ -576,12 +576,12 @@ static int s3c2410_io_port_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     io = malloc( sizeof( s3c2410_io_port_t ) );
     if ( NULL == io ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_io_port_data_init( io ) ) {
@@ -595,7 +595,7 @@ static int s3c2410_io_port_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_io_port_readfn, s3c2410_io_port_writefn, io );
 #ifdef DEBUG_S3C2410_IO_PORT
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_IO_PORT_BASE, S3C2410_MAP_SIZE, iotype );
     return 0;
@@ -606,7 +606,7 @@ static int s3c2410_io_port_exit( x50ng_module_t* module )
     s3c2410_io_port_t* io;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

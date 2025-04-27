@@ -17,7 +17,7 @@ static int s3c2410_arm_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     cpu_reset( env );
@@ -141,7 +141,7 @@ static int s3c2410_arm_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < ( sizeof( env->regs ) / sizeof( env->regs[ 0 ] ) ); i++ ) {
@@ -212,7 +212,7 @@ static int s3c2410_arm_reset( x50ng_module_t* module, x50ng_reset_t reset )
     struct CPUARMState* env = module->user_data;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     cpu_reset( env );
@@ -226,7 +226,7 @@ static int s3c2410_arm_init( x50ng_module_t* module )
     x50ng_t* x50ng = module->x50ng;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     module->user_data = x50ng->env;
@@ -236,7 +236,7 @@ static int s3c2410_arm_init( x50ng_module_t* module )
 static int s3c2410_arm_exit( x50ng_module_t* module )
 {
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     return 0;

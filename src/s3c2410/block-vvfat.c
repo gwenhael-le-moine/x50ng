@@ -539,16 +539,16 @@ static inline void fat_set( BDRVVVFATState* s, unsigned int cluster, uint32_t va
 {
     if ( s->fat_type == 32 ) {
         uint32_t* entry = array_get( &( s->fat ), cluster );
-        DLOG( fprintf( stderr, "%s:%u: cluster %u: %08x\n", __FUNCTION__, __LINE__, cluster, value ) );
+        DLOG( fprintf( stderr, "%s:%u: cluster %u: %08x\n", __func__, __LINE__, cluster, value ) );
         *entry = cpu_to_le32( value );
     } else if ( s->fat_type == 16 ) {
         uint16_t* entry = array_get( &( s->fat ), cluster );
-        DLOG( fprintf( stderr, "%s:%u: cluster %u: %04x\n", __FUNCTION__, __LINE__, cluster, value & 0xffff ) );
+        DLOG( fprintf( stderr, "%s:%u: cluster %u: %04x\n", __func__, __LINE__, cluster, value & 0xffff ) );
         *entry = cpu_to_le16( value & 0xffff );
     } else {
         int offset = ( cluster * 3 / 2 );
         unsigned char* p = array_get( &( s->fat ), offset );
-        DLOG( fprintf( stderr, "%s:%u: cluster %u: %03x\n", __FUNCTION__, __LINE__, cluster, value & 0xfff ) );
+        DLOG( fprintf( stderr, "%s:%u: cluster %u: %03x\n", __func__, __LINE__, cluster, value & 0xfff ) );
         switch ( cluster & 1 ) {
             case 0:
                 p[ 0 ] = value & 0xff;
@@ -744,7 +744,7 @@ static int read_directory( BDRVVVFATState* s, int mapping_index )
             continue;
         }
 
-        DLOG( fprintf( stderr, "%s:%u: create direntry for '%s'\n", __FUNCTION__, __LINE__, entry->d_name ) );
+        DLOG( fprintf( stderr, "%s:%u: create direntry for '%s'\n", __func__, __LINE__, entry->d_name ) );
 
         /* create directory entry for this file */
         direntry = create_short_and_long_name( s, i, entry->d_name, is_dot || is_dotdot );
@@ -771,7 +771,7 @@ static int read_directory( BDRVVVFATState* s, int mapping_index )
 
         /* create mapping for this file */
         if ( !is_dot && !is_dotdot && ( S_ISDIR( st.st_mode ) || st.st_size ) ) {
-            DLOG( fprintf( stderr, "%s:%u: create mapping for '%s'\n", __FUNCTION__, __LINE__, entry->d_name ) );
+            DLOG( fprintf( stderr, "%s:%u: create mapping for '%s'\n", __func__, __LINE__, entry->d_name ) );
 
             s->current_mapping = ( mapping_t* )array_get_next( &( s->mapping ) );
             s->current_mapping->begin = 0;
@@ -875,7 +875,7 @@ static int init_directories( BDRVVVFATState* s, const char* dirname )
     array_init( &( s->mapping ), sizeof( mapping_t ) );
     array_init( &( s->directory ), sizeof( direntry_t ) );
 
-    DLOG( fprintf( stderr, "%s:%u: create direntry for '%s'\n", __FUNCTION__, __LINE__, dirname ) );
+    DLOG( fprintf( stderr, "%s:%u: create direntry for '%s'\n", __func__, __LINE__, dirname ) );
 
     /* add volume label */
     stat( dirname, &st );
@@ -905,7 +905,7 @@ static int init_directories( BDRVVVFATState* s, const char* dirname )
     s->faked_sectors = s->first_sectors_number + s->sectors_per_fat * 2;
     s->cluster_count = sector2cluster( s, s->sector_count );
 
-    DLOG( fprintf( stderr, "%s:%u: create mapping for '%s'\n", __FUNCTION__, __LINE__, dirname ) );
+    DLOG( fprintf( stderr, "%s:%u: create mapping for '%s'\n", __func__, __LINE__, dirname ) );
 
     mapping = array_get_next( &( s->mapping ) );
     mapping->begin = 0;
@@ -1088,7 +1088,7 @@ static int vvfat_open( BlockDriverState* bs, const char* dirname, int flags )
     s->downcase_short_names = 1;
 
     if ( !strstart( dirname, "fat:", NULL ) ) {
-        DLOG( fprintf( stderr, "%s:%u: dirname '%s' not \"fat:\"\n", __FUNCTION__, __LINE__, dirname ) );
+        DLOG( fprintf( stderr, "%s:%u: dirname '%s' not \"fat:\"\n", __func__, __LINE__, dirname ) );
         return -1;
     }
 
@@ -1132,7 +1132,7 @@ static int vvfat_open( BlockDriverState* bs, const char* dirname, int flags )
         s->sector_count = bs->total_sectors;
 
     if ( init_directories( s, dirname ) ) {
-        DLOG( fprintf( stderr, "%s:%u: init_directories failed\n", __FUNCTION__, __LINE__ ) );
+        DLOG( fprintf( stderr, "%s:%u: init_directories failed\n", __func__, __LINE__ ) );
         return -1;
     }
 
@@ -1145,7 +1145,7 @@ static int vvfat_open( BlockDriverState* bs, const char* dirname, int flags )
 
     //    assert(is_consistent(s));
 
-    DLOG( fprintf( stderr, "%s:%u: return 0\n", __FUNCTION__, __LINE__ ) );
+    DLOG( fprintf( stderr, "%s:%u: return 0\n", __func__, __LINE__ ) );
     return 0;
 }
 
@@ -1400,7 +1400,7 @@ static int vvfat_read( BlockDriverState* bs, int64_t sector_num, uint8_t* buf, i
 
 #ifdef DEBUG_SECTORS
     for ( i = 0; i < nb_sectors; i++ ) {
-        fprintf( stderr, "%s:%u: sector %u:\n", __FUNCTION__, __LINE__, orig_sector + i );
+        fprintf( stderr, "%s:%u: sector %u:\n", __func__, __LINE__, orig_sector + i );
         hexdump( buf + i * 0x200, 0x200 );
     }
 #endif
@@ -1700,7 +1700,7 @@ static uint32_t get_cluster_count_for_direntry( BDRVVVFATState* s, direntry_t* d
             const char* basename;
 
             assert( mapping->mode & MODE_DELETED );
-            DLOG( fprintf( stderr, "%s:%u: clear delete: ", __FUNCTION__, __LINE__ ); print_mapping( mapping ) );
+            DLOG( fprintf( stderr, "%s:%u: clear delete: ", __func__, __LINE__ ); print_mapping( mapping ) );
             mapping->mode &= ~MODE_DELETED;
 
             basename = get_basename( mapping->path );
@@ -1817,7 +1817,7 @@ static int check_directory_consistency( BDRVVVFATState* s, int cluster_num, cons
         assert( mapping->mode & MODE_DIRECTORY );
 
         assert( mapping->mode & MODE_DELETED );
-        DLOG( fprintf( stderr, "%s:%u: clear delete: ", __FUNCTION__, __LINE__ ); print_mapping( mapping ) );
+        DLOG( fprintf( stderr, "%s:%u: clear delete: ", __func__, __LINE__ ); print_mapping( mapping ) );
         mapping->mode &= ~MODE_DELETED;
 
         if ( strcmp( basename, basename2 ) )
@@ -1920,9 +1920,9 @@ static int is_consistent( BDRVVVFATState* s )
     int i, check;
     int used_clusters_count = 0;
 
-    DLOG( checkpoint( __FUNCTION__ ) );
+    DLOG( checkpoint( __func__ ) );
 
-    DLOG( fprintf( stderr, "%s:%u:\n", __FUNCTION__, __LINE__ ) );
+    DLOG( fprintf( stderr, "%s:%u:\n", __func__, __LINE__ ) );
 
     /*
      * - get modified FAT
@@ -1945,7 +1945,7 @@ static int is_consistent( BDRVVVFATState* s )
     check = vvfat_read( s->bs, s->first_sectors_number, s->fat2, s->sectors_per_fat );
     if ( check ) {
         fprintf( stderr, "Could not copy fat\n" );
-        DLOG( fprintf( stderr, "%s:%u: copy fat failed\n", __FUNCTION__, __LINE__ ) );
+        DLOG( fprintf( stderr, "%s:%u: copy fat failed\n", __func__, __LINE__ ) );
         return 0;
     }
     assert( s->used_clusters );
@@ -1960,7 +1960,7 @@ static int is_consistent( BDRVVVFATState* s )
         for ( i = 0; ( unsigned int )i < s->mapping.next; i++ ) {
             mapping_t* mapping = array_get( &( s->mapping ), i );
             if ( mapping->first_mapping_index < 0 ) {
-                DLOG( fprintf( stderr, "%s:%u: mark delete: ", __FUNCTION__, __LINE__ ); print_mapping( mapping ) );
+                DLOG( fprintf( stderr, "%s:%u: mark delete: ", __func__, __LINE__ ); print_mapping( mapping ) );
                 mapping->mode |= MODE_DELETED;
             }
         }
@@ -1990,11 +1990,11 @@ static int is_consistent( BDRVVVFATState* s )
     }
 
     if ( check != used_clusters_count ) {
-        DLOG( fprintf( stderr, "%s:%u: check: %u, used %u\n", __FUNCTION__, __LINE__, check, used_clusters_count ) );
+        DLOG( fprintf( stderr, "%s:%u: check: %u, used %u\n", __func__, __LINE__, check, used_clusters_count ) );
         return 0;
     }
 
-    DLOG( fprintf( stderr, "%s:%u: return used %u\n", __FUNCTION__, __LINE__, used_clusters_count ) );
+    DLOG( fprintf( stderr, "%s:%u: return used %u\n", __func__, __LINE__, used_clusters_count ) );
     return used_clusters_count;
 }
 
@@ -2576,7 +2576,7 @@ static int handle_deletes( BDRVVVFATState* s )
             if ( mapping->mode & MODE_DELETED ) {
                 direntry_t* entry = array_get( &( s->directory ), mapping->dir_index );
 
-                DLOG( fprintf( stderr, "%s:%u: ", __FUNCTION__, __LINE__ ); print_mapping( mapping ); print_direntry( entry ) );
+                DLOG( fprintf( stderr, "%s:%u: ", __func__, __LINE__ ); print_mapping( mapping ); print_direntry( entry ) );
 
                 if ( is_free( entry ) ) {
                     /* remove file/directory */
@@ -2643,7 +2643,7 @@ static int do_commit( BDRVVVFATState* s )
 
     /* the real meat are the commits. Nothing to do? Move along! */
     if ( ( 0 == s->commits.next ) && ( 0 == have_deletes( s ) ) ) {
-        DLOG( fprintf( stderr, "%s:%u: nothing to do\n", __FUNCTION__, __LINE__ ) );
+        DLOG( fprintf( stderr, "%s:%u: nothing to do\n", __func__, __LINE__ ) );
         return 0;
     }
 
@@ -2685,7 +2685,7 @@ static int do_commit( BDRVVVFATState* s )
 
     memset( s->used_clusters, 0, sector2cluster( s, s->sector_count ) );
 
-    DLOG( checkpoint( __FUNCTION__ ) );
+    DLOG( checkpoint( __func__ ) );
     return 0;
 }
 
@@ -2693,7 +2693,7 @@ static int try_commit( BDRVVVFATState* s )
 {
     vvfat_close_current_file( s );
 
-    DLOG( checkpoint( __FUNCTION__ ) );
+    DLOG( checkpoint( __func__ ) );
 
     if ( !is_consistent( s ) )
         return -1;
@@ -2705,7 +2705,7 @@ static void vvfat_write_timer( void* opaque )
 {
     BDRVVVFATState* s = opaque;
 
-    DLOG( fprintf( stderr, "%s:%u:\n", __FUNCTION__, __LINE__ ) );
+    DLOG( fprintf( stderr, "%s:%u:\n", __func__, __LINE__ ) );
 
     DLOG( checkpoint( "vvfat_write_timer: before try_commits" ) );
 
@@ -2724,7 +2724,7 @@ static int vvfat_write( BlockDriverState* bs, int64_t sector_num, const uint8_t*
     int64_t start_cluster, end_cluster;
     int i, ret;
 
-    DLOG( checkpoint( __FUNCTION__ ) );
+    DLOG( checkpoint( __func__ ) );
 
     vvfat_close_current_file( s );
 
@@ -2735,19 +2735,19 @@ static int vvfat_write( BlockDriverState* bs, int64_t sector_num, const uint8_t*
      */
 
     if ( sector_num < s->first_sectors_number ) {
-        DLOG( fprintf( stderr, "%s:%u: sector: %u nb %u (first: %u)\n", __FUNCTION__, __LINE__, ( int )sector_num, nb_sectors,
+        DLOG( fprintf( stderr, "%s:%u: sector: %u nb %u (first: %u)\n", __func__, __LINE__, ( int )sector_num, nb_sectors,
                        s->first_sectors_number ) );
         return -1;
     }
 
 #ifdef DEBUG_SECTORS
     for ( i = 0; i < nb_sectors; i++ ) {
-        fprintf( stderr, "%s:%u: sector %u:\n", __FUNCTION__, __LINE__, orig_sector + i );
+        fprintf( stderr, "%s:%u: sector %u:\n", __func__, __LINE__, orig_sector + i );
         hexdump( buf + i * 0x200, 0x200 );
     }
 #endif
 
-    DLOG( fprintf( stderr, "%s:%u: check mappings, sector: %u nb %u (faked: %u)\n", __FUNCTION__, __LINE__, ( int )sector_num, nb_sectors,
+    DLOG( fprintf( stderr, "%s:%u: check mappings, sector: %u nb %u (faked: %u)\n", __func__, __LINE__, ( int )sector_num, nb_sectors,
                    s->faked_sectors ) );
 
     if ( sector_num >= s->faked_sectors ) {
@@ -2762,9 +2762,9 @@ static int vvfat_write( BlockDriverState* bs, int64_t sector_num, const uint8_t*
     }
 
     for ( i = start_cluster; i <= end_cluster; ) {
-        DLOG( fprintf( stderr, "%s:%u: cluster %u\n", __FUNCTION__, __LINE__, i ) );
+        DLOG( fprintf( stderr, "%s:%u: cluster %u\n", __func__, __LINE__, i ) );
         mapping = find_mapping_for_cluster( s, i );
-        DLOG( fprintf( stderr, "%s:%u: mapping %p\n", __FUNCTION__, __LINE__, mapping ) );
+        DLOG( fprintf( stderr, "%s:%u: mapping %p\n", __func__, __LINE__, mapping ) );
         if ( mapping ) {
             if ( mapping->read_only ) {
                 fprintf( stderr, "Tried to write to write-protected file %s\n", mapping->path );
@@ -2841,7 +2841,7 @@ static int enable_write( BDRVVVFATState* s )
     int error;
     int size;
 
-    DLOG( fprintf( stderr, "%s:%u:\n", __FUNCTION__, __LINE__ ) );
+    DLOG( fprintf( stderr, "%s:%u:\n", __func__, __LINE__ ) );
 
     size = sector2cluster( s, s->sector_count );
     s->used_clusters = calloc( size, 1 );
@@ -2852,13 +2852,13 @@ static int enable_write( BDRVVVFATState* s )
     get_tmp_filename( s->qcow_filename, 1024 );
     error = bdrv_create( &bdrv_qcow, s->qcow_filename, s->sector_count, "", 0 );
     if ( error < 0 ) {
-        DLOG( fprintf( stderr, "%s:%u: bdrv_create '%s': %d\n", __FUNCTION__, __LINE__, s->qcow_filename, error ) );
+        DLOG( fprintf( stderr, "%s:%u: bdrv_create '%s': %d\n", __func__, __LINE__, s->qcow_filename, error ) );
         return -1;
     }
 
     s->qcow = bdrv_new( "" );
     if ( s->qcow == NULL ) {
-        DLOG( fprintf( stderr, "%s:%u: bdrv_new: Out of memory\n", __FUNCTION__, __LINE__ ) );
+        DLOG( fprintf( stderr, "%s:%u: bdrv_new: Out of memory\n", __func__, __LINE__ ) );
 #ifndef _WIN32
         unlink( s->qcow_filename );
 #endif
@@ -2867,7 +2867,7 @@ static int enable_write( BDRVVVFATState* s )
 
     error = bdrv_open( s->qcow, s->qcow_filename, 0 );
     if ( error < 0 ) {
-        DLOG( fprintf( stderr, "%s:%u: bdrv_open '%s': %d\n", __FUNCTION__, __LINE__, s->qcow_filename, error ) );
+        DLOG( fprintf( stderr, "%s:%u: bdrv_open '%s': %d\n", __func__, __LINE__, s->qcow_filename, error ) );
 #ifndef _WIN32
         unlink( s->qcow_filename );
 #endif
@@ -2877,7 +2877,7 @@ static int enable_write( BDRVVVFATState* s )
 
     s->write_timer = qemu_new_timer( rt_clock, vvfat_write_timer, s );
     if ( NULL == s->write_timer ) {
-        DLOG( fprintf( stderr, "%s:%u: write_timer: Out of memory\n", __FUNCTION__, __LINE__ ) );
+        DLOG( fprintf( stderr, "%s:%u: write_timer: Out of memory\n", __func__, __LINE__ ) );
 #ifndef _WIN32
         unlink( s->qcow_filename );
 #endif
@@ -2891,7 +2891,7 @@ static int enable_write( BDRVVVFATState* s )
     unlink( s->qcow_filename );
 #endif
 
-    DLOG( fprintf( stderr, "%s:%u: write enabled\n", __FUNCTION__, __LINE__ ) );
+    DLOG( fprintf( stderr, "%s:%u: write enabled\n", __func__, __LINE__ ) );
     return 0;
 }
 
@@ -2938,7 +2938,7 @@ BlockDriver bdrv_vvfat = {
 #ifdef DEBUG
 static void checkpoint( const char* where )
 {
-    DLOG( fprintf( stderr, "%s:%u: checkpoint(%s)\n", __FUNCTION__, __LINE__, where ) );
+    DLOG( fprintf( stderr, "%s:%u: checkpoint(%s)\n", __func__, __LINE__, where ) );
 
     assert( ( ( mapping_t* )array_get( &( vvv->mapping ), 0 ) )->end == 2 );
     DLOG( fprintf( stderr, "checkpoint(%s): call check1()\n", where ) );

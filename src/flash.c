@@ -374,7 +374,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
     int bytes_read;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     error = x50ng_module_get_filename( module, key, "filename", "flash", &( flash->filename ), &filename );
@@ -382,7 +382,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
     flash->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( flash->fd < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         return error;
     }
@@ -390,7 +390,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
     flash->size = SST29VF160_SIZE;
     if ( fstat( flash->fd, &st ) < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: fstat %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: fstat %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         close( flash->fd );
         flash->fd = -1;
@@ -399,7 +399,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
 
     if ( ftruncate( flash->fd, flash->size ) < 0 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: ftruncate %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: ftruncate %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         close( flash->fd );
         flash->fd = -1;
@@ -409,7 +409,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
     flash->data = mmap( phys_ram_base + flash->offset, flash->size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED, flash->fd, 0 );
     if ( flash->data == ( void* )-1 ) {
         error = -errno;
-        fprintf( stderr, "%s: %s:%u: mmap %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+        fprintf( stderr, "%s: %s:%u: mmap %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
         g_free( filename );
         close( flash->fd );
         flash->fd = -1;
@@ -445,7 +445,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
 
         if ( read( bootfd, phys_ram_base + flash->offset, BOOT_SIZE ) < 0 ) {
             error = -errno;
-            fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, filename, strerror( errno ) );
+            fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, filename, strerror( errno ) );
             g_free( filename );
             g_free( bootfile );
             close( bootfd );
@@ -477,7 +477,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
 retry:
         fwfd = x50ng_module_open_rodata( module, opt.firmware, &firmwarefile );
         if ( fwfd < 0 ) {
-            fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __FUNCTION__, __LINE__, firmwarefile, strerror( errno ) );
+            fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, firmwarefile, strerror( errno ) );
             /* Mark firmware as invalid if there is one */
             memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
             if ( opt.firmware != NULL ) {
@@ -494,7 +494,7 @@ retry:
         } else {
             bytes_read = read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE, 16 );
             if ( bytes_read < 0 ) {
-                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, opt.firmware, strerror( errno ) );
+                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, opt.firmware, strerror( errno ) );
                 /* Mark firmware as invalid
                    if there is one */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
@@ -535,7 +535,7 @@ retry:
                    read will just give us what it sees.
                    The space after that will remain empty. */
             } else if ( read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE + 16, SST29VF160_SIZE - ( BOOT_SIZE + 16 ) ) < 0 ) {
-                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __FUNCTION__, __LINE__, opt.firmware, strerror( errno ) );
+                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, opt.firmware, strerror( errno ) );
                 /* Mark firmware as invalid
                    if there is one */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
@@ -571,20 +571,20 @@ static int flash_save( x50ng_module_t* module, GKeyFile* key )
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     x50ng_module_set_filename( module, key, "filename", flash->filename );
 
     error = msync( flash->data, flash->size, MS_ASYNC );
     if ( error ) {
-        fprintf( stderr, "%s:%u: msync: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
+        fprintf( stderr, "%s:%u: msync: %s\n", __func__, __LINE__, strerror( errno ) );
         return error;
     }
 
     error = fsync( flash->fd );
     if ( error ) {
-        fprintf( stderr, "%s:%u: fsync: %s\n", __FUNCTION__, __LINE__, strerror( errno ) );
+        fprintf( stderr, "%s:%u: fsync: %s\n", __func__, __LINE__, strerror( errno ) );
         return error;
     }
 
@@ -596,7 +596,7 @@ static int flash_reset( x50ng_module_t* module, x50ng_reset_t reset )
     x50ng_flash_t* flash = module->user_data;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     flash_state_reset( flash );
@@ -612,12 +612,12 @@ static int flash_init( x50ng_module_t* module )
     x50ng_flash_t* flash;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     flash = malloc( sizeof( x50ng_flash_t ) );
     if ( NULL == flash ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
         return -1;
     }
     memset( flash, 0, sizeof( x50ng_flash_t ) );
@@ -648,7 +648,7 @@ static int flash_exit( x50ng_module_t* module )
     x50ng_flash_t* flash;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

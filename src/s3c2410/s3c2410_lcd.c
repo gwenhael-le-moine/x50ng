@@ -26,7 +26,7 @@ static int s3c2410_lcd_data_init( s3c2410_lcd_t* lcd )
 
     lcd->regs = malloc( sizeof( regs ) );
     if ( NULL == lcd->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -102,7 +102,7 @@ static int s3c2410_lcd_load( x50ng_module_t* module, GKeyFile* key )
     int error = 0;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( unsigned int i = 0; i < lcd->nr_regs; i++ ) {
@@ -124,7 +124,7 @@ static int s3c2410_lcd_save( x50ng_module_t* module, GKeyFile* key )
     s3c2410_offset_t* reg;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( unsigned int i = 0; i < lcd->nr_regs; i++ ) {
@@ -145,7 +145,7 @@ static int s3c2410_lcd_reset( x50ng_module_t* module, x50ng_reset_t reset )
     s3c2410_offset_t* reg;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( unsigned int i = 0; i < lcd->nr_regs; i++ ) {
@@ -170,12 +170,12 @@ static int s3c2410_lcd_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     lcd = malloc( sizeof( s3c2410_lcd_t ) );
     if ( NULL == lcd ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_lcd_data_init( lcd ) ) {
@@ -189,7 +189,7 @@ static int s3c2410_lcd_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_lcd_readfn, s3c2410_lcd_writefn, lcd );
 #ifdef DEBUG_S3C2410_LCD
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_LCD_BASE, S3C2410_MAP_SIZE, iotype );
 
@@ -201,7 +201,7 @@ static int s3c2410_lcd_exit( x50ng_module_t* module )
     s3c2410_lcd_t* lcd;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {

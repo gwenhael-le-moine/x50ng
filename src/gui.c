@@ -1679,7 +1679,7 @@ void ui_init( x50ng_t* x50ng )
 {
     buttons = malloc( NB_KEYS * sizeof( x50ng_ui_button_t ) );
     if ( NULL == buttons ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return;
     }
     memset( buttons, 0, NB_KEYS * sizeof( x50ng_ui_button_t ) );

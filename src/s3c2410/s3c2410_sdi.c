@@ -74,7 +74,7 @@ static int s3c2410_sdi_data_init( s3c2410_sdi_t* sdi )
 
     sdi->regs = malloc( sizeof( regs ) );
     if ( NULL == sdi->regs ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
@@ -619,7 +619,7 @@ int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
             if ( sdi->bs ) {
                 error = bdrv_open( sdi->bs, vvfat_name, 0 );
                 if ( error != 0 ) {
-                    fprintf( stderr, "%s:%u: bdrv_open %s: %d\n", __FUNCTION__, __LINE__, vvfat_name, error );
+                    fprintf( stderr, "%s:%u: bdrv_open %s: %d\n", __func__, __LINE__, vvfat_name, error );
                     bdrv_delete( sdi->bs );
                     sdi->bs = NULL;
                 }
@@ -627,7 +627,7 @@ int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
         } else {
             sdi->fd = open( filename, O_RDWR );
             if ( sdi->fd < 0 )
-                fprintf( stderr, "%s:%u: open %s: %s\n", __FUNCTION__, __LINE__, filename, strerror( errno ) );
+                fprintf( stderr, "%s:%u: open %s: %s\n", __func__, __LINE__, filename, strerror( errno ) );
         }
     }
 
@@ -653,7 +653,7 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     sdi->fd = -1;
@@ -692,7 +692,7 @@ static int s3c2410_sdi_save( x50ng_module_t* module, GKeyFile* key )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     x50ng_module_set_filename( module, key, "filename", sdi->filename );
@@ -716,7 +716,7 @@ static int s3c2410_sdi_reset( x50ng_module_t* module, x50ng_reset_t reset )
     unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     for ( i = 0; i < sdi->nr_regs; i++ ) {
@@ -741,12 +741,12 @@ static int s3c2410_sdi_init( x50ng_module_t* module )
     int iotype;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     sdi = malloc( sizeof( s3c2410_sdi_t ) );
     if ( NULL == sdi ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __FUNCTION__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_sdi_data_init( sdi ) ) {
@@ -760,7 +760,7 @@ static int s3c2410_sdi_init( x50ng_module_t* module )
 
     iotype = cpu_register_io_memory( s3c2410_sdi_readfn, s3c2410_sdi_writefn, sdi );
 #ifdef DEBUG_S3C2410_SDI
-    printf( "%s: iotype %08x\n", __FUNCTION__, iotype );
+    printf( "%s: iotype %08x\n", __func__, iotype );
 #endif
     cpu_register_physical_memory( S3C2410_SDI_BASE, S3C2410_MAP_SIZE, iotype );
 
@@ -773,7 +773,7 @@ static int s3c2410_sdi_exit( x50ng_module_t* module )
     s3c2410_sdi_t* sdi;
 
 #ifdef DEBUG_X50NG_MODULES
-    printf( "%s: %s:%u\n", module->name, __FUNCTION__, __LINE__ );
+    printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
     if ( module->user_data ) {
