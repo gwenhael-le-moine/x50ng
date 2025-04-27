@@ -102,7 +102,6 @@ static inline void array_free( array_t* array )
 /* does not automatically grow */
 static inline void* array_get( array_t* array, unsigned int index )
 {
-    assert( index >= 0 );
     assert( index < array->next );
     return array->pointer + index * array->item_size;
 }
@@ -200,7 +199,6 @@ static int array_remove( array_t* array, int index ) { return array_remove_slice
 static int array_index( array_t* array, void* pointer )
 {
     size_t offset = ( unsigned char* )pointer - array->pointer;
-    assert( offset >= 0 );
     assert( ( offset % array->item_size ) == 0 );
     assert( offset / array->item_size < array->next );
     return offset / array->item_size;
@@ -2294,7 +2292,6 @@ static int commit_one_file( BDRVVVFATState* s, int dir_index, uint32_t offset )
         c1 = modified_fat_get( s, c );
 
         assert( ( size - offset == 0 && fat_eof( s, c ) ) || ( size > offset && c >= 2 && !fat_eof( s, c ) ) );
-        assert( size >= 0 );
 
         ret = vvfat_read( s->bs, cluster2sector( s, c ), cluster, ( rest_size + 0x1ff ) / 0x200 );
 
