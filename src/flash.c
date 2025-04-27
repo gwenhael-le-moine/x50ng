@@ -370,7 +370,7 @@ static int flash_load( x50ng_module_t* module, GKeyFile* key )
     int bootfd, fwfd;
     int error;
     int i;
-    char bank_marker[ 5 ] = { 0xf0, 0x02, 0x00, 0x00, 0x00 };
+    int bank_marker[ 5 ] = { 0xf0, 0x02, 0x00, 0x00, 0x00 };
     int bytes_read;
 
 #ifdef DEBUG_X50NG_MODULES

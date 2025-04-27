@@ -12,7 +12,6 @@ MENUDIR = $(PREFIX)/share/applications
 MANDIR = $(PREFIX)/share/man/man1
 
 #
-DEBUG_CFLAGS = -g # -fsanitize=leak -pg
 OPTIM ?= 2
 
 LUA_VERSION ?= lua
@@ -54,10 +53,9 @@ QEMU_INCLUDES = \
 	-I$(QEMU_DIR)/fpu \
 	-I$(QEMU_DIR)/arm-softmmu
 
-# What if this is MacOSX
-COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)
-
 X50NG_DEBUG = \
+	-g \
+	-pg \
 	-DDEBUG_X50NG_MODULES \
 	-DDEBUG_S3C2410_SRAM \
 	-DDEBUG_S3C2410_MEMC \
@@ -88,13 +86,19 @@ X50NG_INCLUDES = \
 	-I./${QEMU_DIR}/ \
 	$(QEMU_INCLUDES)
 
+X50NG_DISABLED_WARNINGS = \
+	-Wno-unused-parameter \
+	-Wno-pointer-arith \
+	-Wno-overflow # see src/s3c2410/block-vvfat.c:437
+
 X50NG_CFLAGS = \
 	$(CFLAGS) \
 	-O$(OPTIM) \
 	-W \
 	-Wall \
 	-Wextra \
-	-Wno-unused-parameter \
+	-pedantic \
+	$(X50NG_DISABLED_WARNINGS) \
 	$(DEBUG_CFLAGS) \
 	$(X50NG_INCLUDES) \
 	$(QEMU_DEFINES) \
@@ -106,13 +110,16 @@ X50NG_CFLAGS = \
 	-DPATCHLEVEL=$(PATCHLEVEL) \
 	-DX50NG_DATADIR=\"$(DATADIR)\"
 
-ifeq ($(DEBUG), yes)
-	X50NG_CFLAGS += \
-	$(X50NG_DEBUG)
-endif
+# What if this is MacOSX
+COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)
 
-X50NG_LDFLAGS = $(DEBUG_CFLAGS) $(LDFLAGS)
+X50NG_LDFLAGS = $(LDFLAGS)
 X50NG_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(LUALIBS)
+
+ifeq ($(DEBUG), yes)
+	X50NG_CFLAGS += $(X50NG_DEBUG)
+	X50NG_LDFLAGS += -g -pg
+endif
 
 SRCS = \
 	./src/s3c2410/s3c2410.c \

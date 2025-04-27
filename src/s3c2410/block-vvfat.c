@@ -435,7 +435,11 @@ static inline int short2long_name( char* dest, const char* src )
     dest[ 2 * i ] = dest[ 2 * i + 1 ] = 0;
     for ( i = 2 * i + 2; ( i % 26 ); i++ )
         dest[ i ] = 0xff;
-
+    /* FIXME?:
+      warning: overflow in conversion from 'int' to 'char' changes value from '255' to '-1' [-Woverflow]
+      437 |         dest[ i ] = 0xff;
+      |                     ^~~~
+     */
     return i;
 }
 
