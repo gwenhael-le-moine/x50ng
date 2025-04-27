@@ -91,7 +91,9 @@ X50NG_INCLUDES = \
 X50NG_CFLAGS = \
 	$(CFLAGS) \
 	-O$(OPTIM) \
-	-W -Wall \
+	-W \
+	-Wall \
+	-Wextra \
 	-Wno-unused-parameter \
 	$(DEBUG_CFLAGS) \
 	$(X50NG_INCLUDES) \
@@ -106,7 +108,6 @@ X50NG_CFLAGS = \
 
 ifeq ($(DEBUG), yes)
 	X50NG_CFLAGS += \
-	-Wextra \
 	$(X50NG_DEBUG)
 endif
 
