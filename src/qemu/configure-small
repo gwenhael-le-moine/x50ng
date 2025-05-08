@@ -165,6 +165,9 @@ case "$cpu" in
   armv*l)
     cpu="armv4l"
   ;;
+  aarch64)
+    cpu="aarch64"
+  ;;
   parisc|parisc64)
     cpu="hppa"
   ;;
@@ -824,7 +827,7 @@ case "$cpu" in
   i386|x86_64|alpha|cris|hppa|ia64|m68k|microblaze|mips|mips64|ppc|ppc64|s390|s390x|sparc|sparc64)
     ARCH=$cpu
   ;;
-  armv4b|armv4l)
+  armv4b|armv4l|aarch64)
     ARCH=arm
   ;;
   *)
