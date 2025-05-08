@@ -1067,7 +1067,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
                              is_write, sigmask, NULL);
 }
 
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
 
 int cpu_signal_handler(int host_signum, void *pinfo,
                        void *puc)

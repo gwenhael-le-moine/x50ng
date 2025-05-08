@@ -60,7 +60,7 @@ extern int printf(const char *, ...);
 #define AREG0 "r27"
 #define AREG1 "r24"
 #define AREG2 "r25"
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
 #define AREG0 "r7"
 #define AREG1 "r4"
 #define AREG2 "r5"
@@ -119,7 +119,7 @@ extern int printf(const char *, ...);
    Subtracting one gets us the call instruction itself.  */
 #if defined(__s390__) && !defined(__s390x__)
 # define GETPC() ((void*)(((unsigned long)__builtin_return_address(0) & 0x7fffffffUL) - 1))
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
 /* Thumb return addresses have the low bit set, so we need to subtract two.
    This is still safe in ARM mode because instructions are 4 bytes.  */
 # define GETPC() ((void *)((unsigned long)__builtin_return_address(0) - 2))

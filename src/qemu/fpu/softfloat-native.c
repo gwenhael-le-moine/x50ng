@@ -12,7 +12,7 @@ void set_float_rounding_mode(int val STATUS_PARAM)
 #if (defined(CONFIG_BSD) && !defined(__APPLE__) && !defined(__GLIBC__)) || \
     (defined(CONFIG_SOLARIS) && CONFIG_SOLARIS_VERSION < 10)
     fpsetround(val);
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
     /* nothing to do */
 #else
     fesetround(val);
@@ -365,7 +365,7 @@ float64 float64_trunc_to_int( float64 a STATUS_PARAM )
 
 float64 float64_round_to_int( float64 a STATUS_PARAM )
 {
-#if defined(__arm__)
+#if defined(__arm__) || defined(__aarch64__)
     switch(STATUS(float_rounding_mode)) {
     default:
     case float_round_nearest_even:

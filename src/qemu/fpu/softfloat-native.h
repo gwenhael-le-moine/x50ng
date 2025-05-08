@@ -126,7 +126,7 @@ enum {
     float_round_up           = FP_RP,
     float_round_to_zero      = FP_RZ
 };
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
 enum {
     float_round_nearest_even = 0,
     float_round_down         = 1,

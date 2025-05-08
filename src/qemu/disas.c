@@ -266,7 +266,7 @@ void disas(FILE *out, void *code, unsigned long size)
 #if defined(__sparc_v8plus__) || defined(__sparc_v8plusa__) || defined(__sparc_v9__)
     disasm_info.mach = bfd_mach_sparc_v9b;
 #endif
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
     print_insn = print_insn_arm;
 #elif defined(__MIPSEB__)
     print_insn = print_insn_big_mips;
@@ -285,7 +285,7 @@ void disas(FILE *out, void *code, unsigned long size)
 #endif
     for (pc = (unsigned long)code; size > 0; pc += count, size -= count) {
         fprintf(out, "0x%08lx:  ", pc);
-#ifdef __arm__
+#ifdef __arm__ || defined(__aarch64__)
         /* since data is included in the code, it is better to
            display code data too */
         fprintf(out, "%08x  ", (int)bfd_getl32((const bfd_byte *)pc));

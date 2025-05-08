@@ -124,7 +124,7 @@ typedef union {
 typedef union {
     float64 d;
 #if defined(HOST_WORDS_BIGENDIAN) \
-    || (defined(__arm__) && !defined(__VFP_FP__) && !defined(CONFIG_SOFTFLOAT))
+    || ((defined(__arm__) || defined(__aarch64__)) && !defined(__VFP_FP__) && !defined(CONFIG_SOFTFLOAT))
     struct {
         uint32_t upper;
         uint32_t lower;
@@ -142,7 +142,7 @@ typedef union {
 typedef union {
     float128 q;
 #if defined(HOST_WORDS_BIGENDIAN) \
-    || (defined(__arm__) && !defined(__VFP_FP__) && !defined(CONFIG_SOFTFLOAT))
+    || ((defined(__arm__) || defined(__aarch64__)) && !defined(__VFP_FP__) && !defined(CONFIG_SOFTFLOAT))
     struct {
         uint32_t upmost;
         uint32_t upper;

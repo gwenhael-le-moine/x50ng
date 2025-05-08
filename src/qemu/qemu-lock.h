@@ -135,7 +135,7 @@ static inline int testandset (int *p)
 
 	return (ret ? 1 : 0);
 }
-#elif defined(__arm__)
+#elif defined(__arm__) || defined(__aarch64__)
 static inline int testandset (int *spinlock)
 {
     register unsigned int ret;
