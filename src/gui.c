@@ -1229,10 +1229,11 @@ static void open_menu( int x, int y, x50ng_t* x50ng )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
         char* sd_path;
         s3c2410_sdi_get_path( x50ng, &sd_path );
-        asprintf( &unmount_label, "Unmount SD (%s)", sd_path );
+        if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
+            exit( EXIT_FAILURE );
         free( sd_path );
-    } else
-        asprintf( &unmount_label, "Unmount SD" );
+    } else if ( -1 == asprintf( &unmount_label, "Unmount SD" ) )
+        exit( EXIT_FAILURE );
     g_menu_append( menu, unmount_label, "app.unmount_SD" );
     free( unmount_label );
 

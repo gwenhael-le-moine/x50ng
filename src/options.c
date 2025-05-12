@@ -96,20 +96,21 @@ static inline bool config_read( const char* filename )
 static char* config_to_string( void )
 {
     char* config;
-    asprintf( &config,
-              "--------------------------------------------------------------------------------\n"
-              "-- Configuration file for x50ng\n"
-              "-- This is a comment\n"
-              "name = \"%s\"  -- this customize the title of the window\n"
-              "style = \"%s\" -- CSS file (relative to this file)\n"
-              "zoom = %f\n"
-              "netbook = %s\n"
-              "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard\n"
-              "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
-              "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
-              "--- End of x50ng configuration -----------------------------------------------\n",
-              opt.name, opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
-              opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" );
+    if ( -1 == asprintf( &config,
+                         "--------------------------------------------------------------------------------\n"
+                         "-- Configuration file for x50ng\n"
+                         "-- This is a comment\n"
+                         "name = \"%s\"  -- this customize the title of the window\n"
+                         "style = \"%s\" -- CSS file (relative to this file)\n"
+                         "zoom = %f\n"
+                         "netbook = %s\n"
+                         "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard\n"
+                         "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
+                         "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
+                         "--- End of x50ng configuration -----------------------------------------------\n",
+                         opt.name, opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
+                         opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" ) )
+        exit( EXIT_FAILURE );
 
     return config;
 }
