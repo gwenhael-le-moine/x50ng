@@ -1,0 +1,21 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: update deps
+      run: sudo apt-get -y update
+    - name: install deps
+      run: sudo apt install pkgconf libgtk-4-dev liblua5.4-dev
+    - name: make standard
+      run: make clean-all && make
