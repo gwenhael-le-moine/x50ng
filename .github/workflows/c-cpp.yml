@@ -18,4 +18,4 @@ jobs:
     - name: install deps
       run: sudo apt install pkgconf libgtk-4-dev liblua5.4-dev
     - name: make standard
-      run: make clean-all && make
+      run: make
