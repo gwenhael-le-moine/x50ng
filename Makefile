@@ -11,7 +11,7 @@ DOCDIR = $(PREFIX)/doc/$(TARGET)
 MENUDIR = $(PREFIX)/share/applications
 MANDIR = $(PREFIX)/share/man/man1
 
-#
+# optimization level for cc
 OPTIM ?= 2
 
 LUA_VERSION ?= lua
