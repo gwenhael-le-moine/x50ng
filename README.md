@@ -1,3 +1,5 @@
+**⚠️⛔ The reference public source repository is https://codeberg.org/gwh/x50ng/**
+
 # x50ng -- HP 50g hardware level emulator
 
 This is my fork of x49gp, emulator of the HP 49G+/50G hardware platform. Instead of emulating the Saturn processor like most (all?) HP emulators this one goes one level deeper and emulates the actual ARM system.
@@ -9,7 +11,6 @@ This is my fork of x49gp, emulator of the HP 49G+/50G hardware platform. Instead
 - [saturnng](https://codeberg.org/gwh/saturnng)
 - [hpemung](https://codeberg.org/gwh/hpemung)
 
-[ The reference public source repository is https://codeberg.org/gwh/x50ng ]
 
 ## Screenshots
 ![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng") ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
