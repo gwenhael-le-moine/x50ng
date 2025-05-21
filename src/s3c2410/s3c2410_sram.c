@@ -59,7 +59,6 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
 
     g_free( filename );
 
-    s3c2410_schedule_lcd_update( module->x50ng );
     return error;
 }
 

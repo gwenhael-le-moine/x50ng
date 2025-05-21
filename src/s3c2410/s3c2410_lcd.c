@@ -70,7 +70,6 @@ static uint32_t s3c2410_lcd_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_lcd_t* lcd = opaque;
-    x50ng_t* x50ng = lcd->x50ng;
     s3c2410_offset_t* reg;
 
     if ( !S3C2410_OFFSET_OK( lcd, offset ) )
@@ -84,9 +83,6 @@ static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t
 
     switch ( offset ) {
         case S3C2410_LCD_LCDCON1:
-            if ( ( lcd->lcdcon1 ^ data ) & 1 )
-                s3c2410_schedule_lcd_update( x50ng );
-
             lcd->lcdcon1 = ( lcd->lcdcon1 & ( 0x3ff << 18 ) ) | ( data & ~( 0x3ff << 18 ) );
             break;
         default:
@@ -215,12 +211,6 @@ static int s3c2410_lcd_exit( x50ng_module_t* module )
     free( module );
 
     return 0;
-}
-
-void s3c2410_schedule_lcd_update( x50ng_t* x50ng )
-{
-    if ( !x50ng_timer_pending( x50ng->lcd_timer ) )
-        x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + X50NG_LCD_REFRESH_INTERVAL );
 }
 
 int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
