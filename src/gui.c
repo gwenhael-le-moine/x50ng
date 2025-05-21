@@ -1636,6 +1636,33 @@ static int ui_load( x50ng_t* x50ng )
     return 0;
 }
 
+/**********/
+/* timers */
+/**********/
+void ui_events_timer( void* data )
+{
+    x50ng_t* x50ng = data;
+
+    while ( g_main_context_pending( NULL ) )
+        g_main_context_iteration( NULL, false );
+
+    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+}
+
+void ui_lcd_timer( void* data )
+{
+    x50ng_t* x50ng = data;
+    int64_t now, expires;
+
+    ui_update_lcd( x50ng );
+    gdk_display_flush( gdk_display_get_default() );
+
+    now = x50ng_get_clock();
+    expires = now + UI_LCD_REFRESH_INTERVAL;
+
+    x50ng_mod_timer( x50ng->lcd_timer, expires );
+}
+
 /********************/
 /* Public functions */
 /********************/

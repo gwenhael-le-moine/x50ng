@@ -175,31 +175,6 @@ void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
     }
 }
 
-/**********/
-/* timers */
-/**********/
-void x50ng_ui_timer( void* data )
-{
-    while ( g_main_context_pending( NULL ) )
-        g_main_context_iteration( NULL, false );
-
-    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() + X50NG_UI_REFRESH_INTERVAL );
-}
-
-void x50ng_lcd_timer( void* data )
-{
-    x50ng_t* x50ng = data;
-    int64_t now, expires;
-
-    ui_update_lcd( x50ng );
-    gdk_display_flush( gdk_display_get_default() );
-
-    now = x50ng_get_clock();
-    expires = now + X50NG_LCD_REFRESH_INTERVAL;
-
-    x50ng_mod_timer( x50ng->lcd_timer, expires );
-}
-
 /*******************/
 /* signal handlers */
 /*******************/
@@ -266,8 +241,8 @@ int main( int argc, char** argv )
 
     x50ng_timer_init( x50ng );
 
-    x50ng->ui_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, x50ng_ui_timer, x50ng );
-    x50ng->lcd_timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, x50ng_lcd_timer, x50ng );
+    x50ng->ui_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, ui_events_timer, x50ng );
+    x50ng->lcd_timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, ui_lcd_timer, x50ng );
 
     x50ng_s3c2410_arm_init( x50ng );
     x50ng_flash_init( x50ng );

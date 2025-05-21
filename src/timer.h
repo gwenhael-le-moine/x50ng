@@ -9,9 +9,6 @@
 #define X50NG_TIMER_VIRTUAL 0
 #define X50NG_TIMER_REALTIME 1
 
-#define X50NG_UI_REFRESH_INTERVAL 30000LL
-#define X50NG_LCD_REFRESH_INTERVAL 50000LL
-
 typedef void ( *x50ng_timer_cb_t )( void* );
 typedef struct x50ng_timer_s x50ng_timer_t;
 

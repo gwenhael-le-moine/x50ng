@@ -3,6 +3,12 @@
 
 #include "types.h" /* x50ng_t */
 
+#define UI_EVENTS_REFRESH_INTERVAL 30000LL
+#define UI_LCD_REFRESH_INTERVAL 50000LL
+
+void ui_events_timer( void* data );
+void ui_lcd_timer( void* data );
+
 #ifdef USE_GTK_APPLICATION
 #  include <gtk/gtk.h>
 void ui_init( GtkApplication* app, x50ng_t* x50ng );
