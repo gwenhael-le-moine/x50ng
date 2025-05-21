@@ -1674,12 +1674,12 @@ void ui_update_lcd( x50ng_t* x50ng )
     if ( !( lcd->lcdcon1 & 1 ) )
         return;
 
-    gtk_widget_set_opacity( ui_ann_left, x50ng_get_pixel_color( lcd, LCD_WIDTH, 1 ) );
-    gtk_widget_set_opacity( ui_ann_right, x50ng_get_pixel_color( lcd, LCD_WIDTH, 2 ) );
-    gtk_widget_set_opacity( ui_ann_alpha, x50ng_get_pixel_color( lcd, LCD_WIDTH, 3 ) );
-    gtk_widget_set_opacity( ui_ann_battery, x50ng_get_pixel_color( lcd, LCD_WIDTH, 4 ) );
-    gtk_widget_set_opacity( ui_ann_busy, x50ng_get_pixel_color( lcd, LCD_WIDTH, 5 ) );
-    gtk_widget_set_opacity( ui_ann_io, x50ng_get_pixel_color( lcd, LCD_WIDTH, 0 ) );
+    gtk_widget_set_opacity( ui_ann_left, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 1 ) );
+    gtk_widget_set_opacity( ui_ann_right, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 2 ) );
+    gtk_widget_set_opacity( ui_ann_alpha, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 3 ) );
+    gtk_widget_set_opacity( ui_ann_battery, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 4 ) );
+    gtk_widget_set_opacity( ui_ann_busy, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 5 ) );
+    gtk_widget_set_opacity( ui_ann_io, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 0 ) );
 
     if ( NULL != lcd_surface )
         g_free( lcd_surface );
@@ -1688,7 +1688,7 @@ void ui_update_lcd( x50ng_t* x50ng )
 
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
-            cairo_set_source_rgba( cr, 0, 0, 0, x50ng_get_pixel_color( lcd, x, y ) / 15.0 );
+            cairo_set_source_rgba( cr, 0, 0, 0, x50ng_s3c2410_get_pixel_color( lcd, x, y ) / 15.0 );
             cairo_rectangle( cr, x, y, 1.0, 1.0 );
             cairo_fill( cr );
         }

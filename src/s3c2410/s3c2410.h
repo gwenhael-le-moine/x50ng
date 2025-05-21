@@ -366,7 +366,7 @@ extern void s3c2410_io_port_f_set_bit(x50ng_t *x50ng, int n, uint32_t set);
 
 extern void s3c2410_schedule_lcd_update(x50ng_t *x50ng);
 
-extern int x50ng_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
+extern int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
 
 extern unsigned long s3c2410_timer_next_interrupt(x50ng_t *x50ng);
 extern unsigned long s3c2410_watchdog_next_interrupt(x50ng_t *x50ng);

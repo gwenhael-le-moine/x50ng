@@ -223,7 +223,7 @@ void s3c2410_schedule_lcd_update( x50ng_t* x50ng )
         x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + X50NG_LCD_REFRESH_INTERVAL );
 }
 
-int x50ng_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
+int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
 {
     uint32_t bank, addr, data, offset, pixel_offset;
     int bits_per_pixel = lcd->lcdcon5 > 2 ? 1 : 4 >> lcd->lcdcon5;
