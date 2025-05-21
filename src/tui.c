@@ -324,9 +324,7 @@ void tui_init( x50ng_t* x50ng )
     mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvprintw( 0, LCD_WIDTH / 2, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
-
-    // mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", wire_name, ir_name, display.contrast );
+    mvprintw( 0, 30, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" );
 }
