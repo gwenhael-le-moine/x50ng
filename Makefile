@@ -18,12 +18,16 @@ LUA_VERSION ?= lua
 PKG_CONFIG ?= pkg-config
 
 ### lua
-LUACFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
-LUALIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
+LUA_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
+LUA_LDLIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 
 # GTK
 GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4)
 GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4) -lz -lm
+
+# Ncurses
+NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
+NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
 # Embedded qemu
 QEMU_DIR = src/qemu
@@ -103,7 +107,8 @@ X50NG_CFLAGS = \
 	$(X50NG_INCLUDES) \
 	$(QEMU_DEFINES) \
 	$(GTK_CFLAGS) \
-	$(LUACFLAGS) \
+	$(NCURSES_CFLAGS) \
+	$(LUA_CFLAGS) \
 	-D_GNU_SOURCE=1 \
 	-DVERSION_MAJOR=$(VERSION_MAJOR) \
 	-DVERSION_MINOR=$(VERSION_MINOR) \
@@ -114,7 +119,7 @@ X50NG_CFLAGS = \
 COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)
 
 X50NG_LDFLAGS = $(LDFLAGS)
-X50NG_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(LUALIBS)
+X50NG_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(NCURSES_LDLIBS) $(LUA_LDLIBS)
 
 ifeq ($(DEBUG), yes)
 	X50NG_CFLAGS += $(X50NG_DEBUG)

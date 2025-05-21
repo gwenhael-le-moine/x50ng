@@ -282,6 +282,8 @@ int main( int argc, char** argv )
 
     x50ng_main_loop( x50ng );
 
+    ui_exit();
+
     x50ng_modules_save( x50ng );
     if ( !opt.haz_config_file )
         save_config();

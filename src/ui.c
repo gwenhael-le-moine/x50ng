@@ -777,3 +777,9 @@ void ui_init( x50ng_t* x50ng )
     else
         gui_init( x50ng );
 }
+
+void ui_exit( void )
+{
+    if ( opt.tui )
+        tui_exit();
+}
