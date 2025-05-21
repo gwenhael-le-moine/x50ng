@@ -278,21 +278,9 @@ int main( int argc, char** argv )
         gdb_handlesig( x50ng->env, 0 );
     }
 
-#ifdef USE_GTK_APPLICATION
-    GtkApplication* app = gtk_application_new( "org.gtk.example", G_APPLICATION_DEFAULT_FLAGS );
-    g_signal_connect( app, "activate", G_CALLBACK( ui_init ), x50ng );
-
-    /* run gtk_application here ? */
-    int status = g_application_run( G_APPLICATION( app ), 0, NULL );
-#else
     ui_init( x50ng );
-#endif
 
     x50ng_main_loop( x50ng );
-
-#ifdef USE_GTK_APPLICATION
-    g_object_unref( app );
-#endif
 
     x50ng_modules_save( x50ng );
     if ( !opt.haz_config_file )
