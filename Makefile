@@ -144,6 +144,8 @@ SRCS = \
 	./src/flash.c \
 	./src/sram.c \
 	./src/gui.c \
+	./src/tui.c \
+	./src/ui.c \
 	./src/timer.c \
 	./src/gdbstub.c \
 	./src/options.c \

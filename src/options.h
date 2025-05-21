@@ -34,6 +34,8 @@ struct options {
     char* firmware;
     x50ng_reinit_t reinit;
 
+    bool tui;
+
     bool newrpl_keyboard;
     bool legacy_keyboard;
     char* name;

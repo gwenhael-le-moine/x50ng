@@ -1,12 +1,3 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/times.h>
-
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <cairo.h>
@@ -15,98 +6,13 @@
 #include "options.h"
 #include "x50ng.h"
 #include "ui.h"
+#include "ui_inner.h"
 #include "s3c2410.h"
 
 #include "gdbstub.h"
 #include "types.h"
 
 // #define TEST_PASTE true
-
-#define KB_NB_ROWS ( 10 )
-
-#define LCD_WIDTH ( 131 )
-#define LCD_HEIGHT ( 80 )
-
-typedef enum {
-    HPKEY_A = 0,
-    HPKEY_B,
-    HPKEY_C,
-    HPKEY_D,
-    HPKEY_E,
-    HPKEY_F,
-
-    HPKEY_G,
-    HPKEY_H,
-    HPKEY_I,
-    HPKEY_UP,
-    HPKEY_J, /* 10 */
-
-    HPKEY_K,
-    HPKEY_L,
-    HPKEY_LEFT,
-    HPKEY_DOWN,
-    HPKEY_RIGHT,
-
-    HPKEY_M,
-    HPKEY_N,
-    HPKEY_O,
-    HPKEY_P,
-    HPKEY_BACKSPACE, /* 20 */
-
-    HPKEY_Q,
-    HPKEY_R,
-    HPKEY_S,
-    HPKEY_T,
-    HPKEY_U,
-
-    HPKEY_ENTER,
-    HPKEY_V,
-    HPKEY_W,
-    HPKEY_X,
-    HPKEY_Y, /* 30 */
-
-    HPKEY_ALPHA,
-    HPKEY_7,
-    HPKEY_8,
-    HPKEY_9,
-    HPKEY_Z,
-
-    HPKEY_SHIFT_LEFT,
-    HPKEY_4,
-    HPKEY_5,
-    HPKEY_6,
-    HPKEY_MULTIPLY, /* 40 */
-
-    HPKEY_SHIFT_RIGHT,
-    HPKEY_1,
-    HPKEY_2,
-    HPKEY_3,
-    HPKEY_MINUS,
-
-    HPKEY_ON,
-    HPKEY_0,
-    HPKEY_PERIOD,
-    HPKEY_SPACE,
-    HPKEY_PLUS, /* 50 */
-
-    NB_KEYS
-} x50ng_ui_hpkey_t;
-
-typedef struct {
-    const char* css_class;
-    const char* css_id;
-    const char* label;
-    const char* letter;
-    const char* left;
-    const char* right;
-    const char* below;
-
-    int column;
-    int row;
-    unsigned char columnbit;
-    unsigned char rowbit;
-    int eint;
-} x50ng_ui_key_t;
 
 typedef struct {
     x50ng_t* x50ng;
@@ -115,650 +21,6 @@ typedef struct {
     bool down;
     bool hold;
 } x50ng_ui_button_t;
-
-static x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
-    {.css_class = "menu",
-     .css_id = "F1",
-     .label = "F1",
-     .letter = "A",
-     .left = "Y=",
-     .right = NULL,
-     .below = NULL,
-     .column = 5,
-     .row = 1,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "menu",
-     .css_id = "F2",
-     .label = "F2",
-     .letter = "B",
-     .left = "WIN",
-     .right = NULL,
-     .below = NULL,
-     .column = 5,
-     .row = 2,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-    {.css_class = "menu",
-     .css_id = "F3",
-     .label = "F3",
-     .letter = "C",
-     .left = "GRAPH",
-     .right = NULL,
-     .below = NULL,
-     .column = 5,
-     .row = 3,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-    {.css_class = "menu",
-     .css_id = "F4",
-     .label = "F4",
-     .letter = "D",
-     .left = "2D/3D",
-     .right = NULL,
-     .below = NULL,
-     .column = 5,
-     .row = 4,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
-    {.css_class = "menu",
-     .css_id = "F5",
-     .label = "F5",
-     .letter = "E",
-     .left = "TBLSET",
-     .right = NULL,
-     .below = NULL,
-     .column = 5,
-     .row = 5,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
-    {.css_class = "menu",
-     .css_id = "F6",
-     .label = "F6",
-     .letter = "F",
-     .left = "TABLE",
-     .right = NULL,
-     .below = NULL,
-     .column = 5,
-     .row = 6,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
-
-    {.css_class = "function",
-     .css_id = "APPS",
-     .label = "APPS",
-     .letter = "G",
-     .left = "FILES",
-     .right = "BEGIN",
-     .below = NULL,
-     .column = 5,
-     .row = 7,
-     .columnbit = ( 1 << 5 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
-    {.css_class = "function",
-     .css_id = "MODE",
-     .label = "MODE",
-     .letter = "H",
-     .left = "CUSTOM",
-     .right = "END",
-     .below = NULL,
-     .column = 6,
-     .row = 5,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
-    {.css_class = "function",
-     .css_id = "TOOL",
-     .label = "TOOL",
-     .letter = "I",
-     .left = "i",
-     .right = "I",
-     .below = NULL,
-     .column = 6,
-     .row = 6,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
-    {.css_class = "arrow",
-     .css_id = "UP",
-     .label = "⬆",
-     .letter = "",
-     .left = "",
-     .right = NULL,
-     .below = NULL,
-     .column = 6,
-     .row = 1,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "function",
-     .css_id = "VAR",
-     .label = "VAR",
-     .letter = "J",
-     .left = "UPDIR",
-     .right = "COPY",
-     .below = NULL,
-     .column = 6,
-     .row = 7,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
-    {.css_class = "function",
-     .css_id = "STO",
-     .label = "STO⏵",
-     .letter = "K",
-     .left = "RCL",
-     .right = "CUT",
-     .below = NULL,
-     .column = 7,
-     .row = 1,
-     .columnbit = ( 1 << 7 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "function",
-     .css_id = "NXT",
-     .label = "NXT",
-     .letter = "L",
-     .left = "PREV",
-     .right = "PASTE",
-     .below = NULL,
-     .column = 7,
-     .row = 2,
-     .columnbit = ( 1 << 7 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-
-    {.css_class = "arrow",
-     .css_id = "LEFT",
-     .label = "⬅",
-     .letter = "",
-     .left = "",
-     .right = NULL,
-     .below = NULL,
-     .column = 6,
-     .row = 2,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-    {.css_class = "arrow",
-     .css_id = "DOWN",
-     .label = "⬇",
-     .letter = "",
-     .left = "",
-     .right = NULL,
-     .below = NULL,
-     .column = 6,
-     .row = 3,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-    {.css_class = "arrow",
-     .css_id = "RIGHT",
-     .label = "➡",
-     .letter = "",
-     .left = "",
-     .right = NULL,
-     .below = NULL,
-     .column = 6,
-     .row = 4,
-     .columnbit = ( 1 << 6 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
-
-    {.css_class = "function",
-     .css_id = "HIST",
-     .label = "HIST",
-     .letter = "M",
-     .left = "CMD",
-     .right = "UNDO",
-     .below = NULL,
-     .column = 4,
-     .row = 1,
-     .columnbit = ( 1 << 4 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "function",
-     .css_id = "EVAL",
-     .label = "EVAL",
-     .letter = "N",
-     .left = "PRG",
-     .right = "CHARS",
-     .below = NULL,
-     .column = 3,
-     .row = 1,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "function",
-     .css_id = "QUOTE",
-     .label = "'",
-     .letter = "O",
-     .left = "MTRW",
-     .right = "EQW",
-     .below = NULL,
-     .column = 2,
-     .row = 1,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "function",
-     .css_id = "SYMB",
-     .label = "SYMB",
-     .letter = "P",
-     .left = "MTH",
-     .right = "CAT",
-     .below = NULL,
-     .column = 1,
-     .row = 1,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-    {.css_class = "function",
-     .css_id = "BACKSPACE",
-     .label = "⬅",
-     .letter = "",
-     .left = "DEL",
-     .right = "CLEAR",
-     .below = NULL,
-     .column = 0,
-     .row = 1,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 1 ),
-     .eint = 1},
-
-    {.css_class = "function",
-     .css_id = "POW",
-     .label = "Y<sup>x</sup>",
-     .letter = "Q",
-     .left = "𝑒<sup>x</sup>",
-     .right = "LN",
-     .below = NULL,
-     .column = 4,
-     .row = 2,
-     .columnbit = ( 1 << 4 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-    {.css_class = "function",
-     .css_id = "SQRT",
-     .label = "√𝓍",
-     .letter = "R",
-     .left = "𝓍<sup>2</sup>",
-     .right = "<sup>x</sup>√𝓎",
-     .below = NULL,
-     .column = 3,
-     .row = 2,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-    {.css_class = "function",
-     .css_id = "SIN",
-     .label = "SIN",
-     .letter = "S",
-     .left = "ASIN",
-     .right = "∑",
-     .below = NULL,
-     .column = 2,
-     .row = 2,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-    {.css_class = "function",
-     .css_id = "COS",
-     .label = "COS",
-     .letter = "T",
-     .left = "ACOS",
-     .right = "∂",
-     .below = NULL,
-     .column = 1,
-     .row = 2,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-    {.css_class = "function",
-     .css_id = "TAN",
-     .label = "TAN",
-     .letter = "U",
-     .left = "ATAN",
-     .right = "∫",
-     .below = NULL,
-     .column = 0,
-     .row = 2,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 2 ),
-     .eint = 2},
-
-    {.css_class = "enter",
-     .css_id = "ENTER",
-     .label = "ENTER",
-     .letter = NULL,
-     .left = "ANS",
-     .right = "→NUM",
-     .below = NULL,
-     .column = 0,
-     .row = 7,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
-    {.css_class = "function",
-     .css_id = "EEX",
-     .label = "EEX",
-     .letter = "V",
-     .left = "10<sup>𝓍</sup>",
-     .right = "LOG",
-     .below = NULL,
-     .column = 4,
-     .row = 3,
-     .columnbit = ( 1 << 4 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-    {.css_class = "function",
-     .css_id = "NEG",
-     .label = "+/-",
-     .letter = "W",
-     .left = "≠",
-     .right = "=",
-     .below = NULL,
-     .column = 3,
-     .row = 3,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-    {.css_class = "function",
-     .css_id = "X",
-     .label = "𝓍",
-     .letter = "X",
-     .left = "≤",
-     .right = "&gt;",
-     .below = NULL,
-     .column = 2,
-     .row = 3,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-    {.css_class = "function",
-     .css_id = "INV",
-     .label = "1/𝓍",
-     .letter = "Y",
-     .left = "≥",
-     .right = ">",
-     .below = NULL,
-     .column = 1,
-     .row = 3,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-
-    {.css_class = "alpha",
-     .css_id = "ALPHA",
-     .label = "ALPHA",
-     .letter = NULL,
-     .left = "USER",
-     .right = "ENTRY",
-     .below = NULL,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 4},
-    {.css_class = "core-number",
-     .css_id = "SEVEN",
-     .label = "7",
-     .letter = NULL,
-     .left = "S.SLV",
-     .right = "NUM.SLV",
-     .below = NULL,
-     .column = 3,
-     .row = 4,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
-    {.css_class = "core-number",
-     .css_id = "EIGHT",
-     .label = "8",
-     .letter = NULL,
-     .left = "EXP&amp;LN",
-     .right = "TRIG",
-     .below = NULL,
-     .column = 2,
-     .row = 4,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
-    {.css_class = "core-number",
-     .css_id = "NINE",
-     .label = "9",
-     .letter = NULL,
-     .left = "FINANCE",
-     .right = "TIME",
-     .below = NULL,
-     .column = 1,
-     .row = 4,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
-    {.css_class = "core-number",
-     .css_id = "DIVIDE",
-     .label = "÷",
-     .letter = "Z",
-     .left = "ABS",
-     .right = "ARG",
-     .below = NULL,
-     .column = 0,
-     .row = 3,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 3 ),
-     .eint = 3},
-
-    {.css_class = "shift-left",
-     .css_id = "SHIFT-LEFT",
-     .label = "⮢",
-     .letter = NULL,
-     .left = "",
-     .right = NULL,
-     .below = NULL,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 5},
-    {.css_class = "core-number",
-     .css_id = "FOUR",
-     .label = "4",
-     .letter = NULL,
-     .left = "CALC",
-     .right = "ALG",
-     .below = NULL,
-     .column = 3,
-     .row = 5,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
-    {.css_class = "core-number",
-     .css_id = "FIVE",
-     .label = "5",
-     .letter = NULL,
-     .left = "MATRICES",
-     .right = "STAT",
-     .below = NULL,
-     .column = 2,
-     .row = 5,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
-    {.css_class = "core-number",
-     .css_id = "SIX",
-     .label = "6",
-     .letter = NULL,
-     .left = "CONVERT",
-     .right = "UNITS",
-     .below = NULL,
-     .column = 1,
-     .row = 5,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
-    {.css_class = "core-number",
-     .css_id = "MULTIPLY",
-     .label = "×",
-     .letter = NULL,
-     .left = "[ ]",
-     .right = "\" \"",
-     .below = NULL,
-     .column = 0,
-     .row = 4,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 4 ),
-     .eint = 4},
-
-    {.css_class = "shift-right",
-     .css_id = "SHIFT-RIGHT",
-     .label = "⮣",
-     .letter = NULL,
-     .left = "",
-     .right = NULL,
-     .below = NULL,
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 6},
-    {.css_class = "core-number",
-     .css_id = "ONE",
-     .label = "1",
-     .letter = NULL,
-     .left = "ARITH",
-     .right = "CMPLX",
-     .below = NULL,
-     .column = 3,
-     .row = 6,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
-    {.css_class = "core-number",
-     .css_id = "TWO",
-     .label = "2",
-     .letter = NULL,
-     .left = "DEF",
-     .right = "LIB",
-     .below = NULL,
-     .column = 2,
-     .row = 6,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
-    {.css_class = "core-number",
-     .css_id = "THREE",
-     .label = "3",
-     .letter = NULL,
-     .left = "#",
-     .right = "BASE",
-     .below = NULL,
-     .column = 1,
-     .row = 6,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
-    {.css_class = "core-number",
-     .css_id = "MINUS",
-     .label = "-",
-     .letter = NULL,
-     .left = "( )",
-     .right = "_",
-     .below = NULL,
-     .column = 0,
-     .row = 5,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 5 ),
-     .eint = 5},
-
-    {.css_class = "core",
-     .css_id = "ON",
-     .label = "ON",
-     .letter = NULL,
-     .left = "CONT",
-     .right = "OFF",
-     .below = "CANCEL",
-     .column = 0,
-     .row = 0,
-     .columnbit = 0,
-     .rowbit = 0,
-     .eint = 0},
-    {.css_class = "core-number",
-     .css_id = "ZERO",
-     .label = "0",
-     .letter = NULL,
-     .left = "∞",
-     .right = "→",
-     .below = NULL,
-     .column = 3,
-     .row = 7,
-     .columnbit = ( 1 << 3 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
-    {.css_class = "core",
-     .css_id = "PERIOD",
-     .label = ".",
-     .letter = NULL,
-     .left = ": :",
-     .right = "↲",
-     .below = NULL,
-     .column = 2,
-     .row = 7,
-     .columnbit = ( 1 << 2 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
-    {.css_class = "core",
-     .css_id = "SPC",
-     .label = "SPC",
-     .letter = NULL,
-     .left = "𝚷",
-     .right = ",",
-     .below = NULL,
-     .column = 1,
-     .row = 7,
-     .columnbit = ( 1 << 1 ),
-     .rowbit = ( 1 << 7 ),
-     .eint = 7},
-    {.css_class = "core-number",
-     .css_id = "PLUS",
-     .label = "+",
-     .letter = NULL,
-     .left = "{ }",
-     .right = "« »",
-     .below = NULL,
-     .column = 0,
-     .row = 6,
-     .columnbit = ( 1 << 0 ),
-     .rowbit = ( 1 << 6 ),
-     .eint = 6},
-};
-
-static int keys_order_normal[ NB_KEYS ] = {
-    HPKEY_A,          HPKEY_B,  HPKEY_C,         HPKEY_D,      HPKEY_E,     HPKEY_F,           HPKEY_G,     HPKEY_H, HPKEY_I,
-    HPKEY_UP,         HPKEY_J,  HPKEY_K,         HPKEY_L,      HPKEY_LEFT,  HPKEY_DOWN,        HPKEY_RIGHT, HPKEY_M, HPKEY_N,
-    HPKEY_O,          HPKEY_P,  HPKEY_BACKSPACE, HPKEY_Q,      HPKEY_R,     HPKEY_S,           HPKEY_T,     HPKEY_U, HPKEY_V,
-    HPKEY_W,          HPKEY_X,  HPKEY_Y,         HPKEY_Z,      HPKEY_ALPHA, HPKEY_7,           HPKEY_8,     HPKEY_9, HPKEY_MULTIPLY,
-    HPKEY_SHIFT_LEFT, HPKEY_4,  HPKEY_5,         HPKEY_6,      HPKEY_MINUS, HPKEY_SHIFT_RIGHT, HPKEY_1,     HPKEY_2, HPKEY_3,
-    HPKEY_PLUS,       HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE, HPKEY_ENTER,
-};
-
-static int keys_order_legacy[ NB_KEYS ] = {
-    HPKEY_A,          HPKEY_B,  HPKEY_C,         HPKEY_D,      HPKEY_E,        HPKEY_F,           HPKEY_G,     HPKEY_H, HPKEY_I,
-    HPKEY_UP,         HPKEY_J,  HPKEY_K,         HPKEY_L,      HPKEY_LEFT,     HPKEY_DOWN,        HPKEY_RIGHT, HPKEY_M, HPKEY_N,
-    HPKEY_O,          HPKEY_P,  HPKEY_BACKSPACE, HPKEY_Q,      HPKEY_R,        HPKEY_S,           HPKEY_T,     HPKEY_U, HPKEY_ENTER,
-    HPKEY_V,          HPKEY_W,  HPKEY_X,         HPKEY_Y,      HPKEY_ALPHA,    HPKEY_7,           HPKEY_8,     HPKEY_9, HPKEY_Z,
-    HPKEY_SHIFT_LEFT, HPKEY_4,  HPKEY_5,         HPKEY_6,      HPKEY_MULTIPLY, HPKEY_SHIFT_RIGHT, HPKEY_1,     HPKEY_2, HPKEY_3,
-    HPKEY_MINUS,      HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE,    HPKEY_PLUS,
-};
-
-#define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
 
 static GtkWidget* gui_window;
 
@@ -774,85 +36,7 @@ static GtkWidget* gui_ann_battery;
 static GtkWidget* gui_ann_busy;
 static GtkWidget* gui_ann_io;
 
-/*************************/
-/* functions' prototypes */
-/*************************/
 static void gui_open_menu( int x, int y, x50ng_t* x50ng );
-
-/*************/
-/* functions */
-/*************/
-static inline void newrplify_ui_keys()
-{
-    // modify keys' labeling for newRPL
-    for ( int i = HPKEY_A; i <= HPKEY_F; i++ )
-        ui_keys[ i ].left = "";
-
-    for ( int i = HPKEY_G; i <= HPKEY_I; i++ ) {
-        ui_keys[ i ].label = "";
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
-    }
-
-    for ( int i = HPKEY_J; i <= HPKEY_K; i++ ) {
-        ui_keys[ i ].label = "";
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
-    }
-
-    ui_keys[ HPKEY_UP ].left = "UPDIR";
-
-    ui_keys[ HPKEY_LEFT ].left = "BEG";
-    ui_keys[ HPKEY_LEFT ].right = "COPY";
-
-    ui_keys[ HPKEY_DOWN ].left = "CUT";
-
-    ui_keys[ HPKEY_RIGHT ].left = "END";
-    ui_keys[ HPKEY_RIGHT ].right = "PASTE";
-
-    ui_keys[ HPKEY_M ].label = "STO⏵";
-    ui_keys[ HPKEY_M ].left = "RCL";
-    ui_keys[ HPKEY_M ].right = "PREV.M";
-
-    for ( int i = HPKEY_N; i <= HPKEY_O; i++ ) {
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
-    }
-
-    ui_keys[ HPKEY_P ].label = "MENU";
-
-    ui_keys[ HPKEY_BACKSPACE ].left = "";
-
-    for ( int i = HPKEY_S; i <= HPKEY_U; i++ )
-        ui_keys[ i ].right = NULL;
-
-    for ( int i = HPKEY_ALPHA; i <= HPKEY_9; i++ )
-        ui_keys[ i ].left = "";
-
-    ui_keys[ HPKEY_8 ].right = NULL;
-
-    for ( int i = HPKEY_4; i <= HPKEY_6; i++ ) {
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
-    }
-
-    ui_keys[ HPKEY_2 ].left = "";
-
-    ui_keys[ HPKEY_ON ].left = "";
-    ui_keys[ HPKEY_ON ].below = NULL;
-
-    ui_keys[ HPKEY_ENTER ].left = "";
-}
-
-static inline void x50ng_set_key_state( x50ng_t* x50ng, const x50ng_ui_key_t* key, bool state )
-{
-    if ( key->rowbit )
-        s3c2410_io_port_g_update( x50ng, key->column, key->row, key->columnbit, key->rowbit, state );
-    else
-        s3c2410_io_port_f_set_bit( x50ng, key->eint, state );
-}
-#define X50NG_PRESS_KEY( x50ng, key ) x50ng_set_key_state( x50ng, key, true );
-#define X50NG_RELEASE_KEY( x50ng, key ) x50ng_set_key_state( x50ng, key, false );
 
 static void gui_release_button( x50ng_ui_button_t* button )
 {
@@ -921,12 +105,146 @@ static void gui_react_to_button_right_click_release( x50ng_ui_button_t* button, 
     X50NG_PRESS_KEY( x50ng, key );
 }
 
-#define KEY_PRESS 1
-#define KEY_RELEASE 2
-static bool gui_react_to_key_event( int keyval, x50ng_t* x50ng, int event_type )
+static void gui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* x50ng )
 {
-    // x50ng_ui_t* ui = x50ng->ui;
+    g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
+    if ( file != NULL )
+        s3c2410_sdi_mount( x50ng, ( char* )g_file_peek_path( file ) );
+}
+
+static void gui_do_select_and_mount_sd_folder( x50ng_t* x50ng, GMenuItem* _menuitem )
+{
+    g_autoptr( GtkFileDialog ) dialog =
+        g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
+
+    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( gui_window ), NULL, ( GAsyncReadyCallback )gui_mount_sd_folder_file_dialog_callback,
+                                   x50ng );
+}
+
+static void gui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
+{
+    if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
+        gdbserver_start( opt.debug_port );
+        gdb_handlesig( x50ng->env, 0 );
+    }
+}
+
+static void gui_do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
+{
+    x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
+    cpu_reset( x50ng->env );
+    x50ng_set_idle( x50ng, 0 );
+}
+
+#ifdef TEST_PASTE
+static void x50g_string_to_keys_sequence( x50ng_t* x50ng, const char* input )
+{
+    for ( int i = 0; i < strlen( input ); i++ ) {
+        fprintf( stderr, "%c", input[ i ] );
+    }
+    fprintf( stderr, "\n" );
+}
+
+static void gui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* x50ng )
+{
+    g_autofree char* text = NULL;
+    g_autoptr( GError ) error = NULL;
+
+    text = gdk_clipboard_read_text_finish( source, result, &error );
+
+    if ( error ) {
+        g_critical( "Couldn't paste text: %s\n", error->message );
+        return;
+    }
+
+    x50g_string_to_keys_sequence( x50ng, text );
+}
+
+static void gui_do_paste( x50ng_t* x50ng, GtkWidget* _menuitem )
+{
+    gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL, ( GAsyncReadyCallback )gui_paste_callback,
+                                   x50ng );
+}
+#endif
+
+static void gui_do_quit( x50ng_t* x50ng, GtkWidget* _menuitem ) { x50ng->arm_exit++; }
+
+static void gui_open_menu( int x, int y, x50ng_t* x50ng )
+{
+    g_autoptr( GMenu ) menu = g_menu_new();
+    g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
+
+#ifdef TEST_PASTE
+    g_autoptr( GSimpleAction ) act_paste = g_simple_action_new( "paste", NULL );
+    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gui_do_paste ), x50ng );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
+    g_menu_append( menu, "Paste", "app.paste" );
+#endif
+
+    g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
+    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gui_do_select_and_mount_sd_folder ), x50ng );
+    if ( !s3c2410_sdi_is_mounted( x50ng ) )
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
+    g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
+
+    g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
+    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), x50ng );
+    char* unmount_label;
+    if ( s3c2410_sdi_is_mounted( x50ng ) ) {
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
+        char* sd_path;
+        s3c2410_sdi_get_path( x50ng, &sd_path );
+        if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
+            exit( EXIT_FAILURE );
+        free( sd_path );
+    } else if ( -1 == asprintf( &unmount_label, "Unmount SD" ) )
+        exit( EXIT_FAILURE );
+    g_menu_append( menu, unmount_label, "app.unmount_SD" );
+    free( unmount_label );
+
+    g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
+    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gui_do_start_gdb_server ), x50ng );
+    if ( opt.debug_port != 0 )
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
+    g_menu_append( menu, "Start gdb server", "app.debug" );
+
+    g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
+    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gui_do_reset ), x50ng );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
+    g_menu_append( menu, "Reset", "app.reset" );
+
+    g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
+    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gui_do_quit ), x50ng );
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
+    g_menu_append( menu, "Quit", "app.quit" );
+
+    GtkWidget* popup = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
+    gtk_widget_insert_action_group( popup, "app", G_ACTION_GROUP( action_group ) );
+
+    GdkRectangle rect;
+    rect.x = x;
+    rect.y = y;
+    rect.width = rect.height = 1;
+    gtk_popover_set_pointing_to( GTK_POPOVER( popup ), &rect );
+
+    gtk_widget_set_parent( GTK_WIDGET( popup ), gui_window );
+    gtk_popover_set_position( GTK_POPOVER( popup ), GTK_POS_BOTTOM );
+    gtk_popover_popup( GTK_POPOVER( popup ) );
+}
+
+static void gui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, int height, gpointer _user_data )
+{
+    cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( gui_lcd_surface );
+    cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_FAST );
+    cairo_scale( cr, ( double )width / ( double )LCD_WIDTH, ( double )height / ( double )LCD_HEIGHT );
+    cairo_set_source( cr, lcd_pattern );
+
+    cairo_paint( cr );
+}
+
+static bool gui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
+{
     int hpkey;
     switch ( keyval ) {
         case GDK_KEY_a:
@@ -1176,12 +494,16 @@ static bool gui_react_to_key_event( int keyval, x50ng_t* x50ng, int event_type )
     // Using GUI buttons:
     switch ( event_type ) {
         case KEY_PRESS:
+            /* if ( opt.tui ) */
+            /*     X50NG_PRESS_KEY( x50ng, &ui_keys[ hpkey ] ) */
+            /* else */
             gui_react_to_button_press( NULL, 0, 0, 0, &gui_buttons[ hpkey ] );
-            /* X50NG_PRESS_KEY( x50ng, &ui_keys[ hpkey ] ); */
             break;
         case KEY_RELEASE:
+            /* if ( opt.tui ) */
+            /*     X50NG_RELEASE_KEY( x50ng, &ui_keys[ hpkey ] ) */
+            /* else */
             gui_react_to_button_release( NULL, 0, 0, 0, &gui_buttons[ hpkey ] );
-            /* X50NG_RELEASE_KEY( x50ng, &ui_keys[ hpkey ] ); */
             break;
         default:
             return GDK_EVENT_PROPAGATE;
@@ -1190,153 +512,15 @@ static bool gui_react_to_key_event( int keyval, x50ng_t* x50ng, int event_type )
     return GDK_EVENT_STOP;
 }
 
-static void gui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* x50ng )
-{
-    g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
-
-    if ( file != NULL )
-        s3c2410_sdi_mount( x50ng, ( char* )g_file_peek_path( file ) );
-}
-
-static void gui_do_select_and_mount_sd_folder( x50ng_t* x50ng, GMenuItem* _menuitem )
-{
-    g_autoptr( GtkFileDialog ) dialog =
-        g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
-
-    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( gui_window ), NULL, ( GAsyncReadyCallback )gui_mount_sd_folder_file_dialog_callback,
-                                   x50ng );
-}
-
-static void gui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
-{
-    if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
-        gdbserver_start( opt.debug_port );
-        gdb_handlesig( x50ng->env, 0 );
-    }
-}
-
-static void gui_do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
-{
-    x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
-    cpu_reset( x50ng->env );
-    x50ng_set_idle( x50ng, 0 );
-}
-
-#ifdef TEST_PASTE
-static void x50g_string_to_keys_sequence( x50ng_t* x50ng, const char* input )
-{
-    for ( int i = 0; i < strlen( input ); i++ ) {
-        fprintf( stderr, "%c", input[ i ] );
-    }
-    fprintf( stderr, "\n" );
-}
-
-static void gui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* x50ng )
-{
-    g_autofree char* text = NULL;
-    g_autoptr( GError ) error = NULL;
-
-    text = gdk_clipboard_read_text_finish( source, result, &error );
-
-    if ( error ) {
-        g_critical( "Couldn't paste text: %s\n", error->message );
-        return;
-    }
-
-    x50g_string_to_keys_sequence( x50ng, text );
-}
-
-static void gui_do_paste( x50ng_t* x50ng, GtkWidget* _menuitem )
-{
-    gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL, ( GAsyncReadyCallback )gui_paste_callback,
-                                   x50ng );
-}
-#endif
-
-static void gui_do_quit( x50ng_t* x50ng, GtkWidget* _menuitem ) { x50ng->arm_exit++; }
-
-static void gui_open_menu( int x, int y, x50ng_t* x50ng )
-{
-    g_autoptr( GMenu ) menu = g_menu_new();
-    g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
-
-#ifdef TEST_PASTE
-    g_autoptr( GSimpleAction ) act_paste = g_simple_action_new( "paste", NULL );
-    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gui_do_paste ), x50ng );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
-    g_menu_append( menu, "Paste", "app.paste" );
-#endif
-
-    g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
-    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gui_do_select_and_mount_sd_folder ), x50ng );
-    if ( !s3c2410_sdi_is_mounted( x50ng ) )
-        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
-    g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
-
-    g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
-    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), x50ng );
-    char* unmount_label;
-    if ( s3c2410_sdi_is_mounted( x50ng ) ) {
-        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
-        char* sd_path;
-        s3c2410_sdi_get_path( x50ng, &sd_path );
-        if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
-            exit( EXIT_FAILURE );
-        free( sd_path );
-    } else if ( -1 == asprintf( &unmount_label, "Unmount SD" ) )
-        exit( EXIT_FAILURE );
-    g_menu_append( menu, unmount_label, "app.unmount_SD" );
-    free( unmount_label );
-
-    g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
-    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gui_do_start_gdb_server ), x50ng );
-    if ( opt.debug_port != 0 )
-        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
-    g_menu_append( menu, "Start gdb server", "app.debug" );
-
-    g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
-    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gui_do_reset ), x50ng );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
-    g_menu_append( menu, "Reset", "app.reset" );
-
-    g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
-    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gui_do_quit ), x50ng );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
-    g_menu_append( menu, "Quit", "app.quit" );
-
-    GtkWidget* popup = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
-    gtk_widget_insert_action_group( popup, "app", G_ACTION_GROUP( action_group ) );
-
-    GdkRectangle rect;
-    rect.x = x;
-    rect.y = y;
-    rect.width = rect.height = 1;
-    gtk_popover_set_pointing_to( GTK_POPOVER( popup ), &rect );
-
-    gtk_widget_set_parent( GTK_WIDGET( popup ), gui_window );
-    gtk_popover_set_position( GTK_POPOVER( popup ), GTK_POS_BOTTOM );
-    gtk_popover_popup( GTK_POPOVER( popup ) );
-}
-
-static void gui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, int height, gpointer _user_data )
-{
-    cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( gui_lcd_surface );
-    cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_FAST );
-    cairo_scale( cr, ( double )width / ( double )LCD_WIDTH, ( double )height / ( double )LCD_HEIGHT );
-    cairo_set_source( cr, lcd_pattern );
-
-    cairo_paint( cr );
-}
-
 static bool gui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, x50ng_t* x50ng )
 {
-    return gui_react_to_key_event( keyval, x50ng, KEY_PRESS );
+    return gui_handle_key_event( keyval, x50ng, KEY_PRESS );
 }
 
 static bool gui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
                                       x50ng_t* x50ng )
 {
-    return gui_react_to_key_event( keyval, x50ng, KEY_RELEASE );
+    return gui_handle_key_event( keyval, x50ng, KEY_RELEASE );
 }
 
 static void gui_react_to_display_click( x50ng_t* x50ng, GtkEventController* _gesture, gdouble x, gdouble y )
@@ -1615,7 +799,7 @@ static int gui_load( x50ng_t* x50ng )
     return 0;
 }
 
-static void gui_update_lcd( x50ng_t* x50ng )
+void gui_update_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
@@ -1647,19 +831,19 @@ static void gui_update_lcd( x50ng_t* x50ng )
     gtk_widget_queue_draw( gui_lcd_canvas );
 }
 
-static void gui_events_handling_step( x50ng_t* _x50ng )
+void gui_events_handling_step( x50ng_t* _x50ng )
 {
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
 }
 
-static void gui_refresh_lcd( x50ng_t* x50ng )
+void gui_refresh_lcd( x50ng_t* x50ng )
 {
-    ui_update_lcd( x50ng );
+    gui_update_lcd( x50ng );
     gdk_display_flush( gdk_display_get_default() );
 }
 
-static void gui_init( x50ng_t* x50ng )
+void gui_init( x50ng_t* x50ng )
 {
     gui_buttons = malloc( NB_KEYS * sizeof( x50ng_ui_button_t ) );
     if ( NULL == gui_buttons ) {
@@ -1671,35 +855,4 @@ static void gui_init( x50ng_t* x50ng )
     gtk_init();
 
     gui_load( x50ng );
-}
-
-/********************/
-/* Public functions */
-/********************/
-void ui_update_lcd( x50ng_t* x50ng ) { gui_update_lcd( x50ng ); }
-
-void ui_events_timer( void* data )
-{
-    x50ng_t* x50ng = data;
-
-    gui_events_handling_step( x50ng );
-
-    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
-}
-
-void ui_lcd_timer( void* data )
-{
-    x50ng_t* x50ng = data;
-
-    gui_refresh_lcd( x50ng );
-
-    x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
-}
-
-void ui_init( x50ng_t* x50ng )
-{
-    if ( opt.newrpl_keyboard )
-        newrplify_ui_keys();
-
-    gui_init( x50ng );
 }
