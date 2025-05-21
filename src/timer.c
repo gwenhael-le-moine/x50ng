@@ -205,10 +205,8 @@ void x50ng_main_loop( x50ng_t* x50ng )
                 continue;
             }
 
-            if ( ( x50ng->arm_idle != prev_idle ) && ( x50ng->arm_idle == X50NG_ARM_OFF ) ) {
-                ui_update_lcd( x50ng );
+            if ( ( x50ng->arm_idle != prev_idle ) && ( x50ng->arm_idle == X50NG_ARM_OFF ) )
                 cpu_reset( x50ng->env );
-            }
 
             timeout = ( ret == EXCP_HALTED ) ? 10 : 0;
         } else
