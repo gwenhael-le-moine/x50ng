@@ -19,6 +19,8 @@
 #define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / 4 )
 #define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / 2 ) + 1
 
+static bool previous_keyboard_state[ NB_KEYS ];
+
 static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
 {
     /*********/
@@ -53,7 +55,6 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
 /* Public */
 /**********/
 
-/* void tui_update_lcd( x50ng_t* x50ng ) */
 void tui_refresh_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
@@ -109,206 +110,222 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
     //    and https://viewsourcecode.org/snaptoken/kilo/03.rawInputAndOutput.html
     //    [ https://github.com/snaptoken/kilo-tutorial ]
 
-    /* int hpkey = -1; */
-    /* uint32_t k; */
+    // Idea:
+    // each run records the state of the keyboard (pressed keys)
+    // This allow to diff with previous state and issue PRESS and RELEASE calls
 
-    /* /\* Start fresh and mark all keys as released *\/ */
-    /* for ( int i = 0; i < NB_KEYS; ++i ) */
-    /*     X50NG_RELEASE_KEY( x50ng, &ui_keys[ i ] ) */
+    bool new_keyboard_state[ NB_KEYS ];
+    for ( int key = 0; key < NB_KEYS; ++key )
+        new_keyboard_state[ key ] = false;
 
-    /* /\* Iterate over all currently pressed keys and mark them as pressed *\/ */
-    /* while ( ( k = getch() ) ) { */
-    /*     if ( k == ( uint32_t )ERR ) */
-    /*         break; */
+    // READ KB STATE
+    uint32_t k;
 
-    /*     switch ( k ) { */
-    /*         case '0': */
-    /*             hpkey = HPKEY_0; */
-    /*             break; */
-    /*         case '1': */
-    /*             hpkey = HPKEY_1; */
-    /*             break; */
-    /*         case '2': */
-    /*             hpkey = HPKEY_2; */
-    /*             break; */
-    /*         case '3': */
-    /*             hpkey = HPKEY_3; */
-    /*             break; */
-    /*         case '4': */
-    /*             hpkey = HPKEY_4; */
-    /*             break; */
-    /*         case '5': */
-    /*             hpkey = HPKEY_5; */
-    /*             break; */
-    /*         case '6': */
-    /*             hpkey = HPKEY_6; */
-    /*             break; */
-    /*         case '7': */
-    /*             hpkey = HPKEY_7; */
-    /*             break; */
-    /*         case '8': */
-    /*             hpkey = HPKEY_8; */
-    /*             break; */
-    /*         case '9': */
-    /*             hpkey = HPKEY_9; */
-    /*             break; */
-    /*         case 'a': */
-    /*             hpkey = HPKEY_A; */
-    /*             break; */
-    /*         case 'b': */
-    /*             hpkey = HPKEY_B; */
-    /*             break; */
-    /*         case 'c': */
-    /*             hpkey = HPKEY_C; */
-    /*             break; */
-    /*         case 'd': */
-    /*             hpkey = HPKEY_D; */
-    /*             break; */
-    /*         case 'e': */
-    /*             hpkey = HPKEY_E; */
-    /*             break; */
-    /*         case 'f': */
-    /*             hpkey = HPKEY_F; */
-    /*             break; */
-    /*         case 'g': */
-    /*             hpkey = HPKEY_G; */
-    /*             break; */
-    /*         case 'h': */
-    /*             hpkey = HPKEY_H; */
-    /*             break; */
-    /*         case 'i': */
-    /*             hpkey = HPKEY_I; */
-    /*             break; */
-    /*         case 'j': */
-    /*             hpkey = HPKEY_J; */
-    /*             break; */
-    /*         case 'k': */
-    /*             hpkey = HPKEY_K; */
-    /*             break; */
-    /*         case KEY_UP: */
-    /*             hpkey = HPKEY_UP; */
-    /*             break; */
-    /*         case 'l': */
-    /*             hpkey = HPKEY_L; */
-    /*             break; */
-    /*         case 'm': */
-    /*             hpkey = HPKEY_M; */
-    /*             break; */
-    /*         case 'n': */
-    /*             hpkey = HPKEY_N; */
-    /*             break; */
-    /*         case 'o': */
-    /*             hpkey = HPKEY_O; */
-    /*             break; */
-    /*         case 'p': */
-    /*             hpkey = HPKEY_P; */
-    /*             break; */
-    /*         case KEY_LEFT: */
-    /*             hpkey = HPKEY_LEFT; */
-    /*             break; */
-    /*         case 'q': */
-    /*             hpkey = HPKEY_Q; */
-    /*             break; */
-    /*         case KEY_DOWN: */
-    /*             hpkey = HPKEY_DOWN; */
-    /*             break; */
-    /*         case 'r': */
-    /*             hpkey = HPKEY_R; */
-    /*             break; */
-    /*         case KEY_RIGHT: */
-    /*             hpkey = HPKEY_RIGHT; */
-    /*             break; */
-    /*         case 's': */
-    /*             hpkey = HPKEY_S; */
-    /*             break; */
-    /*         case 't': */
-    /*             hpkey = HPKEY_T; */
-    /*             break; */
-    /*         case 'u': */
-    /*             hpkey = HPKEY_U; */
-    /*             break; */
-    /*         case 'v': */
-    /*             hpkey = HPKEY_V; */
-    /*             break; */
-    /*         case 'w': */
-    /*             hpkey = HPKEY_W; */
-    /*             break; */
-    /*         case 'x': */
-    /*             hpkey = HPKEY_X; */
-    /*             break; */
-    /*         case 'y': */
-    /*             hpkey = HPKEY_Y; */
-    /*             break; */
-    /*         case 'z': */
-    /*         case '/': */
-    /*             hpkey = HPKEY_Z; */
-    /*             break; */
-    /*         case ' ': */
-    /*             hpkey = HPKEY_SPACE; */
-    /*             break; */
-    /*         case KEY_DC: */
-    /*         case KEY_BACKSPACE: */
-    /*         case 127: */
-    /*         case '\b': */
-    /*             hpkey = HPKEY_BACKSPACE; */
-    /*             break; */
-    /*         case '.': */
-    /*             hpkey = HPKEY_PERIOD; */
-    /*             break; */
-    /*         case '+': */
-    /*             hpkey = HPKEY_PLUS; */
-    /*             break; */
-    /*         case '-': */
-    /*             hpkey = HPKEY_MINUS; */
-    /*             break; */
-    /*         case '*': */
-    /*             hpkey = HPKEY_MULTIPLY; */
-    /*             break; */
+    /* Iterate over all currently pressed keys and mark them as pressed */
+    while ( ( k = getch() ) ) {
+        if ( k == ( uint32_t )ERR )
+            break;
 
-    /*         case KEY_F( 1 ): */
-    /*         case KEY_ENTER: */
-    /*         case '\n': */
-    /*         case ',': */
-    /*         case 13: */
-    /*             hpkey = HPKEY_ENTER; */
-    /*             break; */
-    /*         case KEY_F( 2 ): */
-    /*         case '[': */
-    /*         case 339: /\* PgUp *\/ */
-    /*             hpkey = HPKEY_SHIFT_LEFT; */
-    /*             break; */
-    /*         case KEY_F( 3 ): */
-    /*         case ']': */
-    /*         case 338: /\* PgDn *\/ */
-    /*             hpkey = HPKEY_SHIFT_RIGHT; */
-    /*             break; */
-    /*         case KEY_F( 4 ): */
-    /*         case ';': */
-    /*         case KEY_IC: /\* Ins *\/ */
-    /*             hpkey = HPKEY_ALPHA; */
-    /*             break; */
-    /*         case KEY_F( 5 ): */
-    /*         case '\\': */
-    /*         case 27:  /\* Esc *\/ */
-    /*         case 262: /\* Home *\/ */
-    /*             hpkey = HPKEY_ON; */
-    /*             break; */
+        switch ( k ) {
+            case '0':
+                new_keyboard_state[ HPKEY_0 ] = true;
+                break;
+            case '1':
+                new_keyboard_state[ HPKEY_1 ] = true;
+                break;
+            case '2':
+                new_keyboard_state[ HPKEY_2 ] = true;
+                break;
+            case '3':
+                new_keyboard_state[ HPKEY_3 ] = true;
+                break;
+            case '4':
+                new_keyboard_state[ HPKEY_4 ] = true;
+                break;
+            case '5':
+                new_keyboard_state[ HPKEY_5 ] = true;
+                break;
+            case '6':
+                new_keyboard_state[ HPKEY_6 ] = true;
+                break;
+            case '7':
+                new_keyboard_state[ HPKEY_7 ] = true;
+                break;
+            case '8':
+                new_keyboard_state[ HPKEY_8 ] = true;
+                break;
+            case '9':
+                new_keyboard_state[ HPKEY_9 ] = true;
+                break;
+            case 'a':
+                new_keyboard_state[ HPKEY_A ] = true;
+                break;
+            case 'b':
+                new_keyboard_state[ HPKEY_B ] = true;
+                break;
+            case 'c':
+                new_keyboard_state[ HPKEY_C ] = true;
+                break;
+            case 'd':
+                new_keyboard_state[ HPKEY_D ] = true;
+                break;
+            case 'e':
+                new_keyboard_state[ HPKEY_E ] = true;
+                break;
+            case 'f':
+                new_keyboard_state[ HPKEY_F ] = true;
+                break;
+            case 'g':
+                new_keyboard_state[ HPKEY_G ] = true;
+                break;
+            case 'h':
+                new_keyboard_state[ HPKEY_H ] = true;
+                break;
+            case 'i':
+                new_keyboard_state[ HPKEY_I ] = true;
+                break;
+            case 'j':
+                new_keyboard_state[ HPKEY_J ] = true;
+                break;
+            case 'k':
+                new_keyboard_state[ HPKEY_K ] = true;
+                break;
+            case KEY_UP:
+                new_keyboard_state[ HPKEY_UP ] = true;
+                break;
+            case 'l':
+                new_keyboard_state[ HPKEY_L ] = true;
+                break;
+            case 'm':
+                new_keyboard_state[ HPKEY_M ] = true;
+                break;
+            case 'n':
+                new_keyboard_state[ HPKEY_N ] = true;
+                break;
+            case 'o':
+                new_keyboard_state[ HPKEY_O ] = true;
+                break;
+            case 'p':
+                new_keyboard_state[ HPKEY_P ] = true;
+                break;
+            case KEY_LEFT:
+                new_keyboard_state[ HPKEY_LEFT ] = true;
+                break;
+            case 'q':
+                new_keyboard_state[ HPKEY_Q ] = true;
+                break;
+            case KEY_DOWN:
+                new_keyboard_state[ HPKEY_DOWN ] = true;
+                break;
+            case 'r':
+                new_keyboard_state[ HPKEY_R ] = true;
+                break;
+            case KEY_RIGHT:
+                new_keyboard_state[ HPKEY_RIGHT ] = true;
+                break;
+            case 's':
+                new_keyboard_state[ HPKEY_S ] = true;
+                break;
+            case 't':
+                new_keyboard_state[ HPKEY_T ] = true;
+                break;
+            case 'u':
+                new_keyboard_state[ HPKEY_U ] = true;
+                break;
+            case 'v':
+                new_keyboard_state[ HPKEY_V ] = true;
+                break;
+            case 'w':
+                new_keyboard_state[ HPKEY_W ] = true;
+                break;
+            case 'x':
+                new_keyboard_state[ HPKEY_X ] = true;
+                break;
+            case 'y':
+                new_keyboard_state[ HPKEY_Y ] = true;
+                break;
+            case 'z':
+            case '/':
+                new_keyboard_state[ HPKEY_Z ] = true;
+                break;
+            case ' ':
+                new_keyboard_state[ HPKEY_SPACE ] = true;
+                break;
+            case KEY_DC:
+            case KEY_BACKSPACE:
+            case 127:
+            case '\b':
+                new_keyboard_state[ HPKEY_BACKSPACE ] = true;
+                break;
+            case '.':
+                new_keyboard_state[ HPKEY_PERIOD ] = true;
+                break;
+            case '+':
+                new_keyboard_state[ HPKEY_PLUS ] = true;
+                break;
+            case '-':
+                new_keyboard_state[ HPKEY_MINUS ] = true;
+                break;
+            case '*':
+                new_keyboard_state[ HPKEY_MULTIPLY ] = true;
+                break;
 
-    /*         case KEY_F( 7 ): */
-    /*         case '|':      /\* Shift+\ *\/ */
-    /*         case KEY_SEND: /\* Shift+End *\/ */
-    /*         case KEY_F( 10 ): */
-    /*             x50ng->arm_exit = 1; */
-    /*             cpu_exit( x50ng->env ); */
-    /*             break; */
-    /*     } */
+            case KEY_F( 1 ):
+            case KEY_ENTER:
+            case '\n':
+            case ',':
+            case 13:
+                new_keyboard_state[ HPKEY_ENTER ] = true;
+                break;
+            case KEY_F( 2 ):
+            case '[':
+            case 339: /* PgUp */
+                new_keyboard_state[ HPKEY_SHIFT_LEFT ] = true;
+                break;
+            case KEY_F( 3 ):
+            case ']':
+            case 338: /* PgDn */
+                new_keyboard_state[ HPKEY_SHIFT_RIGHT ] = true;
+                break;
+            case KEY_F( 4 ):
+            case ';':
+            case KEY_IC: /* Ins */
+                new_keyboard_state[ HPKEY_ALPHA ] = true;
+                break;
+            case KEY_F( 5 ):
+            case '\\':
+            case 27:  /* Esc */
+            case 262: /* Home */
+                new_keyboard_state[ HPKEY_ON ] = true;
+                break;
 
-    /*     X50NG_PRESS_KEY( x50ng, &ui_keys[ hpkey ] ) */
-    /* } */
+            case KEY_F( 7 ):
+            case '|':      /* Shift+\ */
+            case KEY_SEND: /* Shift+End */
+            case KEY_F( 10 ):
+                x50ng->arm_exit = 1;
+                cpu_exit( x50ng->env );
+                break;
+        }
+    }
+
+    for ( int key = 0; key < NB_KEYS; ++key ) {
+        /* key pressed */
+        if ( !previous_keyboard_state[ key ] && new_keyboard_state[ key ] )
+            X50NG_PRESS_KEY( x50ng, &ui_keys[ key ] )
+
+        /* key released */
+        if ( previous_keyboard_state[ key ] && !new_keyboard_state[ key ] )
+            X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] )
+
+        previous_keyboard_state[ key ] = new_keyboard_state[ key ];
+    }
 }
 
 void tui_init( x50ng_t* x50ng )
 {
+    for ( int i = 0; i < NB_KEYS; ++i )
+        previous_keyboard_state[ i ] = false;
 
     setlocale( LC_ALL, "" );
     initscr();              /* initialize the curses library */

@@ -741,8 +741,8 @@ void ui_handle_pending_inputs( void* data )
 
     if ( opt.tui )
         tui_handle_pending_inputs( x50ng );
-    /* else */
-    gui_handle_pending_inputs( x50ng );
+    else
+        gui_handle_pending_inputs( x50ng );
 
     x50ng_mod_timer( x50ng->timer_ui_input, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
@@ -753,8 +753,8 @@ void ui_refresh_output( void* data )
 
     if ( opt.tui )
         tui_refresh_lcd( x50ng );
-    /* else */
-    gui_refresh_lcd( x50ng );
+    else
+        gui_refresh_lcd( x50ng );
 
     x50ng_mod_timer( x50ng->timer_ui_output, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
@@ -766,14 +766,14 @@ void ui_init( x50ng_t* x50ng )
 
     if ( opt.tui )
         tui_init( x50ng );
-    /* else */
-    gui_init( x50ng );
+    else
+        gui_init( x50ng );
 }
 
 void ui_exit( void )
 {
     if ( opt.tui )
         tui_exit();
-    /* else */
-    gui_exit();
+    else
+        gui_exit();
 }
