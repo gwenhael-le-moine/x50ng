@@ -52,7 +52,9 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
 /**********/
 /* Public */
 /**********/
-void tui_update_lcd( x50ng_t* x50ng )
+
+/* void tui_update_lcd( x50ng_t* x50ng ) */
+void tui_refresh_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
@@ -100,207 +102,207 @@ void tui_update_lcd( x50ng_t* x50ng )
     wrefresh( stdscr );
 }
 
-void tui_events_handling_step( x50ng_t* x50ng )
+void tui_handle_pending_inputs( x50ng_t* x50ng )
 {
-    int hpkey = -1;
-    uint32_t k;
+    // FIXME: not implemented, likely needs raw mode or something
 
-    /* Start fresh and mark all keys as released */
-    for ( int i = 0; i < NB_KEYS; ++i )
-        X50NG_RELEASE_KEY( x50ng, &ui_keys[ i ] )
+    /* int hpkey = -1; */
+    /* uint32_t k; */
 
-    /* Iterate over all currently pressed keys and mark them as pressed */
-    while ( ( k = getch() ) ) {
-        if ( k == ( uint32_t )ERR )
-            break;
+    /* /\* Start fresh and mark all keys as released *\/ */
+    /* for ( int i = 0; i < NB_KEYS; ++i ) */
+    /*     X50NG_RELEASE_KEY( x50ng, &ui_keys[ i ] ) */
 
-        switch ( k ) {
-            case '0':
-                hpkey = HPKEY_0;
-                break;
-            case '1':
-                hpkey = HPKEY_1;
-                break;
-            case '2':
-                hpkey = HPKEY_2;
-                break;
-            case '3':
-                hpkey = HPKEY_3;
-                break;
-            case '4':
-                hpkey = HPKEY_4;
-                break;
-            case '5':
-                hpkey = HPKEY_5;
-                break;
-            case '6':
-                hpkey = HPKEY_6;
-                break;
-            case '7':
-                hpkey = HPKEY_7;
-                break;
-            case '8':
-                hpkey = HPKEY_8;
-                break;
-            case '9':
-                hpkey = HPKEY_9;
-                break;
-            case 'a':
-                hpkey = HPKEY_A;
-                break;
-            case 'b':
-                hpkey = HPKEY_B;
-                break;
-            case 'c':
-                hpkey = HPKEY_C;
-                break;
-            case 'd':
-                hpkey = HPKEY_D;
-                break;
-            case 'e':
-                hpkey = HPKEY_E;
-                break;
-            case 'f':
-                hpkey = HPKEY_F;
-                break;
-            case 'g':
-                hpkey = HPKEY_G;
-                break;
-            case 'h':
-                hpkey = HPKEY_H;
-                break;
-            case 'i':
-                hpkey = HPKEY_I;
-                break;
-            case 'j':
-                hpkey = HPKEY_J;
-                break;
-            case 'k':
-                hpkey = HPKEY_K;
-                break;
-            case KEY_UP:
-                hpkey = HPKEY_UP;
-                break;
-            case 'l':
-                hpkey = HPKEY_L;
-                break;
-            case 'm':
-                hpkey = HPKEY_M;
-                break;
-            case 'n':
-                hpkey = HPKEY_N;
-                break;
-            case 'o':
-                hpkey = HPKEY_O;
-                break;
-            case 'p':
-                hpkey = HPKEY_P;
-                break;
-            case KEY_LEFT:
-                hpkey = HPKEY_LEFT;
-                break;
-            case 'q':
-                hpkey = HPKEY_Q;
-                break;
-            case KEY_DOWN:
-                hpkey = HPKEY_DOWN;
-                break;
-            case 'r':
-                hpkey = HPKEY_R;
-                break;
-            case KEY_RIGHT:
-                hpkey = HPKEY_RIGHT;
-                break;
-            case 's':
-                hpkey = HPKEY_S;
-                break;
-            case 't':
-                hpkey = HPKEY_T;
-                break;
-            case 'u':
-                hpkey = HPKEY_U;
-                break;
-            case 'v':
-                hpkey = HPKEY_V;
-                break;
-            case 'w':
-                hpkey = HPKEY_W;
-                break;
-            case 'x':
-                hpkey = HPKEY_X;
-                break;
-            case 'y':
-                hpkey = HPKEY_Y;
-                break;
-            case 'z':
-            case '/':
-                hpkey = HPKEY_Z;
-                break;
-            case ' ':
-                hpkey = HPKEY_SPACE;
-                break;
-            case KEY_DC:
-            case KEY_BACKSPACE:
-            case 127:
-            case '\b':
-                hpkey = HPKEY_BACKSPACE;
-                break;
-            case '.':
-                hpkey = HPKEY_PERIOD;
-                break;
-            case '+':
-                hpkey = HPKEY_PLUS;
-                break;
-            case '-':
-                hpkey = HPKEY_MINUS;
-                break;
-            case '*':
-                hpkey = HPKEY_MULTIPLY;
-                break;
+    /* /\* Iterate over all currently pressed keys and mark them as pressed *\/ */
+    /* while ( ( k = getch() ) ) { */
+    /*     if ( k == ( uint32_t )ERR ) */
+    /*         break; */
 
-            case KEY_F( 1 ):
-            case KEY_ENTER:
-            case '\n':
-            case ',':
-            case 13:
-                hpkey = HPKEY_ENTER;
-                break;
-            case KEY_F( 2 ):
-            case '[':
-            case 339: /* PgUp */
-                hpkey = HPKEY_SHIFT_LEFT;
-                break;
-            case KEY_F( 3 ):
-            case ']':
-            case 338: /* PgDn */
-                hpkey = HPKEY_SHIFT_RIGHT;
-                break;
-            case KEY_F( 4 ):
-            case ';':
-            case KEY_IC: /* Ins */
-                hpkey = HPKEY_ALPHA;
-                break;
-            case KEY_F( 5 ):
-            case '\\':
-            case 27:  /* Esc */
-            case 262: /* Home */
-                hpkey = HPKEY_ON;
-                break;
+    /*     switch ( k ) { */
+    /*         case '0': */
+    /*             hpkey = HPKEY_0; */
+    /*             break; */
+    /*         case '1': */
+    /*             hpkey = HPKEY_1; */
+    /*             break; */
+    /*         case '2': */
+    /*             hpkey = HPKEY_2; */
+    /*             break; */
+    /*         case '3': */
+    /*             hpkey = HPKEY_3; */
+    /*             break; */
+    /*         case '4': */
+    /*             hpkey = HPKEY_4; */
+    /*             break; */
+    /*         case '5': */
+    /*             hpkey = HPKEY_5; */
+    /*             break; */
+    /*         case '6': */
+    /*             hpkey = HPKEY_6; */
+    /*             break; */
+    /*         case '7': */
+    /*             hpkey = HPKEY_7; */
+    /*             break; */
+    /*         case '8': */
+    /*             hpkey = HPKEY_8; */
+    /*             break; */
+    /*         case '9': */
+    /*             hpkey = HPKEY_9; */
+    /*             break; */
+    /*         case 'a': */
+    /*             hpkey = HPKEY_A; */
+    /*             break; */
+    /*         case 'b': */
+    /*             hpkey = HPKEY_B; */
+    /*             break; */
+    /*         case 'c': */
+    /*             hpkey = HPKEY_C; */
+    /*             break; */
+    /*         case 'd': */
+    /*             hpkey = HPKEY_D; */
+    /*             break; */
+    /*         case 'e': */
+    /*             hpkey = HPKEY_E; */
+    /*             break; */
+    /*         case 'f': */
+    /*             hpkey = HPKEY_F; */
+    /*             break; */
+    /*         case 'g': */
+    /*             hpkey = HPKEY_G; */
+    /*             break; */
+    /*         case 'h': */
+    /*             hpkey = HPKEY_H; */
+    /*             break; */
+    /*         case 'i': */
+    /*             hpkey = HPKEY_I; */
+    /*             break; */
+    /*         case 'j': */
+    /*             hpkey = HPKEY_J; */
+    /*             break; */
+    /*         case 'k': */
+    /*             hpkey = HPKEY_K; */
+    /*             break; */
+    /*         case KEY_UP: */
+    /*             hpkey = HPKEY_UP; */
+    /*             break; */
+    /*         case 'l': */
+    /*             hpkey = HPKEY_L; */
+    /*             break; */
+    /*         case 'm': */
+    /*             hpkey = HPKEY_M; */
+    /*             break; */
+    /*         case 'n': */
+    /*             hpkey = HPKEY_N; */
+    /*             break; */
+    /*         case 'o': */
+    /*             hpkey = HPKEY_O; */
+    /*             break; */
+    /*         case 'p': */
+    /*             hpkey = HPKEY_P; */
+    /*             break; */
+    /*         case KEY_LEFT: */
+    /*             hpkey = HPKEY_LEFT; */
+    /*             break; */
+    /*         case 'q': */
+    /*             hpkey = HPKEY_Q; */
+    /*             break; */
+    /*         case KEY_DOWN: */
+    /*             hpkey = HPKEY_DOWN; */
+    /*             break; */
+    /*         case 'r': */
+    /*             hpkey = HPKEY_R; */
+    /*             break; */
+    /*         case KEY_RIGHT: */
+    /*             hpkey = HPKEY_RIGHT; */
+    /*             break; */
+    /*         case 's': */
+    /*             hpkey = HPKEY_S; */
+    /*             break; */
+    /*         case 't': */
+    /*             hpkey = HPKEY_T; */
+    /*             break; */
+    /*         case 'u': */
+    /*             hpkey = HPKEY_U; */
+    /*             break; */
+    /*         case 'v': */
+    /*             hpkey = HPKEY_V; */
+    /*             break; */
+    /*         case 'w': */
+    /*             hpkey = HPKEY_W; */
+    /*             break; */
+    /*         case 'x': */
+    /*             hpkey = HPKEY_X; */
+    /*             break; */
+    /*         case 'y': */
+    /*             hpkey = HPKEY_Y; */
+    /*             break; */
+    /*         case 'z': */
+    /*         case '/': */
+    /*             hpkey = HPKEY_Z; */
+    /*             break; */
+    /*         case ' ': */
+    /*             hpkey = HPKEY_SPACE; */
+    /*             break; */
+    /*         case KEY_DC: */
+    /*         case KEY_BACKSPACE: */
+    /*         case 127: */
+    /*         case '\b': */
+    /*             hpkey = HPKEY_BACKSPACE; */
+    /*             break; */
+    /*         case '.': */
+    /*             hpkey = HPKEY_PERIOD; */
+    /*             break; */
+    /*         case '+': */
+    /*             hpkey = HPKEY_PLUS; */
+    /*             break; */
+    /*         case '-': */
+    /*             hpkey = HPKEY_MINUS; */
+    /*             break; */
+    /*         case '*': */
+    /*             hpkey = HPKEY_MULTIPLY; */
+    /*             break; */
 
-            case KEY_F( 7 ):
-            case '|':      /* Shift+\ */
-            case KEY_SEND: /* Shift+End */
-            case KEY_F( 10 ):
-                x50ng->arm_exit = 1;
-                cpu_exit( x50ng->env );
-                break;
-        }
+    /*         case KEY_F( 1 ): */
+    /*         case KEY_ENTER: */
+    /*         case '\n': */
+    /*         case ',': */
+    /*         case 13: */
+    /*             hpkey = HPKEY_ENTER; */
+    /*             break; */
+    /*         case KEY_F( 2 ): */
+    /*         case '[': */
+    /*         case 339: /\* PgUp *\/ */
+    /*             hpkey = HPKEY_SHIFT_LEFT; */
+    /*             break; */
+    /*         case KEY_F( 3 ): */
+    /*         case ']': */
+    /*         case 338: /\* PgDn *\/ */
+    /*             hpkey = HPKEY_SHIFT_RIGHT; */
+    /*             break; */
+    /*         case KEY_F( 4 ): */
+    /*         case ';': */
+    /*         case KEY_IC: /\* Ins *\/ */
+    /*             hpkey = HPKEY_ALPHA; */
+    /*             break; */
+    /*         case KEY_F( 5 ): */
+    /*         case '\\': */
+    /*         case 27:  /\* Esc *\/ */
+    /*         case 262: /\* Home *\/ */
+    /*             hpkey = HPKEY_ON; */
+    /*             break; */
 
-        X50NG_PRESS_KEY( x50ng, &ui_keys[ hpkey ] )
-    }
+    /*         case KEY_F( 7 ): */
+    /*         case '|':      /\* Shift+\ *\/ */
+    /*         case KEY_SEND: /\* Shift+End *\/ */
+    /*         case KEY_F( 10 ): */
+    /*             x50ng->arm_exit = 1; */
+    /*             cpu_exit( x50ng->env ); */
+    /*             break; */
+    /*     } */
+
+    /*     X50NG_PRESS_KEY( x50ng, &ui_keys[ hpkey ] ) */
+    /* } */
 }
-
-void tui_refresh_lcd( x50ng_t* x50ng ) {}
 
 void tui_init( x50ng_t* x50ng )
 {

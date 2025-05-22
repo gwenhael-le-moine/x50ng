@@ -799,7 +799,13 @@ static int gui_load( x50ng_t* x50ng )
     return 0;
 }
 
-void gui_update_lcd( x50ng_t* x50ng )
+void gui_handle_pending_inputs( x50ng_t* _x50ng )
+{
+    while ( g_main_context_pending( NULL ) )
+        g_main_context_iteration( NULL, false );
+}
+
+void gui_refresh_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
@@ -829,17 +835,7 @@ void gui_update_lcd( x50ng_t* x50ng )
     cairo_destroy( cr );
 
     gtk_widget_queue_draw( gui_lcd_canvas );
-}
 
-void gui_events_handling_step( x50ng_t* _x50ng )
-{
-    while ( g_main_context_pending( NULL ) )
-        g_main_context_iteration( NULL, false );
-}
-
-void gui_refresh_lcd( x50ng_t* x50ng )
-{
-    gui_update_lcd( x50ng );
     gdk_display_flush( gdk_display_get_default() );
 }
 
@@ -856,3 +852,5 @@ void gui_init( x50ng_t* x50ng )
 
     gui_load( x50ng );
 }
+
+void gui_exit( void ) {}

@@ -241,8 +241,8 @@ int main( int argc, char** argv )
 
     x50ng_timer_init( x50ng );
 
-    x50ng->ui_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, ui_events_timer, x50ng );
-    x50ng->lcd_timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, ui_lcd_timer, x50ng );
+    x50ng->timer_ui_input = x50ng_new_timer( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, x50ng );
+    x50ng->timer_ui_output = x50ng_new_timer( X50NG_TIMER_VIRTUAL, ui_refresh_output, x50ng );
 
     x50ng_s3c2410_arm_init( x50ng );
     x50ng_flash_init( x50ng );
@@ -270,8 +270,8 @@ int main( int argc, char** argv )
 
     // stl_phys(0x08000a1c, 0x55555555);
 
-    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() );
-    x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() );
+    x50ng_mod_timer( x50ng->timer_ui_input, x50ng_get_clock() );
+    x50ng_mod_timer( x50ng->timer_ui_output, x50ng_get_clock() );
 
     if ( opt.debug_port != 0 && opt.start_debugger ) {
         gdbserver_start( opt.debug_port );

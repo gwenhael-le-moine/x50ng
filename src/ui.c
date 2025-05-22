@@ -735,36 +735,28 @@ void x50ng_set_key_state( x50ng_t* x50ng, const x50ng_ui_key_t* key, bool state 
 /********************/
 /* Public functions */
 /********************/
-void ui_update_lcd( x50ng_t* x50ng )
-{
-    if ( opt.tui )
-        tui_update_lcd( x50ng );
-    else
-        gui_update_lcd( x50ng );
-}
-
-void ui_events_timer( void* data )
+void ui_handle_pending_inputs( void* data )
 {
     x50ng_t* x50ng = data;
 
     if ( opt.tui )
-        tui_events_handling_step( x50ng );
-    else
-        gui_events_handling_step( x50ng );
+        tui_handle_pending_inputs( x50ng );
+    /* else */
+    gui_handle_pending_inputs( x50ng );
 
-    x50ng_mod_timer( x50ng->ui_timer, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+    x50ng_mod_timer( x50ng->timer_ui_input, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
 
-void ui_lcd_timer( void* data )
+void ui_refresh_output( void* data )
 {
     x50ng_t* x50ng = data;
 
     if ( opt.tui )
         tui_refresh_lcd( x50ng );
-    else
-        gui_refresh_lcd( x50ng );
+    /* else */
+    gui_refresh_lcd( x50ng );
 
-    x50ng_mod_timer( x50ng->lcd_timer, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
+    x50ng_mod_timer( x50ng->timer_ui_output, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
 void ui_init( x50ng_t* x50ng )
@@ -774,12 +766,14 @@ void ui_init( x50ng_t* x50ng )
 
     if ( opt.tui )
         tui_init( x50ng );
-    else
-        gui_init( x50ng );
+    /* else */
+    gui_init( x50ng );
 }
 
 void ui_exit( void )
 {
     if ( opt.tui )
         tui_exit();
+    /* else */
+    gui_exit();
 }
