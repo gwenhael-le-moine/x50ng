@@ -739,7 +739,7 @@ void ui_handle_pending_inputs( void* data )
 {
     x50ng_t* x50ng = data;
 
-    if ( opt.tui )
+    if ( opt.tui || opt.tui_small || opt.tui_tiny )
         tui_handle_pending_inputs( x50ng );
     else
         gui_handle_pending_inputs( x50ng );
@@ -751,7 +751,7 @@ void ui_refresh_output( void* data )
 {
     x50ng_t* x50ng = data;
 
-    if ( opt.tui )
+    if ( opt.tui || opt.tui_small || opt.tui_tiny )
         tui_refresh_lcd( x50ng );
     else
         gui_refresh_lcd( x50ng );
@@ -764,7 +764,7 @@ void ui_init( x50ng_t* x50ng )
     if ( opt.newrpl_keyboard )
         newrplify_ui_keys();
 
-    if ( opt.tui )
+    if ( opt.tui || opt.tui_small || opt.tui_tiny )
         tui_init( x50ng );
     else
         gui_init( x50ng );
@@ -772,7 +772,7 @@ void ui_init( x50ng_t* x50ng )
 
 void ui_exit( void )
 {
-    if ( opt.tui )
+    if ( opt.tui || opt.tui_small || opt.tui_tiny )
         tui_exit();
     else
         gui_exit();

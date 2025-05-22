@@ -16,11 +16,86 @@
 
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / 4 )
-#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / 2 ) + 1
+#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( opt.tui_tiny ? 4 : ( opt.tui_small ? 2 : 1 ) ) )
+#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( opt.tui ? 1 : 2 ) ) + 1
 
-static bool previous_keyboard_state[ NB_KEYS ];
+static bool keyboard_state[ NB_KEYS ];
 
+/* FULL SIZE */
+static void tui_draw_lcd( s3c2410_lcd_t* lcd )
+{
+    wchar_t line[ LCD_WIDTH ];
+    wchar_t pixel;
+
+    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+        wcscpy( line, L"" );
+
+        for ( int x = 0; x < LCD_WIDTH; ++x ) {
+            pixel = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0 ? L'█' : L' ';
+
+            wcsncat( line, &pixel, 1 );
+        }
+        mvaddwstr( LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
+    }
+}
+
+/* SMALL */
+static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
+{
+    if ( top_left ) {
+        if ( top_right ) {
+            if ( bottom_left )
+                return bottom_right ? L'█' : L'▛'; /* 0x2588 0x2598 */
+            else
+                return bottom_right ? L'▜' : L'▀'; /* 0x259C 0x2580 */
+        } else {
+            if ( bottom_left )
+                return bottom_right ? L'▙' : L'▌';
+            else
+                return bottom_right ? L'▚' : L'▘';
+        }
+    } else {
+        if ( top_right ) {
+            if ( bottom_left )
+                return bottom_right ? L'▟' : L'▞';
+            else
+                return bottom_right ? L'▐' : L'▝';
+        } else {
+            if ( bottom_left )
+                return bottom_right ? L'▄' : L'▖';
+            else
+                return bottom_right ? L'▗' : L' ';
+        }
+    }
+}
+
+static void tui_draw_lcd_small( s3c2410_lcd_t* lcd )
+{
+    bool b1, b2, b3, b4;
+    int step_x = 2;
+    int step_y = 2;
+
+    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t pixels;
+
+    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+        wcscpy( line, L"" );
+
+        for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            b1 = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0;
+            b2 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y ) > 0;
+
+            b3 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 1 ) > 0;
+            b4 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 1 ) > 0;
+
+            pixels = four_bits_to_quadrant_char( b1, b2, b3, b4 );
+            wcsncat( line, &pixels, 1 );
+        }
+        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+    }
+}
+
+/* TINY */
 static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
 {
     /*********/
@@ -51,6 +126,38 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     return chr;
 }
 
+static void tui_draw_lcd_tiny( s3c2410_lcd_t* lcd )
+{
+    bool b1, b2, b3, b4, b5, b6, b7, b8;
+    int step_x = 2;
+    int step_y = 4;
+
+    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t pixels;
+
+    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+        wcscpy( line, L"" );
+
+        for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            b1 = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0;
+            b4 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y ) > 0;
+
+            b2 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 1 ) > 0;
+            b5 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 1 ) > 0;
+
+            b3 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 2 ) > 0;
+            b6 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 2 ) > 0;
+
+            b7 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 3 ) > 0;
+            b8 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 3 ) > 0;
+
+            pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
+            wcsncat( line, &pixels, 1 );
+        }
+        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+    }
+}
+
 /**********/
 /* Public */
 /**********/
@@ -72,33 +179,12 @@ void tui_refresh_lcd( x50ng_t* x50ng )
             ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, annunciators_pixel_index[ i ] ) > 0 ? annunciators_icons[ i ] : L" " ) );
 
     /* pixels */
-    bool b1, b2, b3, b4, b5, b6, b7, b8;
-    int step_x = 2;
-    int step_y = 4;
-
-    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
-
-    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
-        wcscpy( line, L"" );
-
-        for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0;
-            b4 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y ) > 0;
-
-            b2 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 1 ) > 0;
-            b5 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 1 ) > 0;
-
-            b3 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 2 ) > 0;
-            b6 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 2 ) > 0;
-
-            b7 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 3 ) > 0;
-            b8 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 3 ) > 0;
-
-            wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
-            wcsncat( line, &pixels, 1 );
-        }
-        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
-    }
+    if ( opt.tui )
+        tui_draw_lcd( lcd );
+    else if ( opt.tui_small )
+        tui_draw_lcd_small( lcd );
+    else if ( opt.tui_tiny )
+        tui_draw_lcd_tiny( lcd );
 
     wrefresh( stdscr );
 }
@@ -304,25 +390,22 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
     }
 
     for ( int key = 0; key < NB_KEYS; ++key ) {
-        /* key pressed */
-        if ( !previous_keyboard_state[ key ] && new_keyboard_state[ key ] )
-            X50NG_PRESS_KEY( x50ng, &ui_keys[ key ] )
+        if ( keyboard_state[ key ] == new_keyboard_state[ key ] )
+            continue; /* key hasn't changed state */
 
-        /* key released */
-        if ( previous_keyboard_state[ key ] && !new_keyboard_state[ key ] )
-            X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] )
+        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] )
+            X50NG_PRESS_KEY( x50ng, &ui_keys[ key ] ) /* key pressed */
+        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] )
+            X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] ) /* key released */
 
-        /* mvaddwstr( 40, key, previous_keyboard_state[ key ] ? L"█" : L"_" ); */
-        /* mvaddwstr( 41, key, new_keyboard_state[ key ] ? L"█" : L"_" ); */
-
-        previous_keyboard_state[ key ] = new_keyboard_state[ key ];
+        keyboard_state[ key ] = new_keyboard_state[ key ];
     }
 }
 
 void tui_init( x50ng_t* x50ng )
 {
     for ( int i = 0; i < NB_KEYS; ++i )
-        previous_keyboard_state[ i ] = false;
+        keyboard_state[ i ] = false;
 
     setlocale( LC_ALL, "" );
     initscr();              /* initialize the curses library */

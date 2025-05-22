@@ -35,6 +35,8 @@ struct options {
     x50ng_reinit_t reinit;
 
     bool tui;
+    bool tui_small;
+    bool tui_tiny;
 
     bool newrpl_keyboard;
     bool legacy_keyboard;

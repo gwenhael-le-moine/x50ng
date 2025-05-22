@@ -28,6 +28,8 @@ struct options opt = {
     .reinit = X50NG_REINIT_NONE,
 
     .tui = false,
+    .tui_small = false,
+    .tui_tiny = false,
 
     .newrpl_keyboard = false,
     .legacy_keyboard = false,
@@ -167,6 +169,8 @@ void config_init( char* progname, int argc, char* argv[] )
     int clopt_netbook = -1;
     int clopt_netbook_pivot_line = -1;
     int clopt_tui = -1;
+    int clopt_tui_small = -1;
+    int clopt_tui_tiny = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -184,6 +188,8 @@ void config_init( char* progname, int argc, char* argv[] )
         {"name",               required_argument, NULL,                   'n' },
 
         {"tui",                no_argument,       &clopt_tui,             true},
+        {"tui-small",          no_argument,       &clopt_tui_small,       true},
+        {"tui-tiny",           no_argument,       &clopt_tui_tiny,        true},
 
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
@@ -224,6 +230,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
                          "-z --zoom[=X]                scale LCD by X (default: 2.0)\n"
                          "--tui                        use TUI (Terminal text UI) (default: false)\n"
+                         "--tui-small                  use TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
+                         "--tui-tiny                   use TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
                          "--netbook                    horizontal window (default: false)\n"
                          "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
                          "--newrpl-keyboard            label keyboard for newRPL\n"
@@ -369,6 +377,12 @@ void config_init( char* progname, int argc, char* argv[] )
 
     if ( clopt_tui != -1 )
         opt.tui = clopt_tui;
+
+    if ( clopt_tui_small != -1 )
+        opt.tui_small = clopt_tui_small;
+
+    if ( clopt_tui_tiny != -1 )
+        opt.tui_tiny = clopt_tui_tiny;
 
     if ( clopt_netbook_pivot_line != -1 )
         opt.netbook_pivot_line = clopt_netbook_pivot_line;
