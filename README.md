@@ -12,8 +12,22 @@ This is my fork of x49gp, emulator of the HP 49G+/50G hardware platform. Instead
 - [hpemung](https://codeberg.org/gwh/hpemung)
 
 
+
 ## Screenshots
-![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng") ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
+
+<details>
+<summary>
+screenshot of x50ng (click to _expand_ )
+</summary>
+![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng")
+</details>
+
+<details>
+<summary>
+screenshot of x50ng running newRPL (click to _expand_ )
+</summary>
+![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
+</details>
 
 ## Usage
 `x50ng --help`
