@@ -105,12 +105,6 @@ void tui_refresh_lcd( x50ng_t* x50ng )
 
 void tui_handle_pending_inputs( x50ng_t* x50ng )
 {
-    // FIXME: not implemented, likely needs raw mode or something
-    //  see https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
-    //    and https://viewsourcecode.org/snaptoken/kilo/03.rawInputAndOutput.html
-    //    [ https://github.com/snaptoken/kilo-tutorial ]
-
-    // Idea:
     // each run records the state of the keyboard (pressed keys)
     // This allow to diff with previous state and issue PRESS and RELEASE calls
 
@@ -317,6 +311,9 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
         /* key released */
         if ( previous_keyboard_state[ key ] && !new_keyboard_state[ key ] )
             X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] )
+
+        /* mvaddwstr( 40, key, previous_keyboard_state[ key ] ? L"█" : L"_" ); */
+        /* mvaddwstr( 41, key, new_keyboard_state[ key ] ? L"█" : L"_" ); */
 
         previous_keyboard_state[ key ] = new_keyboard_state[ key ];
     }
