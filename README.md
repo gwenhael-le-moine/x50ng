@@ -16,20 +16,49 @@ This is my fork of x49gp, emulator of the HP 49G+/50G hardware platform. Instead
 ## Screenshots
 
 <details>
-<summary>screenshot of x50ng (click to _expand_ )</summary>
-
-<img title="screenshot of x50ng" src="./screenshot.png" />
+<summary>screenshot of x50ng (click to expand )</summary>
 
 ![screenshot of x50ng](./screenshot.png?raw=true "screenshot of x50ng")
 
 </details>
 
 <details>
-<summary>screenshot of x50ng running newRPL (click to _expand_ )</summary>
-
-<img title="screenshot of x50ng running newRPL" src="./screenshot-newRPL.png" />
+<summary>screenshot of x50ng running newRPL (click to expand )</summary>
 
 ![screenshot of x50ng running newRPL](./screenshot-newRPL.png?raw=true "screenshot of x50ng running newRPL")
+
+</details>
+
+<details>
+<summary>
+
+screenshot of x50ng running in a terminal (`--tui`) (click to expand )
+
+</summary>
+
+![screenshot of x50ng running in a terminal](./screenshot-tui.png?raw=true "screenshot of x50ng running in a terminal")
+
+</details>
+
+<details>
+<summary>
+
+screenshot of x50ng running in a terminal (`--tui-small`) (click to expand )
+
+</summary>
+
+![screenshot of x50ng running in a terminal (`--tui-small`)](./screenshot-tui-small.png?raw=true "screenshot of x50ng running in a terminal (`--tui-small`)")
+
+</details>
+
+<details>
+<summary>
+
+screenshot of x50ng running in a terminal (`--tui-tiny`) (click to expand )
+
+</summary>
+
+![screenshot of x50ng running in a terminal (`--tui-tiny`)](./screenshot-tui-tiny.png?raw=true "screenshot of x50ng running in a terminal (`--tui-tiny`)")
 
 </details>
 
