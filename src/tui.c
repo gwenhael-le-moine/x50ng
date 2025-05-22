@@ -105,6 +105,9 @@ void tui_refresh_lcd( x50ng_t* x50ng )
 void tui_handle_pending_inputs( x50ng_t* x50ng )
 {
     // FIXME: not implemented, likely needs raw mode or something
+    //  see https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
+    //    and https://viewsourcecode.org/snaptoken/kilo/03.rawInputAndOutput.html
+    //    [ https://github.com/snaptoken/kilo-tutorial ]
 
     /* int hpkey = -1; */
     /* uint32_t k; */
