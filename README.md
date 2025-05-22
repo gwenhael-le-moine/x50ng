@@ -45,7 +45,7 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 ### Dependencies
 - `lua` (`luajit` also works, see `LUA_VERSION` in `Makefile`)
 - `gtk4`
-
+- `ncurses`
 
 ## Installation
 

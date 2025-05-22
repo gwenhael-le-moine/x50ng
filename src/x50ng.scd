@@ -59,21 +59,29 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 *-n* *--name*[=_text_]             customize the title of the window (default: "x50ng")
 
-*-s* *--style*[=_filename_]        css filename in <datadir> (default: style-50g.css)
+*-s* *--style*[=_filename_]        css filename in <datadir> (GUI only) (default: style-50g.css)
 
-*-z* *--zoom*[=_X_]                scale LCD by X (default: 2.0)
+*-z* *--zoom*[=_X_]                scale LCD by X (GUI only) (default: 2.0)
 
-*--netbook*                    horizontal window (default: false)
+*--gui*                        use GUI (Graphical UI) (default: true)
 
-*--netbook-pivot-line*[=_X_]     at which line is the keyboard split in netbook mode (default: 3)
+*--tui*                        use TUI (Terminal text UI) (default: false)
+
+*--tui-small*                  use TUI (4 pixels per character) (Terminal text UI) (default: false)
+
+*--tui-tiny*                   use TUI (8 pixels per character) (Terminal text UI) (default: false)
+
+*--netbook*                    horizontal window (GUI only) (default: false)
+
+*--netbook-pivot-line*[=_X_]     at which line is the keyboard split in netbook mode (GUI only) (default: 3)
 
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 
 *--overwrite-config*           force writing <datadir>/config.lua even if it exists
 
-*--newrpl-keyboard*            label keyboard for newRPL
+*--newrpl-keyboard*            label keyboard for newRPL (GUI only)
 
-*--legacy-keyboard*            place Enter key where it belongs
+*--legacy-keyboard*            place Enter key where it belongs (GUI only)
 
 *--enable-debug*[=_port_]        enable the debugger interface (default port: 1234)
 
@@ -114,13 +122,15 @@ The general configuration file of *x50ng*. Content reflecting default values (as
 --------------------------------------------------------------------------------
 -- Configuration file for x50ng
 -- This is a comment
-style = "style-50g.css" -- CSS file (relative to this file)
-zoom = 2.0
-netbook = false
-netbook-pivot-line = 3
-newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use
-legacy_keyboard = false -- when true this put the Enter key where it belongs
---- End of saturnng configuration ----------------------------------------------
+frontend = "gui" -- possible values are: "gui" (default), "tui", "tui-small", "tui-tiny"
+name = "x50ng"  -- this customize the title of the window
+style = "style-50g.css" -- CSS file (relative to this file) (gui only)
+zoom = 2.0 -- (gui only)
+netbook = false -- (gui only)
+netbook_pivot_line = 3 -- this marks the transition between higher and lower keyboard (gui only)
+newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use (gui only)
+legacy_keyboard = false -- when true this put the Enter key where it belongs (gui only)
+--- End of x50ng configuration -----------------------------------------------
 ```
 
 - *state*

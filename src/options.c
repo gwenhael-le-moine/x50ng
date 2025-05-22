@@ -104,17 +104,18 @@ static char* config_to_string( void )
                          "--------------------------------------------------------------------------------\n"
                          "-- Configuration file for x50ng\n"
                          "-- This is a comment\n"
+                         "frontend = \"%s\" -- possible values are: \"gui\" (default), \"tui\", \"tui-small\", \"tui-tiny\"\n"
                          "name = \"%s\"  -- this customize the title of the window\n"
-                         "style = \"%s\" -- CSS file (relative to this file)\n"
-                         "zoom = %f\n"
-                         "tui = %s\n"
-                         "netbook = %s\n"
-                         "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard\n"
-                         "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use\n"
-                         "legacy_keyboard = %s -- when true this put the Enter key where it belongs\n"
+                         "style = \"%s\" -- CSS file (relative to this file) (gui only)\n"
+                         "zoom = %f -- (gui only)\n"
+                         "netbook = %s -- (gui only)\n"
+                         "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
+                         "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
+                         "legacy_keyboard = %s -- when true this put the Enter key where it belongs (gui only)\n"
                          "--- End of x50ng configuration -----------------------------------------------\n",
-                         opt.name, opt.style_filename, opt.zoom, opt.tui ? "true" : "false", opt.netbook ? "true" : "false",
-                         opt.netbook_pivot_line, opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" ) )
+                         opt.tui_tiny ? "tui-tiny" : ( opt.tui_small ? "tui-small" : ( opt.tui ? "tui" : "gui" ) ), opt.name,
+                         opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
+                         opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" ) )
         exit( EXIT_FAILURE );
 
     return config;
@@ -122,24 +123,21 @@ static char* config_to_string( void )
 
 int save_config( void )
 {
-    int error;
     const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
     fprintf( stderr, "Loading configuration file: %s\n", config_lua_filename );
     int fd = open( config_lua_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
 
     if ( fd < 0 ) {
-        error = -errno;
         fprintf( stderr, "%s:%u: open %s: %s\n", __func__, __LINE__, config_lua_filename, strerror( errno ) );
-        return error;
+        return -errno;
     }
 
     char* data = config_to_string();
     if ( write( fd, data, strlen( data ) ) != ( ssize_t )strlen( data ) ) {
-        error = -errno;
         fprintf( stderr, "%s:%u: write %s: %s\n", __func__, __LINE__, config_lua_filename, strerror( errno ) );
         close( fd );
         g_free( data );
-        return error;
+        return -errno;
     }
 
     close( fd );
@@ -187,9 +185,14 @@ void config_init( char* progname, int argc, char* argv[] )
 
         {"name",               required_argument, NULL,                   'n' },
 
-        {"tui",                no_argument,       &clopt_tui,             true},
-        {"tui-small",          no_argument,       &clopt_tui_small,       true},
-        {"tui-tiny",           no_argument,       &clopt_tui_tiny,        true},
+        /* {"tui",                no_argument,       &clopt_tui,             true}, */
+        /* {"tui-small",          no_argument,       &clopt_tui_small,       true}, */
+        /* {"tui-tiny",           no_argument,       &clopt_tui_tiny,        true}, */
+
+        {"gui",                no_argument,       NULL,                   900 },
+        {"tui",                no_argument,       NULL,                   901 },
+        {"tui-small",          no_argument,       NULL,                   902 },
+        {"tui-tiny",           no_argument,       NULL,                   903 },
 
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
@@ -227,15 +230,16 @@ void config_init( char* progname, int argc, char* argv[] )
                          "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
                          "\n"
                          "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
-                         "-s --style[=filename]        css filename in <datadir> (default: style-50g.css)\n"
-                         "-z --zoom[=X]                scale LCD by X (default: 2.0)\n"
+                         "--gui                        use GUI (Graphical UI) (default: true)\n"
                          "--tui                        use TUI (Terminal text UI) (default: false)\n"
                          "--tui-small                  use TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
                          "--tui-tiny                   use TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
-                         "--netbook                    horizontal window (default: false)\n"
-                         "--netbook-pivot-line         at which line is the keyboard split in netbook mode (default: 3)\n"
-                         "--newrpl-keyboard            label keyboard for newRPL\n"
-                         "--legacy-keyboard            place Enter key where it belongs\n"
+                         "--netbook                    horizontal window (GUI only) (default: false)\n"
+                         "--netbook-pivot-line         at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
+                         "--newrpl-keyboard            label keyboard for newRPL (GUI only)\n"
+                         "--legacy-keyboard            place Enter key where it belongs (GUI only)\n"
+                         "-s --style[=filename]        css filename in <datadir> (GUI only) (default: style-50g.css)\n"
+                         "-z --zoom[=X]                scale LCD by X (GUI only) (default: 2.0)\n"
                          "\n"
                          "--enable-debug[=port]        enable the debugger interface (default port: %i)\n"
                          "--debug                      use along -D to also start the debugger immediately\n"
@@ -269,6 +273,26 @@ void config_init( char* progname, int argc, char* argv[] )
                 break;
             case 93:
                 opt.firmware = strdup( optarg );
+                break;
+            case 900:
+                opt.tui = false;
+                opt.tui_small = false;
+                opt.tui_tiny = false;
+                break;
+            case 901:
+                opt.tui = true;
+                opt.tui_small = false;
+                opt.tui_tiny = false;
+                break;
+            case 902:
+                opt.tui = false;
+                opt.tui_small = true;
+                opt.tui_tiny = false;
+                break;
+            case 903:
+                opt.tui = false;
+                opt.tui_small = false;
+                opt.tui_tiny = true;
                 break;
             case 1001:
                 clopt_netbook_pivot_line = atoi( optarg );
@@ -328,6 +352,31 @@ void config_init( char* progname, int argc, char* argv[] )
         const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
         if ( lua_name != NULL )
             opt.name = strdup( lua_name );
+
+        lua_getglobal( config_lua_values, "frontend" );
+        const char* svalue = luaL_optstring( config_lua_values, -1, "gui" );
+        if ( svalue != NULL ) {
+            if ( strcmp( svalue, "gui" ) == 0 ) {
+                opt.tui = false;
+                opt.tui_small = false;
+                opt.tui_tiny = false;
+            }
+            if ( strcmp( svalue, "tui" ) == 0 ) {
+                opt.tui = true;
+                opt.tui_small = false;
+                opt.tui_tiny = false;
+            }
+            if ( strcmp( svalue, "tui-small" ) == 0 ) {
+                opt.tui = false;
+                opt.tui_small = true;
+                opt.tui_tiny = false;
+            }
+            if ( strcmp( svalue, "tui-tiny" ) == 0 ) {
+                opt.tui = false;
+                opt.tui_small = false;
+                opt.tui_tiny = true;
+            }
+        }
 
         lua_getglobal( config_lua_values, "zoom" );
         opt.zoom = luaL_optnumber( config_lua_values, -1, opt.zoom );
