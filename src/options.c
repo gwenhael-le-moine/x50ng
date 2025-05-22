@@ -275,24 +275,24 @@ void config_init( char* progname, int argc, char* argv[] )
                 opt.firmware = strdup( optarg );
                 break;
             case 900:
-                opt.tui = false;
-                opt.tui_small = false;
-                opt.tui_tiny = false;
+                clopt_tui = false;
+                clopt_tui_small = false;
+                clopt_tui_tiny = false;
                 break;
             case 901:
-                opt.tui = true;
-                opt.tui_small = false;
-                opt.tui_tiny = false;
+                clopt_tui = true;
+                clopt_tui_small = false;
+                clopt_tui_tiny = false;
                 break;
             case 902:
-                opt.tui = false;
-                opt.tui_small = true;
-                opt.tui_tiny = false;
+                clopt_tui = false;
+                clopt_tui_small = true;
+                clopt_tui_tiny = false;
                 break;
             case 903:
-                opt.tui = false;
-                opt.tui_small = false;
-                opt.tui_tiny = true;
+                clopt_tui = false;
+                clopt_tui_small = false;
+                clopt_tui_tiny = true;
                 break;
             case 1001:
                 clopt_netbook_pivot_line = atoi( optarg );
