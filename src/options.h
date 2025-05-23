@@ -28,6 +28,8 @@ struct options {
     char* datadir;
     char* style_filename;
 
+    char* sd_dir;
+
     int debug_port;
     int start_debugger;
     char* bootloader;

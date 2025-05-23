@@ -57,6 +57,9 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 *-d* *--datadir*[=_absolute path_] alternate datadir (default: $XDG_CONFIG_HOME/x50ng/)
 
+*--sd-dir*[=_absolute path_]     directory to mount as SD card (default: none)
+Note: this path is persisted in _<datadir>/state_ so this option is only needed to mount a new or different directory.
+
 *-n* *--name*[=_text_]             customize the title of the window (default: "x50ng")
 
 *-s* *--style*[=_filename_]        css filename in <datadir> (GUI only) (default: style-50g.css)
@@ -67,9 +70,9 @@ The third and final group contains two items: *Reset*, which resets the calculat
 
 *--tui*                        use TUI (Terminal text UI) (default: false)
 
-*--tui-small*                  use TUI (4 pixels per character) (Terminal text UI) (default: false)
+*--tui-small*                  use small TUI (4 pixels per character) (Terminal text UI) (default: false)
 
-*--tui-tiny*                   use TUI (8 pixels per character) (Terminal text UI) (default: false)
+*--tui-tiny*                   use tiny TUI (8 pixels per character) (Terminal text UI) (default: false)
 
 *--netbook*                    horizontal window (GUI only) (default: false)
 

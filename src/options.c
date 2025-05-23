@@ -21,6 +21,8 @@ struct options opt = {
     .datadir = NULL,
     .style_filename = NULL,
 
+    .sd_dir = NULL,
+
     .debug_port = 0,
     .start_debugger = false,
     .bootloader = "firmware/boot-50g.bin",
@@ -104,18 +106,24 @@ static char* config_to_string( void )
                          "--------------------------------------------------------------------------------\n"
                          "-- Configuration file for x50ng\n"
                          "-- This is a comment\n"
-                         "frontend = \"%s\" -- possible values are: \"gui\" (default), \"tui\", \"tui-small\", \"tui-tiny\"\n"
                          "name = \"%s\"  -- this customize the title of the window\n"
+                         "\n"
+                         "frontend = \"%s\" -- possible values are: \"gui\" (default), \"tui\", \"tui-small\", \"tui-tiny\"\n"
+                         "\n"
+                         "-- the following only apply to 'gui' frontend \n"
                          "style = \"%s\" -- CSS file (relative to this file) (gui only)\n"
                          "zoom = %f -- (gui only)\n"
                          "netbook = %s -- (gui only)\n"
                          "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
                          "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
                          "legacy_keyboard = %s -- when true this put the Enter key where it belongs (gui only)\n"
+                         /* "\n" */
+                         /* "sd_dir = \"%s\"\n" */
                          "--- End of x50ng configuration -----------------------------------------------\n",
-                         opt.tui_tiny ? "tui-tiny" : ( opt.tui_small ? "tui-small" : ( opt.tui ? "tui" : "gui" ) ), opt.name,
+                         opt.name, opt.tui_tiny ? "tui-tiny" : ( opt.tui_small ? "tui-small" : ( opt.tui ? "tui" : "gui" ) ),
                          opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
-                         opt.newrpl_keyboard ? "true" : "false", opt.legacy_keyboard ? "true" : "false" ) )
+                         opt.newrpl_keyboard ? "true" : "false",
+                         opt.legacy_keyboard ? "true" : "false" /* , opt.sd_dir == NULL ? "" : opt.sd_dir */ ) )
         exit( EXIT_FAILURE );
 
     return config;
@@ -161,6 +169,7 @@ void config_init( char* progname, int argc, char* argv[] )
 
     char* clopt_style_filename = NULL;
     char* clopt_name = NULL;
+    char* clopt_sd_dir = NULL;
     int clopt_newrpl_keyboard = -1;
     int clopt_legacy_keyboard = -1;
     double clopt_zoom = -1.0;
@@ -182,6 +191,8 @@ void config_init( char* progname, int argc, char* argv[] )
         {"print-config",       no_argument,       &print_config_and_exit, true},
         {"overwrite-config",   no_argument,       &overwrite_config,      true},
         {"datadir",            required_argument, NULL,                   'd' },
+
+        {"sd-dir",             required_argument, NULL,                   800 },
 
         {"name",               required_argument, NULL,                   'n' },
 
@@ -226,30 +237,32 @@ void config_init( char* progname, int argc, char* argv[] )
                          "-v --version                 print out version\n"
                          "-V --verbose                 print out more information\n"
                          "-d --datadir[=absolute path] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
+                         "   --sd-dir[=absolute path]  directory to mount as SD card (default: none)\n"
                          "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
-                         "--overwrite-config           force writing <datadir>/config.lua even if it exists\n"
+                         "   --overwrite-config        force writing <datadir>/config.lua even if it exists (allows migrating config file "
+                         "to its latest format if needed)\n"
                          "\n"
                          "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
-                         "--gui                        use GUI (Graphical UI) (default: true)\n"
-                         "--tui                        use TUI (Terminal text UI) (default: false)\n"
-                         "--tui-small                  use TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
-                         "--tui-tiny                   use TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
-                         "--netbook                    horizontal window (GUI only) (default: false)\n"
-                         "--netbook-pivot-line         at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
-                         "--newrpl-keyboard            label keyboard for newRPL (GUI only)\n"
-                         "--legacy-keyboard            place Enter key where it belongs (GUI only)\n"
+                         "   --gui                     use GUI (Graphical UI) (default: true)\n"
+                         "   --tui                     use TUI (Terminal text UI) (default: false)\n"
+                         "   --tui-small               use TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
+                         "   --tui-tiny                use TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
+                         "   --netbook                 horizontal window (GUI only) (default: false)\n"
+                         "   --netbook-pivot-line      at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
+                         "   --newrpl-keyboard         label keyboard for newRPL (GUI only)\n"
+                         "   --legacy-keyboard         place Enter key where it belongs (GUI only)\n"
                          "-s --style[=filename]        css filename in <datadir> (GUI only) (default: style-50g.css)\n"
                          "-z --zoom[=X]                scale LCD by X (GUI only) (default: 2.0)\n"
                          "\n"
-                         "--enable-debug[=port]        enable the debugger interface (default port: %i)\n"
-                         "--debug                      use along -D to also start the debugger immediately\n"
+                         "   --enable-debug[=port]     enable the debugger interface (default port: %i)\n"
+                         "   --debug                   use along -D to also start the debugger immediately\n"
                          "\n"
-                         "--flash         rebuild the flash using the supplied firmware (requires --firmware=) "
+                         "   --flash                   rebuild the flash using the supplied firmware (requires --firmware=) "
                          "(implies -r for safety reasons)\n"
-                         "--flash-full    rebuild the flash using the supplied firmware and drop the flash contents in the "
+                         "   --flash-full              rebuild the flash using the supplied firmware and drop the flash contents in the "
                          "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
-                         "--bootloader[=filename]         bootloader file (default: %s)\n"
-                         "--firmware[=filename]         firmware file (default: %s)\n",
+                         "   --bootloader[=filename]   bootloader file (default: %s)\n"
+                         "   --firmware[=filename]     firmware file (default: %s)\n",
                          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, progname, DEFAULT_GDBSTUB_PORT,
                          opt.bootloader, opt.firmware );
                 exit( EXIT_SUCCESS );
@@ -273,6 +286,9 @@ void config_init( char* progname, int argc, char* argv[] )
                 break;
             case 93:
                 opt.firmware = strdup( optarg );
+                break;
+            case 800:
+                clopt_sd_dir = strdup( optarg );
                 break;
             case 900:
                 clopt_tui = false;
@@ -346,7 +362,9 @@ void config_init( char* progname, int argc, char* argv[] )
     opt.haz_config_file = config_read( config_lua_filename );
     if ( opt.haz_config_file ) {
         lua_getglobal( config_lua_values, "style" );
-        opt.style_filename = strdup( luaL_optstring( config_lua_values, -1, opt.style_filename ) );
+        const char* lua_style_filename = luaL_optstring( config_lua_values, -1, NULL );
+        if ( lua_style_filename != NULL )
+            opt.style_filename = strdup( lua_style_filename );
 
         lua_getglobal( config_lua_values, "name" );
         const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
@@ -354,29 +372,34 @@ void config_init( char* progname, int argc, char* argv[] )
             opt.name = strdup( lua_name );
 
         lua_getglobal( config_lua_values, "frontend" );
-        const char* svalue = luaL_optstring( config_lua_values, -1, "gui" );
-        if ( svalue != NULL ) {
-            if ( strcmp( svalue, "gui" ) == 0 ) {
+        const char* frontend = luaL_optstring( config_lua_values, -1, "gui" );
+        if ( frontend != NULL ) {
+            if ( strcmp( frontend, "gui" ) == 0 ) {
                 opt.tui = false;
                 opt.tui_small = false;
                 opt.tui_tiny = false;
             }
-            if ( strcmp( svalue, "tui" ) == 0 ) {
+            if ( strcmp( frontend, "tui" ) == 0 ) {
                 opt.tui = true;
                 opt.tui_small = false;
                 opt.tui_tiny = false;
             }
-            if ( strcmp( svalue, "tui-small" ) == 0 ) {
+            if ( strcmp( frontend, "tui-small" ) == 0 ) {
                 opt.tui = false;
                 opt.tui_small = true;
                 opt.tui_tiny = false;
             }
-            if ( strcmp( svalue, "tui-tiny" ) == 0 ) {
+            if ( strcmp( frontend, "tui-tiny" ) == 0 ) {
                 opt.tui = false;
                 opt.tui_small = false;
                 opt.tui_tiny = true;
             }
         }
+
+        /* lua_getglobal( config_lua_values, "sd_dir" ); */
+        /* const char* lua_sd_dir = luaL_optstring( config_lua_values, -1, NULL ); */
+        /* if ( lua_sd_dir != NULL && 0 < strlen( lua_sd_dir ) ) */
+        /*     opt.sd_dir = strdup( lua_sd_dir ); */
 
         lua_getglobal( config_lua_values, "zoom" );
         opt.zoom = luaL_optnumber( config_lua_values, -1, opt.zoom );
@@ -411,6 +434,9 @@ void config_init( char* progname, int argc, char* argv[] )
         opt.name = strdup( clopt_name );
     else if ( opt.name == NULL )
         opt.name = strdup( progname );
+
+    if ( clopt_sd_dir != NULL )
+        opt.sd_dir = strdup( clopt_sd_dir );
 
     if ( clopt_newrpl_keyboard != -1 )
         opt.newrpl_keyboard = clopt_newrpl_keyboard;

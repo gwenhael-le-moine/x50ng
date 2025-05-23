@@ -278,6 +278,9 @@ int main( int argc, char** argv )
         gdb_handlesig( x50ng->env, 0 );
     }
 
+    if ( opt.sd_dir != NULL )
+        s3c2410_sdi_mount( x50ng, opt.sd_dir );
+
     ui_init( x50ng );
 
     x50ng_main_loop( x50ng );

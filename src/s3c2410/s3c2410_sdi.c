@@ -649,8 +649,6 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
     char *filename, *filepath;
-    int error, error2;
-    unsigned int i;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
@@ -660,10 +658,9 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     sdi->bs = NULL;
     sdi->filename = NULL;
 
-    /* Here we could check a filename passed to cli options */
-    error = x50ng_module_get_filename( module, key, "filename", "", &filename, &filepath );
+    int error = x50ng_module_get_filename( module, key, "filename", "", &filename, &filepath );
     if ( strcmp( filename, "" ) ) {
-        error2 = s3c2410_sdi_mount( x50ng, filepath );
+        int error2 = s3c2410_sdi_mount( x50ng, filepath );
         if ( 0 == error )
             error = error2;
     } else
@@ -672,7 +669,7 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     g_free( sdi->filename );
     sdi->filename = filename;
 
-    for ( i = 0; i < sdi->nr_regs; i++ ) {
+    for ( unsigned int i = 0; i < sdi->nr_regs; i++ ) {
         reg = &sdi->regs[ i ];
 
         if ( NULL == reg->name )
