@@ -19,6 +19,9 @@
 #define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( opt.tui_tiny ? 4 : ( opt.tui_small ? 2 : 1 ) ) )
 #define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( opt.tui ? 1 : 2 ) ) + 1
 
+WINDOW* lcd_window;
+WINDOW* help_window;
+
 static bool keyboard_state[ NB_KEYS ];
 
 /* FULL SIZE */
@@ -35,7 +38,7 @@ static void tui_draw_lcd( s3c2410_lcd_t* lcd )
 
             wcsncat( line, &pixel, 1 );
         }
-        mvaddwstr( LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
 }
 
@@ -91,7 +94,7 @@ static void tui_draw_lcd_small( s3c2410_lcd_t* lcd )
             pixels = four_bits_to_quadrant_char( b1, b2, b3, b4 );
             wcsncat( line, &pixels, 1 );
         }
-        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 }
 
@@ -154,7 +157,34 @@ static void tui_draw_lcd_tiny( s3c2410_lcd_t* lcd )
             pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
         }
-        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+    }
+}
+
+static void tui_show_help( void )
+{
+    if ( help_window == NULL ) {
+        help_window = newwin( 7, LCD_RIGHT + 1, LCD_BOTTOM + 1, 0 );
+        refresh();
+
+        wborder( help_window, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+        mvwprintw( help_window, 0, 2, "[ Help ]" );
+        mvwprintw( help_window, 1, 1, "Special keys:" );
+        mvwprintw( help_window, 2, 2, "F1: Help, F7: Quit" );
+
+        mvwprintw( help_window, 3, 1, "Calculator keys:" );
+        mvwprintw( help_window, 4, 2, "all alpha-numerical keys " );
+        mvwprintw( help_window, 5, 2, "F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F6: Enter" );
+
+        wrefresh( help_window );
+    } else {
+        wclear( help_window );
+        wrefresh( help_window );
+        //delwin( help_window );
+        refresh();
+
+        help_window = NULL;
     }
 }
 
@@ -174,8 +204,8 @@ void tui_refresh_lcd( x50ng_t* x50ng )
     const int annunciators_pixel_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
 
     for ( int i = 0; i < 6; i++ )
-        mvaddwstr(
-            0, 4 + ( i * 4 ),
+        mvwaddwstr(
+            lcd_window, 0, 4 + ( i * 4 ),
             ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, annunciators_pixel_index[ i ] ) > 0 ? annunciators_icons[ i ] : L" " ) );
 
     /* pixels */
@@ -186,7 +216,8 @@ void tui_refresh_lcd( x50ng_t* x50ng )
     else if ( opt.tui_tiny )
         tui_draw_lcd_tiny( lcd );
 
-    wrefresh( stdscr );
+    // wrefresh( stdscr );
+    wrefresh( lcd_window );
 }
 
 void tui_handle_pending_inputs( x50ng_t* x50ng )
@@ -350,13 +381,6 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
                 new_keyboard_state[ HPKEY_MULTIPLY ] = true;
                 break;
 
-            case KEY_F( 1 ):
-            case KEY_ENTER:
-            case '\n':
-            case ',':
-            case 13:
-                new_keyboard_state[ HPKEY_ENTER ] = true;
-                break;
             case KEY_F( 2 ):
             case '[':
             case 339: /* PgUp */
@@ -377,6 +401,17 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
             case 27:  /* Esc */
             case 262: /* Home */
                 new_keyboard_state[ HPKEY_ON ] = true;
+                break;
+            case KEY_F( 6 ):
+            case KEY_ENTER:
+            case '\n':
+            case ',':
+            case 13:
+                new_keyboard_state[ HPKEY_ENTER ] = true;
+                break;
+
+            case KEY_F( 1 ):
+                tui_show_help();
                 break;
 
             case KEY_F( 7 ):
@@ -416,23 +451,24 @@ void tui_init( x50ng_t* x50ng )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    mvaddch( 0, 0, ACS_ULCORNER );
-    mvaddch( LCD_BOTTOM, 0, ACS_LLCORNER );
-    mvaddch( 0, LCD_RIGHT, ACS_URCORNER );
-    mvaddch( LCD_BOTTOM, LCD_RIGHT, ACS_LRCORNER );
-    mvhline( 0, 1, ACS_HLINE, LCD_RIGHT - 1 );
-    mvhline( LCD_BOTTOM, 1, ACS_HLINE, LCD_RIGHT - 1 );
-    mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
-    mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
+    lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
+    refresh();
 
-    mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvprintw( 0, 30, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-    mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" );
+    mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
+    mvwprintw( lcd_window, 0, 30, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+
+    /* mvwprintw( lcd_window, LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" ); */
+
+    wrefresh( lcd_window );
 }
 
 void tui_exit( void )
 {
+    delwin( lcd_window );
+    delwin( help_window );
+
     nodelay( stdscr, FALSE );
     echo();
     endwin();
