@@ -181,7 +181,7 @@ static void tui_show_help( void )
     } else {
         wclear( help_window );
         wrefresh( help_window );
-        //delwin( help_window );
+        // delwin( help_window );
         refresh();
 
         help_window = NULL;

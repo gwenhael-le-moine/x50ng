@@ -221,9 +221,7 @@ int x50ng_module_unregister( x50ng_module_t* module )
 
 int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep, char** path )
 {
-    int error;
-
-    error = x50ng_module_get_string( module, key, name, reset, valuep );
+    int error = x50ng_module_get_string( module, key, name, reset, valuep );
 
     if ( g_path_is_absolute( *valuep ) ) {
         *path = g_strdup( *valuep );

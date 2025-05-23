@@ -610,7 +610,7 @@ int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
 
     s3c2410_sdi_unmount( x50ng );
     g_free( sdi->filename );
-    sdi->filename = filename;
+    sdi->filename = g_strdup( filename );
 
     if ( strcmp( filename, "" ) && ( stat( filename, &st ) == 0 ) ) {
         if ( S_ISDIR( st.st_mode ) ) {
