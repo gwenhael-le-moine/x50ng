@@ -106,12 +106,8 @@ extern int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile*, const c
 extern int x50ng_module_set_filename( x50ng_module_t* module, GKeyFile*, const char*, const char* );
 extern int x50ng_module_get_int( x50ng_module_t* module, GKeyFile*, const char*, int, int* );
 extern int x50ng_module_set_int( x50ng_module_t* module, GKeyFile*, const char*, int );
-//extern int x50ng_module_get_uint( x50ng_module_t* module, GKeyFile*, const char*, unsigned int, unsigned int* );
-//extern int x50ng_module_set_uint( x50ng_module_t* module, GKeyFile*, const char*, unsigned int );
 extern int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile*, const char*, uint32_t, uint32_t* );
 extern int x50ng_module_set_u32( x50ng_module_t* module, GKeyFile*, const char*, uint32_t );
-/* extern int x50ng_module_get_u64( x50ng_module_t* module, GKeyFile*, const char*, uint64_t, uint64_t* ); */
-/* extern int x50ng_module_set_u64( x50ng_module_t* module, GKeyFile*, const char*, uint64_t ); */
 extern int x50ng_module_get_string( x50ng_module_t* module, GKeyFile*, const char*, char*, char** );
 extern int x50ng_module_set_string( x50ng_module_t* module, GKeyFile*, const char*, const char* );
 extern int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** path );
