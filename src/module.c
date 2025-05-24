@@ -259,21 +259,21 @@ int x50ng_module_set_int( x50ng_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x50ng_module_get_uint( x50ng_module_t* module, GKeyFile* key, const char* name, unsigned int reset, unsigned int* valuep )
-{
-    return x50ng_module_get_u32( module, key, name, reset, valuep );
-}
+/* int x50ng_module_get_uint( x50ng_module_t* module, GKeyFile* key, const char* name, unsigned int reset, unsigned int* valuep ) */
+/* { */
+/*     return x50ng_module_get_u32( module, key, name, reset, valuep ); */
+/* } */
 
-int x50ng_module_set_uint( x50ng_module_t* module, GKeyFile* key, const char* name, unsigned int value )
-{
-    char data[ 16 ];
+/* int x50ng_module_set_uint( x50ng_module_t* module, GKeyFile* key, const char* name, unsigned int value ) */
+/* { */
+/*     char data[ 16 ]; */
 
-    snprintf( data, sizeof( data ), "%u", value );
+/*     snprintf( data, sizeof( data ), "%u", value ); */
 
-    g_key_file_set_value( key, module->name, name, data );
+/*     g_key_file_set_value( key, module->name, name, data ); */
 
-    return 0;
-}
+/*     return 0; */
+/* } */
 
 int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile* key, const char* name, uint32_t reset, uint32_t* valuep )
 {
@@ -312,42 +312,42 @@ int x50ng_module_set_u32( x50ng_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x50ng_module_set_u64( x50ng_module_t* module, GKeyFile* key, const char* name, uint64_t value )
-{
-    char data[ 32 ];
+/* int x50ng_module_set_u64( x50ng_module_t* module, GKeyFile* key, const char* name, uint64_t value ) */
+/* { */
+/*     char data[ 32 ]; */
 
-    snprintf( data, sizeof( data ), "0x%016" PRIx64 "", value );
+/*     snprintf( data, sizeof( data ), "0x%016" PRIx64 "", value ); */
 
-    g_key_file_set_value( key, module->name, name, data );
+/*     g_key_file_set_value( key, module->name, name, data ); */
 
-    return 0;
-}
+/*     return 0; */
+/* } */
 
-int x50ng_module_get_u64( x50ng_module_t* module, GKeyFile* key, const char* name, uint64_t reset, uint64_t* valuep )
-{
-    GError* gerror = NULL;
-    char *data, *end;
-    uint64_t value;
+/* int x50ng_module_get_u64( x50ng_module_t* module, GKeyFile* key, const char* name, uint64_t reset, uint64_t* valuep ) */
+/* { */
+/*     GError* gerror = NULL; */
+/*     char *data, *end; */
+/*     uint64_t value; */
 
-    data = g_key_file_get_value( key, module->name, name, &gerror );
-    if ( NULL == data ) {
-        fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __func__, __LINE__, name );
-        *valuep = reset;
-        return -EAGAIN;
-    }
+/*     data = g_key_file_get_value( key, module->name, name, &gerror ); */
+/*     if ( NULL == data ) { */
+/*         fprintf( stderr, "%s: %s:%u: key \"%s\" not found\n", module->name, __func__, __LINE__, name ); */
+/*         *valuep = reset; */
+/*         return -EAGAIN; */
+/*     } */
 
-    value = strtoull( data, &end, 0 );
-    if ( ( end == data ) || ( *end != '\0' ) ) {
-        *valuep = reset;
-        g_free( data );
-        return -EAGAIN;
-    }
+/*     value = strtoull( data, &end, 0 ); */
+/*     if ( ( end == data ) || ( *end != '\0' ) ) { */
+/*         *valuep = reset; */
+/*         g_free( data ); */
+/*         return -EAGAIN; */
+/*     } */
 
-    *valuep = value;
+/*     *valuep = value; */
 
-    g_free( data );
-    return 0;
-}
+/*     g_free( data ); */
+/*     return 0; */
+/* } */
 
 int x50ng_module_get_string( x50ng_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep )
 {
