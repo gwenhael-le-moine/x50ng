@@ -200,13 +200,11 @@ void tui_refresh_lcd( x50ng_t* x50ng )
         return;
 
     /* annunciators */
-    const wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
-    const int annunciators_pixel_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
-
-    for ( int i = 0; i < 6; i++ )
-        mvwaddwstr(
-            lcd_window, 0, 4 + ( i * 4 ),
-            ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, annunciators_pixel_index[ i ] ) > 0 ? annunciators_icons[ i ] : L" " ) );
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        mvwaddstr( lcd_window, 0, 4 + ( i * 4 ),
+                    ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) > 0
+                      ? ui_annunciators[ i ].icon
+                          : " " ) );
 
     /* pixels */
     if ( opt.tui )

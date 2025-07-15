@@ -659,6 +659,15 @@ int keys_order_legacy[ NB_KEYS ] = {
     HPKEY_MINUS,      HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE,    HPKEY_PLUS,
 };
 
+x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ] = {
+    {.icon = "⮢",  .state_pixel_index = 1},
+    {.icon = "⮣",  .state_pixel_index = 2},
+    {.icon = "α",  .state_pixel_index = 3},
+    {.icon = "🪫", .state_pixel_index = 4},
+    {.icon = "⌛", .state_pixel_index = 5},
+    {.icon = "⇄",  .state_pixel_index = 0}
+};
+
 /*************/
 /* functions */
 /*************/

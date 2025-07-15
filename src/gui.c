@@ -5,7 +5,6 @@
 
 #include "options.h"
 #include "x50ng.h"
-#include "ui.h"
 #include "ui_inner.h"
 #include "s3c2410.h"
 
@@ -22,22 +21,26 @@ typedef struct {
     bool hold;
 } x50ng_ui_button_t;
 
-static GtkWidget* gui_window;
+/*************/
+/* Variables */
+/*************/
+static GtkWidget* gui_annunciator_widgets[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
 static x50ng_ui_button_t* gui_buttons;
+
+static GtkWidget* gui_window;
 
 static GtkWidget* gui_lcd_canvas;
 static cairo_surface_t* gui_lcd_surface;
 
-static GtkWidget* gui_ann_left;
-static GtkWidget* gui_ann_right;
-static GtkWidget* gui_ann_alpha;
-static GtkWidget* gui_ann_battery;
-static GtkWidget* gui_ann_busy;
-static GtkWidget* gui_ann_io;
-
+/*************************/
+/* Functions' prototypes */
+/*************************/
 static void gui_open_menu( int x, int y, x50ng_t* x50ng );
 
+/*************/
+/* Functions */
+/*************/
 static void gui_release_button( x50ng_ui_button_t* button )
 {
     if ( !button->down )
@@ -494,15 +497,9 @@ static bool gui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
     // Using GUI buttons:
     switch ( event_type ) {
         case KEY_PRESS:
-            /* if ( opt.tui ) */
-            /*     X50NG_PRESS_KEY( x50ng, &ui_keys[ hpkey ] ) */
-            /* else */
             gui_react_to_button_press( NULL, 0, 0, 0, &gui_buttons[ hpkey ] );
             break;
         case KEY_RELEASE:
-            /* if ( opt.tui ) */
-            /*     X50NG_RELEASE_KEY( x50ng, &ui_keys[ hpkey ] ) */
-            /* else */
             gui_react_to_button_release( NULL, 0, 0, 0, &gui_buttons[ hpkey ] );
             break;
         default:
@@ -617,19 +614,10 @@ static int gui_load( x50ng_t* x50ng )
     gtk_widget_add_css_class( annunciators_container, "annunciators-container" );
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
-    gui_ann_left = _gui_load__create_annunciator_widget( "⮢" );
-    gui_ann_right = _gui_load__create_annunciator_widget( "⮣" );
-    gui_ann_alpha = _gui_load__create_annunciator_widget( "α" );
-    gui_ann_battery = _gui_load__create_annunciator_widget( "🪫" );
-    gui_ann_busy = _gui_load__create_annunciator_widget( "⌛" );
-    gui_ann_io = _gui_load__create_annunciator_widget( "⇄" );
-
-    gtk_box_append( GTK_BOX( annunciators_container ), gui_ann_left );
-    gtk_box_append( GTK_BOX( annunciators_container ), gui_ann_right );
-    gtk_box_append( GTK_BOX( annunciators_container ), gui_ann_alpha );
-    gtk_box_append( GTK_BOX( annunciators_container ), gui_ann_battery );
-    gtk_box_append( GTK_BOX( annunciators_container ), gui_ann_busy );
-    gtk_box_append( GTK_BOX( annunciators_container ), gui_ann_io );
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+        gui_annunciator_widgets[ i ] = _gui_load__create_annunciator_widget( ui_annunciators[ i ].icon );
+        gtk_box_append( GTK_BOX( annunciators_container ), gui_annunciator_widgets[ i ] );
+    }
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( annunciators_container, "display-container" );
@@ -812,12 +800,9 @@ void gui_refresh_lcd( x50ng_t* x50ng )
     if ( !( lcd->lcdcon1 & 1 ) )
         return;
 
-    gtk_widget_set_opacity( gui_ann_left, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 1 ) );
-    gtk_widget_set_opacity( gui_ann_right, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 2 ) );
-    gtk_widget_set_opacity( gui_ann_alpha, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 3 ) );
-    gtk_widget_set_opacity( gui_ann_battery, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 4 ) );
-    gtk_widget_set_opacity( gui_ann_busy, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 5 ) );
-    gtk_widget_set_opacity( gui_ann_io, x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, 0 ) );
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        gtk_widget_set_opacity( gui_annunciator_widgets[ i ],
+                                x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) );
 
     if ( NULL != gui_lcd_surface )
         g_free( gui_lcd_surface );

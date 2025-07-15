@@ -6,6 +6,8 @@
 #define UI_EVENTS_REFRESH_INTERVAL 30000LL
 #define UI_LCD_REFRESH_INTERVAL 50000LL
 
+#define NB_ANNUNCIATORS 6
+
 #define KB_NB_ROWS ( 10 )
 
 #define LCD_WIDTH ( 131 )
@@ -95,11 +97,17 @@ typedef struct {
     int eint;
 } x50ng_ui_key_t;
 
+typedef struct {
+    char* icon;
+    int state_pixel_index;
+} x50ng_ui_annunciator_t;
+
 extern x50ng_ui_key_t ui_keys[ NB_KEYS ];
 extern int keys_order_normal[ NB_KEYS ];
 extern int keys_order_legacy[ NB_KEYS ];
-
 #define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
+
+extern x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ];
 
 bool ui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type );
 void newrplify_ui_keys();
