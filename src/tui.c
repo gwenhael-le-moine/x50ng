@@ -202,9 +202,8 @@ void tui_refresh_lcd( x50ng_t* x50ng )
     /* annunciators */
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         mvwaddstr( lcd_window, 0, 4 + ( i * 4 ),
-                    ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) > 0
-                      ? ui_annunciators[ i ].icon
-                          : " " ) );
+                   ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) > 0 ? ui_annunciators[ i ].icon
+                                                                                                                 : " " ) );
 
     /* pixels */
     if ( opt.tui )
