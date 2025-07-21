@@ -24,7 +24,7 @@ typedef struct {
 /*************/
 /* Variables */
 /*************/
-static GtkWidget* gui_annunciator_widgets[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
+static GtkWidget* gui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
 static x50ng_ui_button_t* gui_buttons;
 
@@ -548,7 +548,34 @@ static GtkWidget* _gui_load__create_label( const char* css_class, const char* te
     return gui_label;
 }
 
-static int gui_load( x50ng_t* x50ng )
+static void _gui_load__load_and_apply_CSS( x50ng_t* x50ng )
+{
+    char* style_full_path = g_build_filename( opt.style_filename, NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        style_full_path = g_build_filename( x50ng->progpath, opt.style_filename, NULL );
+
+    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
+        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", opt.style_filename, opt.datadir,
+                 opt.style_filename, GLOBAL_DATADIR, opt.style_filename, x50ng->progpath, opt.style_filename );
+    else {
+        g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
+        gtk_css_provider_load_from_path( style_provider, style_full_path );
+
+        gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
+                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
+
+        if ( opt.verbose )
+            fprintf( stderr, "Loaded style from %s\n", style_full_path );
+    }
+
+    free( style_full_path );
+}
+
+static void gui_load( x50ng_t* x50ng )
 {
     // create gui_window and widgets/stuff
     gui_window = gtk_window_new();
@@ -615,8 +642,8 @@ static int gui_load( x50ng_t* x50ng )
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
-        gui_annunciator_widgets[ i ] = _gui_load__create_annunciator_widget( ui_annunciators[ i ].icon );
-        gtk_box_append( GTK_BOX( annunciators_container ), gui_annunciator_widgets[ i ] );
+        gui_annunciators[ i ] = _gui_load__create_annunciator_widget( ui_annunciators[ i ].icon );
+        gtk_box_append( GTK_BOX( annunciators_container ), gui_annunciators[ i ] );
     }
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
@@ -657,6 +684,13 @@ static int gui_load( x50ng_t* x50ng )
     GtkWidget* rows_containers[ KB_NB_ROWS ];
     GtkWidget* keys_containers[ NB_KEYS ];
     GtkWidget* keys_top_labels_containers[ NB_KEYS ];
+
+    gui_buttons = malloc( NB_KEYS * sizeof( x50ng_ui_button_t ) );
+    if ( NULL == gui_buttons ) {
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
+        return;
+    }
+    memset( gui_buttons, 0, NB_KEYS * sizeof( x50ng_ui_button_t ) );
 
     int key_index = 0;
     int nb_keys_in_row = 0;
@@ -756,35 +790,11 @@ static int gui_load( x50ng_t* x50ng )
         }
     }
 
-    // Apply CSS
-    char* style_full_path = g_build_filename( opt.style_filename, NULL );
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( x50ng->progpath, opt.style_filename, NULL );
-
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", opt.style_filename, opt.datadir,
-                 opt.style_filename, GLOBAL_DATADIR, opt.style_filename, x50ng->progpath, opt.style_filename );
-    else {
-        g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
-        gtk_css_provider_load_from_path( style_provider, style_full_path );
-
-        gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
-                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
-
-        if ( opt.verbose )
-            fprintf( stderr, "Loaded style from %s\n", style_full_path );
-    }
-    free( style_full_path );
+    _gui_load__load_and_apply_CSS( x50ng );
 
     // finally show the window
     gtk_widget_realize( gui_window );
     gtk_window_present( GTK_WINDOW( gui_window ) );
-
-    return 0;
 }
 
 void gui_handle_pending_inputs( x50ng_t* _x50ng )
@@ -801,7 +811,7 @@ void gui_refresh_lcd( x50ng_t* x50ng )
         return;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        gtk_widget_set_opacity( gui_annunciator_widgets[ i ],
+        gtk_widget_set_opacity( gui_annunciators[ i ],
                                 x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) );
 
     if ( NULL != gui_lcd_surface )
@@ -826,13 +836,6 @@ void gui_refresh_lcd( x50ng_t* x50ng )
 
 void gui_init( x50ng_t* x50ng )
 {
-    gui_buttons = malloc( NB_KEYS * sizeof( x50ng_ui_button_t ) );
-    if ( NULL == gui_buttons ) {
-        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
-        return;
-    }
-    memset( gui_buttons, 0, NB_KEYS * sizeof( x50ng_ui_button_t ) );
-
     gtk_init();
 
     gui_load( x50ng );
