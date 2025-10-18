@@ -3,6 +3,7 @@
 #include <cairo.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "list.h"
 #include "options.h"
 #include "x50ng.h"
 #include "ui_inner.h"
@@ -525,7 +526,7 @@ static void gui_react_to_display_click( x50ng_t* x50ng, GtkEventController* _ges
     gui_open_menu( ( int )x, ( int )y, x50ng );
 }
 
-static GtkWidget* _gui_load__create_annunciator_widget( const char* label )
+static GtkWidget* _gui_activate__create_annunciator_widget( const char* label )
 {
     GtkWidget* gui_ann = gtk_label_new( NULL );
     gtk_widget_add_css_class( gui_ann, "annunciator" );
@@ -537,7 +538,7 @@ static GtkWidget* _gui_load__create_annunciator_widget( const char* label )
     return gui_ann;
 }
 
-static GtkWidget* _gui_load__create_label( const char* css_class, const char* text )
+static GtkWidget* _gui_activate__create_label( const char* css_class, const char* text )
 {
     GtkWidget* gui_label = gtk_label_new( NULL );
     gtk_widget_add_css_class( gui_label, css_class );
@@ -548,7 +549,7 @@ static GtkWidget* _gui_load__create_label( const char* css_class, const char* te
     return gui_label;
 }
 
-static void _gui_load__load_and_apply_CSS( x50ng_t* x50ng )
+static void _gui_activate__load_and_apply_CSS( x50ng_t* x50ng )
 {
     char* style_full_path = g_build_filename( opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
@@ -575,10 +576,14 @@ static void _gui_load__load_and_apply_CSS( x50ng_t* x50ng )
     free( style_full_path );
 }
 
-static void gui_load( x50ng_t* x50ng )
+static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
 {
     // create gui_window and widgets/stuff
-    gui_window = gtk_window_new();
+    if ( app == NULL )
+        gui_window = gtk_window_new();
+    else
+        gui_window = gtk_application_window_new( app );
+
     gtk_window_set_decorated( GTK_WINDOW( gui_window ), true );
     gtk_window_set_resizable( GTK_WINDOW( gui_window ), true );
     gtk_window_set_title( GTK_WINDOW( gui_window ), opt.name );
@@ -642,7 +647,7 @@ static void gui_load( x50ng_t* x50ng )
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
-        gui_annunciators[ i ] = _gui_load__create_annunciator_widget( ui_annunciators[ i ].icon );
+        gui_annunciators[ i ] = _gui_activate__create_annunciator_widget( ui_annunciators[ i ].icon );
         gtk_box_append( GTK_BOX( annunciators_container ), gui_annunciators[ i ] );
     }
 
@@ -734,11 +739,11 @@ static void gui_load( x50ng_t* x50ng )
 
             GtkWidget* label_left = NULL;
             if ( button->key->left )
-                label_left = _gui_load__create_label( "label-left", button->key->left );
+                label_left = _gui_activate__create_label( "label-left", button->key->left );
 
             GtkWidget* label_right = NULL;
             if ( button->key->right )
-                label_right = _gui_load__create_label( "label-right", button->key->right );
+                label_right = _gui_activate__create_label( "label-right", button->key->right );
 
             if ( button->key->left && button->key->right ) {
                 gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_left );
@@ -761,7 +766,7 @@ static void gui_load( x50ng_t* x50ng )
             gtk_widget_set_name( button->button, button->key->css_id );
 
             // There's always a label, even if it's empty.
-            GtkWidget* label = _gui_load__create_label( "label-key", button->key->label );
+            GtkWidget* label = _gui_activate__create_label( "label-key", button->key->label );
             gtk_button_set_child( GTK_BUTTON( button->button ), label );
 
             gtk_widget_set_can_focus( button->button, false );
@@ -782,15 +787,16 @@ static void gui_load( x50ng_t* x50ng )
             gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), button->button );
 
             if ( button->key->below )
-                gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), _gui_load__create_label( "label-below", button->key->below ) );
+                gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), _gui_activate__create_label( "label-below", button->key->below ) );
             if ( button->key->letter )
-                gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), _gui_load__create_label( "label-letter", button->key->letter ) );
+                gtk_box_append( GTK_BOX( keys_containers[ key_index ] ),
+                                _gui_activate__create_label( "label-letter", button->key->letter ) );
 
             key_index++;
         }
     }
 
-    _gui_load__load_and_apply_CSS( x50ng );
+    _gui_activate__load_and_apply_CSS( x50ng );
 
     // finally show the window
     gtk_widget_realize( gui_window );
@@ -836,9 +842,14 @@ void gui_refresh_lcd( x50ng_t* x50ng )
 
 void gui_init( x50ng_t* x50ng )
 {
-    gtk_init();
+    /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
-    gui_load( x50ng );
+    /* g_signal_connect( app, "activate", G_CALLBACK( gui_activate ), x50ng ); */
+
+    /* g_application_run( G_APPLICATION( app ), 0, NULL ); */
+
+    gtk_init();
+    gui_activate( NULL, x50ng );
 }
 
 void gui_exit( void ) {}
