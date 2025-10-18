@@ -178,7 +178,7 @@ void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
 /*******************/
 /* signal handlers */
 /*******************/
-void ui_sighnd( int sig )
+void signal_handler( int sig )
 {
     switch ( sig ) {
         case SIGINT:
@@ -187,12 +187,6 @@ void ui_sighnd( int sig )
             x50ng->arm_exit = 1;
             cpu_exit( x50ng->env );
             break;
-    }
-}
-
-static void arm_sighnd( int sig )
-{
-    switch ( sig ) {
         case SIGUSR1:
             //		stop_simulator = 1;
             //		x50ng->arm->CallDebug ^= 1;
@@ -260,11 +254,10 @@ int main( int argc, char** argv )
         x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
     }
 
-    signal( SIGINT, ui_sighnd );
-    signal( SIGTERM, ui_sighnd );
-    signal( SIGQUIT, ui_sighnd );
-
-    signal( SIGUSR1, arm_sighnd );
+    signal( SIGINT, signal_handler );
+    signal( SIGTERM, signal_handler );
+    signal( SIGQUIT, signal_handler );
+    signal( SIGUSR1, signal_handler );
 
     x50ng_set_idle( x50ng, 0 );
 
