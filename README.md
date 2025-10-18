@@ -154,3 +154,7 @@ window {
 - `make` to compile with all warnings
 - `make clean` and `make mrproper` to clean between compilation runs
 - `make pretty-code` to format the code using `clang-format` and the provided `.clang-format`
+
+## Limits
+
+- The embedded and patched qemu is old (0.12.50) and doesn't support `aarch64`
