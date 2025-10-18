@@ -1,8 +1,8 @@
 #ifndef _S3C2410_MMU_H
-#define _S3C2410_MMU_H 1
+#  define _S3C2410_MMU_H 1
 
-#define S3C2410_MMU_TLB_SIZE 64
-#define S3C2410_MMU_TLB_MASK ( S3C2410_MMU_TLB_SIZE - 1 )
+#  define S3C2410_MMU_TLB_SIZE 64
+#  define S3C2410_MMU_TLB_MASK ( S3C2410_MMU_TLB_SIZE - 1 )
 
 typedef struct {
     uint32_t mva;

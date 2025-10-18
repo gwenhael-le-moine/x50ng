@@ -1,13 +1,13 @@
 #ifndef _X50NG_TIMER_H
-#define _X50NG_TIMER_H 1
+#  define _X50NG_TIMER_H 1
 
-#include <stdbool.h>
-#include <stdint.h>
+#  include <stdbool.h>
+#  include <stdint.h>
 
-#include "types.h"
+#  include "types.h"
 
-#define X50NG_TIMER_VIRTUAL 0
-#define X50NG_TIMER_REALTIME 1
+#  define X50NG_TIMER_VIRTUAL 0
+#  define X50NG_TIMER_REALTIME 1
 
 typedef void ( *x50ng_timer_cb_t )( void* );
 typedef struct x50ng_timer_s x50ng_timer_t;

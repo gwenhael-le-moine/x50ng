@@ -1,20 +1,20 @@
 #ifndef _UI_INNER_H
-#define _UI_INNER_H 1
+#  define _UI_INNER_H 1
 
-#include "types.h" /* x50ng_t */
+#  include "types.h" /* x50ng_t */
 
-#define UI_EVENTS_REFRESH_INTERVAL 30000LL
-#define UI_LCD_REFRESH_INTERVAL 50000LL
+#  define UI_EVENTS_REFRESH_INTERVAL 30000LL
+#  define UI_LCD_REFRESH_INTERVAL 50000LL
 
-#define NB_ANNUNCIATORS 6
+#  define NB_ANNUNCIATORS 6
 
-#define KB_NB_ROWS ( 10 )
+#  define KB_NB_ROWS ( 10 )
 
-#define LCD_WIDTH ( 131 )
-#define LCD_HEIGHT ( 80 )
+#  define LCD_WIDTH ( 131 )
+#  define LCD_HEIGHT ( 80 )
 
-#define KEY_PRESS 1
-#define KEY_RELEASE 2
+#  define KEY_PRESS 1
+#  define KEY_RELEASE 2
 
 typedef enum {
     HPKEY_A = 0,
@@ -105,14 +105,14 @@ typedef struct {
 extern x50ng_ui_key_t ui_keys[ NB_KEYS ];
 extern int keys_order_normal[ NB_KEYS ];
 extern int keys_order_legacy[ NB_KEYS ];
-#define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
+#  define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
 
 extern x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ];
 
 bool ui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type );
 void newrplify_ui_keys();
 void x50ng_set_key_state( x50ng_t* x50ng, const x50ng_ui_key_t* key, bool state );
-#define X50NG_PRESS_KEY( x50ng, key ) x50ng_set_key_state( x50ng, key, true );
-#define X50NG_RELEASE_KEY( x50ng, key ) x50ng_set_key_state( x50ng, key, false );
+#  define X50NG_PRESS_KEY( x50ng, key ) x50ng_set_key_state( x50ng, key, true );
+#  define X50NG_RELEASE_KEY( x50ng, key ) x50ng_set_key_state( x50ng, key, false );
 
 #endif /* !(_UI_INNER_H) */

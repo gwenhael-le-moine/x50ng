@@ -1,25 +1,25 @@
 #ifndef _CONFIG_H
-#define _CONFIG_H 1
+#  define _CONFIG_H 1
 
-#include <stdbool.h>
+#  include <stdbool.h>
 
-#include "x50ng.h"
+#  include "x50ng.h"
 
-#ifndef VERSION_MAJOR
-#  define VERSION_MAJOR 0
-#endif
-#ifndef VERSION_MINOR
-#  define VERSION_MINOR 0
-#endif
-#ifndef PATCHLEVEL
-#  define PATCHLEVEL 0
-#endif
+#  ifndef VERSION_MAJOR
+#    define VERSION_MAJOR 0
+#  endif
+#  ifndef VERSION_MINOR
+#    define VERSION_MINOR 0
+#  endif
+#  ifndef PATCHLEVEL
+#    define PATCHLEVEL 0
+#  endif
 
-#ifdef X50NG_DATADIR
-#  define GLOBAL_DATADIR X50NG_DATADIR
-#else
-#  define GLOBAL_DATADIR x50ng->progpath
-#endif
+#  ifdef X50NG_DATADIR
+#    define GLOBAL_DATADIR X50NG_DATADIR
+#  else
+#    define GLOBAL_DATADIR x50ng->progpath
+#  endif
 
 struct options {
     bool verbose;
