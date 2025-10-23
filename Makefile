@@ -127,35 +127,35 @@ ifeq ($(DEBUG), yes)
 endif
 
 SRCS = \
+	./src/s3c2410/block.c \
 	./src/s3c2410/s3c2410.c \
-	./src/s3c2410/s3c2410_sram.c \
-	./src/s3c2410/s3c2410_memc.c \
+	./src/s3c2410/s3c2410_adc.c \
+	./src/s3c2410/s3c2410_arm.c \
 	./src/s3c2410/s3c2410_intc.c \
-	./src/s3c2410/s3c2410_power.c \
+	./src/s3c2410/s3c2410_io_port.c \
 	./src/s3c2410/s3c2410_lcd.c \
+	./src/s3c2410/s3c2410_memc.c \
 	./src/s3c2410/s3c2410_nand.c \
-	./src/s3c2410/s3c2410_uart.c \
+	./src/s3c2410/s3c2410_power.c \
+	./src/s3c2410/s3c2410_rtc.c \
+	./src/s3c2410/s3c2410_sdi.c \
+	./src/s3c2410/s3c2410_spi.c \
+	./src/s3c2410/s3c2410_sram.c \
 	./src/s3c2410/s3c2410_timer.c \
+	./src/s3c2410/s3c2410_uart.c \
 	./src/s3c2410/s3c2410_usbdev.c \
 	./src/s3c2410/s3c2410_watchdog.c \
-	./src/s3c2410/s3c2410_io_port.c \
-	./src/s3c2410/s3c2410_rtc.c \
-	./src/s3c2410/s3c2410_adc.c \
-	./src/s3c2410/s3c2410_spi.c \
-	./src/s3c2410/s3c2410_sdi.c \
-	./src/s3c2410/s3c2410_arm.c \
-	./src/s3c2410/block.c \
 	./src/ui/gui.c \
 	./src/ui/tui.c \
 	./src/ui/ui.c \
 	./src/emulator.c \
-	./src/module.c \
 	./src/flash.c \
-	./src/sram.c \
-	./src/timer.c \
 	./src/gdbstub.c \
+	./src/main.c \
+	./src/module.c \
 	./src/options.c \
-	./src/main.c
+	./src/sram.c \
+	./src/timer.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -213,7 +213,7 @@ compile_commands.json: distclean
 
 # Cleaning
 clean:
-	rm -f ./src/*.o ./src/s3c2410/*.o core *~ .depend
+	rm -f $(OBJS) core *~ .depend
 
 distclean: clean clean-qemu
 	rm -f compile_commands.json
@@ -224,7 +224,7 @@ mrproper: distclean
 
 # auto-format code
 pretty-code:
-	clang-format -i ./src/*.c ./src/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
+	clang-format -i ./src/*.c ./src/*.h ./src/ui/*.c ./src/ui/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
 
 # Populate dist/firmware/ from hpcalc.org
 pull-firmware:
