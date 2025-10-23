@@ -21,7 +21,10 @@
 #    define GLOBAL_DATADIR x50ng->progpath
 #  endif
 
-struct options {
+typedef struct options_t {
+    char* progname;
+    char* progpath;
+
     bool verbose;
     bool haz_config_file;
 
@@ -46,14 +49,14 @@ struct options {
     double zoom;
     bool netbook;
     int netbook_pivot_line;
-};
+} options_t;
 
-extern struct options opt;
+extern options_t opt;
 
 /*************/
 /* functions */
 /*************/
-extern void config_init( char* progname, int argc, char* argv[] );
+extern void config_init( int argc, char* argv[] );
 extern int save_config( void );
 
 #endif /* !_CONFIG_H */

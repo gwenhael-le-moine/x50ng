@@ -15,7 +15,7 @@
 
 #define CONFIG_LUA_FILE_NAME "config.lua"
 
-struct options opt = {
+options_t opt = {
     .verbose = false,
 
     .datadir = NULL,
@@ -157,7 +157,7 @@ int save_config( void )
     return EXIT_SUCCESS;
 }
 
-void config_init( char* progname, int argc, char* argv[] )
+void config_init( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
@@ -223,6 +223,9 @@ void config_init( char* progname, int argc, char* argv[] )
         {0,                    0,                 0,                      0   }
     };
 
+    opt.progname = g_path_get_basename( argv[ 0 ] );
+    opt.progpath = g_path_get_dirname( argv[ 0 ] );
+
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
@@ -263,8 +266,8 @@ void config_init( char* progname, int argc, char* argv[] )
                          "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
                          "   --bootloader[=filename]   bootloader file (default: %s)\n"
                          "   --firmware[=filename]     firmware file (default: %s)\n",
-                         progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname, progname, progname, DEFAULT_GDBSTUB_PORT,
-                         opt.bootloader, opt.firmware );
+                         opt.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, opt.progname, opt.progname, opt.progname,
+                         DEFAULT_GDBSTUB_PORT, opt.bootloader, opt.firmware );
                 exit( EXIT_SUCCESS );
                 break;
             case 10:
@@ -350,7 +353,7 @@ void config_init( char* progname, int argc, char* argv[] )
     }
 
     if ( opt.datadir == NULL )
-        opt.datadir = g_build_filename( g_get_user_config_dir(), progname, NULL );
+        opt.datadir = g_build_filename( g_get_user_config_dir(), opt.progname, NULL );
 
     const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
     if ( opt.verbose )
@@ -433,7 +436,7 @@ void config_init( char* progname, int argc, char* argv[] )
     if ( clopt_name != NULL )
         opt.name = strdup( clopt_name );
     else if ( opt.name == NULL )
-        opt.name = strdup( progname );
+        opt.name = strdup( opt.progname );
 
     if ( clopt_sd_dir != NULL )
         opt.sd_dir = strdup( clopt_sd_dir );

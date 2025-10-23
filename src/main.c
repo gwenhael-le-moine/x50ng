@@ -24,7 +24,7 @@
 #include "gdbstub.h"
 #include "options.h"
 
-extern struct options opt;
+extern options_t opt;
 
 static x50ng_t* x50ng;
 
@@ -199,14 +199,11 @@ void signal_handler( int sig )
 
 int main( int argc, char** argv )
 {
-    char* progname = g_path_get_basename( argv[ 0 ] );
-    char* progpath = g_path_get_dirname( argv[ 0 ] );
-
-    config_init( progname, argc, argv );
+    config_init( argc, argv );
 
     x50ng = malloc( sizeof( x50ng_t ) );
     if ( NULL == x50ng ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", progname, __func__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", opt.progname, __func__, __LINE__ );
         exit( EXIT_FAILURE );
     }
     memset( x50ng, 0, sizeof( x50ng_t ) );
@@ -219,8 +216,8 @@ int main( int argc, char** argv )
 
     INIT_LIST_HEAD( &x50ng->modules );
 
-    x50ng->progname = progname;
-    x50ng->progpath = progpath;
+    x50ng->progname = opt.progname;
+    x50ng->progpath = opt.progpath;
     x50ng->clk_tck = sysconf( _SC_CLK_TCK );
     x50ng->emulator_fclk = 75000000;
     x50ng->PCLK_ratio = 4;
