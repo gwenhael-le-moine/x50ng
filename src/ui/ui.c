@@ -747,10 +747,15 @@ void ui_handle_pending_inputs( void* data )
 {
     x50ng_t* x50ng = data;
 
-    if ( opt.tui || opt.tui_small || opt.tui_tiny )
+    switch ( opt.frontend ) {
+    case FRONTEND_NCURSES:
         tui_handle_pending_inputs( x50ng );
-    else
+        break;
+    case FRONTEND_GTK:
+    default:
         gui_handle_pending_inputs( x50ng );
+        break;
+    }
 
     x50ng_mod_timer( x50ng->timer_ui_input, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
@@ -759,10 +764,15 @@ void ui_refresh_output( void* data )
 {
     x50ng_t* x50ng = data;
 
-    if ( opt.tui || opt.tui_small || opt.tui_tiny )
+    switch ( opt.frontend ) {
+    case FRONTEND_NCURSES:
         tui_refresh_lcd( x50ng );
-    else
+        break;
+    case FRONTEND_GTK:
+    default:
         gui_refresh_lcd( x50ng );
+        break;
+    }
 
     x50ng_mod_timer( x50ng->timer_ui_output, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
@@ -772,16 +782,26 @@ void ui_init( x50ng_t* x50ng )
     if ( opt.newrpl_keyboard )
         newrplify_ui_keys();
 
-    if ( opt.tui || opt.tui_small || opt.tui_tiny )
+    switch ( opt.frontend ) {
+    case FRONTEND_NCURSES:
         tui_init( x50ng );
-    else
+        break;
+    case FRONTEND_GTK:
+    default:
         gui_init( x50ng );
+        break;
+    }
 }
 
 void ui_exit( void )
 {
-    if ( opt.tui || opt.tui_small || opt.tui_tiny )
+    switch ( opt.frontend ) {
+    case FRONTEND_NCURSES:
         tui_exit();
-    else
+        break;
+    case FRONTEND_GTK:
+    default:
         gui_exit();
+        break;
+    }
 }

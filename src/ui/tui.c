@@ -8,15 +8,15 @@
 #include "../s3c2410/s3c2410.h"
 
 #include "../options.h"
-#include "../types.h"
+#include "../x50ng.h"
 
 #include "ui.h"
 #include "ui_inner.h"
 
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( opt.tui_tiny ? 4 : ( opt.tui_small ? 2 : 1 ) ) )
-#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( opt.tui ? 1 : 2 ) ) + 1
+#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( opt.tiny ? 4 : ( opt.small ? 2 : 1 ) ) )
+#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( opt.small || opt.tiny ? 2 : 1 ) ) + 1
 
 WINDOW* lcd_window;
 WINDOW* help_window;
@@ -205,12 +205,13 @@ void tui_refresh_lcd( x50ng_t* x50ng )
                                                                                                                  : " " ) );
 
     /* pixels */
-    if ( opt.tui )
-        tui_draw_lcd( lcd );
-    else if ( opt.tui_small )
+    if ( opt.small )
         tui_draw_lcd_small( lcd );
-    else if ( opt.tui_tiny )
+    else if ( opt.tiny )
         tui_draw_lcd_tiny( lcd );
+    else
+        tui_draw_lcd( lcd );
+
 
     // wrefresh( stdscr );
     wrefresh( lcd_window );
@@ -454,8 +455,6 @@ void tui_init( x50ng_t* x50ng )
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
     mvwprintw( lcd_window, 0, 30, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
-
-    /* mvwprintw( lcd_window, LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" ); */
 
     wrefresh( lcd_window );
 }

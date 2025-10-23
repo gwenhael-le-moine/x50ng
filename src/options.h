@@ -19,6 +19,7 @@
 #    define GLOBAL_DATADIR x50ng->progpath
 #  endif
 
+typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t;
 typedef enum { X50NG_REINIT_NONE = 0, X50NG_REINIT_REBOOT_ONLY, X50NG_REINIT_FLASH, X50NG_REINIT_FLASH_FULL } x50ng_reinit_t;
 
 typedef struct options_t {
@@ -39,9 +40,9 @@ typedef struct options_t {
     char* firmware;
     x50ng_reinit_t reinit;
 
-    bool tui;
-    bool tui_small;
-    bool tui_tiny;
+    frontend_t frontend;
+    bool small;
+    bool tiny;
 
     bool newrpl_keyboard;
     bool legacy_keyboard;

@@ -29,9 +29,9 @@ options_t opt = {
     .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
     .reinit = X50NG_REINIT_NONE,
 
-    .tui = false,
-    .tui_small = false,
-    .tui_tiny = false,
+    .frontend = FRONTEND_GTK,
+    .small = false,
+    .tiny = false,
 
     .newrpl_keyboard = false,
     .legacy_keyboard = false,
@@ -120,7 +120,7 @@ static char* config_to_string( void )
                          /* "\n" */
                          /* "sd_dir = \"%s\"\n" */
                          "--- End of x50ng configuration -----------------------------------------------\n",
-                         opt.name, opt.tui_tiny ? "tui-tiny" : ( opt.tui_small ? "tui-small" : ( opt.tui ? "tui" : "gui" ) ),
+                         opt.name, opt.frontend == FRONTEND_GTK ? "gui" : ( opt.tiny ? "tui-tiny" : ( opt.small ? "tui-small" : "tui" ) ),
                          opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
                          opt.newrpl_keyboard ? "true" : "false",
                          opt.legacy_keyboard ? "true" : "false" /* , opt.sd_dir == NULL ? "" : opt.sd_dir */ ) )
@@ -175,9 +175,9 @@ void config_init( int argc, char* argv[] )
     double clopt_zoom = -1.0;
     int clopt_netbook = -1;
     int clopt_netbook_pivot_line = -1;
-    int clopt_tui = -1;
-    int clopt_tui_small = -1;
-    int clopt_tui_tiny = -1;
+    int clopt_frontend = -1;
+    int clopt_small = -1;
+    int clopt_tiny = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -195,10 +195,6 @@ void config_init( int argc, char* argv[] )
         {"sd-dir",             required_argument, NULL,                   800 },
 
         {"name",               required_argument, NULL,                   'n' },
-
-        /* {"tui",                no_argument,       &clopt_tui,             true}, */
-        /* {"tui-small",          no_argument,       &clopt_tui_small,       true}, */
-        /* {"tui-tiny",           no_argument,       &clopt_tui_tiny,        true}, */
 
         {"gui",                no_argument,       NULL,                   900 },
         {"tui",                no_argument,       NULL,                   901 },
@@ -294,24 +290,24 @@ void config_init( int argc, char* argv[] )
                 clopt_sd_dir = strdup( optarg );
                 break;
             case 900:
-                clopt_tui = false;
-                clopt_tui_small = false;
-                clopt_tui_tiny = false;
+                clopt_frontend = FRONTEND_GTK;
+                /* clopt_small = false; */
+                /* clopt_tiny = false; */
                 break;
             case 901:
-                clopt_tui = true;
-                clopt_tui_small = false;
-                clopt_tui_tiny = false;
+                clopt_frontend = FRONTEND_NCURSES;
+                clopt_small = false;
+                clopt_tiny = false;
                 break;
             case 902:
-                clopt_tui = false;
-                clopt_tui_small = true;
-                clopt_tui_tiny = false;
+                clopt_frontend = FRONTEND_NCURSES;
+                clopt_small = true;
+                clopt_tiny = false;
                 break;
             case 903:
-                clopt_tui = false;
-                clopt_tui_small = false;
-                clopt_tui_tiny = true;
+                clopt_frontend = FRONTEND_NCURSES;
+                clopt_small = false;
+                clopt_tiny = true;
                 break;
             case 1001:
                 clopt_netbook_pivot_line = atoi( optarg );
@@ -378,24 +374,24 @@ void config_init( int argc, char* argv[] )
         const char* frontend = luaL_optstring( config_lua_values, -1, "gui" );
         if ( frontend != NULL ) {
             if ( strcmp( frontend, "gui" ) == 0 ) {
-                opt.tui = false;
-                opt.tui_small = false;
-                opt.tui_tiny = false;
+                opt.frontend = FRONTEND_GTK;
+                opt.small = false;
+                opt.tiny = false;
             }
             if ( strcmp( frontend, "tui" ) == 0 ) {
-                opt.tui = true;
-                opt.tui_small = false;
-                opt.tui_tiny = false;
+                opt.frontend = FRONTEND_NCURSES;
+                opt.small = false;
+                opt.tiny = false;
             }
             if ( strcmp( frontend, "tui-small" ) == 0 ) {
-                opt.tui = false;
-                opt.tui_small = true;
-                opt.tui_tiny = false;
+                opt.frontend = FRONTEND_NCURSES;
+                opt.small = true;
+                opt.tiny = false;
             }
             if ( strcmp( frontend, "tui-tiny" ) == 0 ) {
-                opt.tui = false;
-                opt.tui_small = false;
-                opt.tui_tiny = true;
+                opt.frontend = FRONTEND_NCURSES;
+                opt.small = false;
+                opt.tiny = true;
             }
         }
 
@@ -410,8 +406,8 @@ void config_init( int argc, char* argv[] )
         lua_getglobal( config_lua_values, "netbook" );
         opt.netbook = lua_toboolean( config_lua_values, -1 );
 
-        lua_getglobal( config_lua_values, "tui" );
-        opt.tui = lua_toboolean( config_lua_values, -1 );
+        /* lua_getglobal( config_lua_values, "tui" ); */
+        /* opt.tui = lua_toboolean( config_lua_values, -1 ); */
 
         lua_getglobal( config_lua_values, "netbook_pivot_line" );
         opt.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
@@ -453,14 +449,14 @@ void config_init( int argc, char* argv[] )
     if ( clopt_netbook != -1 )
         opt.netbook = clopt_netbook;
 
-    if ( clopt_tui != -1 )
-        opt.tui = clopt_tui;
+    if ( clopt_frontend != -1 )
+        opt.frontend = clopt_frontend;
 
-    if ( clopt_tui_small != -1 )
-        opt.tui_small = clopt_tui_small;
+    if ( clopt_small != -1 )
+        opt.small = clopt_small;
 
-    if ( clopt_tui_tiny != -1 )
-        opt.tui_tiny = clopt_tui_tiny;
+    if ( clopt_tiny != -1 )
+        opt.tiny = clopt_tiny;
 
     if ( clopt_netbook_pivot_line != -1 )
         opt.netbook_pivot_line = clopt_netbook_pivot_line;
