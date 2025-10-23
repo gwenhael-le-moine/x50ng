@@ -34,6 +34,7 @@ static GtkWidget* gui_window;
 static GtkWidget* gui_lcd_canvas;
 static cairo_surface_t* gui_lcd_surface;
 
+static char last_annunciators = 0;
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 
 /*************************/
@@ -537,6 +538,8 @@ static GtkWidget* _gui_activate__create_annunciator_widget( const char* label )
     gtk_label_set_use_markup( GTK_LABEL( gui_ann ), true );
     gtk_label_set_markup( GTK_LABEL( gui_ann ), label );
 
+    gtk_widget_set_opacity( gui_ann, 0 );
+
     return gui_ann;
 }
 
@@ -811,16 +814,25 @@ void gui_handle_pending_inputs( x50ng_t* _x50ng )
         g_main_context_iteration( NULL, false );
 }
 
-void gui_refresh_lcd( x50ng_t* x50ng )
+static void gui_refresh_annunciators( void )
 {
-    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+    int annunciators = get_annunciators();
 
+    if ( last_annunciators == annunciators )
+        return;
+
+    last_annunciators = annunciators;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        gtk_widget_set_opacity( gui_annunciators[ i ], ( annunciators >> i ) & 0x01 ? 1 : 0 );
+}
+
+void gui_refresh_lcd( x50ng_t* _x50ng )
+{
     if ( !get_display_state() )
         return;
 
-    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        gtk_widget_set_opacity( gui_annunciators[ i ],
-                                x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) );
+    gui_refresh_annunciators();
 
     if ( NULL != gui_lcd_surface )
         g_free( gui_lcd_surface );
@@ -830,7 +842,7 @@ void gui_refresh_lcd( x50ng_t* x50ng )
     get_lcd_buffer( display_buffer_grayscale );
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
-            cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[(y*LCD_WIDTH) + x] / 15.0 );
+            cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] / 15.0 );
             cairo_rectangle( cr, x, y, 1.0, 1.0 );
             cairo_fill( cr );
         }

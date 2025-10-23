@@ -336,8 +336,15 @@ bool get_display_state( void )
 
 unsigned char get_annunciators( void )
 {
-    // FIXME
-    return 0;
+    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+
+    char annunciators = 0;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; ++i )
+        if ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) > 0 )
+            annunciators |= 0x01 << i;
+
+    return annunciators;
 }
 
 void get_lcd_buffer( int* target )

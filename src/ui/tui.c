@@ -21,6 +21,7 @@
 WINDOW* lcd_window;
 WINDOW* help_window;
 
+static char last_annunciators = 0;
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 static bool keyboard_state[ NB_KEYS ];
 
@@ -34,7 +35,7 @@ static void tui_draw_lcd( void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
-            pixel = display_buffer_grayscale[(y * LCD_WIDTH) + x ] > 0 ? L'█' : L' ';
+            pixel = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? L'█' : L' ';
 
             wcsncat( line, &pixel, 1 );
         }
@@ -72,7 +73,7 @@ static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right,
     }
 }
 
-static void tui_draw_lcd_small(void )
+static void tui_draw_lcd_small( void )
 {
     bool b1, b2, b3, b4;
     int step_x = 2;
@@ -85,11 +86,11 @@ static void tui_draw_lcd_small(void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = display_buffer_grayscale[(y * LCD_WIDTH) + x ] > 0;
-            b2 = display_buffer_grayscale[(y * LCD_WIDTH) + x + 1 ] > 0;
+            b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
+            b2 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
 
-            b3 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x ] > 0;
-            b4 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x + 1 ] > 0;
+            b3 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
+            b4 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
 
             pixels = four_bits_to_quadrant_char( b1, b2, b3, b4 );
             wcsncat( line, &pixels, 1 );
@@ -142,17 +143,17 @@ static void tui_draw_lcd_tiny( void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = display_buffer_grayscale[(y * LCD_WIDTH) + x ] > 0;
-            b4 = display_buffer_grayscale[(y * LCD_WIDTH) + x + 1 ] > 0;
+            b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
+            b4 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
 
-            b2 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x ] > 0;
-            b5 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x + 1 ] > 0;
+            b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
+            b5 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
 
-            b3 = display_buffer_grayscale[((y+2) * LCD_WIDTH) + x ] > 0;
-            b6 = display_buffer_grayscale[((y+2) * LCD_WIDTH) + x + 1 ] > 0;
+            b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0;
+            b6 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0;
 
-            b7 = display_buffer_grayscale[((y+3) * LCD_WIDTH) + x ] > 0;
-            b8 = display_buffer_grayscale[((y+3) * LCD_WIDTH) + x + 1 ] > 0;
+            b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0;
+            b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0;
 
             pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
@@ -188,24 +189,32 @@ static void tui_show_help( void )
     }
 }
 
+static void ncurses_refresh_annunciators( void )
+{
+    int annunciators = get_annunciators();
+
+    if ( last_annunciators == annunciators )
+        return;
+
+    last_annunciators = annunciators;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        mvwaddstr( lcd_window, 0, 4 + ( i * 4 ), ( ( annunciators >> i ) & 0x01 ) ? ui_annunciators[ i ].icon : " " );
+}
+
 /**********/
 /* Public */
 /**********/
 
 void tui_refresh_lcd( x50ng_t* x50ng )
 {
-    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
-
     if ( !get_display_state() )
         return;
 
-    /* annunciators */
-    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvwaddstr( lcd_window, 0, 4 + ( i * 4 ),
-                   ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) > 0 ? ui_annunciators[ i ].icon
-                                                                                                                 : " " ) );
+    ncurses_refresh_annunciators();
+
     get_lcd_buffer( display_buffer_grayscale );
-    /* pixels */
+
     if ( opt.small )
         tui_draw_lcd_small();
     else if ( opt.tiny )
@@ -213,8 +222,6 @@ void tui_refresh_lcd( x50ng_t* x50ng )
     else
         tui_draw_lcd();
 
-
-    // wrefresh( stdscr );
     wrefresh( lcd_window );
 }
 
