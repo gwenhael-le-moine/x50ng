@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,8 +18,75 @@
 #include "sram.h"
 #include "flash.h"
 #include "module.h"
+#include "emulator.h"
 
 x50ng_t* x50ng;
+
+x50ng_key_t x50ng_keys[ NB_KEYS ] = {
+    {.column = 5, .row = 1, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 5, .row = 2, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 5, .row = 3, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 5, .row = 4, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 4 ), .eint = 4},
+    {.column = 5, .row = 5, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 5 ), .eint = 5},
+    {.column = 5, .row = 6, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 6 ), .eint = 6},
+
+    {.column = 5, .row = 7, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 7 ), .eint = 7},
+    {.column = 6, .row = 5, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 5 ), .eint = 5},
+    {.column = 6, .row = 6, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 6 ), .eint = 6},
+    {.column = 6, .row = 1, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 6, .row = 7, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 7 ), .eint = 7},
+    {.column = 7, .row = 1, .columnbit = ( 1 << 7 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 7, .row = 2, .columnbit = ( 1 << 7 ), .rowbit = ( 1 << 2 ), .eint = 2},
+
+    {.column = 6, .row = 2, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 6, .row = 3, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 6, .row = 4, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 4 ), .eint = 4},
+
+    {.column = 4, .row = 1, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 3, .row = 1, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 2, .row = 1, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 1, .row = 1, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 0, .row = 1, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 1 ), .eint = 1},
+
+    {.column = 4, .row = 2, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 3, .row = 2, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 2, .row = 2, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 1, .row = 2, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 0, .row = 2, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 2 ), .eint = 2},
+
+    {.column = 0, .row = 7, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 7 ), .eint = 7},
+    {.column = 4, .row = 3, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 3, .row = 3, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 2, .row = 3, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 1, .row = 3, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 3 ), .eint = 3},
+
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 4},
+    {.column = 3, .row = 4, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 4 ), .eint = 4},
+    {.column = 2, .row = 4, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 4 ), .eint = 4},
+    {.column = 1, .row = 4, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 4 ), .eint = 4},
+    {.column = 0, .row = 3, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 3 ), .eint = 3},
+
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 5},
+    {.column = 3, .row = 5, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 5 ), .eint = 5},
+    {.column = 2, .row = 5, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 5 ), .eint = 5},
+    {.column = 1, .row = 5, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 5 ), .eint = 5},
+    {.column = 0, .row = 4, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 4 ), .eint = 4},
+
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 6},
+    {.column = 3, .row = 6, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 6 ), .eint = 6},
+    {.column = 2, .row = 6, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 6 ), .eint = 6},
+    {.column = 1, .row = 6, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 6 ), .eint = 6},
+    {.column = 0, .row = 5, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 5 ), .eint = 5},
+
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 0},
+    {.column = 3, .row = 7, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 7 ), .eint = 7},
+    {.column = 2, .row = 7, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 7 ), .eint = 7},
+    {.column = 1, .row = 7, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 7 ), .eint = 7},
+    {.column = 0, .row = 6, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 6 ), .eint = 6},
+};
+
+x50ng_annunciator_t x50ng_annunciators[ 6 ] = { { .state_pixel_index = 1 }, { .state_pixel_index = 2 }, { .state_pixel_index = 3 },
+                                                { .state_pixel_index = 4 }, { .state_pixel_index = 5 }, { .state_pixel_index = 0 } };
 
 /* LD TEMPO HACK */
 CPUState* __GLOBAL_env;
@@ -245,3 +313,15 @@ void emulator_exit( void )
 
     x50ng_modules_exit( x50ng );
 }
+
+static void x50ng_set_key_state( const x50ng_key_t key, bool state )
+{
+    if ( key.rowbit )
+        s3c2410_io_port_g_update( x50ng, key.column, key.row, key.columnbit, key.rowbit, state );
+    else
+        s3c2410_io_port_f_set_bit( x50ng, key.eint, state );
+}
+
+void press_key( int hpkey ) { x50ng_set_key_state( x50ng_keys[ hpkey ], true ); }
+
+void release_key( int hpkey ) { x50ng_set_key_state( x50ng_keys[ hpkey ], false ); }

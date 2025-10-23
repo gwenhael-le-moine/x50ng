@@ -4,10 +4,11 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "../options.h"
-#include "../x50ng.h"
+#include "../module.h"
 #include "../s3c2410/s3c2410.h"
 #include "../gdbstub.h"
 #include "../types.h"
+#include "../emulator.h"
 
 #include "ui_inner.h"
 
@@ -46,7 +47,6 @@ static void gui_release_button( x50ng_ui_button_t* button )
     if ( !button->down )
         return;
 
-    x50ng_t* x50ng = button->x50ng;
     const x50ng_ui_key_t* key = button->key;
 
     button->down = false;
@@ -54,12 +54,12 @@ static void gui_release_button( x50ng_ui_button_t* button )
 
     gtk_widget_remove_css_class( button->button, "key-down" );
 
-    X50NG_RELEASE_KEY( x50ng, key );
+    // X50NG_RELEASE_KEY( x50ng, key );
+    release_key( key->hpkey );
 }
 
 static bool gui_press_button( x50ng_ui_button_t* button, bool hold )
 {
-    x50ng_t* x50ng = button->x50ng;
     const x50ng_ui_key_t* key = button->key;
 
     if ( button->down ) {
@@ -75,7 +75,8 @@ static bool gui_press_button( x50ng_ui_button_t* button, bool hold )
 
     gtk_widget_add_css_class( button->button, "key-down" );
 
-    X50NG_RELEASE_KEY( x50ng, key );
+    // X50NG_RELEASE_KEY( x50ng, key );
+    press_key( key->hpkey );
 
     return GDK_EVENT_STOP;
 }
@@ -83,11 +84,11 @@ static bool gui_press_button( x50ng_ui_button_t* button, bool hold )
 static void gui_react_to_button_press( GtkGesture* _gesture, int _n_press, double _x, double _y, x50ng_ui_button_t* button )
 {
     const x50ng_ui_key_t* key = button->key;
-    x50ng_t* x50ng = button->x50ng;
 
     gui_press_button( button, false );
 
-    X50NG_PRESS_KEY( x50ng, key );
+    // X50NG_PRESS_KEY( x50ng, key );
+    press_key( key->hpkey );
 }
 
 static void gui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, x50ng_ui_button_t* button )
@@ -98,14 +99,14 @@ static void gui_react_to_button_release( GtkGesture* _gesture, int _n_press, dou
 static void gui_react_to_button_right_click_release( x50ng_ui_button_t* button, GtkGesture* _gesture, int _n_press, double _x, double _y )
 {
     const x50ng_ui_key_t* key = button->key;
-    x50ng_t* x50ng = button->x50ng;
 
     button->down = true;
     button->hold = true;
 
     gui_press_button( button, true );
 
-    X50NG_PRESS_KEY( x50ng, key );
+    // X50NG_PRESS_KEY( x50ng, key );
+    press_key( key->hpkey );
 }
 
 static void gui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* x50ng )
@@ -817,7 +818,7 @@ void gui_refresh_lcd( x50ng_t* x50ng )
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         gtk_widget_set_opacity( gui_annunciators[ i ],
-                                x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) );
+                                x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) );
 
     if ( NULL != gui_lcd_surface )
         g_free( gui_lcd_surface );

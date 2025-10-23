@@ -9,6 +9,7 @@
 
 #include "../options.h"
 #include "../x50ng.h"
+#include "../emulator.h"
 
 #include "ui.h"
 #include "ui_inner.h"
@@ -201,7 +202,7 @@ void tui_refresh_lcd( x50ng_t* x50ng )
     /* annunciators */
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         mvwaddstr( lcd_window, 0, 4 + ( i * 4 ),
-                   ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, ui_annunciators[ i ].state_pixel_index ) > 0 ? ui_annunciators[ i ].icon
+                   ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) > 0 ? ui_annunciators[ i ].icon
                                                                                                                  : " " ) );
 
     /* pixels */
@@ -426,9 +427,11 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
             continue; /* key hasn't changed state */
 
         if ( !keyboard_state[ key ] && new_keyboard_state[ key ] )
-            X50NG_PRESS_KEY( x50ng, &ui_keys[ key ] ) /* key pressed */
+            // X50NG_PRESS_KEY( x50ng, &ui_keys[ key ] ) /* key pressed */
+            press_key( key );
         else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] )
-            X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] ) /* key released */
+            // X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] ) /* key released */
+            release_key( key );
 
         keyboard_state[ key ] = new_keyboard_state[ key ];
     }
