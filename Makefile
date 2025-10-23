@@ -148,6 +148,7 @@ SRCS = \
 	./src/ui/gui.c \
 	./src/ui/tui.c \
 	./src/ui/ui.c \
+	./src/emulator.c \
 	./src/module.c \
 	./src/flash.c \
 	./src/sram.c \
