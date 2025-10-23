@@ -7,15 +7,14 @@
 #include <fcntl.h>
 #include <sys/times.h>
 
-#include "options.h"
-#include "x50ng.h"
-#include "s3c2410.h"
+#include "../options.h"
+#include "../types.h"
+
+#include "../s3c2410/s3c2410.h"
+
 #include "ui.h"
 #include "gui.h"
 #include "tui.h"
-
-#include "gdbstub.h"
-#include "types.h"
 
 x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",

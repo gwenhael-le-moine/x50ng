@@ -16,9 +16,10 @@
 
 #include <memory.h>
 
+#include "ui/ui.h"
+
 #include "list.h"
 #include "x50ng.h"
-#include "ui.h"
 #include "s3c2410.h"
 #include "timer.h"
 #include "gdbstub.h"

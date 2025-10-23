@@ -5,14 +5,13 @@
 
 #include <curses.h>
 
-#include "options.h"
-#include "x50ng.h"
+#include "../s3c2410/s3c2410.h"
+
+#include "../options.h"
+#include "../types.h"
+
 #include "ui.h"
 #include "ui_inner.h"
-#include "s3c2410.h"
-
-/* #include "gdbstub.h" */
-#include "types.h"
 
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1

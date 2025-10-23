@@ -3,14 +3,13 @@
 #include <cairo.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "list.h"
-#include "options.h"
-#include "x50ng.h"
-#include "ui_inner.h"
-#include "s3c2410.h"
+#include "../options.h"
+#include "../x50ng.h"
+#include "../s3c2410/s3c2410.h"
+#include "../gdbstub.h"
+#include "../types.h"
 
-#include "gdbstub.h"
-#include "types.h"
+#include "ui_inner.h"
 
 // #define TEST_PASTE true
 

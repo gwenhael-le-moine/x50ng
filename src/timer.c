@@ -12,8 +12,6 @@
 
 #include "x50ng.h"
 #include "timer.h"
-#include "ui.h"
-
 #include "gdbstub.h"
 
 typedef struct {

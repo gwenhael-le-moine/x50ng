@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "types.h"
+#include "../types.h"
 
 typedef struct {
     const char	*name;

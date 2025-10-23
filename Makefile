@@ -145,12 +145,12 @@ SRCS = \
 	./src/s3c2410/s3c2410_sdi.c \
 	./src/s3c2410/s3c2410_arm.c \
 	./src/s3c2410/block.c \
+	./src/ui/gui.c \
+	./src/ui/tui.c \
+	./src/ui/ui.c \
 	./src/module.c \
 	./src/flash.c \
 	./src/sram.c \
-	./src/gui.c \
-	./src/tui.c \
-	./src/ui.c \
 	./src/timer.c \
 	./src/gdbstub.c \
 	./src/options.c \
