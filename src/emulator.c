@@ -14,6 +14,9 @@
 #include "x50ng.h"
 #include "gdbstub.h"
 #include "options.h"
+#include "sram.h"
+#include "flash.h"
+#include "module.h"
 
 x50ng_t* x50ng;
 

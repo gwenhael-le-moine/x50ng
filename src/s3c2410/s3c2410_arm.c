@@ -4,6 +4,8 @@
 
 #include "target-arm/cpu.h"
 
+#include "../module.h"
+
 #include "x50ng.h"
 #include "s3c2410.h"
 

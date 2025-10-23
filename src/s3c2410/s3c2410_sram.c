@@ -6,7 +6,9 @@
 #include <sys/mman.h>
 #include <errno.h>
 
-#include "x50ng.h"
+#include "../x50ng.h"
+#include "../module.h"
+
 #include "s3c2410.h"
 
 typedef struct {

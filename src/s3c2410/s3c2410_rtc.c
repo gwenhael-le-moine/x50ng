@@ -6,7 +6,8 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "x50ng.h"
+#include "../module.h"
+
 #include "s3c2410.h"
 #include "s3c2410_intc.h"
 

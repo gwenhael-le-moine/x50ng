@@ -6,7 +6,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x50ng.h"
+#include "../module.h"
+
 #include "s3c2410.h"
 
 static int s3c2410_lcd_data_init( s3c2410_lcd_t* lcd )

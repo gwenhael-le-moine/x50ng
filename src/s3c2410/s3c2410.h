@@ -1,6 +1,7 @@
 #ifndef _X50NG_S3C2410_H
 #define _X50NG_S3C2410_H 1
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "../types.h"
@@ -368,5 +369,11 @@ extern int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
 
 extern unsigned long s3c2410_timer_next_interrupt(x50ng_t *x50ng);
 extern unsigned long s3c2410_watchdog_next_interrupt(x50ng_t *x50ng);
+
+/* s3c2410/s3c2410_sdi.c */
+extern void s3c2410_sdi_unmount( x50ng_t* x50ng );
+extern int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename );
+extern bool s3c2410_sdi_is_mounted( x50ng_t* x50ng );
+extern void s3c2410_sdi_get_path( x50ng_t* x50ng, char** filename );
 
 #endif /* !(_X50NG_S3C2410_H) */

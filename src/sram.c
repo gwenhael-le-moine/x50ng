@@ -8,7 +8,7 @@
 
 #include <memory.h>
 
-#include "x50ng.h"
+#include "module.h"
 
 typedef struct {
     void* data;

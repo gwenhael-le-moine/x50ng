@@ -20,32 +20,26 @@ extern uint8_t* phys_ram_base;
 extern int phys_ram_size;
 
 typedef enum { X50NG_ARM_RUN = 0, X50NG_ARM_SLEEP, X50NG_ARM_OFF } x50ng_arm_idle_t;
-
 typedef enum { X50NG_RESET_POWER_ON = 0, X50NG_RESET_POWER_OFF, X50NG_RESET_WATCHDOG } x50ng_reset_t;
 
-struct __x50ng_module_s__;
-typedef struct __x50ng_module_s__ x50ng_module_t;
-
-struct __x50ng_module_s__ {
+typedef struct x50ng_module_t {
     const char* name;
 
-    int ( *init )( x50ng_module_t* );
-    int ( *exit )( x50ng_module_t* );
+    int ( *init )( struct x50ng_module_t* );
+    int ( *exit )( struct x50ng_module_t* );
 
-    int ( *reset )( x50ng_module_t*, x50ng_reset_t );
+    int ( *reset )( struct x50ng_module_t*, x50ng_reset_t );
 
-    int ( *load )( x50ng_module_t*, GKeyFile* );
-    int ( *save )( x50ng_module_t*, GKeyFile* );
+    int ( *load )( struct x50ng_module_t*, GKeyFile* );
+    int ( *save )( struct x50ng_module_t*, GKeyFile* );
 
     void* user_data;
 
-    x50ng_t* x50ng;
+    struct x50ng_t* x50ng;
     struct list_head list;
-};
+} x50ng_module_t;
 
-typedef enum { X50NG_REINIT_NONE = 0, X50NG_REINIT_REBOOT_ONLY, X50NG_REINIT_FLASH, X50NG_REINIT_FLASH_FULL } x50ng_reinit_t;
-
-struct __x50ng_s__ {
+struct x50ng_t {
     CPUARMState* env;
 
     struct list_head modules;
@@ -84,44 +78,5 @@ struct __x50ng_s__ {
     const char* progname;
     const char* progpath;
 };
-
-/* main.c */
-extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
-
-/* s3c2410/s3c2410_sdi.c */
-extern void s3c2410_sdi_unmount( x50ng_t* x50ng );
-extern int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename );
-extern bool s3c2410_sdi_is_mounted( x50ng_t* x50ng );
-extern void s3c2410_sdi_get_path( x50ng_t* x50ng, char** filename );
-
-/* module.c */
-extern int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( x50ng_module_t* ), int ( *exit )( x50ng_module_t* ),
-                              int ( *reset )( x50ng_module_t*, x50ng_reset_t ), int ( *load )( x50ng_module_t*, GKeyFile* ),
-                              int ( *save )( x50ng_module_t*, GKeyFile* ), void* user_data, x50ng_module_t** module );
-
-extern int x50ng_module_register( x50ng_module_t* module );
-extern int x50ng_module_unregister( x50ng_module_t* module );
-
-extern int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile*, const char*, char*, char**, char** );
-extern int x50ng_module_set_filename( x50ng_module_t* module, GKeyFile*, const char*, const char* );
-extern int x50ng_module_get_int( x50ng_module_t* module, GKeyFile*, const char*, int, int* );
-extern int x50ng_module_set_int( x50ng_module_t* module, GKeyFile*, const char*, int );
-extern int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile*, const char*, uint32_t, uint32_t* );
-extern int x50ng_module_set_u32( x50ng_module_t* module, GKeyFile*, const char*, uint32_t );
-extern int x50ng_module_get_string( x50ng_module_t* module, GKeyFile*, const char*, char*, char** );
-extern int x50ng_module_set_string( x50ng_module_t* module, GKeyFile*, const char*, const char* );
-extern int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** path );
-
-extern int x50ng_modules_init( x50ng_t* );
-extern int x50ng_modules_exit( x50ng_t* );
-extern int x50ng_modules_reset( x50ng_t*, x50ng_reset_t );
-extern int x50ng_modules_load( x50ng_t* );
-extern int x50ng_modules_save( x50ng_t* );
-
-/* flash.c */
-extern int x50ng_flash_init( x50ng_t* );
-
-/* sram.c */
-extern int x50ng_sram_init( x50ng_t* );
 
 #endif /* !(_X50NG_H) */

@@ -7,7 +7,8 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#include "x50ng.h"
+#include "../module.h"
+
 #include "s3c2410.h"
 
 #include "block.h"

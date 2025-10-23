@@ -5,7 +5,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "x50ng.h"
+#include "../module.h"
+
 #include "s3c2410.h"
 #include "s3c2410_timer.h"
 #include "s3c2410_intc.h"

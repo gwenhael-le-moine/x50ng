@@ -12,6 +12,7 @@
 #include "list.h"
 #include "x50ng.h"
 #include "options.h"
+#include "module.h"
 
 #define STATE_FILE_NAME "state"
 

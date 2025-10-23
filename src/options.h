@@ -3,8 +3,6 @@
 
 #  include <stdbool.h>
 
-#  include "x50ng.h"
-
 #  ifndef VERSION_MAJOR
 #    define VERSION_MAJOR 0
 #  endif
@@ -20,6 +18,8 @@
 #  else
 #    define GLOBAL_DATADIR x50ng->progpath
 #  endif
+
+typedef enum { X50NG_REINIT_NONE = 0, X50NG_REINIT_REBOOT_ONLY, X50NG_REINIT_FLASH, X50NG_REINIT_FLASH_FULL } x50ng_reinit_t;
 
 typedef struct options_t {
     char* progname;

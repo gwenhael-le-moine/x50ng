@@ -8,7 +8,7 @@
 
 #include <memory.h>
 
-#include "x50ng.h"
+#include "module.h"
 #include "options.h"
 
 #define FLASH_STATE_NORMAL 0
