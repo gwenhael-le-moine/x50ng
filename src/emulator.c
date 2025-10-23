@@ -12,6 +12,7 @@
 #include "ui/ui.h"
 
 #include "list.h"
+#include "ui/ui_inner.h"
 #include "x50ng.h"
 #include "gdbstub.h"
 #include "options.h"
@@ -325,3 +326,25 @@ static void x50ng_set_key_state( const x50ng_key_t key, bool state )
 void press_key( int hpkey ) { x50ng_set_key_state( x50ng_keys[ hpkey ], true ); }
 
 void release_key( int hpkey ) { x50ng_set_key_state( x50ng_keys[ hpkey ], false ); }
+
+bool get_display_state( void )
+{
+    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+
+    return ( lcd->lcdcon1 & 1 );
+}
+
+unsigned char get_annunciators( void )
+{
+    // FIXME
+    return 0;
+}
+
+void get_lcd_buffer( int* target )
+{
+    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+
+    for ( int y = 0; y < LCD_HEIGHT; ++y )
+        for ( int x = 0; x < LCD_WIDTH; ++x )
+            target[ ( y * LCD_WIDTH ) + x ] = x50ng_s3c2410_get_pixel_color( lcd, x, y );
+}

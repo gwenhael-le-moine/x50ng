@@ -8,7 +8,6 @@
 #include "../s3c2410/s3c2410.h"
 
 #include "../options.h"
-#include "../x50ng.h"
 #include "../emulator.h"
 
 #include "ui.h"
@@ -22,10 +21,11 @@
 WINDOW* lcd_window;
 WINDOW* help_window;
 
+static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 static bool keyboard_state[ NB_KEYS ];
 
 /* FULL SIZE */
-static void tui_draw_lcd( s3c2410_lcd_t* lcd )
+static void tui_draw_lcd( void )
 {
     wchar_t line[ LCD_WIDTH ];
     wchar_t pixel;
@@ -34,7 +34,7 @@ static void tui_draw_lcd( s3c2410_lcd_t* lcd )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
-            pixel = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0 ? L'█' : L' ';
+            pixel = display_buffer_grayscale[(y * LCD_WIDTH) + x ] > 0 ? L'█' : L' ';
 
             wcsncat( line, &pixel, 1 );
         }
@@ -72,7 +72,7 @@ static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right,
     }
 }
 
-static void tui_draw_lcd_small( s3c2410_lcd_t* lcd )
+static void tui_draw_lcd_small(void )
 {
     bool b1, b2, b3, b4;
     int step_x = 2;
@@ -85,11 +85,11 @@ static void tui_draw_lcd_small( s3c2410_lcd_t* lcd )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0;
-            b2 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y ) > 0;
+            b1 = display_buffer_grayscale[(y * LCD_WIDTH) + x ] > 0;
+            b2 = display_buffer_grayscale[(y * LCD_WIDTH) + x + 1 ] > 0;
 
-            b3 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 1 ) > 0;
-            b4 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 1 ) > 0;
+            b3 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x ] > 0;
+            b4 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x + 1 ] > 0;
 
             pixels = four_bits_to_quadrant_char( b1, b2, b3, b4 );
             wcsncat( line, &pixels, 1 );
@@ -129,7 +129,7 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     return chr;
 }
 
-static void tui_draw_lcd_tiny( s3c2410_lcd_t* lcd )
+static void tui_draw_lcd_tiny( void )
 {
     bool b1, b2, b3, b4, b5, b6, b7, b8;
     int step_x = 2;
@@ -142,17 +142,17 @@ static void tui_draw_lcd_tiny( s3c2410_lcd_t* lcd )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = x50ng_s3c2410_get_pixel_color( lcd, x, y ) > 0;
-            b4 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y ) > 0;
+            b1 = display_buffer_grayscale[(y * LCD_WIDTH) + x ] > 0;
+            b4 = display_buffer_grayscale[(y * LCD_WIDTH) + x + 1 ] > 0;
 
-            b2 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 1 ) > 0;
-            b5 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 1 ) > 0;
+            b2 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x ] > 0;
+            b5 = display_buffer_grayscale[((y+1) * LCD_WIDTH) + x + 1 ] > 0;
 
-            b3 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 2 ) > 0;
-            b6 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 2 ) > 0;
+            b3 = display_buffer_grayscale[((y+2) * LCD_WIDTH) + x ] > 0;
+            b6 = display_buffer_grayscale[((y+2) * LCD_WIDTH) + x + 1 ] > 0;
 
-            b7 = x50ng_s3c2410_get_pixel_color( lcd, x, y + 3 ) > 0;
-            b8 = x50ng_s3c2410_get_pixel_color( lcd, x + 1, y + 3 ) > 0;
+            b7 = display_buffer_grayscale[((y+3) * LCD_WIDTH) + x ] > 0;
+            b8 = display_buffer_grayscale[((y+3) * LCD_WIDTH) + x + 1 ] > 0;
 
             pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
@@ -196,7 +196,7 @@ void tui_refresh_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
-    if ( !( lcd->lcdcon1 & 1 ) )
+    if ( !get_display_state() )
         return;
 
     /* annunciators */
@@ -204,14 +204,14 @@ void tui_refresh_lcd( x50ng_t* x50ng )
         mvwaddstr( lcd_window, 0, 4 + ( i * 4 ),
                    ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) > 0 ? ui_annunciators[ i ].icon
                                                                                                                  : " " ) );
-
+    get_lcd_buffer( display_buffer_grayscale );
     /* pixels */
     if ( opt.small )
-        tui_draw_lcd_small( lcd );
+        tui_draw_lcd_small();
     else if ( opt.tiny )
-        tui_draw_lcd_tiny( lcd );
+        tui_draw_lcd_tiny();
     else
-        tui_draw_lcd( lcd );
+        tui_draw_lcd();
 
 
     // wrefresh( stdscr );
@@ -427,10 +427,8 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
             continue; /* key hasn't changed state */
 
         if ( !keyboard_state[ key ] && new_keyboard_state[ key ] )
-            // X50NG_PRESS_KEY( x50ng, &ui_keys[ key ] ) /* key pressed */
             press_key( key );
         else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] )
-            // X50NG_RELEASE_KEY( x50ng, &ui_keys[ key ] ) /* key released */
             release_key( key );
 
         keyboard_state[ key ] = new_keyboard_state[ key ];

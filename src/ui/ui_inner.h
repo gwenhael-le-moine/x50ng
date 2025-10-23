@@ -1,7 +1,7 @@
 #ifndef _UI_INNER_H
 #  define _UI_INNER_H 1
 
-#include "../emulator.h"
+#  include "../emulator.h"
 #  include "../types.h" /* x50ng_t */
 
 #  define UI_EVENTS_REFRESH_INTERVAL 30000LL
@@ -42,8 +42,5 @@ extern x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ];
 
 bool ui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type );
 void newrplify_ui_keys();
-/* void x50ng_set_key_state( const x50ng_key_t* key, bool state ); */
-/* #  define X50NG_PRESS_KEY( key ) x50ng_set_key_state( key, true ); */
-/* #  define X50NG_RELEASE_KEY( key ) x50ng_set_key_state( key, false ); */
 
 #endif /* !(_UI_INNER_H) */

@@ -34,6 +34,8 @@ static GtkWidget* gui_window;
 static GtkWidget* gui_lcd_canvas;
 static cairo_surface_t* gui_lcd_surface;
 
+static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
+
 /*************************/
 /* Functions' prototypes */
 /*************************/
@@ -813,7 +815,7 @@ void gui_refresh_lcd( x50ng_t* x50ng )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
-    if ( !( lcd->lcdcon1 & 1 ) )
+    if ( !get_display_state() )
         return;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
@@ -825,9 +827,10 @@ void gui_refresh_lcd( x50ng_t* x50ng )
     gui_lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
     cairo_t* cr = cairo_create( gui_lcd_surface );
 
+    get_lcd_buffer( display_buffer_grayscale );
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
-            cairo_set_source_rgba( cr, 0, 0, 0, x50ng_s3c2410_get_pixel_color( lcd, x, y ) / 15.0 );
+            cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[(y*LCD_WIDTH) + x] / 15.0 );
             cairo_rectangle( cr, x, y, 1.0, 1.0 );
             cairo_fill( cr );
         }

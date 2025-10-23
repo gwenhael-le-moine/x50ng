@@ -93,9 +93,9 @@ extern void press_key( int hpkey );
 extern void release_key( int hpkey );
 /* extern bool is_key_pressed( int hpkey ); */
 
-/* extern unsigned char get_annunciators( void ); */
-/* extern bool get_display_state( void ); */
-/* extern void get_lcd_buffer( int* target ); */
+extern unsigned char get_annunciators( void );
+extern bool get_display_state( void );
+extern void get_lcd_buffer( int* target );
 /* extern int get_contrast( void ); */
 
 #endif /* !(_X50NG_EMULATOR_H) */
