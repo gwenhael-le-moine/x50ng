@@ -213,7 +213,7 @@ compile_commands.json: distclean
 
 # Cleaning
 clean:
-	rm -f $(OBJS) core *~ .depend
+	rm -f $(OBJS) $(VVFATOBJS) core *~ .depend
 
 distclean: clean clean-qemu
 	rm -f compile_commands.json
