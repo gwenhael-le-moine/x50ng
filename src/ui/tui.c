@@ -5,12 +5,9 @@
 
 #include <curses.h>
 
-#include "../s3c2410/s3c2410.h"
-
 #include "../options.h"
 #include "../emulator.h"
 
-#include "ui.h"
 #include "ui_inner.h"
 
 #define LCD_OFFSET_X 1
