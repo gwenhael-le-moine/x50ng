@@ -79,15 +79,19 @@ static void tui_draw_lcd_small( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
+    bool last_column = false;
+
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            last_column = x == (LCD_WIDTH - 1);
+
             b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
             b2 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
 
-            b3 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
-            b4 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
+            b3 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
+            b4 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
 
             pixels = four_bits_to_quadrant_char( b1, b2, b3, b4 );
             wcsncat( line, &pixels, 1 );
@@ -136,21 +140,23 @@ static void tui_draw_lcd_tiny( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
+    bool last_column = false;
+
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            last_column = x == (LCD_WIDTH - 1);
+
             b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
-            b4 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
-
             b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
-            b5 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
-
             b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0;
-            b6 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0;
-
             b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0;
-            b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0;
+
+            b4 = last_column ? 0 : display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
+            b5 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
+            b6 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0;
+            b8 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0;
 
             pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
