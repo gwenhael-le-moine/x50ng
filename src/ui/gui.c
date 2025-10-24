@@ -57,7 +57,6 @@ static void gui_release_button( x50ng_ui_button_t* button )
 
     gtk_widget_remove_css_class( button->button, "key-down" );
 
-    // X50NG_RELEASE_KEY( x50ng, key );
     release_key( key->hpkey );
 }
 
@@ -78,7 +77,6 @@ static bool gui_press_button( x50ng_ui_button_t* button, bool hold )
 
     gtk_widget_add_css_class( button->button, "key-down" );
 
-    // X50NG_RELEASE_KEY( x50ng, key );
     press_key( key->hpkey );
 
     return GDK_EVENT_STOP;
@@ -90,7 +88,6 @@ static void gui_react_to_button_press( GtkGesture* _gesture, int _n_press, doubl
 
     gui_press_button( button, false );
 
-    // X50NG_PRESS_KEY( x50ng, key );
     press_key( key->hpkey );
 }
 
@@ -108,7 +105,6 @@ static void gui_react_to_button_right_click_release( x50ng_ui_button_t* button, 
 
     gui_press_button( button, true );
 
-    // X50NG_PRESS_KEY( x50ng, key );
     press_key( key->hpkey );
 }
 
@@ -147,9 +143,8 @@ static void gui_do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
 #ifdef TEST_PASTE
 static void x50g_string_to_keys_sequence( x50ng_t* x50ng, const char* input )
 {
-    for ( int i = 0; i < strlen( input ); i++ ) {
+    for ( int i = 0; i < strlen( input ); i++ )
         fprintf( stderr, "%c", input[ i ] );
-    }
     fprintf( stderr, "\n" );
 }
 
