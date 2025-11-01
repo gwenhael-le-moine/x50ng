@@ -12,7 +12,7 @@
 #include "ui/ui.h"
 
 #include "list.h"
-#include "ui/ui_inner.h"
+#include "ui/inner.h"
 #include "x50ng.h"
 #include "gdbstub.h"
 #include "options.h"
@@ -24,67 +24,68 @@
 x50ng_t* x50ng;
 
 x50ng_key_t x50ng_keys[ NB_KEYS ] = {
-    {.column = 5, .row = 1, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 5, .row = 2, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 2 ), .eint = 2},
-    {.column = 5, .row = 3, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 3 ), .eint = 3},
-    {.column = 5, .row = 4, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 4 ), .eint = 4},
-    {.column = 5, .row = 5, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 5 ), .eint = 5},
-    {.column = 5, .row = 6, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 6 ), .eint = 6},
+    {.column = 5, .row = 1, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 5, .row = 2, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
+    {.column = 5, .row = 3, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
+    {.column = 5, .row = 4, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 4 ), .eint = 4, .pressed = false},
+    {.column = 5, .row = 5, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 5 ), .eint = 5, .pressed = false},
+    {.column = 5, .row = 6, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 6 ), .eint = 6, .pressed = false},
 
-    {.column = 5, .row = 7, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 7 ), .eint = 7},
-    {.column = 6, .row = 5, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 5 ), .eint = 5},
-    {.column = 6, .row = 6, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 6 ), .eint = 6},
-    {.column = 6, .row = 1, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 6, .row = 7, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 7 ), .eint = 7},
-    {.column = 7, .row = 1, .columnbit = ( 1 << 7 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 7, .row = 2, .columnbit = ( 1 << 7 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 5, .row = 7, .columnbit = ( 1 << 5 ), .rowbit = ( 1 << 7 ), .eint = 7, .pressed = false},
+    {.column = 6, .row = 5, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 5 ), .eint = 5, .pressed = false},
+    {.column = 6, .row = 6, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 6 ), .eint = 6, .pressed = false},
+    {.column = 6, .row = 1, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 6, .row = 7, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 7 ), .eint = 7, .pressed = false},
+    {.column = 7, .row = 1, .columnbit = ( 1 << 7 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 7, .row = 2, .columnbit = ( 1 << 7 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
 
-    {.column = 6, .row = 2, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 2 ), .eint = 2},
-    {.column = 6, .row = 3, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 3 ), .eint = 3},
-    {.column = 6, .row = 4, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 4 ), .eint = 4},
+    {.column = 6, .row = 2, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
+    {.column = 6, .row = 3, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
+    {.column = 6, .row = 4, .columnbit = ( 1 << 6 ), .rowbit = ( 1 << 4 ), .eint = 4, .pressed = false},
 
-    {.column = 4, .row = 1, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 3, .row = 1, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 2, .row = 1, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 1, .row = 1, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 1 ), .eint = 1},
-    {.column = 0, .row = 1, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 1 ), .eint = 1},
+    {.column = 4, .row = 1, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 3, .row = 1, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 2, .row = 1, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 1, .row = 1, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
+    {.column = 0, .row = 1, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 1 ), .eint = 1, .pressed = false},
 
-    {.column = 4, .row = 2, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 2 ), .eint = 2},
-    {.column = 3, .row = 2, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 2 ), .eint = 2},
-    {.column = 2, .row = 2, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 2 ), .eint = 2},
-    {.column = 1, .row = 2, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 2 ), .eint = 2},
-    {.column = 0, .row = 2, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 2 ), .eint = 2},
+    {.column = 4, .row = 2, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
+    {.column = 3, .row = 2, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
+    {.column = 2, .row = 2, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
+    {.column = 1, .row = 2, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
+    {.column = 0, .row = 2, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 2 ), .eint = 2, .pressed = false},
 
-    {.column = 0, .row = 7, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 7 ), .eint = 7},
-    {.column = 4, .row = 3, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 3 ), .eint = 3},
-    {.column = 3, .row = 3, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 3 ), .eint = 3},
-    {.column = 2, .row = 3, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 3 ), .eint = 3},
-    {.column = 1, .row = 3, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 0, .row = 7, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 7 ), .eint = 7, .pressed = false},
+    {.column = 4, .row = 3, .columnbit = ( 1 << 4 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
+    {.column = 3, .row = 3, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
+    {.column = 2, .row = 3, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
+    {.column = 1, .row = 3, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
 
-    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 4},
-    {.column = 3, .row = 4, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 4 ), .eint = 4},
-    {.column = 2, .row = 4, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 4 ), .eint = 4},
-    {.column = 1, .row = 4, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 4 ), .eint = 4},
-    {.column = 0, .row = 3, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 3 ), .eint = 3},
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 4, .pressed = false},
+    {.column = 3, .row = 4, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 4 ), .eint = 4, .pressed = false},
+    {.column = 2, .row = 4, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 4 ), .eint = 4, .pressed = false},
+    {.column = 1, .row = 4, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 4 ), .eint = 4, .pressed = false},
+    {.column = 0, .row = 3, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 3 ), .eint = 3, .pressed = false},
 
-    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 5},
-    {.column = 3, .row = 5, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 5 ), .eint = 5},
-    {.column = 2, .row = 5, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 5 ), .eint = 5},
-    {.column = 1, .row = 5, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 5 ), .eint = 5},
-    {.column = 0, .row = 4, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 4 ), .eint = 4},
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 5, .pressed = false},
+    {.column = 3, .row = 5, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 5 ), .eint = 5, .pressed = false},
+    {.column = 2, .row = 5, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 5 ), .eint = 5, .pressed = false},
+    {.column = 1, .row = 5, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 5 ), .eint = 5, .pressed = false},
+    {.column = 0, .row = 4, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 4 ), .eint = 4, .pressed = false},
 
-    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 6},
-    {.column = 3, .row = 6, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 6 ), .eint = 6},
-    {.column = 2, .row = 6, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 6 ), .eint = 6},
-    {.column = 1, .row = 6, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 6 ), .eint = 6},
-    {.column = 0, .row = 5, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 5 ), .eint = 5},
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 6, .pressed = false},
+    {.column = 3, .row = 6, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 6 ), .eint = 6, .pressed = false},
+    {.column = 2, .row = 6, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 6 ), .eint = 6, .pressed = false},
+    {.column = 1, .row = 6, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 6 ), .eint = 6, .pressed = false},
+    {.column = 0, .row = 5, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 5 ), .eint = 5, .pressed = false},
 
-    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 0},
-    {.column = 3, .row = 7, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 7 ), .eint = 7},
-    {.column = 2, .row = 7, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 7 ), .eint = 7},
-    {.column = 1, .row = 7, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 7 ), .eint = 7},
-    {.column = 0, .row = 6, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 6 ), .eint = 6},
+    {.column = 0, .row = 0, .columnbit = 0,          .rowbit = 0,          .eint = 0, .pressed = false},
+    {.column = 3, .row = 7, .columnbit = ( 1 << 3 ), .rowbit = ( 1 << 7 ), .eint = 7, .pressed = false},
+    {.column = 2, .row = 7, .columnbit = ( 1 << 2 ), .rowbit = ( 1 << 7 ), .eint = 7, .pressed = false},
+    {.column = 1, .row = 7, .columnbit = ( 1 << 1 ), .rowbit = ( 1 << 7 ), .eint = 7, .pressed = false},
+    {.column = 0, .row = 6, .columnbit = ( 1 << 0 ), .rowbit = ( 1 << 6 ), .eint = 6, .pressed = false},
 };
+#define KEYBOARD x50ng_keys
 
 x50ng_annunciator_t x50ng_annunciators[ 6 ] = { { .state_pixel_index = 1 }, { .state_pixel_index = 2 }, { .state_pixel_index = 3 },
                                                 { .state_pixel_index = 4 }, { .state_pixel_index = 5 }, { .state_pixel_index = 0 } };
@@ -323,9 +324,25 @@ static void x50ng_set_key_state( const x50ng_key_t key, bool state )
         s3c2410_io_port_f_set_bit( x50ng, key.eint, state );
 }
 
-void press_key( int hpkey ) { x50ng_set_key_state( x50ng_keys[ hpkey ], true ); }
+void press_key( int hpkey )
+{
+    x50ng_set_key_state( KEYBOARD[ hpkey ], true );
+    KEYBOARD[ hpkey ].pressed = true;
+}
 
-void release_key( int hpkey ) { x50ng_set_key_state( x50ng_keys[ hpkey ], false ); }
+void release_key( int hpkey )
+{
+    x50ng_set_key_state( KEYBOARD[ hpkey ], false );
+    KEYBOARD[ hpkey ].pressed = false;
+}
+
+bool is_key_pressed( int hpkey )
+{
+    if ( hpkey < 0 || hpkey > NB_KEYS )
+        return false;
+
+    return KEYBOARD[ hpkey ].pressed;
+}
 
 bool get_display_state( void )
 {

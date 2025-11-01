@@ -8,99 +8,27 @@
 #include "../options.h"
 #include "../emulator.h"
 
-#include "ui_inner.h"
+#include "inner.h"
 
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
 #define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( opt.tiny ? 4 : ( opt.small ? 2 : 1 ) ) )
 #define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( opt.small || opt.tiny ? 2 : 1 ) ) + 1
 
-WINDOW* lcd_window;
-WINDOW* help_window;
-
-static char last_annunciators = 0;
+/*************/
+/* variables */
+/*************/
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
+static char last_annunciators = 0;
+
 static bool keyboard_state[ NB_KEYS ];
 
-/* FULL SIZE */
-static void tui_draw_lcd( void )
-{
-    wchar_t line[ LCD_WIDTH ];
-    wchar_t pixel;
+static WINDOW* lcd_window;
+static WINDOW* help_window;
 
-    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
-        wcscpy( line, L"" );
-
-        for ( int x = 0; x < LCD_WIDTH; ++x ) {
-            pixel = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? L'█' : L' ';
-
-            wcsncat( line, &pixel, 1 );
-        }
-        mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
-    }
-}
-
-/* SMALL */
-static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
-{
-    if ( top_left ) {
-        if ( top_right ) {
-            if ( bottom_left )
-                return bottom_right ? L'█' : L'▛'; /* 0x2588 0x2598 */
-            else
-                return bottom_right ? L'▜' : L'▀'; /* 0x259C 0x2580 */
-        } else {
-            if ( bottom_left )
-                return bottom_right ? L'▙' : L'▌';
-            else
-                return bottom_right ? L'▚' : L'▘';
-        }
-    } else {
-        if ( top_right ) {
-            if ( bottom_left )
-                return bottom_right ? L'▟' : L'▞';
-            else
-                return bottom_right ? L'▐' : L'▝';
-        } else {
-            if ( bottom_left )
-                return bottom_right ? L'▄' : L'▖';
-            else
-                return bottom_right ? L'▗' : L' ';
-        }
-    }
-}
-
-static void tui_draw_lcd_small( void )
-{
-    bool b1, b2, b3, b4;
-    int step_x = 2;
-    int step_y = 2;
-
-    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
-    wchar_t pixels;
-
-    bool last_column = false;
-
-    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
-        wcscpy( line, L"" );
-
-        for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            last_column = x == (LCD_WIDTH - 1);
-
-            b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
-            b2 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
-
-            b3 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
-            b4 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
-
-            pixels = four_bits_to_quadrant_char( b1, b2, b3, b4 );
-            wcsncat( line, &pixels, 1 );
-        }
-        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
-    }
-}
-
-/* TINY */
+/****************************/
+/* functions implementation */
+/****************************/
 static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
 {
     /*********/
@@ -131,32 +59,35 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     return chr;
 }
 
-static void tui_draw_lcd_tiny( void )
+static inline void ncurses_draw_lcd_tiny( void )
 {
     bool b1, b2, b3, b4, b5, b6, b7, b8;
     int step_x = 2;
     int step_y = 4;
+    bool last_column = false;
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
-
-    bool last_column = false;
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            last_column = x == (LCD_WIDTH - 1);
+            last_column = x == ( LCD_WIDTH - 1 );
 
             b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
             b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
             b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0;
             b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0;
 
-            b4 = last_column ? 0 : display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0;
-            b5 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0;
-            b6 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0;
-            b8 = last_column ? 0 : display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0;
+            if ( last_column )
+                b4 = b5 = b6 = b8 = 0;
+            else {
+                b4 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                b5 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                b6 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            }
 
             pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
@@ -165,7 +96,101 @@ static void tui_draw_lcd_tiny( void )
     }
 }
 
-static void tui_show_help( void )
+static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
+{
+    if ( top_left ) {
+        if ( top_right ) {
+            if ( bottom_left )
+                return bottom_right ? L'█' : L'▛'; /* 0x2588 0x2598 */
+            else
+                return bottom_right ? L'▜' : L'▀'; /* 0x259C 0x2580 */
+        } else {
+            if ( bottom_left )
+                return bottom_right ? L'▙' : L'▌';
+            else
+                return bottom_right ? L'▚' : L'▘';
+        }
+    } else {
+        if ( top_right ) {
+            if ( bottom_left )
+                return bottom_right ? L'▟' : L'▞';
+            else
+                return bottom_right ? L'▐' : L'▝';
+        } else {
+            if ( bottom_left )
+                return bottom_right ? L'▄' : L'▖';
+            else
+                return bottom_right ? L'▗' : L' ';
+        }
+    }
+}
+
+static inline void ncurses_draw_lcd_small( void )
+{
+    bool top_left, top_right, bottom_left, bottom_right;
+    int step_x = 2;
+    int step_y = 2;
+    bool last_column = false;
+
+    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t pixels;
+
+    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+        wcscpy( line, L"" );
+
+        for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            last_column = x == ( LCD_WIDTH - 1 );
+
+            top_left = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            bottom_left = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+
+            if ( last_column )
+                top_right = bottom_right = 0;
+            else {
+                top_right = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                bottom_right = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            }
+
+            pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
+            wcsncat( line, &pixels, 1 );
+        }
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+    }
+}
+
+static inline void ncurses_draw_lcd_fullsize( void )
+{
+    int val;
+    wchar_t pixel;
+
+    wchar_t line[ LCD_WIDTH ];
+
+    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+        wcscpy( line, L"" );
+        for ( int x = 0; x < LCD_WIDTH; ++x ) {
+            val = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
+
+            switch ( val ) {
+                case 0:
+                    pixel = L' ';
+                    break;
+                case 1:
+                    pixel = L'░';
+                    break;
+                case 2:
+                    pixel = L'▒';
+                    break;
+                case 3:
+                    pixel = L'█';
+                    break;
+            }
+            wcsncat( line, &pixel, 1 );
+        }
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
+    }
+}
+
+static inline void ncurses_show_help( void )
 {
     if ( help_window == NULL ) {
         help_window = newwin( 7, LCD_RIGHT + 1, LCD_BOTTOM + 1, 0 );
@@ -209,7 +234,7 @@ static void ncurses_refresh_annunciators( void )
 /* Public */
 /**********/
 
-void tui_refresh_lcd( x50ng_t* x50ng )
+void ncurses_refresh_lcd( x50ng_t* x50ng )
 {
     if ( !get_display_state() )
         return;
@@ -219,27 +244,26 @@ void tui_refresh_lcd( x50ng_t* x50ng )
     get_lcd_buffer( display_buffer_grayscale );
 
     if ( opt.small )
-        tui_draw_lcd_small();
+        ncurses_draw_lcd_small();
     else if ( opt.tiny )
-        tui_draw_lcd_tiny();
+        ncurses_draw_lcd_tiny();
     else
-        tui_draw_lcd();
+        ncurses_draw_lcd_fullsize();
 
     wrefresh( lcd_window );
 }
 
-void tui_handle_pending_inputs( x50ng_t* x50ng )
+void ncurses_handle_pending_inputs( x50ng_t* x50ng )
 {
+    bool new_keyboard_state[ NB_KEYS ];
+    uint32_t k;
+
     // each run records the state of the keyboard (pressed keys)
     // This allow to diff with previous state and issue PRESS and RELEASE calls
-
-    bool new_keyboard_state[ NB_KEYS ];
-    for ( int key = 0; key < NB_KEYS; ++key )
+    for ( int key = 0; key < NB_KEYS; key++ )
         new_keyboard_state[ key ] = false;
 
     // READ KB STATE
-    uint32_t k;
-
     /* Iterate over all currently pressed keys and mark them as pressed */
     while ( ( k = getch() ) ) {
         if ( k == ( uint32_t )ERR )
@@ -419,7 +443,7 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
                 break;
 
             case KEY_F( 1 ):
-                tui_show_help();
+                ncurses_show_help();
                 break;
 
             case KEY_F( 7 ):
@@ -432,20 +456,30 @@ void tui_handle_pending_inputs( x50ng_t* x50ng )
         }
     }
 
-    for ( int key = 0; key < NB_KEYS; ++key ) {
+    for ( int key = 0; key < NB_KEYS; key++ ) {
         if ( keyboard_state[ key ] == new_keyboard_state[ key ] )
             continue; /* key hasn't changed state */
 
-        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] )
+        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !is_key_pressed( key ) )
             press_key( key );
-        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] )
+        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && is_key_pressed( key ) )
             release_key( key );
 
         keyboard_state[ key ] = new_keyboard_state[ key ];
     }
 }
 
-void tui_init( x50ng_t* x50ng )
+void ncurses_exit( void )
+{
+    delwin( lcd_window );
+    delwin( help_window );
+
+    nodelay( stdscr, FALSE );
+    echo();
+    endwin();
+}
+
+void ncurses_init( x50ng_t* x50ng )
 {
     for ( int i = 0; i < NB_KEYS; ++i )
         keyboard_state[ i ] = false;
@@ -465,17 +499,7 @@ void tui_init( x50ng_t* x50ng )
     wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, 30, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, LCD_RIGHT / 2, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     wrefresh( lcd_window );
-}
-
-void tui_exit( void )
-{
-    delwin( lcd_window );
-    delwin( help_window );
-
-    nodelay( stdscr, FALSE );
-    echo();
-    endwin();
 }

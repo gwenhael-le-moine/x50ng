@@ -12,9 +12,9 @@
 
 #include "../s3c2410/s3c2410.h"
 
-#include "ui_inner.h"
-#include "gui.h"
-#include "tui.h"
+#include "inner.h"
+#include "gtk.h"
+#include "ncurses.h"
 
 x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
     {.css_class = "menu",        .css_id = "F1",    .label = "F1",  .letter = "A", .left = "Y=",     .right = NULL,   .below = NULL, .hpkey = HPKEY_A    },
@@ -440,7 +440,7 @@ void ui_handle_pending_inputs( void* data )
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            tui_handle_pending_inputs( x50ng );
+            ncurses_handle_pending_inputs( x50ng );
             break;
         case FRONTEND_GTK:
         default:
@@ -457,7 +457,7 @@ void ui_refresh_output( void* data )
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            tui_refresh_lcd( x50ng );
+            ncurses_refresh_lcd( x50ng );
             break;
         case FRONTEND_GTK:
         default:
@@ -475,7 +475,7 @@ void ui_init( x50ng_t* x50ng )
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            tui_init( x50ng );
+            ncurses_init( x50ng );
             break;
         case FRONTEND_GTK:
         default:
@@ -488,7 +488,7 @@ void ui_exit( void )
 {
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            tui_exit();
+            ncurses_exit();
             break;
         case FRONTEND_GTK:
         default:

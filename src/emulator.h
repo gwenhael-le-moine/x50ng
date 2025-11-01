@@ -75,6 +75,7 @@ typedef struct {
     unsigned char columnbit;
     unsigned char rowbit;
     int eint;
+    bool pressed;
 } x50ng_key_t;
 
 typedef struct {
@@ -91,7 +92,7 @@ void emulator_exit( void );
 
 extern void press_key( int hpkey );
 extern void release_key( int hpkey );
-/* extern bool is_key_pressed( int hpkey ); */
+extern bool is_key_pressed( int hpkey );
 
 extern unsigned char get_annunciators( void );
 extern bool get_display_state( void );

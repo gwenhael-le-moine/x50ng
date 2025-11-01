@@ -10,7 +10,7 @@
 #include "../types.h"
 #include "../emulator.h"
 
-#include "ui_inner.h"
+#include "inner.h"
 
 // #define TEST_PASTE true
 

@@ -156,8 +156,8 @@ SRCS = \
 	./src/s3c2410/s3c2410_uart.c \
 	./src/s3c2410/s3c2410_usbdev.c \
 	./src/s3c2410/s3c2410_watchdog.c \
-	./src/ui/gui.c \
-	./src/ui/tui.c \
+	./src/ui/gtk.c \
+	./src/ui/ncurses.c \
 	./src/ui/ui.c \
 	./src/emulator.c \
 	./src/flash.c \
