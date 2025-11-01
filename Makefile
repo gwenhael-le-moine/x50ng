@@ -30,14 +30,21 @@ NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
 NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
 # Embedded qemu
-QEMU_DIR = src/qemu
-QEMU_DEFINES = \
+QEMU_CFLAGS = \
 	-DTARGET_ARM \
 	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-D_LARGEFILE_SOURCE \
 	-DNEED_CPU_H \
 	-fno-strict-aliasing
-QEMU_OBJS = \
+
+QEMU_DIR = src/qemu
+QEMU_INCLUDES = \
+	-I$(QEMU_DIR) \
+	-I$(QEMU_DIR)/target-arm \
+	-I$(QEMU_DIR)/fpu \
+	-I$(QEMU_DIR)/arm-softmmu
+
+QEMU_SRCS = \
 	$(QEMU_DIR)/arm-softmmu/exec.o \
 	$(QEMU_DIR)/arm-softmmu/translate-all.o \
 	$(QEMU_DIR)/arm-softmmu/cpu-exec.o \
@@ -51,11 +58,15 @@ QEMU_OBJS = \
 	$(QEMU_DIR)/arm-softmmu/tcg/tcg.o \
 	$(QEMU_DIR)/arm-softmmu/iwmmxt_helper.o \
 	$(QEMU_DIR)/arm-softmmu/neon_helper.o
-QEMU_INCLUDES = \
-	-I$(QEMU_DIR) \
-	-I$(QEMU_DIR)/target-arm \
-	-I$(QEMU_DIR)/fpu \
-	-I$(QEMU_DIR)/arm-softmmu
+QEMU_OBJS = $(QEMU_SRCS:.c=.o)
+
+# TEMPO hack
+VVFAT_SRCS =	\
+	$(QEMU_DIR)/cutils.o \
+	./src/s3c2410/block-vvfat.o \
+	./src/s3c2410/block-qcow.o \
+	./src/s3c2410/block-raw.o
+VVFAT_OBJS = $(VVFAT_SRCS:.c=.o)
 
 X50NG_DEBUG = \
 	-g \
@@ -105,7 +116,7 @@ X50NG_CFLAGS = \
 	$(X50NG_DISABLED_WARNINGS) \
 	$(DEBUG_CFLAGS) \
 	$(X50NG_INCLUDES) \
-	$(QEMU_DEFINES) \
+	$(QEMU_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(NCURSES_CFLAGS) \
 	$(LUA_CFLAGS) \
@@ -159,13 +170,6 @@ SRCS = \
 
 OBJS = $(SRCS:.c=.o)
 
-# TEMPO hack
-VVFATOBJS =	\
-	$(QEMU_DIR)/cutils.o \
-	./src/s3c2410/block-vvfat.o \
-	./src/s3c2410/block-qcow.o \
-	./src/s3c2410/block-raw.o
-
 all: do-it-all
 
 ifeq (.depend,$(wildcard .depend))
@@ -175,69 +179,77 @@ else
 do-it-all: depend-and-build
 endif
 
-# Compilation
-dist/$(TARGET): $(OBJS) $(VVFATOBJS) $(QEMU_OBJS)
-	$(CC) $(X50NG_LDFLAGS) -o $@ $(OBJS) $(VVFATOBJS) $(LDLIBS) $(X50NG_LDLIBS)
-
-%.o: %.c
-	$(CC) $(X50NG_CFLAGS) -o $@ -c $<
-
 # Compilation of qemu
 $(QEMU_DIR)/config-host.h:
 	+( cd $(QEMU_DIR); \
-	./configure-small; \
-	$(MAKE) -f Makefile-small )
-
-$(QEMU_OBJS): qemu-objs
+		 ./configure-small; )
+	$(MAKE) -C $(QEMU_DIR) -f Makefile-small
 
 qemu-objs: $(QEMU_DIR)/config-host.h
 	+$(MAKE) -C $(QEMU_DIR) -f Makefile-small
 
-clean-qemu:
-	$(MAKE) -C $(QEMU_DIR) -f Makefile-small clean
+# Compilation
+%.o: %.c
+	$(CC) $(X50NG_CFLAGS) -o $@ -c $<
+
 
 # Depend
 MAKEDEPEND = $(CC) -MM
 
 depend-libs: $(QEMU_DIR)/config-host.h
 
+depend: depend-libs
+	$(MAKEDEPEND) $(X50NG_CFLAGS) $(SRCS) > .depend
+
 depend-and-build: depend
 	$(MAKE) -C . all
 
-depend: depend-libs
-	$(MAKEDEPEND) $(X50NG_CFLAGS) $(SRCS) >.depend
 
 # for clangd
 compile_commands.json: distclean
 	bear -- make dist/$(TARGET)
 
-# Cleaning
-clean:
-	rm -f core *~ .depend
-	find . -name \*.o -exec  rm {} \;
-
-distclean: clean clean-qemu
-	rm -f compile_commands.json
-	rm -f dist/$(TARGET) dist/$(TARGET).desktop dist/$(TARGET).man
-
-mrproper: distclean
-	make -C dist/firmware/ mrproper
-
 # auto-format code
 pretty-code:
 	clang-format -i ./src/*.c ./src/*.h ./src/ui/*.c ./src/ui/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
 
-# Populate dist/firmware/ from hpcalc.org
-pull-firmware:
-	make -C dist/firmware/
 
-# Installation
+# Cleaning
+clean-qemu:
+	$(MAKE) -C $(QEMU_DIR) -f Makefile-small clean
+
+distclean-qemu:
+	$(MAKE) -C $(QEMU_DIR) -f Makefile-small distclean
+
+clean: clean-qemu
+	rm -f core *~ .depend
+	rm -f $(OBJS) $(VVFAT_OBJS) $(QEMU_OBJS)
+
+distclean: clean distclean-qemu
+	rm -f compile_commands.json
+	rm -f dist/$(TARGET) dist/$(TARGET).desktop dist/$(TARGET).man
+	find . -name \*.o -exec  rm {} \;
+
+mrproper: distclean
+	make -C dist/firmware/ mrproper
+
+
+# Populate dist/
+dist/$(TARGET): qemu-objs $(OBJS) $(VVFAT_OBJS)
+	$(CC) $(X50NG_LDFLAGS) -o $@ $(OBJS) $(VVFAT_OBJS) $(LDLIBS) $(X50NG_LDLIBS)
+
 dist/$(TARGET).desktop: src/$(TARGET).desktop.in
 	perl -p -e "s!TARGET!$(TARGET)!" < $^ >$@
 
 dist/$(TARGET).man: src/$(TARGET).scd
 	scdoc < $^ > $@
 
+# Populate dist/firmware/ from hpcalc.org
+pull-firmware:
+	make -C dist/firmware/
+
+
+# Installation
 install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	mkdir -p "$(DESTDIR)$(BINDIR)/"
 	install -D -m 755 dist/$(TARGET) "$(DESTDIR)$(BINDIR)/$(TARGET)"
@@ -250,3 +262,10 @@ install: all dist/$(TARGET).desktop dist/$(TARGET).man
 	cp dist/*.css "$(DESTDIR)$(DATADIR)/"
 	mkdir -p "$(DESTDIR)$(DOCDIR)/"
 	cp -R docs/ README.* screenshot*.png "$(DESTDIR)$(DOCDIR)/"
+
+uninstall:
+	rm -f "$(DESTDIR)$(BINDIR)/$(TARGET)"
+	rm -f "$(DESTDIR)$(MENUDIR)/$(TARGET).desktop"
+	rm -f "$(DESTDIR)$(MANDIR)/$(TARGET).1"
+	rm -fr "$(DESTDIR)$(DATADIR)/"
+	rm -fr "$(DESTDIR)$(DOCDIR)/"
