@@ -33,9 +33,9 @@ typedef struct {
     char* icon;
 } x50ng_ui_annunciator_t;
 
-extern x50ng_ui_key_t ui_keys[ NB_KEYS ];
-extern int keys_order_normal[ NB_KEYS ];
-extern int keys_order_legacy[ NB_KEYS ];
+extern x50ng_ui_key_t ui_keys[ NB_HP50g_KEYS ];
+extern int keys_order_normal[ NB_HP50g_KEYS ];
+extern int keys_order_legacy[ NB_HP50g_KEYS ];
 #  define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
 
 extern x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ];

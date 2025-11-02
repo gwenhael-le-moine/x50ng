@@ -16,13 +16,48 @@
 #include "gtk.h"
 #include "ncurses.h"
 
-x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
-    {.css_class = "menu",        .css_id = "F1",    .label = "F1",  .letter = "A", .left = "Y=",     .right = NULL,   .below = NULL, .hpkey = HPKEY_A    },
-    {.css_class = "menu",        .css_id = "F2",    .label = "F2",  .letter = "B", .left = "WIN",    .right = NULL,   .below = NULL, .hpkey = HPKEY_B    },
-    {.css_class = "menu",        .css_id = "F3",    .label = "F3",  .letter = "C", .left = "GRAPH",  .right = NULL,   .below = NULL, .hpkey = HPKEY_C    },
-    {.css_class = "menu",        .css_id = "F4",    .label = "F4",  .letter = "D", .left = "2D/3D",  .right = NULL,   .below = NULL, .hpkey = HPKEY_D    },
-    {.css_class = "menu",        .css_id = "F5",    .label = "F5",  .letter = "E", .left = "TBLSET", .right = NULL,   .below = NULL, .hpkey = HPKEY_E    },
-    {.css_class = "menu",        .css_id = "F6",    .label = "F6",  .letter = "F", .left = "TABLE",  .right = NULL,   .below = NULL, .hpkey = HPKEY_F    },
+x50ng_ui_key_t ui_keys[ NB_HP50g_KEYS ] = {
+    {.css_class = "menu",        .css_id = "F1", .label = "F1", .letter = "A", .left = "Y=", .right = NULL, .below = NULL, .hpkey = HP50g_KEY_A },
+    {.css_class = "menu",
+     .css_id = "F2",
+     .label = "F2",
+     .letter = "B",
+     .left = "WIN",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_B                                                                                                                       },
+    {.css_class = "menu",
+     .css_id = "F3",
+     .label = "F3",
+     .letter = "C",
+     .left = "GRAPH",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_C                                                                                                                       },
+    {.css_class = "menu",
+     .css_id = "F4",
+     .label = "F4",
+     .letter = "D",
+     .left = "2D/3D",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_D                                                                                                                       },
+    {.css_class = "menu",
+     .css_id = "F5",
+     .label = "F5",
+     .letter = "E",
+     .left = "TBLSET",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_E                                                                                                                       },
+    {.css_class = "menu",
+     .css_id = "F6",
+     .label = "F6",
+     .letter = "F",
+     .left = "TABLE",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_F                                                                                                                       },
 
     {.css_class = "function",
      .css_id = "APPS",
@@ -31,7 +66,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "FILES",
      .right = "BEGIN",
      .below = NULL,
-     .hpkey = HPKEY_G                                                                                                                                    },
+     .hpkey = HP50g_KEY_G                                                                                                                       },
     {.css_class = "function",
      .css_id = "MODE",
      .label = "MODE",
@@ -39,7 +74,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CUSTOM",
      .right = "END",
      .below = NULL,
-     .hpkey = HPKEY_H                                                                                                                                    },
+     .hpkey = HP50g_KEY_H                                                                                                                       },
     {.css_class = "function",
      .css_id = "TOOL",
      .label = "TOOL",
@@ -47,8 +82,8 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "i",
      .right = "I",
      .below = NULL,
-     .hpkey = HPKEY_I                                                                                                                                    },
-    {.css_class = "arrow",       .css_id = "UP",    .label = "⬆",   .letter = "",  .left = "",       .right = NULL,   .below = NULL, .hpkey = HPKEY_UP   },
+     .hpkey = HP50g_KEY_I                                                                                                                       },
+    {.css_class = "arrow",       .css_id = "UP", .label = "⬆",  .letter = "",  .left = "",   .right = NULL, .below = NULL, .hpkey = HP50g_KEY_UP},
     {.css_class = "function",
      .css_id = "VAR",
      .label = "VAR",
@@ -56,7 +91,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "UPDIR",
      .right = "COPY",
      .below = NULL,
-     .hpkey = HPKEY_J                                                                                                                                    },
+     .hpkey = HP50g_KEY_J                                                                                                                       },
     {.css_class = "function",
      .css_id = "STO",
      .label = "STO⏵",
@@ -64,7 +99,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "RCL",
      .right = "CUT",
      .below = NULL,
-     .hpkey = HPKEY_K                                                                                                                                    },
+     .hpkey = HP50g_KEY_K                                                                                                                       },
     {.css_class = "function",
      .css_id = "NXT",
      .label = "NXT",
@@ -72,11 +107,32 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "PREV",
      .right = "PASTE",
      .below = NULL,
-     .hpkey = HPKEY_L                                                                                                                                    },
+     .hpkey = HP50g_KEY_L                                                                                                                       },
 
-    {.css_class = "arrow",       .css_id = "LEFT",  .label = "⬅",   .letter = "",  .left = "",       .right = NULL,   .below = NULL, .hpkey = HPKEY_LEFT },
-    {.css_class = "arrow",       .css_id = "DOWN",  .label = "⬇",   .letter = "",  .left = "",       .right = NULL,   .below = NULL, .hpkey = HPKEY_DOWN },
-    {.css_class = "arrow",       .css_id = "RIGHT", .label = "➡",   .letter = "",  .left = "",       .right = NULL,   .below = NULL, .hpkey = HPKEY_RIGHT},
+    {.css_class = "arrow",
+     .css_id = "LEFT",
+     .label = "⬅",
+     .letter = "",
+     .left = "",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_LEFT                                                                                                                    },
+    {.css_class = "arrow",
+     .css_id = "DOWN",
+     .label = "⬇",
+     .letter = "",
+     .left = "",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_DOWN                                                                                                                    },
+    {.css_class = "arrow",
+     .css_id = "RIGHT",
+     .label = "➡",
+     .letter = "",
+     .left = "",
+     .right = NULL,
+     .below = NULL,
+     .hpkey = HP50g_KEY_RIGHT                                                                                                                   },
 
     {.css_class = "function",
      .css_id = "HIST",
@@ -85,7 +141,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CMD",
      .right = "UNDO",
      .below = NULL,
-     .hpkey = HPKEY_M                                                                                                                                    },
+     .hpkey = HP50g_KEY_M                                                                                                                       },
     {.css_class = "function",
      .css_id = "EVAL",
      .label = "EVAL",
@@ -93,7 +149,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "PRG",
      .right = "CHARS",
      .below = NULL,
-     .hpkey = HPKEY_N                                                                                                                                    },
+     .hpkey = HP50g_KEY_N                                                                                                                       },
     {.css_class = "function",
      .css_id = "QUOTE",
      .label = "'",
@@ -101,7 +157,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "MTRW",
      .right = "EQW",
      .below = NULL,
-     .hpkey = HPKEY_O                                                                                                                                    },
+     .hpkey = HP50g_KEY_O                                                                                                                       },
     {.css_class = "function",
      .css_id = "SYMB",
      .label = "SYMB",
@@ -109,7 +165,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "MTH",
      .right = "CAT",
      .below = NULL,
-     .hpkey = HPKEY_P                                                                                                                                    },
+     .hpkey = HP50g_KEY_P                                                                                                                       },
     {.css_class = "function",
      .css_id = "BACKSPACE",
      .label = "⬅",
@@ -117,7 +173,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "DEL",
      .right = "CLEAR",
      .below = NULL,
-     .hpkey = HPKEY_BACKSPACE                                                                                                                            },
+     .hpkey = HP50g_KEY_BACKSPACE                                                                                                               },
 
     {.css_class = "function",
      .css_id = "POW",
@@ -126,7 +182,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "𝑒<sup>x</sup>",
      .right = "LN",
      .below = NULL,
-     .hpkey = HPKEY_Q                                                                                                                                    },
+     .hpkey = HP50g_KEY_Q                                                                                                                       },
     {.css_class = "function",
      .css_id = "SQRT",
      .label = "√𝓍",
@@ -134,7 +190,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "𝓍<sup>2</sup>",
      .right = "<sup>x</sup>√𝓎",
      .below = NULL,
-     .hpkey = HPKEY_R                                                                                                                                    },
+     .hpkey = HP50g_KEY_R                                                                                                                       },
     {.css_class = "function",
      .css_id = "SIN",
      .label = "SIN",
@@ -142,7 +198,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ASIN",
      .right = "∑",
      .below = NULL,
-     .hpkey = HPKEY_S                                                                                                                                    },
+     .hpkey = HP50g_KEY_S                                                                                                                       },
     {.css_class = "function",
      .css_id = "COS",
      .label = "COS",
@@ -150,7 +206,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ACOS",
      .right = "∂",
      .below = NULL,
-     .hpkey = HPKEY_T                                                                                                                                    },
+     .hpkey = HP50g_KEY_T                                                                                                                       },
     {.css_class = "function",
      .css_id = "TAN",
      .label = "TAN",
@@ -158,7 +214,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ATAN",
      .right = "∫",
      .below = NULL,
-     .hpkey = HPKEY_U                                                                                                                                    },
+     .hpkey = HP50g_KEY_U                                                                                                                       },
 
     {.css_class = "enter",
      .css_id = "ENTER",
@@ -167,7 +223,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ANS",
      .right = "→NUM",
      .below = NULL,
-     .hpkey = HPKEY_ENTER                                                                                                                                },
+     .hpkey = HP50g_KEY_ENTER                                                                                                                   },
     {.css_class = "function",
      .css_id = "EEX",
      .label = "EEX",
@@ -175,10 +231,31 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "10<sup>𝓍</sup>",
      .right = "LOG",
      .below = NULL,
-     .hpkey = HPKEY_V                                                                                                                                    },
-    {.css_class = "function",    .css_id = "NEG",   .label = "+/-", .letter = "W", .left = "≠",      .right = "=",    .below = NULL, .hpkey = HPKEY_W    },
-    {.css_class = "function",    .css_id = "X",     .label = "𝓍",   .letter = "X", .left = "≤",      .right = "&gt;", .below = NULL, .hpkey = HPKEY_X    },
-    {.css_class = "function",    .css_id = "INV",   .label = "1/𝓍", .letter = "Y", .left = "≥",      .right = ">",    .below = NULL, .hpkey = HPKEY_Y    },
+     .hpkey = HP50g_KEY_V                                                                                                                       },
+    {.css_class = "function",
+     .css_id = "NEG",
+     .label = "+/-",
+     .letter = "W",
+     .left = "≠",
+     .right = "=",
+     .below = NULL,
+     .hpkey = HP50g_KEY_W                                                                                                                       },
+    {.css_class = "function",
+     .css_id = "X",
+     .label = "𝓍",
+     .letter = "X",
+     .left = "≤",
+     .right = "&gt;",
+     .below = NULL,
+     .hpkey = HP50g_KEY_X                                                                                                                       },
+    {.css_class = "function",
+     .css_id = "INV",
+     .label = "1/𝓍",
+     .letter = "Y",
+     .left = "≥",
+     .right = ">",
+     .below = NULL,
+     .hpkey = HP50g_KEY_Y                                                                                                                       },
 
     {.css_class = "alpha",
      .css_id = "ALPHA",
@@ -187,7 +264,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "USER",
      .right = "ENTRY",
      .below = NULL,
-     .hpkey = HPKEY_ALPHA                                                                                                                                },
+     .hpkey = HP50g_KEY_ALPHA                                                                                                                   },
     {.css_class = "core-number",
      .css_id = "SEVEN",
      .label = "7",
@@ -195,7 +272,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "S.SLV",
      .right = "NUM.SLV",
      .below = NULL,
-     .hpkey = HPKEY_7                                                                                                                                    },
+     .hpkey = HP50g_KEY_7                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "EIGHT",
      .label = "8",
@@ -203,7 +280,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "EXP&amp;LN",
      .right = "TRIG",
      .below = NULL,
-     .hpkey = HPKEY_8                                                                                                                                    },
+     .hpkey = HP50g_KEY_8                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "NINE",
      .label = "9",
@@ -211,7 +288,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "FINANCE",
      .right = "TIME",
      .below = NULL,
-     .hpkey = HPKEY_9                                                                                                                                    },
+     .hpkey = HP50g_KEY_9                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "DIVIDE",
      .label = "÷",
@@ -219,7 +296,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ABS",
      .right = "ARG",
      .below = NULL,
-     .hpkey = HPKEY_Z                                                                                                                                    },
+     .hpkey = HP50g_KEY_Z                                                                                                                       },
 
     {.css_class = "shift-left",
      .css_id = "SHIFT-LEFT",
@@ -228,7 +305,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HPKEY_SHIFT_LEFT                                                                                                                           },
+     .hpkey = HP50g_KEY_SHIFT_LEFT                                                                                                              },
     {.css_class = "core-number",
      .css_id = "FOUR",
      .label = "4",
@@ -236,7 +313,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CALC",
      .right = "ALG",
      .below = NULL,
-     .hpkey = HPKEY_4                                                                                                                                    },
+     .hpkey = HP50g_KEY_4                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "FIVE",
      .label = "5",
@@ -244,7 +321,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "MATRICES",
      .right = "STAT",
      .below = NULL,
-     .hpkey = HPKEY_5                                                                                                                                    },
+     .hpkey = HP50g_KEY_5                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "SIX",
      .label = "6",
@@ -252,7 +329,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CONVERT",
      .right = "UNITS",
      .below = NULL,
-     .hpkey = HPKEY_6                                                                                                                                    },
+     .hpkey = HP50g_KEY_6                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "MULTIPLY",
      .label = "×",
@@ -260,7 +337,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "[ ]",
      .right = "\" \"",
      .below = NULL,
-     .hpkey = HPKEY_MULTIPLY                                                                                                                             },
+     .hpkey = HP50g_KEY_MULTIPLY                                                                                                                },
 
     {.css_class = "shift-right",
      .css_id = "SHIFT-RIGHT",
@@ -269,7 +346,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HPKEY_SHIFT_RIGHT                                                                                                                          },
+     .hpkey = HP50g_KEY_SHIFT_RIGHT                                                                                                             },
     {.css_class = "core-number",
      .css_id = "ONE",
      .label = "1",
@@ -277,7 +354,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "ARITH",
      .right = "CMPLX",
      .below = NULL,
-     .hpkey = HPKEY_1                                                                                                                                    },
+     .hpkey = HP50g_KEY_1                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "TWO",
      .label = "2",
@@ -285,7 +362,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "DEF",
      .right = "LIB",
      .below = NULL,
-     .hpkey = HPKEY_2                                                                                                                                    },
+     .hpkey = HP50g_KEY_2                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "THREE",
      .label = "3",
@@ -293,7 +370,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "#",
      .right = "BASE",
      .below = NULL,
-     .hpkey = HPKEY_3                                                                                                                                    },
+     .hpkey = HP50g_KEY_3                                                                                                                       },
     {.css_class = "core-number",
      .css_id = "MINUS",
      .label = "-",
@@ -301,7 +378,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "( )",
      .right = "_",
      .below = NULL,
-     .hpkey = HPKEY_MINUS                                                                                                                                },
+     .hpkey = HP50g_KEY_MINUS                                                                                                                   },
 
     {.css_class = "core",
      .css_id = "ON",
@@ -310,7 +387,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "CONT",
      .right = "OFF",
      .below = "CANCEL",
-     .hpkey = HPKEY_ON                                                                                                                                   },
+     .hpkey = HP50g_KEY_ON                                                                                                                      },
     {.css_class = "core-number",
      .css_id = "ZERO",
      .label = "0",
@@ -318,7 +395,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "∞",
      .right = "→",
      .below = NULL,
-     .hpkey = HPKEY_0                                                                                                                                    },
+     .hpkey = HP50g_KEY_0                                                                                                                       },
     {.css_class = "core",
      .css_id = "PERIOD",
      .label = ".",
@@ -326,7 +403,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = ": :",
      .right = "↲",
      .below = NULL,
-     .hpkey = HPKEY_PERIOD                                                                                                                               },
+     .hpkey = HP50g_KEY_PERIOD                                                                                                                  },
     {.css_class = "core",
      .css_id = "SPC",
      .label = "SPC",
@@ -334,7 +411,7 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "𝚷",
      .right = ",",
      .below = NULL,
-     .hpkey = HPKEY_SPACE                                                                                                                                },
+     .hpkey = HP50g_KEY_SPACE                                                                                                                   },
     {.css_class = "core-number",
      .css_id = "PLUS",
      .label = "+",
@@ -342,25 +419,29 @@ x50ng_ui_key_t ui_keys[ NB_KEYS ] = {
      .left = "{ }",
      .right = "« »",
      .below = NULL,
-     .hpkey = HPKEY_PLUS                                                                                                                                 },
+     .hpkey = HP50g_KEY_PLUS                                                                                                                    },
 };
 
-int keys_order_normal[ NB_KEYS ] = {
-    HPKEY_A,          HPKEY_B,  HPKEY_C,         HPKEY_D,      HPKEY_E,     HPKEY_F,           HPKEY_G,     HPKEY_H, HPKEY_I,
-    HPKEY_UP,         HPKEY_J,  HPKEY_K,         HPKEY_L,      HPKEY_LEFT,  HPKEY_DOWN,        HPKEY_RIGHT, HPKEY_M, HPKEY_N,
-    HPKEY_O,          HPKEY_P,  HPKEY_BACKSPACE, HPKEY_Q,      HPKEY_R,     HPKEY_S,           HPKEY_T,     HPKEY_U, HPKEY_V,
-    HPKEY_W,          HPKEY_X,  HPKEY_Y,         HPKEY_Z,      HPKEY_ALPHA, HPKEY_7,           HPKEY_8,     HPKEY_9, HPKEY_MULTIPLY,
-    HPKEY_SHIFT_LEFT, HPKEY_4,  HPKEY_5,         HPKEY_6,      HPKEY_MINUS, HPKEY_SHIFT_RIGHT, HPKEY_1,     HPKEY_2, HPKEY_3,
-    HPKEY_PLUS,       HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE, HPKEY_ENTER,
+int keys_order_normal[ NB_HP50g_KEYS ] = {
+    HP50g_KEY_A,        HP50g_KEY_B,          HP50g_KEY_C,  HP50g_KEY_D,     HP50g_KEY_E,  HP50g_KEY_F,     HP50g_KEY_G,
+    HP50g_KEY_H,        HP50g_KEY_I,          HP50g_KEY_UP, HP50g_KEY_J,     HP50g_KEY_K,  HP50g_KEY_L,     HP50g_KEY_LEFT,
+    HP50g_KEY_DOWN,     HP50g_KEY_RIGHT,      HP50g_KEY_M,  HP50g_KEY_N,     HP50g_KEY_O,  HP50g_KEY_P,     HP50g_KEY_BACKSPACE,
+    HP50g_KEY_Q,        HP50g_KEY_R,          HP50g_KEY_S,  HP50g_KEY_T,     HP50g_KEY_U,  HP50g_KEY_V,     HP50g_KEY_W,
+    HP50g_KEY_X,        HP50g_KEY_Y,          HP50g_KEY_Z,  HP50g_KEY_ALPHA, HP50g_KEY_7,  HP50g_KEY_8,     HP50g_KEY_9,
+    HP50g_KEY_MULTIPLY, HP50g_KEY_SHIFT_LEFT, HP50g_KEY_4,  HP50g_KEY_5,     HP50g_KEY_6,  HP50g_KEY_MINUS, HP50g_KEY_SHIFT_RIGHT,
+    HP50g_KEY_1,        HP50g_KEY_2,          HP50g_KEY_3,  HP50g_KEY_PLUS,  HP50g_KEY_ON, HP50g_KEY_0,     HP50g_KEY_PERIOD,
+    HP50g_KEY_SPACE,    HP50g_KEY_ENTER,
 };
 
-int keys_order_legacy[ NB_KEYS ] = {
-    HPKEY_A,          HPKEY_B,  HPKEY_C,         HPKEY_D,      HPKEY_E,        HPKEY_F,           HPKEY_G,     HPKEY_H, HPKEY_I,
-    HPKEY_UP,         HPKEY_J,  HPKEY_K,         HPKEY_L,      HPKEY_LEFT,     HPKEY_DOWN,        HPKEY_RIGHT, HPKEY_M, HPKEY_N,
-    HPKEY_O,          HPKEY_P,  HPKEY_BACKSPACE, HPKEY_Q,      HPKEY_R,        HPKEY_S,           HPKEY_T,     HPKEY_U, HPKEY_ENTER,
-    HPKEY_V,          HPKEY_W,  HPKEY_X,         HPKEY_Y,      HPKEY_ALPHA,    HPKEY_7,           HPKEY_8,     HPKEY_9, HPKEY_Z,
-    HPKEY_SHIFT_LEFT, HPKEY_4,  HPKEY_5,         HPKEY_6,      HPKEY_MULTIPLY, HPKEY_SHIFT_RIGHT, HPKEY_1,     HPKEY_2, HPKEY_3,
-    HPKEY_MINUS,      HPKEY_ON, HPKEY_0,         HPKEY_PERIOD, HPKEY_SPACE,    HPKEY_PLUS,
+int keys_order_legacy[ NB_HP50g_KEYS ] = {
+    HP50g_KEY_A,     HP50g_KEY_B,          HP50g_KEY_C,  HP50g_KEY_D,     HP50g_KEY_E,  HP50g_KEY_F,        HP50g_KEY_G,
+    HP50g_KEY_H,     HP50g_KEY_I,          HP50g_KEY_UP, HP50g_KEY_J,     HP50g_KEY_K,  HP50g_KEY_L,        HP50g_KEY_LEFT,
+    HP50g_KEY_DOWN,  HP50g_KEY_RIGHT,      HP50g_KEY_M,  HP50g_KEY_N,     HP50g_KEY_O,  HP50g_KEY_P,        HP50g_KEY_BACKSPACE,
+    HP50g_KEY_Q,     HP50g_KEY_R,          HP50g_KEY_S,  HP50g_KEY_T,     HP50g_KEY_U,  HP50g_KEY_ENTER,    HP50g_KEY_V,
+    HP50g_KEY_W,     HP50g_KEY_X,          HP50g_KEY_Y,  HP50g_KEY_ALPHA, HP50g_KEY_7,  HP50g_KEY_8,        HP50g_KEY_9,
+    HP50g_KEY_Z,     HP50g_KEY_SHIFT_LEFT, HP50g_KEY_4,  HP50g_KEY_5,     HP50g_KEY_6,  HP50g_KEY_MULTIPLY, HP50g_KEY_SHIFT_RIGHT,
+    HP50g_KEY_1,     HP50g_KEY_2,          HP50g_KEY_3,  HP50g_KEY_MINUS, HP50g_KEY_ON, HP50g_KEY_0,        HP50g_KEY_PERIOD,
+    HP50g_KEY_SPACE, HP50g_KEY_PLUS,
 };
 
 x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ] = { { .icon = "⮢" },  { .icon = "⮣" },  { .icon = "α" },
@@ -372,63 +453,63 @@ x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ] = { { .icon = "⮢" },
 void newrplify_ui_keys()
 {
     // modify keys' labeling for newRPL
-    for ( int i = HPKEY_A; i <= HPKEY_F; i++ )
+    for ( int i = HP50g_KEY_A; i <= HP50g_KEY_F; i++ )
         ui_keys[ i ].left = "";
 
-    for ( int i = HPKEY_G; i <= HPKEY_I; i++ ) {
+    for ( int i = HP50g_KEY_G; i <= HP50g_KEY_I; i++ ) {
         ui_keys[ i ].label = "";
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    for ( int i = HPKEY_J; i <= HPKEY_K; i++ ) {
+    for ( int i = HP50g_KEY_J; i <= HP50g_KEY_K; i++ ) {
         ui_keys[ i ].label = "";
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ HPKEY_UP ].left = "UPDIR";
+    ui_keys[ HP50g_KEY_UP ].left = "UPDIR";
 
-    ui_keys[ HPKEY_LEFT ].left = "BEG";
-    ui_keys[ HPKEY_LEFT ].right = "COPY";
+    ui_keys[ HP50g_KEY_LEFT ].left = "BEG";
+    ui_keys[ HP50g_KEY_LEFT ].right = "COPY";
 
-    ui_keys[ HPKEY_DOWN ].left = "CUT";
+    ui_keys[ HP50g_KEY_DOWN ].left = "CUT";
 
-    ui_keys[ HPKEY_RIGHT ].left = "END";
-    ui_keys[ HPKEY_RIGHT ].right = "PASTE";
+    ui_keys[ HP50g_KEY_RIGHT ].left = "END";
+    ui_keys[ HP50g_KEY_RIGHT ].right = "PASTE";
 
-    ui_keys[ HPKEY_M ].label = "STO⏵";
-    ui_keys[ HPKEY_M ].left = "RCL";
-    ui_keys[ HPKEY_M ].right = "PREV.M";
+    ui_keys[ HP50g_KEY_M ].label = "STO⏵";
+    ui_keys[ HP50g_KEY_M ].left = "RCL";
+    ui_keys[ HP50g_KEY_M ].right = "PREV.M";
 
-    for ( int i = HPKEY_N; i <= HPKEY_O; i++ ) {
+    for ( int i = HP50g_KEY_N; i <= HP50g_KEY_O; i++ ) {
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ HPKEY_P ].label = "MENU";
+    ui_keys[ HP50g_KEY_P ].label = "MENU";
 
-    ui_keys[ HPKEY_BACKSPACE ].left = "";
+    ui_keys[ HP50g_KEY_BACKSPACE ].left = "";
 
-    for ( int i = HPKEY_S; i <= HPKEY_U; i++ )
+    for ( int i = HP50g_KEY_S; i <= HP50g_KEY_U; i++ )
         ui_keys[ i ].right = NULL;
 
-    for ( int i = HPKEY_ALPHA; i <= HPKEY_9; i++ )
+    for ( int i = HP50g_KEY_ALPHA; i <= HP50g_KEY_9; i++ )
         ui_keys[ i ].left = "";
 
-    ui_keys[ HPKEY_8 ].right = NULL;
+    ui_keys[ HP50g_KEY_8 ].right = NULL;
 
-    for ( int i = HPKEY_4; i <= HPKEY_6; i++ ) {
+    for ( int i = HP50g_KEY_4; i <= HP50g_KEY_6; i++ ) {
         ui_keys[ i ].left = "";
         ui_keys[ i ].right = NULL;
     }
 
-    ui_keys[ HPKEY_2 ].left = "";
+    ui_keys[ HP50g_KEY_2 ].left = "";
 
-    ui_keys[ HPKEY_ON ].left = "";
-    ui_keys[ HPKEY_ON ].below = NULL;
+    ui_keys[ HP50g_KEY_ON ].left = "";
+    ui_keys[ HP50g_KEY_ON ].below = NULL;
 
-    ui_keys[ HPKEY_ENTER ].left = "";
+    ui_keys[ HP50g_KEY_ENTER ].left = "";
 }
 
 /********************/

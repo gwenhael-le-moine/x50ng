@@ -5,68 +5,68 @@
 #  include "x50ng.h"
 
 typedef enum {
-    HPKEY_A = 0,
-    HPKEY_B,
-    HPKEY_C,
-    HPKEY_D,
-    HPKEY_E,
-    HPKEY_F,
+    HP50g_KEY_A = 0,
+    HP50g_KEY_B,
+    HP50g_KEY_C,
+    HP50g_KEY_D,
+    HP50g_KEY_E,
+    HP50g_KEY_F,
 
-    HPKEY_G,
-    HPKEY_H,
-    HPKEY_I,
-    HPKEY_UP,
-    HPKEY_J, /* 10 */
+    HP50g_KEY_G,
+    HP50g_KEY_H,
+    HP50g_KEY_I,
+    HP50g_KEY_UP,
+    HP50g_KEY_J, /* 10 */
 
-    HPKEY_K,
-    HPKEY_L,
-    HPKEY_LEFT,
-    HPKEY_DOWN,
-    HPKEY_RIGHT,
+    HP50g_KEY_K,
+    HP50g_KEY_L,
+    HP50g_KEY_LEFT,
+    HP50g_KEY_DOWN,
+    HP50g_KEY_RIGHT,
 
-    HPKEY_M,
-    HPKEY_N,
-    HPKEY_O,
-    HPKEY_P,
-    HPKEY_BACKSPACE, /* 20 */
+    HP50g_KEY_M,
+    HP50g_KEY_N,
+    HP50g_KEY_O,
+    HP50g_KEY_P,
+    HP50g_KEY_BACKSPACE, /* 20 */
 
-    HPKEY_Q,
-    HPKEY_R,
-    HPKEY_S,
-    HPKEY_T,
-    HPKEY_U,
+    HP50g_KEY_Q,
+    HP50g_KEY_R,
+    HP50g_KEY_S,
+    HP50g_KEY_T,
+    HP50g_KEY_U,
 
-    HPKEY_ENTER,
-    HPKEY_V,
-    HPKEY_W,
-    HPKEY_X,
-    HPKEY_Y, /* 30 */
+    HP50g_KEY_ENTER,
+    HP50g_KEY_V,
+    HP50g_KEY_W,
+    HP50g_KEY_X,
+    HP50g_KEY_Y, /* 30 */
 
-    HPKEY_ALPHA,
-    HPKEY_7,
-    HPKEY_8,
-    HPKEY_9,
-    HPKEY_Z,
+    HP50g_KEY_ALPHA,
+    HP50g_KEY_7,
+    HP50g_KEY_8,
+    HP50g_KEY_9,
+    HP50g_KEY_Z,
 
-    HPKEY_SHIFT_LEFT,
-    HPKEY_4,
-    HPKEY_5,
-    HPKEY_6,
-    HPKEY_MULTIPLY, /* 40 */
+    HP50g_KEY_SHIFT_LEFT,
+    HP50g_KEY_4,
+    HP50g_KEY_5,
+    HP50g_KEY_6,
+    HP50g_KEY_MULTIPLY, /* 40 */
 
-    HPKEY_SHIFT_RIGHT,
-    HPKEY_1,
-    HPKEY_2,
-    HPKEY_3,
-    HPKEY_MINUS,
+    HP50g_KEY_SHIFT_RIGHT,
+    HP50g_KEY_1,
+    HP50g_KEY_2,
+    HP50g_KEY_3,
+    HP50g_KEY_MINUS,
 
-    HPKEY_ON,
-    HPKEY_0,
-    HPKEY_PERIOD,
-    HPKEY_SPACE,
-    HPKEY_PLUS, /* 50 */
+    HP50g_KEY_ON,
+    HP50g_KEY_0,
+    HP50g_KEY_PERIOD,
+    HP50g_KEY_SPACE,
+    HP50g_KEY_PLUS, /* 50 */
 
-    NB_KEYS
+    NB_HP50g_KEYS
 } hp50g_keynames_t;
 
 typedef struct {
@@ -80,7 +80,7 @@ typedef struct {
     int state_pixel_index;
 } x50ng_annunciator_t;
 
-extern x50ng_key_t x50ng_keys[ NB_KEYS ];
+extern x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ];
 extern x50ng_annunciator_t x50ng_annunciators[ 6 ];
 
 extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
@@ -95,6 +95,6 @@ extern bool is_key_pressed( int hpkey );
 extern unsigned char get_annunciators( void );
 extern bool get_display_state( void );
 extern void get_lcd_buffer( int* target );
-/* extern int get_contrast( void ); */
+extern int get_contrast( void );
 
 #endif /* !(_X50NG_EMULATOR_H) */

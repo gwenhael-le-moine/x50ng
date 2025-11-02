@@ -23,67 +23,67 @@
 
 x50ng_t* x50ng;
 
-x50ng_key_t x50ng_keys[ NB_KEYS ] = {
-    {.column = 5, .row = 1, .eint = 1, .pressed = false},
-    {.column = 5, .row = 2, .eint = 2, .pressed = false},
-    {.column = 5, .row = 3, .eint = 3, .pressed = false},
-    {.column = 5, .row = 4, .eint = 4, .pressed = false},
-    {.column = 5, .row = 5, .eint = 5, .pressed = false},
-    {.column = 5, .row = 6, .eint = 6, .pressed = false},
+x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
+    {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 5, .row = 2, .eint = -1 /* 2 */, .pressed = false},
+    {.column = 5, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 5, .row = 4, .eint = -1 /* 4 */, .pressed = false},
+    {.column = 5, .row = 5, .eint = -1 /* 5 */, .pressed = false},
+    {.column = 5, .row = 6, .eint = -1 /* 6 */, .pressed = false},
 
-    {.column = 5, .row = 7, .eint = 7, .pressed = false},
-    {.column = 6, .row = 5, .eint = 5, .pressed = false},
-    {.column = 6, .row = 6, .eint = 6, .pressed = false},
-    {.column = 6, .row = 1, .eint = 1, .pressed = false},
-    {.column = 6, .row = 7, .eint = 7, .pressed = false},
-    {.column = 7, .row = 1, .eint = 1, .pressed = false},
-    {.column = 7, .row = 2, .eint = 2, .pressed = false},
+    {.column = 5, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 6, .row = 5, .eint = -1 /* 5 */, .pressed = false},
+    {.column = 6, .row = 6, .eint = -1 /* 6 */, .pressed = false},
+    {.column = 6, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 6, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 7, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 7, .row = 2, .eint = -1 /* 2 */, .pressed = false},
 
-    {.column = 6, .row = 2, .eint = 2, .pressed = false},
-    {.column = 6, .row = 3, .eint = 3, .pressed = false},
-    {.column = 6, .row = 4, .eint = 4, .pressed = false},
+    {.column = 6, .row = 2, .eint = -1 /* 2 */, .pressed = false},
+    {.column = 6, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 6, .row = 4, .eint = -1 /* 4 */, .pressed = false},
 
-    {.column = 4, .row = 1, .eint = 1, .pressed = false},
-    {.column = 3, .row = 1, .eint = 1, .pressed = false},
-    {.column = 2, .row = 1, .eint = 1, .pressed = false},
-    {.column = 1, .row = 1, .eint = 1, .pressed = false},
-    {.column = 0, .row = 1, .eint = 1, .pressed = false},
+    {.column = 4, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 3, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 2, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 1, .row = 1, .eint = -1 /* 1 */, .pressed = false},
+    {.column = 0, .row = 1, .eint = -1 /* 1 */, .pressed = false},
 
-    {.column = 4, .row = 2, .eint = 2, .pressed = false},
-    {.column = 3, .row = 2, .eint = 2, .pressed = false},
-    {.column = 2, .row = 2, .eint = 2, .pressed = false},
-    {.column = 1, .row = 2, .eint = 2, .pressed = false},
-    {.column = 0, .row = 2, .eint = 2, .pressed = false},
+    {.column = 4, .row = 2, .eint = -1 /* 2 */, .pressed = false},
+    {.column = 3, .row = 2, .eint = -1 /* 2 */, .pressed = false},
+    {.column = 2, .row = 2, .eint = -1 /* 2 */, .pressed = false},
+    {.column = 1, .row = 2, .eint = -1 /* 2 */, .pressed = false},
+    {.column = 0, .row = 2, .eint = -1 /* 2 */, .pressed = false},
 
-    {.column = 0, .row = 7, .eint = 7, .pressed = false},
-    {.column = 4, .row = 3, .eint = 3, .pressed = false},
-    {.column = 3, .row = 3, .eint = 3, .pressed = false},
-    {.column = 2, .row = 3, .eint = 3, .pressed = false},
-    {.column = 1, .row = 3, .eint = 3, .pressed = false},
+    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 4, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 3, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 2, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 1, .row = 3, .eint = -1 /* 3 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 4, .pressed = false}, /* HPKEY_ALPHA */
-    {.column = 3, .row = 4, .eint = 4, .pressed = false},
-    {.column = 2, .row = 4, .eint = 4, .pressed = false},
-    {.column = 1, .row = 4, .eint = 4, .pressed = false},
-    {.column = 0, .row = 3, .eint = 3, .pressed = false},
+    {.column = 0, .row = 0, .eint = 4,          .pressed = false}, /* HP50g_KEY_ALPHA */
+    {.column = 3, .row = 4, .eint = -1 /* 4 */, .pressed = false},
+    {.column = 2, .row = 4, .eint = -1 /* 4 */, .pressed = false},
+    {.column = 1, .row = 4, .eint = -1 /* 4 */, .pressed = false},
+    {.column = 0, .row = 3, .eint = -1 /* 3 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 5, .pressed = false}, /* HPKEY_SHIFT_LEFT */
-    {.column = 3, .row = 5, .eint = 5, .pressed = false},
-    {.column = 2, .row = 5, .eint = 5, .pressed = false},
-    {.column = 1, .row = 5, .eint = 5, .pressed = false},
-    {.column = 0, .row = 4, .eint = 4, .pressed = false},
+    {.column = 0, .row = 0, .eint = 5,          .pressed = false}, /* HP50g_KEY_SHIFT_LEFT */
+    {.column = 3, .row = 5, .eint = -1 /* 5 */, .pressed = false},
+    {.column = 2, .row = 5, .eint = -1 /* 5 */, .pressed = false},
+    {.column = 1, .row = 5, .eint = -1 /* 5 */, .pressed = false},
+    {.column = 0, .row = 4, .eint = -1 /* 4 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 6, .pressed = false}, /* HPKEY_SHIFT_RIGHT */
-    {.column = 3, .row = 6, .eint = 6, .pressed = false},
-    {.column = 2, .row = 6, .eint = 6, .pressed = false},
-    {.column = 1, .row = 6, .eint = 6, .pressed = false},
-    {.column = 0, .row = 5, .eint = 5, .pressed = false},
+    {.column = 0, .row = 0, .eint = 6,          .pressed = false}, /* HP50g_KEY_SHIFT_RIGHT */
+    {.column = 3, .row = 6, .eint = -1 /* 6 */, .pressed = false},
+    {.column = 2, .row = 6, .eint = -1 /* 6 */, .pressed = false},
+    {.column = 1, .row = 6, .eint = -1 /* 6 */, .pressed = false},
+    {.column = 0, .row = 5, .eint = -1 /* 5 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 0, .pressed = false}, /* HPKEY_ON */
-    {.column = 3, .row = 7, .eint = 7, .pressed = false},
-    {.column = 2, .row = 7, .eint = 7, .pressed = false},
-    {.column = 1, .row = 7, .eint = 7, .pressed = false},
-    {.column = 0, .row = 6, .eint = 6, .pressed = false},
+    {.column = 0, .row = 0, .eint = 0,          .pressed = false}, /* HP50g_KEY_ON */
+    {.column = 3, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 2, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 1, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 0, .row = 6, .eint = -1 /* 6 */, .pressed = false},
 };
 #define KEYBOARD x50ng_keys
 
@@ -318,7 +318,7 @@ void emulator_exit( void )
 
 static void x50ng_set_key_state( const x50ng_key_t key, bool state )
 {
-    if ( key.row == 0 && key.column == 0 )
+    if ( key.eint >= 0 /* && key.row == 0 && key.column == 0 */ )
         s3c2410_io_port_f_set_bit( x50ng, key.eint, state );
     else
         s3c2410_io_port_g_update( x50ng, key.column, key.row, state );
@@ -338,7 +338,7 @@ void release_key( int hpkey )
 
 bool is_key_pressed( int hpkey )
 {
-    if ( hpkey < 0 || hpkey > NB_KEYS )
+    if ( hpkey < 0 || hpkey > NB_HP50g_KEYS )
         return false;
 
     return KEYBOARD[ hpkey ].pressed;
@@ -363,6 +363,8 @@ unsigned char get_annunciators( void )
 
     return annunciators;
 }
+
+int get_contrast( void ) { return 19; }
 
 void get_lcd_buffer( int* target )
 {
