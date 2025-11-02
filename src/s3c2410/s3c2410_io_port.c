@@ -315,9 +315,11 @@ static void s3c2410_io_port_write( void* opaque, target_phys_addr_t offset, uint
     }
 }
 
-void s3c2410_io_port_g_update( x50ng_t* x50ng, int column, int row, unsigned char columnbit, unsigned char rowbit, uint32_t new_state )
+void s3c2410_io_port_g_update( x50ng_t* x50ng, int column, int row, uint32_t new_state )
 {
     s3c2410_io_port_t* io = x50ng->s3c2410_io_port;
+    unsigned char columnbit = 1 << column;
+    unsigned char rowbit = 1 << row;
     uint32_t oldvalue, newvalue, change;
     int n;
 

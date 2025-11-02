@@ -72,8 +72,6 @@ typedef enum {
 typedef struct {
     int column;
     int row;
-    unsigned char columnbit;
-    unsigned char rowbit;
     int eint;
     bool pressed;
 } x50ng_key_t;

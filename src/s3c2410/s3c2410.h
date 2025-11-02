@@ -362,7 +362,7 @@ extern int x50ng_s3c2410_adc_init(x50ng_t *x50ng);
 extern int x50ng_s3c2410_spi_init(x50ng_t *x50ng);
 extern int x50ng_s3c2410_sdi_init(x50ng_t *x50ng);
 
-extern void s3c2410_io_port_g_update(x50ng_t *x50ng, int column, int row, unsigned char columnbit, unsigned char rowbit, uint32_t new_state);
+extern void s3c2410_io_port_g_update(x50ng_t *x50ng, int column, int row, uint32_t new_state);
 extern void s3c2410_io_port_f_set_bit(x50ng_t *x50ng, int n, uint32_t set);
 
 extern int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
