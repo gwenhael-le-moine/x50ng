@@ -3,8 +3,6 @@
 
 #  include "../types.h" /* hdw_t */
 
-#  include "inner.h"
-
 void ui_handle_pending_inputs( void* data );
 void ui_refresh_output( void* data );
 void ui_init( hdw_t* hdw_state );

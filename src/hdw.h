@@ -1,8 +1,9 @@
 #ifndef _X50NG_H
 #define _X50NG_H
 
-#include <sys/types.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <sys/types.h>
 #include <sys/times.h>
 
 #include <glib.h>
@@ -76,5 +77,8 @@ struct hdw_t {
 
     GKeyFile* state;
 };
+
+extern void hdw_set_idle( hdw_t*, hdw_arm_idle_t idle );
+extern void hdw_stop( hdw_t* );
 
 #endif /* !(_X50NG_H) */

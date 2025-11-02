@@ -9,6 +9,7 @@
 
 #include "../options.h"
 #include "../types.h"
+#include "../hdw.h"
 
 #include "../s3c2410/s3c2410.h"
 

@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../emulator.h"
+#include "../ui/api.h"
+
 #include "../module.h"
 
 #include "s3c2410.h"

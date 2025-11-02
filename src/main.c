@@ -14,12 +14,12 @@
 
 #include <memory.h>
 
-#include "ui/ui.h"
+#include "ui/common.h"
+#include "ui/api.h"
 
+#include "hdw.h"
 #include "timer.h"
 #include "options.h"
-
-#include "emulator.h"
 
 config_t opt;
 
@@ -34,8 +34,7 @@ void signal_handler( int sig )
         case SIGINT:
         case SIGQUIT:
         case SIGTERM:
-            hdw_state->arm_exit = 1;
-            cpu_exit( hdw_state->env );
+            hdw_stop( hdw_state );
             break;
         case SIGUSR1:
             //		stop_simulator = 1;

@@ -8,8 +8,9 @@
 #include "../s3c2410/s3c2410.h"
 #include "../gdbstub.h"
 #include "../types.h"
-#include "../emulator.h"
+#include "../hdw.h"
 
+#include "api.h"
 #include "inner.h"
 
 // #define TEST_PASTE true
@@ -466,8 +467,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
 
         case GDK_KEY_F7:
         case GDK_KEY_F10:
-            hdw_state->arm_exit = 1;
-            cpu_exit( hdw_state->env );
+            hdw_stop( hdw_state );
             return GDK_EVENT_STOP;
 
         case GDK_KEY_F12:

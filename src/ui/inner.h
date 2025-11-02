@@ -1,8 +1,9 @@
 #ifndef _UI_INNER_H
 #  define _UI_INNER_H 1
 
-#  include "../emulator.h"
 #  include "../types.h" /* hdw_t */
+
+#  include "api.h"
 
 #  define UI_EVENTS_REFRESH_INTERVAL 30000LL
 #  define UI_LCD_REFRESH_INTERVAL 50000LL
@@ -10,9 +11,6 @@
 // #  define NB_ANNUNCIATORS 6
 
 #  define KB_NB_ROWS ( 10 )
-
-#  define LCD_WIDTH ( 131 )
-#  define LCD_HEIGHT ( 80 )
 
 typedef enum { KEY_PRESS, KEY_RELEASE } key_event_t;
 

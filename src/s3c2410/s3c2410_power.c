@@ -5,7 +5,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "../emulator.h"
+#include "../ui/api.h"
+
 #include "../module.h"
 
 #include "s3c2410.h"

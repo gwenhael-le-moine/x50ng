@@ -1,9 +1,11 @@
 #ifndef _X50NG_EMULATOR_H
 #  define _X50NG_EMULATOR_H 1
 
-#  include "types.h"
-#  include "hdw.h"
-#  include "options.h"
+#  include "../types.h"
+#  include "../options.h"
+
+#  define LCD_WIDTH ( 131 )
+#  define LCD_HEIGHT ( 80 )
 
 #  define NB_ANNUNCIATORS ( 6 )
 
@@ -88,8 +90,6 @@ extern int x50ng_annunciators_index[ NB_ANNUNCIATORS ];
 /*************/
 /* functions */
 /*************/
-extern void hdw_set_idle( hdw_t*, hdw_arm_idle_t idle );
-
 extern hdw_t* emulator_init( config_t config );
 extern void emulator_exit( config_t config );
 

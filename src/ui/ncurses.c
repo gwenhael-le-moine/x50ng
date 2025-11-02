@@ -6,8 +6,10 @@
 #include <curses.h>
 
 #include "../options.h"
-#include "../emulator.h"
+#include "../types.h"
+#include "../hdw.h"
 
+#include "api.h"
 #include "inner.h"
 
 #define LCD_OFFSET_X 1
@@ -450,8 +452,7 @@ void ncurses_handle_pending_inputs( hdw_t* hdw_state )
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                hdw_state->arm_exit = 1;
-                cpu_exit( hdw_state->env );
+                hdw_stop( hdw_state );
                 break;
         }
     }

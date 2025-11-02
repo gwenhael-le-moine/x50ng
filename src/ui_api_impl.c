@@ -9,17 +9,16 @@
 
 #include "s3c2410/s3c2410.h"
 
-#include "ui/ui.h"
+#include "ui/common.h"
+#include "ui/api.h"
 
 #include "list.h"
-#include "ui/inner.h"
 #include "hdw.h"
 #include "gdbstub.h"
 #include "options.h"
 #include "sram.h"
 #include "flash.h"
 #include "module.h"
-#include "emulator.h"
 
 static hdw_t* hdw_state;
 
@@ -214,24 +213,6 @@ uint32_t do_arm_semihosting( CPUState* env )
     }
 
     return 0;
-}
-
-void hdw_set_idle( hdw_t* hdw_state, hdw_arm_idle_t idle )
-{
-#ifdef DEBUG_HDW_ARM_IDLE
-    if ( idle != hdw_state->arm_idle ) {
-        printf( "%s: arm_idle %u, idle %u\n", __func__, hdw_state->arm_idle, idle );
-    }
-#endif
-
-    hdw_state->arm_idle = idle;
-
-    if ( hdw_state->arm_idle == HDW_ARM_RUN )
-        hdw_state->env->halted = 0;
-    else {
-        hdw_state->env->halted = 1;
-        cpu_exit( hdw_state->env );
-    }
 }
 
 hdw_t* emulator_init( config_t config )
