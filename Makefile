@@ -159,6 +159,7 @@ SRCS = \
 	./src/ui/gtk.c \
 	./src/ui/ncurses.c \
 	./src/ui/common.c \
+	./src/ui/hp50g.c \
 	./src/hdw.c \
 	./src/ui_api_impl.c \
 	./src/flash.c \

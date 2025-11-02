@@ -17,18 +17,18 @@
 
 typedef struct {
     hdw_t* hdw_state;
-    const ui_button_t* key;
+    const button_t* key;
     GtkWidget* button;
     bool down;
     bool hold;
-} gtk_ui_button_t;
+} gtk_button_t;
 
 /*************/
 /* Variables */
 /*************/
 static GtkWidget* gtk_ui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
-static gtk_ui_button_t* gtk_ui_buttons;
+static gtk_button_t* gtk_ui_buttons;
 
 static GtkWidget* gtk_ui_window;
 
@@ -46,12 +46,12 @@ static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state );
 /*************/
 /* Functions */
 /*************/
-static void gtk_ui_release_button( gtk_ui_button_t* button )
+static void gtk_ui_release_button( gtk_button_t* button )
 {
     if ( !button->down )
         return;
 
-    const ui_button_t* key = button->key;
+    const button_t* key = button->key;
 
     button->down = false;
     button->hold = false;
@@ -61,9 +61,9 @@ static void gtk_ui_release_button( gtk_ui_button_t* button )
     release_key( key->hpkey );
 }
 
-static bool gtk_ui_press_button( gtk_ui_button_t* button, bool hold )
+static bool gtk_ui_press_button( gtk_button_t* button, bool hold )
 {
-    const ui_button_t* key = button->key;
+    const button_t* key = button->key;
 
     if ( button->down ) {
         if ( button->hold && hold ) {
@@ -83,23 +83,23 @@ static bool gtk_ui_press_button( gtk_ui_button_t* button, bool hold )
     return GDK_EVENT_STOP;
 }
 
-static void gtk_ui_react_to_button_press( GtkGesture* _gesture, int _n_press, double _x, double _y, gtk_ui_button_t* button )
+static void gtk_ui_react_to_button_press( GtkGesture* _gesture, int _n_press, double _x, double _y, gtk_button_t* button )
 {
-    const ui_button_t* key = button->key;
+    const button_t* key = button->key;
 
     gtk_ui_press_button( button, false );
 
     press_key( key->hpkey );
 }
 
-static void gtk_ui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, gtk_ui_button_t* button )
+static void gtk_ui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, gtk_button_t* button )
 {
     gtk_ui_release_button( button );
 }
 
-static void gtk_ui_react_to_button_right_click_release( gtk_ui_button_t* button, GtkGesture* _gesture, int _n_press, double _x, double _y )
+static void gtk_ui_react_to_button_right_click_release( gtk_button_t* button, GtkGesture* _gesture, int _n_press, double _x, double _y )
 {
-    const ui_button_t* key = button->key;
+    const button_t* key = button->key;
 
     button->down = true;
     button->hold = true;
@@ -685,18 +685,18 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
     gtk_box_append( GTK_BOX( downer_right_container ), low_keyboard_container );
 
-    gtk_ui_button_t* button;
+    gtk_button_t* button;
 
     GtkWidget* rows_containers[ KB_NB_ROWS ];
     GtkWidget* keys_containers[ NB_HP50g_KEYS ];
     GtkWidget* keys_top_labels_containers[ NB_HP50g_KEYS ];
 
-    gtk_ui_buttons = malloc( NB_HP50g_KEYS * sizeof( gtk_ui_button_t ) );
+    gtk_ui_buttons = malloc( NB_HP50g_KEYS * sizeof( gtk_button_t ) );
     if ( NULL == gtk_ui_buttons ) {
         fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return;
     }
-    memset( gtk_ui_buttons, 0, NB_HP50g_KEYS * sizeof( gtk_ui_button_t ) );
+    memset( gtk_ui_buttons, 0, NB_HP50g_KEYS * sizeof( gtk_button_t ) );
 
     int key_index = 0;
     int nb_keys_in_row = 0;
@@ -731,7 +731,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
             button = &gtk_ui_buttons[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
             button->hdw_state = hdw_state;
-            button->key = &ui_buttons_hp50g[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
+            button->key = &buttons_hp50g[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
             gtk_widget_add_css_class( keys_top_labels_containers[ key_index ], "top-labels-container" );

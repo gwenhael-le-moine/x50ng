@@ -14,7 +14,7 @@
 
 typedef enum { KEY_PRESS, KEY_RELEASE } key_event_t;
 
-typedef struct {
+typedef struct button_t {
     const char* css_class;
     const char* css_id;
     const char* label;
@@ -24,15 +24,15 @@ typedef struct {
     const char* below;
 
     hp50g_keynames_t hpkey;
-} ui_button_t;
+} button_t;
 
-extern ui_button_t ui_buttons_hp50g[ NB_HP50g_KEYS ];
+extern char* ui_annunciators[ NB_ANNUNCIATORS ];
+
+extern button_t buttons_hp50g[ NB_HP50g_KEYS ];
 extern int buttons_order_normal[ NB_HP50g_KEYS ];
 extern int buttons_order_legacy[ NB_HP50g_KEYS ];
 #  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
 
-extern char* ui_annunciators[ NB_ANNUNCIATORS ];
-
-extern void newrplify_ui_buttons_hp50g();
+extern void newrplify_buttons_hp50g();
 
 #endif /* !(_UI_INNER_H) */
