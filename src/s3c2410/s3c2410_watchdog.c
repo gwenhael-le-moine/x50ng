@@ -90,34 +90,34 @@ static void s3c2410_watchdog_tick( void* data )
     timer_mod( watchdog->timer, timer_get_clock() + watchdog->interval );
 }
 
-unsigned long s3c2410_watchdog_next_interrupt( hdw_t* hdw_state )
-{
-    s3c2410_watchdog_t* watchdog = hdw_state->s3c2410_watchdog;
-    unsigned long irq;
-    unsigned long ticks;
+/* static unsigned long s3c2410_watchdog_next_interrupt( hdw_t* hdw_state ) */
+/* { */
+/*     s3c2410_watchdog_t* watchdog = hdw_state->s3c2410_watchdog; */
+/*     unsigned long irq; */
+/*     unsigned long ticks; */
 
-    ticks = timer_get_clock();
+/*     ticks = timer_get_clock(); */
 
-    if ( !( watchdog->wtcon & 0x0020 ) )
-        return ~( 0 );
+/*     if ( !( watchdog->wtcon & 0x0020 ) ) */
+/*         return ~( 0 ); */
 
-    if ( is_timer_pendinig( watchdog->timer ) )
-        irq = timer_expires_when( watchdog->timer ) - ticks;
-    else
-        irq = 0;
+/*     if ( is_timer_pendinig( watchdog->timer ) ) */
+/*         irq = timer_expires_when( watchdog->timer ) - ticks; */
+/*     else */
+/*         irq = 0; */
 
-    if ( watchdog->wtcnt )
-        irq += ( watchdog->wtcnt - 1 ) * watchdog->interval;
-    else
-        irq += watchdog->wtdat * watchdog->interval;
+/*     if ( watchdog->wtcnt ) */
+/*         irq += ( watchdog->wtcnt - 1 ) * watchdog->interval; */
+/*     else */
+/*         irq += watchdog->wtdat * watchdog->interval; */
 
-#ifdef DEBUG_S3C2410_WATCHDOG
-    printf( "WATCHDOG: wtcnt %u, interval %lu, expires %llu, next irq %lu\n", watchdog->wtcnt, watchdog->interval,
-            ( unsigned long long )( is_timer_pendinig( watchdog->timer ) ? timer_expires_when( watchdog->timer ) : 0 ), irq );
-#endif
+/* #ifdef DEBUG_S3C2410_WATCHDOG */
+/*     printf( "WATCHDOG: wtcnt %u, interval %lu, expires %llu, next irq %lu\n", watchdog->wtcnt, watchdog->interval, */
+/*             ( unsigned long long )( is_timer_pendinig( watchdog->timer ) ? timer_expires_when( watchdog->timer ) : 0 ), irq ); */
+/* #endif */
 
-    return irq;
-}
+/*     return irq; */
+/* } */
 
 static int s3c2410_watchdog_update( s3c2410_watchdog_t* watchdog )
 {

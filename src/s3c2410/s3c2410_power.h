@@ -22,4 +22,6 @@
 
 extern int s3c2410_idle;
 
+extern int s3c2410_init_module_power( hdw_t* hdw_state );
+
 #endif /* !(_S3C2410_POWER_H) */

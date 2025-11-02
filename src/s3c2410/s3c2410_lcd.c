@@ -9,6 +9,7 @@
 #include "../module.h"
 
 #include "s3c2410.h"
+#include "s3c2410_lcd.h"
 
 static int s3c2410_lcd_data_init( s3c2410_lcd_t* lcd )
 {

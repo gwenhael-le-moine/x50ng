@@ -7,11 +7,12 @@
 #include <fcntl.h>
 #include <sys/times.h>
 
-#include "../options.h"
-#include "../types.h"
 #include "../hdw.h"
+#include "../options.h"
+#include "../timer.h"
+#include "../types.h"
 
-#include "../s3c2410/s3c2410.h"
+// #include "../s3c2410/s3c2410.h"
 
 #include "inner.h"
 #include "gtk.h"

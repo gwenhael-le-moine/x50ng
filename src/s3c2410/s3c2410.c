@@ -2,7 +2,30 @@
 #include <fcntl.h>
 #include <sys/times.h>
 
+/* #include "s3c2410.h" */
+/* #include "s3c2410_intc.h" */
+/* #include "s3c2410_io_port.h" */
+/* #include "s3c2410_lcd.h" */
+/* #include "s3c2410_sdi.h" */
+
 #include "s3c2410.h"
+#include "s3c2410_adc.h"
+// #include "s3c2410_arm.h"
+#include "s3c2410_intc.h"
+#include "s3c2410_io_port.h"
+#include "s3c2410_lcd.h"
+#include "s3c2410_memc.h"
+// #include "s3c2410_mmu.h"
+#include "s3c2410_nand.h"
+#include "s3c2410_power.h"
+#include "s3c2410_rtc.h"
+#include "s3c2410_sdi.h"
+#include "s3c2410_spi.h"
+#include "s3c2410_sram.h"
+#include "s3c2410_timer.h"
+#include "s3c2410_uart.h"
+#include "s3c2410_usbdev.h"
+#include "s3c2410_watchdog.h"
 
 /*
  * Boot SRAM:			0x40000000

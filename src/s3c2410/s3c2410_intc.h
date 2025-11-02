@@ -1,5 +1,5 @@
-#ifndef _X50NG_S3C2410_INTC_H
-#  define _X50NG_S3C2410_INTC_H 1
+#ifndef _S3C2410_INTC_H
+#  define _S3C2410_INTC_H 1
 
 #  include "../types.h"
 
@@ -62,10 +62,12 @@
 #  define ARB6_SEL_SHIFT 19
 #  define ARBx_SEL_MASK 3
 
-void s3c2410_intc_sub_assert( hdw_t* hdw_state, int sub_irq, int level );
-void s3c2410_intc_sub_deassert( hdw_t* hdw_state, int sub_irq );
+extern void s3c2410_intc_sub_assert( hdw_t* hdw_state, int sub_irq, int level );
+extern void s3c2410_intc_sub_deassert( hdw_t* hdw_state, int sub_irq );
 
-void s3c2410_intc_assert( hdw_t* hdw_state, int irq, int level );
-void s3c2410_intc_deassert( hdw_t* hdw_state, int irq );
+extern void s3c2410_intc_assert( hdw_t* hdw_state, int irq, int level );
+extern void s3c2410_intc_deassert( hdw_t* hdw_state, int irq );
 
-#endif /* !(_X50NG_S3C2410_INTC_H) */
+extern int s3c2410_init_module_intc( hdw_t* hdw_state );
+
+#endif /* !(_S3C2410_INTC_H) */

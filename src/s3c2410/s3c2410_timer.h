@@ -41,7 +41,9 @@
 #  define TCON_TIMER0_UPDATE 0x00000002
 #  define TCON_TIMER0_START 0x00000001
 
-void s3c2410_run_timers( hdw_t* hdw_state );
-clock_t s3c2410_next_timer( hdw_t* hdw_state );
+extern void s3c2410_run_timers( hdw_t* hdw_state );
+extern clock_t s3c2410_next_timer( hdw_t* hdw_state );
+
+extern int s3c2410_init_module_timer( hdw_t* hdw_state );
 
 #endif /* !(_S3C2410_TIMER_H) */

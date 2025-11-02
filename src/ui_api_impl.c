@@ -7,7 +7,10 @@
 
 #include <gtk/gtk.h>
 
-#include "s3c2410/s3c2410.h"
+#include "s3c2410/s3c2410_arm.h"
+#include "s3c2410/s3c2410_io_port.h"
+#include "s3c2410/s3c2410_lcd.h"
+#include "s3c2410/s3c2410_sdi.h"
 
 #include "ui/common.h"
 #include "ui/api.h"

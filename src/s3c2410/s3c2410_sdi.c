@@ -10,7 +10,7 @@
 #include "../module.h"
 
 #include "s3c2410.h"
-
+#include "s3c2410_io_port.h"
 #include "block.h"
 
 // #define DEBUG_S3C2410_SDI 1

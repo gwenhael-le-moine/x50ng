@@ -1,5 +1,5 @@
-#ifndef _X50NG_S3C2410_H
-#define _X50NG_S3C2410_H 1
+#ifndef _S3C2410_H
+#define _S3C2410_H 1
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -316,64 +316,7 @@ typedef struct s3c2410_offset_t {
     uint32_t	*datap;
 } s3c2410_offset_t;
 
-typedef struct s3c2410_lcd_t {
-    uint32_t lcdcon1;
-    uint32_t lcdcon2;
-    uint32_t lcdcon3;
-    uint32_t lcdcon4;
-    uint32_t lcdcon5;
-    uint32_t lcdsaddr1;
-    uint32_t lcdsaddr2;
-    uint32_t lcdsaddr3;
-    uint32_t redlut;
-    uint32_t greenlut;
-    uint32_t bluelut;
-    uint32_t dithmode;
-    uint32_t tpal;
-    uint32_t lcdintpnd;
-    uint32_t lcdsrcpnd;
-    uint32_t lcdintmsk;
-    uint32_t lpcsel;
-    uint32_t __unknown_68;
-
-    unsigned int nr_regs;
-    s3c2410_offset_t* regs;
-
-    hdw_t* hdw_state;
-} s3c2410_lcd_t;
-
-
-extern int s3c2410_init_module_sram(hdw_t* hdw_state);
-extern int s3c2410_init_module_memc(hdw_t* hdw_state);
-extern int s3c2410_init_module_intc(hdw_t* hdw_state);
-extern int s3c2410_init_module_power(hdw_t* hdw_state);
-extern int s3c2410_init_module_lcd(hdw_t* hdw_state);
-extern int s3c2410_init_module_nand(hdw_t* hdw_state);
-extern int s3c2410_init_module_uart(hdw_t* hdw_state);
-extern int s3c2410_init_module_timer(hdw_t* hdw_state);
-extern int s3c2410_init_module_usbdev(hdw_t* hdw_state);
-extern int s3c2410_init_module_watchdog(hdw_t* hdw_state);
-extern int s3c2410_init_module_io_port(hdw_t* hdw_state);
-extern int s3c2410_init_module_rtc(hdw_t* hdw_state);
-extern int s3c2410_init_module_adc(hdw_t* hdw_state);
-extern int s3c2410_init_module_spi(hdw_t* hdw_state);
-extern int s3c2410_init_module_sdi(hdw_t* hdw_state);
-
-extern void s3c2410_io_port_g_update(hdw_t *hdw_state, int column, int row, uint32_t new_state);
-extern void s3c2410_io_port_f_set_bit(hdw_t *hdw_state, int n, uint32_t set);
-
-extern int s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
-
-extern unsigned long s3c2410_timer_next_interrupt(hdw_t* hdw_state);
-extern unsigned long s3c2410_watchdog_next_interrupt(hdw_t* hdw_state);
-
-/* s3c2410/s3c2410_sdi.c */
-extern void s3c2410_sdi_unmount( hdw_t* hdw_state );
-extern int s3c2410_sdi_mount( hdw_t* hdw_state, char* filename );
-extern bool s3c2410_sdi_is_mounted( hdw_t* hdw_state );
-extern void s3c2410_sdi_get_path( hdw_t* hdw_state, char** filename );
 
 extern int init_s3c2410(hdw_t* hdw_state);
-extern int init_s3c2410_arm(hdw_t* hdw_state);
 
-#endif /* !(_X50NG_S3C2410_H) */
+#endif /* !(_S3C2410_H) */

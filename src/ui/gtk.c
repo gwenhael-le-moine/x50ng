@@ -5,7 +5,7 @@
 
 #include "../options.h"
 #include "../module.h"
-#include "../s3c2410/s3c2410.h"
+#include "../s3c2410/s3c2410_sdi.h"
 #include "../gdbstub.h"
 #include "../types.h"
 #include "../hdw.h"
