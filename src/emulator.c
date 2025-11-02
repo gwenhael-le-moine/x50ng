@@ -87,8 +87,7 @@ x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
 };
 #define KEYBOARD x50ng_keys
 
-x50ng_annunciator_t x50ng_annunciators[ 6 ] = { { .state_pixel_index = 1 }, { .state_pixel_index = 2 }, { .state_pixel_index = 3 },
-                                                { .state_pixel_index = 4 }, { .state_pixel_index = 5 }, { .state_pixel_index = 0 } };
+int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
 
 /* LD TEMPO HACK */
 CPUState* __GLOBAL_env;
@@ -344,7 +343,7 @@ bool is_key_pressed( int hpkey )
     return KEYBOARD[ hpkey ].pressed;
 }
 
-bool get_display_state( void )
+bool is_display_on( void )
 {
     s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
 
@@ -358,7 +357,7 @@ unsigned char get_annunciators( void )
     char annunciators = 0;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; ++i )
-        if ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators[ i ].state_pixel_index ) > 0 )
+        if ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
             annunciators |= 0x01 << i;
 
     return annunciators;

@@ -16,7 +16,7 @@
 #include "gtk.h"
 #include "ncurses.h"
 
-x50ng_ui_key_t ui_keys[ NB_HP50g_KEYS ] = {
+ui_button_t ui_buttons_hp50g[ NB_HP50g_KEYS ] = {
     {.css_class = "menu",        .css_id = "F1", .label = "F1", .letter = "A", .left = "Y=", .right = NULL, .below = NULL, .hpkey = HP50g_KEY_A },
     {.css_class = "menu",
      .css_id = "F2",
@@ -422,7 +422,7 @@ x50ng_ui_key_t ui_keys[ NB_HP50g_KEYS ] = {
      .hpkey = HP50g_KEY_PLUS                                                                                                                    },
 };
 
-int keys_order_normal[ NB_HP50g_KEYS ] = {
+int buttons_order_normal[ NB_HP50g_KEYS ] = {
     HP50g_KEY_A,        HP50g_KEY_B,          HP50g_KEY_C,  HP50g_KEY_D,     HP50g_KEY_E,  HP50g_KEY_F,     HP50g_KEY_G,
     HP50g_KEY_H,        HP50g_KEY_I,          HP50g_KEY_UP, HP50g_KEY_J,     HP50g_KEY_K,  HP50g_KEY_L,     HP50g_KEY_LEFT,
     HP50g_KEY_DOWN,     HP50g_KEY_RIGHT,      HP50g_KEY_M,  HP50g_KEY_N,     HP50g_KEY_O,  HP50g_KEY_P,     HP50g_KEY_BACKSPACE,
@@ -433,7 +433,7 @@ int keys_order_normal[ NB_HP50g_KEYS ] = {
     HP50g_KEY_SPACE,    HP50g_KEY_ENTER,
 };
 
-int keys_order_legacy[ NB_HP50g_KEYS ] = {
+int buttons_order_legacy[ NB_HP50g_KEYS ] = {
     HP50g_KEY_A,     HP50g_KEY_B,          HP50g_KEY_C,  HP50g_KEY_D,     HP50g_KEY_E,  HP50g_KEY_F,        HP50g_KEY_G,
     HP50g_KEY_H,     HP50g_KEY_I,          HP50g_KEY_UP, HP50g_KEY_J,     HP50g_KEY_K,  HP50g_KEY_L,        HP50g_KEY_LEFT,
     HP50g_KEY_DOWN,  HP50g_KEY_RIGHT,      HP50g_KEY_M,  HP50g_KEY_N,     HP50g_KEY_O,  HP50g_KEY_P,        HP50g_KEY_BACKSPACE,
@@ -444,72 +444,71 @@ int keys_order_legacy[ NB_HP50g_KEYS ] = {
     HP50g_KEY_SPACE, HP50g_KEY_PLUS,
 };
 
-x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ] = { { .icon = "⮢" },  { .icon = "⮣" },  { .icon = "α" },
-                                                              { .icon = "🪫" }, { .icon = "⌛" }, { .icon = "⇄" } };
+char* ui_annunciators[ NB_ANNUNCIATORS ] = { "⮢", "⮣", "α", "🪫", "⌛", "⇄" };
 
 /*************/
 /* functions */
 /*************/
-void newrplify_ui_keys()
+void newrplify_ui_buttons_hp50g()
 {
     // modify keys' labeling for newRPL
     for ( int i = HP50g_KEY_A; i <= HP50g_KEY_F; i++ )
-        ui_keys[ i ].left = "";
+        ui_buttons_hp50g[ i ].left = "";
 
     for ( int i = HP50g_KEY_G; i <= HP50g_KEY_I; i++ ) {
-        ui_keys[ i ].label = "";
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
+        ui_buttons_hp50g[ i ].label = "";
+        ui_buttons_hp50g[ i ].left = "";
+        ui_buttons_hp50g[ i ].right = NULL;
     }
 
     for ( int i = HP50g_KEY_J; i <= HP50g_KEY_K; i++ ) {
-        ui_keys[ i ].label = "";
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
+        ui_buttons_hp50g[ i ].label = "";
+        ui_buttons_hp50g[ i ].left = "";
+        ui_buttons_hp50g[ i ].right = NULL;
     }
 
-    ui_keys[ HP50g_KEY_UP ].left = "UPDIR";
+    ui_buttons_hp50g[ HP50g_KEY_UP ].left = "UPDIR";
 
-    ui_keys[ HP50g_KEY_LEFT ].left = "BEG";
-    ui_keys[ HP50g_KEY_LEFT ].right = "COPY";
+    ui_buttons_hp50g[ HP50g_KEY_LEFT ].left = "BEG";
+    ui_buttons_hp50g[ HP50g_KEY_LEFT ].right = "COPY";
 
-    ui_keys[ HP50g_KEY_DOWN ].left = "CUT";
+    ui_buttons_hp50g[ HP50g_KEY_DOWN ].left = "CUT";
 
-    ui_keys[ HP50g_KEY_RIGHT ].left = "END";
-    ui_keys[ HP50g_KEY_RIGHT ].right = "PASTE";
+    ui_buttons_hp50g[ HP50g_KEY_RIGHT ].left = "END";
+    ui_buttons_hp50g[ HP50g_KEY_RIGHT ].right = "PASTE";
 
-    ui_keys[ HP50g_KEY_M ].label = "STO⏵";
-    ui_keys[ HP50g_KEY_M ].left = "RCL";
-    ui_keys[ HP50g_KEY_M ].right = "PREV.M";
+    ui_buttons_hp50g[ HP50g_KEY_M ].label = "STO⏵";
+    ui_buttons_hp50g[ HP50g_KEY_M ].left = "RCL";
+    ui_buttons_hp50g[ HP50g_KEY_M ].right = "PREV.M";
 
     for ( int i = HP50g_KEY_N; i <= HP50g_KEY_O; i++ ) {
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
+        ui_buttons_hp50g[ i ].left = "";
+        ui_buttons_hp50g[ i ].right = NULL;
     }
 
-    ui_keys[ HP50g_KEY_P ].label = "MENU";
+    ui_buttons_hp50g[ HP50g_KEY_P ].label = "MENU";
 
-    ui_keys[ HP50g_KEY_BACKSPACE ].left = "";
+    ui_buttons_hp50g[ HP50g_KEY_BACKSPACE ].left = "";
 
     for ( int i = HP50g_KEY_S; i <= HP50g_KEY_U; i++ )
-        ui_keys[ i ].right = NULL;
+        ui_buttons_hp50g[ i ].right = NULL;
 
     for ( int i = HP50g_KEY_ALPHA; i <= HP50g_KEY_9; i++ )
-        ui_keys[ i ].left = "";
+        ui_buttons_hp50g[ i ].left = "";
 
-    ui_keys[ HP50g_KEY_8 ].right = NULL;
+    ui_buttons_hp50g[ HP50g_KEY_8 ].right = NULL;
 
     for ( int i = HP50g_KEY_4; i <= HP50g_KEY_6; i++ ) {
-        ui_keys[ i ].left = "";
-        ui_keys[ i ].right = NULL;
+        ui_buttons_hp50g[ i ].left = "";
+        ui_buttons_hp50g[ i ].right = NULL;
     }
 
-    ui_keys[ HP50g_KEY_2 ].left = "";
+    ui_buttons_hp50g[ HP50g_KEY_2 ].left = "";
 
-    ui_keys[ HP50g_KEY_ON ].left = "";
-    ui_keys[ HP50g_KEY_ON ].below = NULL;
+    ui_buttons_hp50g[ HP50g_KEY_ON ].left = "";
+    ui_buttons_hp50g[ HP50g_KEY_ON ].below = NULL;
 
-    ui_keys[ HP50g_KEY_ENTER ].left = "";
+    ui_buttons_hp50g[ HP50g_KEY_ENTER ].left = "";
 }
 
 /********************/
@@ -525,7 +524,7 @@ void ui_handle_pending_inputs( void* data )
             break;
         case FRONTEND_GTK:
         default:
-            gui_handle_pending_inputs( x50ng );
+            gtk_ui_handle_pending_inputs( x50ng );
             break;
     }
 
@@ -542,7 +541,7 @@ void ui_refresh_output( void* data )
             break;
         case FRONTEND_GTK:
         default:
-            gui_refresh_lcd( x50ng );
+            gtk_ui_refresh_lcd( x50ng );
             break;
     }
 
@@ -552,7 +551,7 @@ void ui_refresh_output( void* data )
 void ui_init( x50ng_t* x50ng )
 {
     if ( opt.newrpl_keyboard )
-        newrplify_ui_keys();
+        newrplify_ui_buttons_hp50g();
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
@@ -560,7 +559,7 @@ void ui_init( x50ng_t* x50ng )
             break;
         case FRONTEND_GTK:
         default:
-            gui_init( x50ng );
+            gtk_ui_init( x50ng );
             break;
     }
 }
@@ -573,7 +572,7 @@ void ui_exit( void )
             break;
         case FRONTEND_GTK:
         default:
-            gui_exit();
+            gtk_ui_exit();
             break;
     }
 }

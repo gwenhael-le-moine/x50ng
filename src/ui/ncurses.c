@@ -227,7 +227,7 @@ static void ncurses_refresh_annunciators( void )
     last_annunciators = annunciators;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvwaddstr( lcd_window, 0, 4 + ( i * 4 ), ( ( annunciators >> i ) & 0x01 ) ? ui_annunciators[ i ].icon : " " );
+        mvwaddstr( lcd_window, 0, 4 + ( i * 4 ), ( ( annunciators >> i ) & 0x01 ) ? ui_annunciators[ i ] : " " );
 }
 
 /**********/
@@ -236,7 +236,7 @@ static void ncurses_refresh_annunciators( void )
 
 void ncurses_refresh_lcd( x50ng_t* x50ng )
 {
-    if ( !get_display_state() )
+    if ( !is_display_on() )
         return;
 
     ncurses_refresh_annunciators();

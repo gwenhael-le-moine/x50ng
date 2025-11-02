@@ -1,11 +1,11 @@
-#ifndef _GUI_H
-#  define _GUI_H 1
+#ifndef _GTK_UI_H
+#  define _GTK_UI_H 1
 
 #  include "../x50ng.h"
 
-void gui_refresh_lcd( x50ng_t* x50ng );
-void gui_handle_pending_inputs( x50ng_t* x50ng );
-void gui_init( x50ng_t* x50ng );
-void gui_exit( void );
+void gtk_ui_refresh_lcd( x50ng_t* x50ng );
+void gtk_ui_handle_pending_inputs( x50ng_t* x50ng );
+void gtk_ui_init( x50ng_t* x50ng );
+void gtk_ui_exit( void );
 
-#endif /* !(_GUI_H) */
+#endif /* !(_GTK_UI_H) */

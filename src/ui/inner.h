@@ -27,20 +27,15 @@ typedef struct {
     const char* below;
 
     hp50g_keynames_t hpkey;
-} x50ng_ui_key_t;
+} ui_button_t;
 
-typedef struct {
-    char* icon;
-} x50ng_ui_annunciator_t;
+extern ui_button_t ui_buttons_hp50g[ NB_HP50g_KEYS ];
+extern int buttons_order_normal[ NB_HP50g_KEYS ];
+extern int buttons_order_legacy[ NB_HP50g_KEYS ];
+#  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
 
-extern x50ng_ui_key_t ui_keys[ NB_HP50g_KEYS ];
-extern int keys_order_normal[ NB_HP50g_KEYS ];
-extern int keys_order_legacy[ NB_HP50g_KEYS ];
-#  define NORMALIZED_KEYS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? keys_order_legacy : keys_order_normal )[ hpkey ] )
+extern char* ui_annunciators[ NB_ANNUNCIATORS ];
 
-extern x50ng_ui_annunciator_t ui_annunciators[ NB_ANNUNCIATORS ];
-
-bool ui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type );
-void newrplify_ui_keys();
+extern void newrplify_ui_buttons_hp50g();
 
 #endif /* !(_UI_INNER_H) */

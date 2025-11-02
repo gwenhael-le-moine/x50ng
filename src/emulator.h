@@ -76,12 +76,8 @@ typedef struct {
     bool pressed;
 } x50ng_key_t;
 
-typedef struct {
-    int state_pixel_index;
-} x50ng_annunciator_t;
-
 extern x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ];
-extern x50ng_annunciator_t x50ng_annunciators[ 6 ];
+extern int x50ng_annunciators_index[ 6 ];
 
 extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
 
@@ -93,7 +89,7 @@ extern void release_key( int hpkey );
 extern bool is_key_pressed( int hpkey );
 
 extern unsigned char get_annunciators( void );
-extern bool get_display_state( void );
+extern bool is_display_on( void );
 extern void get_lcd_buffer( int* target );
 extern int get_contrast( void );
 

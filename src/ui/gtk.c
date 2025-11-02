@@ -16,7 +16,7 @@
 
 typedef struct {
     x50ng_t* x50ng;
-    const x50ng_ui_key_t* key;
+    const ui_button_t* key;
     GtkWidget* button;
     bool down;
     bool hold;
@@ -25,14 +25,14 @@ typedef struct {
 /*************/
 /* Variables */
 /*************/
-static GtkWidget* gui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
+static GtkWidget* gtk_ui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
-static x50ng_ui_button_t* gui_buttons;
+static x50ng_ui_button_t* gtk_ui_buttons;
 
-static GtkWidget* gui_window;
+static GtkWidget* gtk_ui_window;
 
-static GtkWidget* gui_lcd_canvas;
-static cairo_surface_t* gui_lcd_surface;
+static GtkWidget* gtk_ui_lcd_canvas;
+static cairo_surface_t* gtk_ui_lcd_surface;
 
 static char last_annunciators = 0;
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
@@ -40,17 +40,17 @@ static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 /*************************/
 /* Functions' prototypes */
 /*************************/
-static void gui_open_menu( int x, int y, x50ng_t* x50ng );
+static void gtk_ui_open_menu( int x, int y, x50ng_t* x50ng );
 
 /*************/
 /* Functions */
 /*************/
-static void gui_release_button( x50ng_ui_button_t* button )
+static void gtk_ui_release_button( x50ng_ui_button_t* button )
 {
     if ( !button->down )
         return;
 
-    const x50ng_ui_key_t* key = button->key;
+    const ui_button_t* key = button->key;
 
     button->down = false;
     button->hold = false;
@@ -60,13 +60,13 @@ static void gui_release_button( x50ng_ui_button_t* button )
     release_key( key->hpkey );
 }
 
-static bool gui_press_button( x50ng_ui_button_t* button, bool hold )
+static bool gtk_ui_press_button( x50ng_ui_button_t* button, bool hold )
 {
-    const x50ng_ui_key_t* key = button->key;
+    const ui_button_t* key = button->key;
 
     if ( button->down ) {
         if ( button->hold && hold ) {
-            gui_release_button( button );
+            gtk_ui_release_button( button );
             return GDK_EVENT_STOP;
         } else
             return GDK_EVENT_PROPAGATE;
@@ -82,33 +82,34 @@ static bool gui_press_button( x50ng_ui_button_t* button, bool hold )
     return GDK_EVENT_STOP;
 }
 
-static void gui_react_to_button_press( GtkGesture* _gesture, int _n_press, double _x, double _y, x50ng_ui_button_t* button )
+static void gtk_ui_react_to_button_press( GtkGesture* _gesture, int _n_press, double _x, double _y, x50ng_ui_button_t* button )
 {
-    const x50ng_ui_key_t* key = button->key;
+    const ui_button_t* key = button->key;
 
-    gui_press_button( button, false );
+    gtk_ui_press_button( button, false );
 
     press_key( key->hpkey );
 }
 
-static void gui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, x50ng_ui_button_t* button )
+static void gtk_ui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, x50ng_ui_button_t* button )
 {
-    gui_release_button( button );
+    gtk_ui_release_button( button );
 }
 
-static void gui_react_to_button_right_click_release( x50ng_ui_button_t* button, GtkGesture* _gesture, int _n_press, double _x, double _y )
+static void gtk_ui_react_to_button_right_click_release( x50ng_ui_button_t* button, GtkGesture* _gesture, int _n_press, double _x,
+                                                        double _y )
 {
-    const x50ng_ui_key_t* key = button->key;
+    const ui_button_t* key = button->key;
 
     button->down = true;
     button->hold = true;
 
-    gui_press_button( button, true );
+    gtk_ui_press_button( button, true );
 
     press_key( key->hpkey );
 }
 
-static void gui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* x50ng )
+static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* x50ng )
 {
     g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
@@ -116,16 +117,16 @@ static void gui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAs
         s3c2410_sdi_mount( x50ng, ( char* )g_file_peek_path( file ) );
 }
 
-static void gui_do_select_and_mount_sd_folder( x50ng_t* x50ng, GMenuItem* _menuitem )
+static void gtk_ui_do_select_and_mount_sd_folder( x50ng_t* x50ng, GMenuItem* _menuitem )
 {
     g_autoptr( GtkFileDialog ) dialog =
         g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
 
-    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( gui_window ), NULL, ( GAsyncReadyCallback )gui_mount_sd_folder_file_dialog_callback,
-                                   x50ng );
+    gtk_file_dialog_select_folder( dialog, GTK_WINDOW( gtk_ui_window ), NULL,
+                                   ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, x50ng );
 }
 
-static void gui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
 {
     if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
         gdbserver_start( opt.debug_port );
@@ -133,7 +134,7 @@ static void gui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
     }
 }
 
-static void gui_do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
+static void gtk_ui_do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
 {
     x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
     cpu_reset( x50ng->env );
@@ -148,7 +149,7 @@ static void x50g_string_to_keys_sequence( x50ng_t* x50ng, const char* input )
     fprintf( stderr, "\n" );
 }
 
-static void gui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* x50ng )
+static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* x50ng )
 {
     g_autofree char* text = NULL;
     g_autoptr( GError ) error = NULL;
@@ -163,29 +164,29 @@ static void gui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50n
     x50g_string_to_keys_sequence( x50ng, text );
 }
 
-static void gui_do_paste( x50ng_t* x50ng, GtkWidget* _menuitem )
+static void gtk_ui_do_paste( x50ng_t* x50ng, GtkWidget* _menuitem )
 {
-    gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL, ( GAsyncReadyCallback )gui_paste_callback,
-                                   x50ng );
+    gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL,
+                                   ( GAsyncReadyCallback )gtk_ui_paste_callback, x50ng );
 }
 #endif
 
-static void gui_do_quit( x50ng_t* x50ng, GtkWidget* _menuitem ) { x50ng->arm_exit++; }
+static void gtk_ui_do_quit( x50ng_t* x50ng, GtkWidget* _menuitem ) { x50ng->arm_exit++; }
 
-static void gui_open_menu( int x, int y, x50ng_t* x50ng )
+static void gtk_ui_open_menu( int x, int y, x50ng_t* x50ng )
 {
     g_autoptr( GMenu ) menu = g_menu_new();
     g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
 
 #ifdef TEST_PASTE
     g_autoptr( GSimpleAction ) act_paste = g_simple_action_new( "paste", NULL );
-    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gui_do_paste ), x50ng );
+    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gtk_ui_do_paste ), x50ng );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
     g_menu_append( menu, "Paste", "app.paste" );
 #endif
 
     g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
-    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gui_do_select_and_mount_sd_folder ), x50ng );
+    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), x50ng );
     if ( !s3c2410_sdi_is_mounted( x50ng ) )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
     g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
@@ -206,18 +207,18 @@ static void gui_open_menu( int x, int y, x50ng_t* x50ng )
     free( unmount_label );
 
     g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
-    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gui_do_start_gdb_server ), x50ng );
+    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), x50ng );
     if ( opt.debug_port != 0 )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
     g_menu_append( menu, "Start gdb server", "app.debug" );
 
     g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
-    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gui_do_reset ), x50ng );
+    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), x50ng );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
     g_menu_append( menu, "Reset", "app.reset" );
 
     g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
-    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gui_do_quit ), x50ng );
+    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), x50ng );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
     g_menu_append( menu, "Quit", "app.quit" );
 
@@ -230,14 +231,14 @@ static void gui_open_menu( int x, int y, x50ng_t* x50ng )
     rect.width = rect.height = 1;
     gtk_popover_set_pointing_to( GTK_POPOVER( popup ), &rect );
 
-    gtk_widget_set_parent( GTK_WIDGET( popup ), gui_window );
+    gtk_widget_set_parent( GTK_WIDGET( popup ), gtk_ui_window );
     gtk_popover_set_position( GTK_POPOVER( popup ), GTK_POS_BOTTOM );
     gtk_popover_popup( GTK_POPOVER( popup ) );
 }
 
-static void gui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, int height, gpointer _user_data )
+static void gtk_ui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, int height, gpointer _user_data )
 {
-    cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( gui_lcd_surface );
+    cairo_pattern_t* lcd_pattern = cairo_pattern_create_for_surface( gtk_ui_lcd_surface );
     cairo_pattern_set_filter( lcd_pattern, CAIRO_FILTER_FAST );
     cairo_scale( cr, ( double )width / ( double )LCD_WIDTH, ( double )height / ( double )LCD_HEIGHT );
     cairo_set_source( cr, lcd_pattern );
@@ -245,7 +246,7 @@ static void gui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, int
     cairo_paint( cr );
 }
 
-static bool gui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
+static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
 {
     int hpkey;
     switch ( keyval ) {
@@ -486,7 +487,7 @@ static bool gui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            gui_open_menu( ( LCD_WIDTH * opt.zoom ) / 2, ( LCD_HEIGHT * opt.zoom ) / 2, x50ng );
+            gtk_ui_open_menu( ( LCD_WIDTH * opt.zoom ) / 2, ( LCD_HEIGHT * opt.zoom ) / 2, x50ng );
             return GDK_EVENT_STOP;
 
         default:
@@ -496,10 +497,10 @@ static bool gui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
     // Using GUI buttons:
     switch ( event_type ) {
         case KEY_PRESS:
-            gui_react_to_button_press( NULL, 0, 0, 0, &gui_buttons[ hpkey ] );
+            gtk_ui_react_to_button_press( NULL, 0, 0, 0, &gtk_ui_buttons[ hpkey ] );
             break;
         case KEY_RELEASE:
-            gui_react_to_button_release( NULL, 0, 0, 0, &gui_buttons[ hpkey ] );
+            gtk_ui_react_to_button_release( NULL, 0, 0, 0, &gtk_ui_buttons[ hpkey ] );
             break;
         default:
             return GDK_EVENT_PROPAGATE;
@@ -508,48 +509,49 @@ static bool gui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
     return GDK_EVENT_STOP;
 }
 
-static bool gui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, x50ng_t* x50ng )
+static bool gtk_ui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
+                                       x50ng_t* x50ng )
 {
-    return gui_handle_key_event( keyval, x50ng, KEY_PRESS );
+    return gtk_ui_handle_key_event( keyval, x50ng, KEY_PRESS );
 }
 
-static bool gui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                      x50ng_t* x50ng )
+static bool gtk_ui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
+                                         x50ng_t* x50ng )
 {
-    return gui_handle_key_event( keyval, x50ng, KEY_RELEASE );
+    return gtk_ui_handle_key_event( keyval, x50ng, KEY_RELEASE );
 }
 
-static void gui_react_to_display_click( x50ng_t* x50ng, GtkEventController* _gesture, gdouble x, gdouble y )
+static void gtk_ui_react_to_display_click( x50ng_t* x50ng, GtkEventController* _gesture, gdouble x, gdouble y )
 {
-    gui_open_menu( ( int )x, ( int )y, x50ng );
+    gtk_ui_open_menu( ( int )x, ( int )y, x50ng );
 }
 
-static GtkWidget* _gui_activate__create_annunciator_widget( const char* label )
+static GtkWidget* _gtk_ui_activate__create_annunciator_widget( const char* label )
 {
-    GtkWidget* gui_ann = gtk_label_new( NULL );
-    gtk_widget_add_css_class( gui_ann, "annunciator" );
-    gtk_widget_set_name( gui_ann, label );
+    GtkWidget* gtk_ui_ann = gtk_label_new( NULL );
+    gtk_widget_add_css_class( gtk_ui_ann, "annunciator" );
+    gtk_widget_set_name( gtk_ui_ann, label );
 
-    gtk_label_set_use_markup( GTK_LABEL( gui_ann ), true );
-    gtk_label_set_markup( GTK_LABEL( gui_ann ), label );
+    gtk_label_set_use_markup( GTK_LABEL( gtk_ui_ann ), true );
+    gtk_label_set_markup( GTK_LABEL( gtk_ui_ann ), label );
 
-    gtk_widget_set_opacity( gui_ann, 0 );
+    gtk_widget_set_opacity( gtk_ui_ann, 0 );
 
-    return gui_ann;
+    return gtk_ui_ann;
 }
 
-static GtkWidget* _gui_activate__create_label( const char* css_class, const char* text )
+static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const char* text )
 {
-    GtkWidget* gui_label = gtk_label_new( NULL );
-    gtk_widget_add_css_class( gui_label, css_class );
+    GtkWidget* gtk_ui_label = gtk_label_new( NULL );
+    gtk_widget_add_css_class( gtk_ui_label, css_class );
 
-    gtk_label_set_use_markup( GTK_LABEL( gui_label ), true );
-    gtk_label_set_markup( GTK_LABEL( gui_label ), text );
+    gtk_label_set_use_markup( GTK_LABEL( gtk_ui_label ), true );
+    gtk_label_set_markup( GTK_LABEL( gtk_ui_label ), text );
 
-    return gui_label;
+    return gtk_ui_label;
 }
 
-static void _gui_activate__load_and_apply_CSS( x50ng_t* x50ng )
+static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* x50ng )
 {
     char* style_full_path = g_build_filename( opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
@@ -576,18 +578,18 @@ static void _gui_activate__load_and_apply_CSS( x50ng_t* x50ng )
     free( style_full_path );
 }
 
-static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
+static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
 {
-    // create gui_window and widgets/stuff
+    // create gtk_ui_window and widgets/stuff
     if ( app == NULL )
-        gui_window = gtk_window_new();
+        gtk_ui_window = gtk_window_new();
     else
-        gui_window = gtk_application_window_new( app );
+        gtk_ui_window = gtk_application_window_new( app );
 
-    gtk_window_set_decorated( GTK_WINDOW( gui_window ), true );
-    gtk_window_set_resizable( GTK_WINDOW( gui_window ), true );
-    gtk_window_set_title( GTK_WINDOW( gui_window ), opt.name );
-    gtk_window_set_decorated( GTK_WINDOW( gui_window ), true );
+    gtk_window_set_decorated( GTK_WINDOW( gtk_ui_window ), true );
+    gtk_window_set_resizable( GTK_WINDOW( gtk_ui_window ), true );
+    gtk_window_set_title( GTK_WINDOW( gtk_ui_window ), opt.name );
+    gtk_window_set_decorated( GTK_WINDOW( gtk_ui_window ), true );
     // Sets the title of this instance
     g_set_application_name( opt.name );
     // Sets the app_id of all instances
@@ -597,14 +599,14 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
     gtk_widget_add_css_class( window_container, "window-container" );
     gtk_widget_set_name( window_container, "window-container" );
 
-    gtk_window_set_child( ( GtkWindow* )gui_window, window_container );
+    gtk_window_set_child( ( GtkWindow* )gtk_ui_window, window_container );
 
-    g_signal_connect_swapped( G_OBJECT( gui_window ), "destroy", G_CALLBACK( gui_do_quit ), x50ng );
+    g_signal_connect_swapped( G_OBJECT( gtk_ui_window ), "destroy", G_CALLBACK( gtk_ui_do_quit ), x50ng );
 
     GtkEventController* keys_controller = gtk_event_controller_key_new();
-    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( gui_react_to_key_press ), x50ng );
-    g_signal_connect( keys_controller, "key-released", G_CALLBACK( gui_react_to_key_release ), x50ng );
-    gtk_widget_add_controller( gui_window, keys_controller );
+    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( gtk_ui_react_to_key_press ), x50ng );
+    g_signal_connect( keys_controller, "key-released", G_CALLBACK( gtk_ui_react_to_key_release ), x50ng );
+    gtk_widget_add_controller( gtk_ui_window, keys_controller );
 
     /* for --netbook */
     GtkWidget* upper_left_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
@@ -623,13 +625,13 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
     gtk_widget_set_name( header_container, "header-container" );
     gtk_box_append( ( GTK_BOX( upper_left_container ) ), header_container );
 
-    gui_lcd_canvas = gtk_drawing_area_new();
-    gtk_widget_add_css_class( gui_lcd_canvas, "lcd" );
-    gtk_widget_set_name( gui_lcd_canvas, "lcd" );
+    gtk_ui_lcd_canvas = gtk_drawing_area_new();
+    gtk_widget_add_css_class( gtk_ui_lcd_canvas, "lcd" );
+    gtk_widget_set_name( gtk_ui_lcd_canvas, "lcd" );
 
-    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gui_lcd_canvas ), ( LCD_WIDTH * opt.zoom ) );
-    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gui_lcd_canvas ), ( LCD_HEIGHT * opt.zoom ) );
-    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gui_lcd_canvas ), gui_redraw_lcd, x50ng, NULL );
+    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * opt.zoom ) );
+    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * opt.zoom ) );
+    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, x50ng, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_widget_set_halign( lcd_container, GTK_ALIGN_CENTER );
@@ -637,9 +639,9 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
     gtk_widget_set_name( lcd_container, "lcd-container" );
 
     gtk_widget_set_size_request( lcd_container, ( LCD_WIDTH * opt.zoom ), ( LCD_HEIGHT * opt.zoom ) );
-    gtk_box_append( GTK_BOX( lcd_container ), gui_lcd_canvas );
-    gtk_widget_set_halign( GTK_WIDGET( gui_lcd_canvas ), GTK_ALIGN_CENTER );
-    gtk_widget_set_hexpand( GTK_WIDGET( gui_lcd_canvas ), false );
+    gtk_box_append( GTK_BOX( lcd_container ), gtk_ui_lcd_canvas );
+    gtk_widget_set_halign( GTK_WIDGET( gtk_ui_lcd_canvas ), GTK_ALIGN_CENTER );
+    gtk_widget_set_hexpand( GTK_WIDGET( gtk_ui_lcd_canvas ), false );
 
     GtkWidget* annunciators_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_box_set_homogeneous( GTK_BOX( annunciators_container ), true );
@@ -647,8 +649,8 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
     gtk_widget_set_name( annunciators_container, "annunciators-container" );
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
-        gui_annunciators[ i ] = _gui_activate__create_annunciator_widget( ui_annunciators[ i ].icon );
-        gtk_box_append( GTK_BOX( annunciators_container ), gui_annunciators[ i ] );
+        gtk_ui_annunciators[ i ] = _gtk_ui_activate__create_annunciator_widget( ui_annunciators[ i ] );
+        gtk_box_append( GTK_BOX( annunciators_container ), gtk_ui_annunciators[ i ] );
     }
 
     GtkWidget* display_container = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
@@ -662,7 +664,7 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
 
     GtkGesture* right_click_controller = gtk_gesture_click_new();
     gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
-    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( gui_react_to_display_click ), x50ng );
+    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_display_click ), x50ng );
     gtk_widget_add_controller( display_container, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
     // keyboard
@@ -690,12 +692,12 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
     GtkWidget* keys_containers[ NB_HP50g_KEYS ];
     GtkWidget* keys_top_labels_containers[ NB_HP50g_KEYS ];
 
-    gui_buttons = malloc( NB_HP50g_KEYS * sizeof( x50ng_ui_button_t ) );
-    if ( NULL == gui_buttons ) {
+    gtk_ui_buttons = malloc( NB_HP50g_KEYS * sizeof( x50ng_ui_button_t ) );
+    if ( NULL == gtk_ui_buttons ) {
         fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return;
     }
-    memset( gui_buttons, 0, NB_HP50g_KEYS * sizeof( x50ng_ui_button_t ) );
+    memset( gtk_ui_buttons, 0, NB_HP50g_KEYS * sizeof( x50ng_ui_button_t ) );
 
     int key_index = 0;
     int nb_keys_in_row = 0;
@@ -728,9 +730,9 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
             if ( row == 1 && column == 3 )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
-            button = &gui_buttons[ NORMALIZED_KEYS_ORDER( key_index ) ];
+            button = &gtk_ui_buttons[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
             button->x50ng = x50ng;
-            button->key = &ui_keys[ NORMALIZED_KEYS_ORDER( key_index ) ];
+            button->key = &ui_buttons_hp50g[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
             gtk_widget_add_css_class( keys_top_labels_containers[ key_index ], "top-labels-container" );
@@ -739,11 +741,11 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
 
             GtkWidget* label_left = NULL;
             if ( button->key->left )
-                label_left = _gui_activate__create_label( "label-left", button->key->left );
+                label_left = _gtk_ui_activate__create_label( "label-left", button->key->left );
 
             GtkWidget* label_right = NULL;
             if ( button->key->right )
-                label_right = _gui_activate__create_label( "label-right", button->key->right );
+                label_right = _gtk_ui_activate__create_label( "label-right", button->key->right );
 
             if ( button->key->left && button->key->right ) {
                 gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_left );
@@ -766,14 +768,14 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
             gtk_widget_set_name( button->button, button->key->css_id );
 
             // There's always a label, even if it's empty.
-            GtkWidget* label = _gui_activate__create_label( "label-key", button->key->label );
+            GtkWidget* label = _gtk_ui_activate__create_label( "label-key", button->key->label );
             gtk_button_set_child( GTK_BUTTON( button->button ), label );
 
             gtk_widget_set_can_focus( button->button, false );
             GtkGesture* left_click_controller = gtk_gesture_click_new();
             gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( left_click_controller ), 1 );
-            g_signal_connect( left_click_controller, "pressed", G_CALLBACK( gui_react_to_button_press ), button );
-            g_signal_connect( left_click_controller, /* "released" */ "end", G_CALLBACK( gui_react_to_button_release ), button );
+            g_signal_connect( left_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_button_press ), button );
+            g_signal_connect( left_click_controller, /* "released" */ "end", G_CALLBACK( gtk_ui_react_to_button_release ), button );
             /* Here we attach the controller to the label because… gtk4 reasons? gtk4 button only handles 'clicked' event now but we
              * actually need pressed and released (AKA end?) */
             gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( left_click_controller ) );
@@ -781,35 +783,36 @@ static void gui_activate( GtkApplication* app, x50ng_t* x50ng )
             GtkGesture* right_click_controller = gtk_gesture_click_new();
             gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
             g_signal_connect_swapped( right_click_controller, /* "released" */ "pressed",
-                                      G_CALLBACK( gui_react_to_button_right_click_release ), button );
+                                      G_CALLBACK( gtk_ui_react_to_button_right_click_release ), button );
             gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
             gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), button->button );
 
             if ( button->key->below )
-                gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), _gui_activate__create_label( "label-below", button->key->below ) );
+                gtk_box_append( GTK_BOX( keys_containers[ key_index ] ),
+                                _gtk_ui_activate__create_label( "label-below", button->key->below ) );
             if ( button->key->letter )
                 gtk_box_append( GTK_BOX( keys_containers[ key_index ] ),
-                                _gui_activate__create_label( "label-letter", button->key->letter ) );
+                                _gtk_ui_activate__create_label( "label-letter", button->key->letter ) );
 
             key_index++;
         }
     }
 
-    _gui_activate__load_and_apply_CSS( x50ng );
+    _gtk_ui_activate__load_and_apply_CSS( x50ng );
 
     // finally show the window
-    gtk_widget_realize( gui_window );
-    gtk_window_present( GTK_WINDOW( gui_window ) );
+    gtk_widget_realize( gtk_ui_window );
+    gtk_window_present( GTK_WINDOW( gtk_ui_window ) );
 }
 
-void gui_handle_pending_inputs( x50ng_t* _x50ng )
+void gtk_ui_handle_pending_inputs( x50ng_t* _x50ng )
 {
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
 }
 
-static void gui_refresh_annunciators( void )
+static void gtk_ui_refresh_annunciators( void )
 {
     int annunciators = get_annunciators();
 
@@ -819,20 +822,20 @@ static void gui_refresh_annunciators( void )
     last_annunciators = annunciators;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        gtk_widget_set_opacity( gui_annunciators[ i ], ( annunciators >> i ) & 0x01 ? 1 : 0 );
+        gtk_widget_set_opacity( gtk_ui_annunciators[ i ], ( annunciators >> i ) & 0x01 ? 1 : 0 );
 }
 
-void gui_refresh_lcd( x50ng_t* _x50ng )
+void gtk_ui_refresh_lcd( x50ng_t* _x50ng )
 {
-    if ( !get_display_state() )
+    if ( !is_display_on() )
         return;
 
-    gui_refresh_annunciators();
+    gtk_ui_refresh_annunciators();
 
-    if ( NULL != gui_lcd_surface )
-        g_free( gui_lcd_surface );
-    gui_lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
-    cairo_t* cr = cairo_create( gui_lcd_surface );
+    if ( NULL != gtk_ui_lcd_surface )
+        g_free( gtk_ui_lcd_surface );
+    gtk_ui_lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
+    cairo_t* cr = cairo_create( gtk_ui_lcd_surface );
 
     get_lcd_buffer( display_buffer_grayscale );
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
@@ -845,21 +848,21 @@ void gui_refresh_lcd( x50ng_t* _x50ng )
 
     cairo_destroy( cr );
 
-    gtk_widget_queue_draw( gui_lcd_canvas );
+    gtk_widget_queue_draw( gtk_ui_lcd_canvas );
 
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gui_init( x50ng_t* x50ng )
+void gtk_ui_init( x50ng_t* x50ng )
 {
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
-    /* g_signal_connect( app, "activate", G_CALLBACK( gui_activate ), x50ng ); */
+    /* g_signal_connect( app, "activate", G_CALLBACK( gtk_ui_activate ), x50ng ); */
 
     /* g_application_run( G_APPLICATION( app ), 0, NULL ); */
 
     gtk_init();
-    gui_activate( NULL, x50ng );
+    gtk_ui_activate( NULL, x50ng );
 }
 
-void gui_exit( void ) {}
+void gtk_ui_exit( void ) {}
