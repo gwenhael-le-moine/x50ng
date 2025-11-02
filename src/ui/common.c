@@ -24,7 +24,7 @@ static config_t* __config;
 /*************/
 /* functions */
 /*************/
-void newrplify_buttons_hp50g()
+static void newrplify_buttons_hp50g()
 {
     // modify keys' labeling for newRPL
     for ( int i = HP50g_KEY_A; i <= HP50g_KEY_F; i++ )

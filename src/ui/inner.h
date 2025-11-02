@@ -29,6 +29,4 @@ extern int buttons_order_normal[ NB_HP50g_KEYS ];
 extern int buttons_order_legacy[ NB_HP50g_KEYS ];
 #  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( __config->legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
 
-extern void newrplify_buttons_hp50g();
-
 #endif /* !(_UI_INNER_H) */
