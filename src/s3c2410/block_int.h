@@ -96,6 +96,6 @@ struct BlockDriverState {
     BlockDriverState* next;
 };
 
-void get_tmp_filename( char* filename, int size );
+extern void get_tmp_filename( char* filename, int size );
 
 #endif /* BLOCK_INT_H */

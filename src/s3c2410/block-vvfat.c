@@ -25,7 +25,9 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <assert.h>
-#include "qemu-common.h"
+
+#include "../qemu/qemu-common.h"
+
 #include "block.h"
 #include "block_int.h"
 
@@ -1315,7 +1317,7 @@ static void print_direntry( const direntry_t* direntry )
       {                                                                                                                                    \
           buffer[ j ] = ( c );                                                                                                             \
           if ( buffer[ j ] < ' ' )                                                                                                         \
-              buffer[ j ] = '°';                                                                                                           \
+              buffer[ j ] = 0xb0;                                                                                                          \
           j++;                                                                                                                             \
       }
             ADD_CHAR( c[ i ] );

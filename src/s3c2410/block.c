@@ -583,7 +583,7 @@ static int bdrv_pwrite_em( BlockDriverState* bs, int64_t offset, const uint8_t* 
     return count1;
 }
 
-/**
+/*
  * Read with byte offsets (needed only for file protocols)
  */
 int bdrv_pread( BlockDriverState* bs, int64_t offset, void* buf1, int count1 )
@@ -597,7 +597,7 @@ int bdrv_pread( BlockDriverState* bs, int64_t offset, void* buf1, int count1 )
     return drv->bdrv_pread( bs, offset, buf1, count1 );
 }
 
-/**
+/*
  * Write with byte offsets (needed only for file protocols)
  */
 int bdrv_pwrite( BlockDriverState* bs, int64_t offset, const void* buf1, int count1 )

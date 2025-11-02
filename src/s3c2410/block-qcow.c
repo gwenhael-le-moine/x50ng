@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
+#include <zlib.h>
+
 #include "../qemu/qemu-common.h"
 
 #include "block.h"
 #include "block_int.h"
-#include <zlib.h>
 
 /**************************************************************/
 /* QEMU COW block driver with compression and encryption support */

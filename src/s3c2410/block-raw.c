@@ -24,11 +24,10 @@
 
 #include <stdbool.h>
 
-#include "qemu-common.h"
+#include "../qemu/qemu-common.h"
 
 #include "block.h"
 #include "block_int.h"
-#include <assert.h>
 
 #ifndef _WIN32
 
