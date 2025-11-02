@@ -6,7 +6,7 @@
 
 #include "../module.h"
 
-#include "x50ng.h"
+#include "hdw.h"
 #include "s3c2410.h"
 
 #include "cpu-all.h"

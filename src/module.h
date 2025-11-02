@@ -2,7 +2,7 @@
 #  define _X50NG_MODULE_H 1
 
 #  include "types.h"
-#  include "x50ng.h"
+#  include "hdw.h"
 
 int x50ng_module_init( hdw_t* hdw_state, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
                        int ( *reset )( hdw_module_t*, x50ng_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),

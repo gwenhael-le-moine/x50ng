@@ -10,7 +10,7 @@
 #include <signal.h>
 #include <poll.h>
 
-#include "x50ng.h"
+#include "hdw.h"
 #include "timer.h"
 #include "gdbstub.h"
 

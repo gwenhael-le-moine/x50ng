@@ -13,7 +13,7 @@
 
 #include "list.h"
 #include "ui/inner.h"
-#include "x50ng.h"
+#include "hdw.h"
 #include "gdbstub.h"
 #include "options.h"
 #include "sram.h"

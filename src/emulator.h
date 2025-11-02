@@ -2,7 +2,7 @@
 #  define _X50NG_EMULATOR_H 1
 
 #  include "types.h"
-#  include "x50ng.h"
+#  include "hdw.h"
 #  include "options.h"
 
 #  define NB_ANNUNCIATORS ( 6 )

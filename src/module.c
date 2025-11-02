@@ -10,7 +10,7 @@
 #include <gio/gio.h>
 
 #include "list.h"
-#include "x50ng.h"
+#include "hdw.h"
 #include "options.h"
 #include "module.h"
 
