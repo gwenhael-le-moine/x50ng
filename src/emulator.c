@@ -23,7 +23,7 @@
 
 static x50ng_t* hdw_state;
 
-x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
+hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
     {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
     {.column = 5, .row = 2, .eint = -1 /* 2 */, .pressed = false},
     {.column = 5, .row = 3, .eint = -1 /* 3 */, .pressed = false},
@@ -216,7 +216,7 @@ uint32_t do_arm_semihosting( CPUState* env )
     return 0;
 }
 
-void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
+void hdw_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
 {
 #ifdef DEBUG_X50NG_ARM_IDLE
     if ( idle != x50ng->arm_idle ) {
@@ -284,7 +284,7 @@ x50ng_t* emulator_init( config_t config )
         x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
     }
 
-    x50ng_set_idle( hdw_state, 0 );
+    hdw_set_idle( hdw_state, 0 );
 
     // stl_phys(0x08000a1c, 0x55555555);
 
@@ -315,7 +315,7 @@ void emulator_exit( config_t config )
     x50ng_modules_exit( hdw_state );
 }
 
-static void x50ng_set_key_state( const x50ng_key_t key, bool state )
+static void x50ng_set_key_state( const hp50g_key_t key, bool state )
 {
     if ( key.eint >= 0 /* && key.row == 0 && key.column == 0 */ )
         s3c2410_io_port_f_set_bit( hdw_state, key.eint, state );

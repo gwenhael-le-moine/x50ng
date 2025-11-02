@@ -72,23 +72,23 @@ typedef enum {
     NB_HP50g_KEYS
 } hp50g_keynames_t;
 
-typedef struct x50ng_key_t {
+typedef struct hp50g_key_t {
     int column;
     int row;
     int eint;
     bool pressed;
-} x50ng_key_t;
+} hp50g_key_t;
 
 /*************/
 /* variables */
 /*************/
-extern x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ];
+extern hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ];
 extern int x50ng_annunciators_index[ NB_ANNUNCIATORS ];
 
 /*************/
 /* functions */
 /*************/
-extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
+extern void hdw_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
 
 extern x50ng_t* emulator_init( config_t config );
 extern void emulator_exit( config_t config );

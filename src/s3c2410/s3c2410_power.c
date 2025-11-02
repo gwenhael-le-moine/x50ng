@@ -100,7 +100,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
                 //				x50ng->arm->NresetSig = LOW;
                 //				x50ng->arm->Exception++;
                 //			}
-                x50ng_set_idle( x50ng, X50NG_ARM_OFF );
+                hdw_set_idle( x50ng, X50NG_ARM_OFF );
                 return;
             }
 
@@ -109,7 +109,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
 #ifdef DEBUG_S3C2410_POWER
                 printf( "POWER: enter IDLE\n" );
 #endif
-                x50ng_set_idle( x50ng, X50NG_ARM_SLEEP );
+                hdw_set_idle( x50ng, X50NG_ARM_SLEEP );
                 return;
             }
 

@@ -138,7 +138,7 @@ static void gtk_ui_do_reset( x50ng_t* hdw_state, GMenuItem* _menuitem )
 {
     x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
     cpu_reset( hdw_state->env );
-    x50ng_set_idle( hdw_state, 0 );
+    hdw_set_idle( hdw_state, 0 );
 }
 
 #ifdef TEST_PASTE
@@ -476,10 +476,10 @@ static bool gtk_ui_handle_key_event( int keyval, x50ng_t* hdw_state, key_event_t
                 case KEY_PRESS:
                     x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
                     cpu_reset( hdw_state->env );
-                    x50ng_set_idle( hdw_state, 1 );
+                    hdw_set_idle( hdw_state, 1 );
                     break;
                 case KEY_RELEASE:
-                    x50ng_set_idle( hdw_state, 0 );
+                    hdw_set_idle( hdw_state, 0 );
                     break;
                 default:
                     break;
