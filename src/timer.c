@@ -70,7 +70,7 @@ static void main_loop_wait( hdw_t* hdw_state, int timeout )
     else
         poll( NULL, 0, timeout );
 
-    if ( hdw_state->arm_idle != X50NG_ARM_OFF )
+    if ( hdw_state->arm_idle != HDW_ARM_OFF )
         run_timers( &timers_list[ X50NG_TIMER_VIRTUAL ], timer_get_clock() );
 
     run_timers( &timers_list[ X50NG_TIMER_REALTIME ], timer_get_clock() );
@@ -173,13 +173,13 @@ int64_t qemu_get_clock( QEMUClock* clock ) { return timer_get_clock(); }
 
 void main_loop( hdw_t* hdw_state )
 {
-    x50ng_arm_idle_t prev_idle;
+    hdw_arm_idle_t prev_idle;
     int ret, timeout;
 
     while ( !hdw_state->arm_exit ) {
         prev_idle = hdw_state->arm_idle;
 
-        if ( hdw_state->arm_idle == X50NG_ARM_RUN ) {
+        if ( hdw_state->arm_idle == HDW_ARM_RUN ) {
 #ifdef DEBUG_X50NG_TIMER_IDLE
             printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )timer_get_clock(), __func__, hdw_state->env );
 #endif
@@ -201,7 +201,7 @@ void main_loop( hdw_t* hdw_state )
                 continue;
             }
 
-            if ( ( hdw_state->arm_idle != prev_idle ) && ( hdw_state->arm_idle == X50NG_ARM_OFF ) )
+            if ( ( hdw_state->arm_idle != prev_idle ) && ( hdw_state->arm_idle == HDW_ARM_OFF ) )
                 cpu_reset( hdw_state->env );
 
             timeout = ( ret == EXCP_HALTED ) ? 10 : 0;

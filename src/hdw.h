@@ -19,8 +19,8 @@
 extern uint8_t* phys_ram_base;
 extern int phys_ram_size;
 
-typedef enum { X50NG_ARM_RUN = 0, X50NG_ARM_SLEEP, X50NG_ARM_OFF } x50ng_arm_idle_t;
-typedef enum { X50NG_RESET_POWER_ON = 0, X50NG_RESET_POWER_OFF, X50NG_RESET_WATCHDOG } x50ng_reset_t;
+typedef enum { HDW_ARM_RUN = 0, HDW_ARM_SLEEP, HDW_ARM_OFF } hdw_arm_idle_t;
+typedef enum { HDW_RESET_POWER_ON = 0, HDW_RESET_POWER_OFF, HDW_RESET_WATCHDOG } hdw_reset_t;
 
 typedef struct hdw_module_t {
     const char* name;
@@ -28,7 +28,7 @@ typedef struct hdw_module_t {
     int ( *init )( struct hdw_module_t* );
     int ( *exit )( struct hdw_module_t* );
 
-    int ( *reset )( struct hdw_module_t*, x50ng_reset_t );
+    int ( *reset )( struct hdw_module_t*, hdw_reset_t );
 
     int ( *load )( struct hdw_module_t*, GKeyFile* );
     int ( *save )( struct hdw_module_t*, GKeyFile* );
@@ -71,7 +71,7 @@ struct hdw_t {
     hdw_timer_t* timer_ui_input;
     hdw_timer_t* timer_ui_output;
 
-    x50ng_arm_idle_t arm_idle;
+    hdw_arm_idle_t arm_idle;
     int arm_exit;
 
     GKeyFile* state;

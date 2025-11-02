@@ -216,9 +216,9 @@ uint32_t do_arm_semihosting( CPUState* env )
     return 0;
 }
 
-void hdw_set_idle( hdw_t* hdw_state, x50ng_arm_idle_t idle )
+void hdw_set_idle( hdw_t* hdw_state, hdw_arm_idle_t idle )
 {
-#ifdef DEBUG_X50NG_ARM_IDLE
+#ifdef DEBUG_HDW_ARM_IDLE
     if ( idle != hdw_state->arm_idle ) {
         printf( "%s: arm_idle %u, idle %u\n", __func__, hdw_state->arm_idle, idle );
     }
@@ -226,7 +226,7 @@ void hdw_set_idle( hdw_t* hdw_state, x50ng_arm_idle_t idle )
 
     hdw_state->arm_idle = idle;
 
-    if ( hdw_state->arm_idle == X50NG_ARM_RUN )
+    if ( hdw_state->arm_idle == HDW_ARM_RUN )
         hdw_state->env->halted = 0;
     else {
         hdw_state->env->halted = 1;
@@ -281,7 +281,7 @@ hdw_t* emulator_init( config_t config )
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
 
-        x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
+        x50ng_modules_reset( hdw_state, HDW_RESET_POWER_ON );
     }
 
     hdw_set_idle( hdw_state, 0 );

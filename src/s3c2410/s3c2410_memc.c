@@ -149,7 +149,7 @@ static int s3c2410_memc_save( hdw_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_memc_reset( hdw_module_t* module, x50ng_reset_t reset )
+static int s3c2410_memc_reset( hdw_module_t* module, hdw_reset_t reset )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;

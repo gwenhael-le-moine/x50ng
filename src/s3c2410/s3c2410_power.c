@@ -94,13 +94,13 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
                 printf( "POWER: enter POWER_OFF\n" );
 #endif
 
-                x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_OFF );
+                x50ng_modules_reset( hdw_state, HDW_RESET_POWER_OFF );
 
                 //			if (hdw_state->arm->NresetSig != LOW) {
                 //				hdw_state->arm->NresetSig = LOW;
                 //				hdw_state->arm->Exception++;
                 //			}
-                hdw_set_idle( hdw_state, X50NG_ARM_OFF );
+                hdw_set_idle( hdw_state, HDW_ARM_OFF );
                 return;
             }
 
@@ -109,7 +109,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
 #ifdef DEBUG_S3C2410_POWER
                 printf( "POWER: enter IDLE\n" );
 #endif
-                hdw_set_idle( hdw_state, X50NG_ARM_SLEEP );
+                hdw_set_idle( hdw_state, HDW_ARM_SLEEP );
                 return;
             }
 
@@ -234,7 +234,7 @@ static int s3c2410_power_save( hdw_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_power_reset( hdw_module_t* module, x50ng_reset_t reset )
+static int s3c2410_power_reset( hdw_module_t* module, hdw_reset_t reset )
 {
     s3c2410_power_t* power = module->user_data;
     s3c2410_offset_t* reg;

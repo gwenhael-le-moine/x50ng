@@ -90,7 +90,7 @@ X50NG_DEBUG = \
 	-DDEBUG_X50NG_FLASH_READ \
 	-DDEBUG_X50NG_FLASH_WRITE \
 	-DDEBUG_X50NG_TIMER_IDLE \
-	-DDEBUG_X50NG_ARM_IDLE \
+	-DDEBUG_HDW_ARM_IDLE \
 	-DDEBUG_X50NG_ENABLE_IRQ \
 	-DDEBUG_X50NG_BLOCK \
 	-DDEBUG_X50NG_MAIN
@@ -206,8 +206,8 @@ depend-and-build: depend
 
 
 # for clangd
-compile_commands.json: distclean
-	bear -- make dist/$(TARGET)
+compile_commands.json: distclean $(QEMU_DIR)/config-host.h
+	bear -- make
 
 # auto-format code
 pretty-code:
@@ -235,7 +235,7 @@ mrproper: distclean
 
 
 # Populate dist/
-dist/$(TARGET): qemu-objs $(OBJS) $(VVFAT_OBJS)
+dist/$(TARGET): qemu-objs $(OBJS) $(VVFAT_OBJS) $(QEMU_DIR)/config-host.h
 	$(CC) $(X50NG_LDFLAGS) -o $@ $(OBJS) $(VVFAT_OBJS) $(LDLIBS) $(X50NG_LDLIBS)
 
 dist/$(TARGET).desktop: src/$(TARGET).desktop.in

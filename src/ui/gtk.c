@@ -136,7 +136,7 @@ static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, hdw_t* hdw_state )
 
 static void gtk_ui_do_reset( hdw_t* hdw_state, GMenuItem* _menuitem )
 {
-    x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
+    x50ng_modules_reset( hdw_state, HDW_RESET_POWER_ON );
     cpu_reset( hdw_state->env );
     hdw_set_idle( hdw_state, 0 );
 }
@@ -474,7 +474,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
         case GDK_KEY_F12:
             switch ( event_type ) {
                 case KEY_PRESS:
-                    x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
+                    x50ng_modules_reset( hdw_state, HDW_RESET_POWER_ON );
                     cpu_reset( hdw_state->env );
                     hdw_set_idle( hdw_state, 1 );
                     break;

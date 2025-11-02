@@ -88,7 +88,7 @@ extern int x50ng_annunciators_index[ NB_ANNUNCIATORS ];
 /*************/
 /* functions */
 /*************/
-extern void hdw_set_idle( hdw_t*, x50ng_arm_idle_t idle );
+extern void hdw_set_idle( hdw_t*, hdw_arm_idle_t idle );
 
 extern hdw_t* emulator_init( config_t config );
 extern void emulator_exit( config_t config );

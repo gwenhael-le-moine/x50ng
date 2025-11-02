@@ -579,7 +579,7 @@ static int s3c2410_intc_save( hdw_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_intc_reset( hdw_module_t* module, x50ng_reset_t reset )
+static int s3c2410_intc_reset( hdw_module_t* module, hdw_reset_t reset )
 {
     s3c2410_intc_t* intc = module->user_data;
     s3c2410_offset_t* reg;
@@ -589,7 +589,7 @@ static int s3c2410_intc_reset( hdw_module_t* module, x50ng_reset_t reset )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    if ( reset == X50NG_RESET_POWER_OFF ) {
+    if ( reset == HDW_RESET_POWER_OFF ) {
         return 0;
     }
 

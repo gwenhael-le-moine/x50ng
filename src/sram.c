@@ -114,7 +114,7 @@ static int sram_save( hdw_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int sram_reset( hdw_module_t* module, x50ng_reset_t reset )
+static int sram_reset( hdw_module_t* module, hdw_reset_t reset )
 {
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );

@@ -72,7 +72,7 @@ int x50ng_modules_exit( hdw_t* hdw_state )
     return 0;
 }
 
-int x50ng_modules_reset( hdw_t* hdw_state, x50ng_reset_t reset )
+int x50ng_modules_reset( hdw_t* hdw_state, hdw_reset_t reset )
 {
     hdw_module_t* module;
     int error;
@@ -387,7 +387,7 @@ int x50ng_module_open_rodata( hdw_module_t* module, const char* name, char** pat
 }
 
 int x50ng_module_init( hdw_t* hdw_state, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
-                       int ( *reset )( hdw_module_t*, x50ng_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),
+                       int ( *reset )( hdw_module_t*, hdw_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),
                        int ( *save )( hdw_module_t*, GKeyFile* ), void* user_data, hdw_module_t** modulep )
 {
     hdw_module_t* module;

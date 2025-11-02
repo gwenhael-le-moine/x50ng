@@ -76,7 +76,7 @@ static void s3c2410_watchdog_tick( void* data )
         printf( "WATCHDOG: assert internal RESET\n" );
 #endif
 
-        x50ng_modules_reset( hdw_state, X50NG_RESET_WATCHDOG );
+        x50ng_modules_reset( hdw_state, HDW_RESET_WATCHDOG );
         cpu_reset( hdw_state->env );
 
         //		if (hdw_state->arm->NresetSig != LOW) {
@@ -236,7 +236,7 @@ static int s3c2410_watchdog_save( hdw_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_watchdog_reset( hdw_module_t* module, x50ng_reset_t reset )
+static int s3c2410_watchdog_reset( hdw_module_t* module, hdw_reset_t reset )
 {
     s3c2410_watchdog_t* watchdog = module->user_data;
     s3c2410_offset_t* reg;

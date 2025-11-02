@@ -591,7 +591,7 @@ static int flash_save( hdw_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int flash_reset( hdw_module_t* module, x50ng_reset_t reset )
+static int flash_reset( hdw_module_t* module, hdw_reset_t reset )
 {
     hdw_flash_t* flash = module->user_data;
 
