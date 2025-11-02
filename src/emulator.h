@@ -3,6 +3,7 @@
 
 #  include "types.h"
 #  include "x50ng.h"
+#  include "options.h"
 
 #  define NB_ANNUNCIATORS ( 6 )
 
@@ -71,27 +72,33 @@ typedef enum {
     NB_HP50g_KEYS
 } hp50g_keynames_t;
 
-typedef struct {
+typedef struct x50ng_key_t {
     int column;
     int row;
     int eint;
     bool pressed;
 } x50ng_key_t;
 
+/*************/
+/* variables */
+/*************/
 extern x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ];
 extern int x50ng_annunciators_index[ NB_ANNUNCIATORS ];
 
+/*************/
+/* functions */
+/*************/
 extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
 
-extern void emulator_init( void );
-extern void emulator_exit( void );
+extern x50ng_t* emulator_init( config_t config );
+extern void emulator_exit( config_t config );
 
 extern void press_key( int hpkey );
 extern void release_key( int hpkey );
 extern bool is_key_pressed( int hpkey );
 
-extern unsigned char get_annunciators( void );
 extern bool is_display_on( void );
+extern unsigned char get_annunciators( void );
 extern void get_lcd_buffer( int* target );
 extern int get_contrast( void );
 

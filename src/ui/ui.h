@@ -7,7 +7,7 @@
 
 void ui_handle_pending_inputs( void* data );
 void ui_refresh_output( void* data );
-void ui_init( x50ng_t* x50ng );
+void ui_init( x50ng_t* hdw_state );
 void ui_exit( void );
 
 #endif /* !(_X50NG_UI_H) */

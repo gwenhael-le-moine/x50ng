@@ -21,9 +21,9 @@
 
 #include "emulator.h"
 
-extern options_t opt;
+config_t opt;
 
-extern x50ng_t* x50ng;
+static x50ng_t* hdw_state;
 
 /*******************/
 /* signal handlers */
@@ -34,12 +34,12 @@ void signal_handler( int sig )
         case SIGINT:
         case SIGQUIT:
         case SIGTERM:
-            x50ng->arm_exit = 1;
-            cpu_exit( x50ng->env );
+            hdw_state->arm_exit = 1;
+            cpu_exit( hdw_state->env );
             break;
         case SIGUSR1:
             //		stop_simulator = 1;
-            //		x50ng->arm->CallDebug ^= 1;
+            //		hdw_state->arm->CallDebug ^= 1;
             break;
         default:
             fprintf( stderr, "%s: sig %u\n", __func__, sig );
@@ -49,22 +49,22 @@ void signal_handler( int sig )
 
 int main( int argc, char** argv )
 {
-    config_init( argc, argv ); /* initialize global variable `opt` */
+    opt = *config_init( argc, argv ); /* initialize global variable `opt` */
 
-    emulator_init(); /* initialize global variable `x50ng` */
+    hdw_state = emulator_init( opt ); /* initialize global variable `hdw_state` */
 
     signal( SIGINT, signal_handler );
     signal( SIGTERM, signal_handler );
     signal( SIGQUIT, signal_handler );
     signal( SIGUSR1, signal_handler );
 
-    ui_init( x50ng );
+    ui_init( hdw_state );
 
-    x50ng_main_loop( x50ng );
+    x50ng_main_loop( hdw_state );
 
     ui_exit();
 
-    emulator_exit();
+    emulator_exit( opt );
 
     return EXIT_SUCCESS;
 }

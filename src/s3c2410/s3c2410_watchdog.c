@@ -275,7 +275,7 @@ static int s3c2410_watchdog_init( x50ng_module_t* module )
 
     watchdog = malloc( sizeof( s3c2410_watchdog_t ) );
     if ( NULL == watchdog ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __func__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_watchdog_data_init( watchdog ) ) {

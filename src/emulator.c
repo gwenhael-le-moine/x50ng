@@ -21,7 +21,7 @@
 #include "module.h"
 #include "emulator.h"
 
-x50ng_t* x50ng;
+static x50ng_t* hdw_state;
 
 x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
     {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
@@ -234,14 +234,14 @@ void x50ng_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
     }
 }
 
-void emulator_init( void )
+x50ng_t* emulator_init( config_t config )
 {
-    x50ng = malloc( sizeof( x50ng_t ) );
-    if ( NULL == x50ng ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", opt.progname, __func__, __LINE__ );
+    hdw_state = malloc( sizeof( x50ng_t ) );
+    if ( NULL == hdw_state ) {
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", config.progname, __func__, __LINE__ );
         exit( EXIT_FAILURE );
     }
-    memset( x50ng, 0, sizeof( x50ng_t ) );
+    memset( hdw_state, 0, sizeof( x50ng_t ) );
 
 #ifdef DEBUG_X50NG_MAIN
     fprintf( stderr, "_SC_PAGE_SIZE: %08lx\n", sysconf( _SC_PAGE_SIZE ) );
@@ -249,78 +249,78 @@ void emulator_init( void )
     printf( "%s:%u: x50ng: %p\n", __func__, __LINE__, x50ng );
 #endif
 
-    INIT_LIST_HEAD( &x50ng->modules );
+    INIT_LIST_HEAD( &hdw_state->modules );
 
-    x50ng->progname = opt.progname;
-    x50ng->progpath = opt.progpath;
-    x50ng->clk_tck = sysconf( _SC_CLK_TCK );
-    x50ng->emulator_fclk = 75000000;
-    x50ng->PCLK_ratio = 4;
-    x50ng->PCLK = 75000000 / 4;
+    hdw_state->clk_tck = sysconf( _SC_CLK_TCK );
+    hdw_state->emulator_fclk = 75000000;
+    hdw_state->PCLK_ratio = 4;
+    hdw_state->PCLK = 75000000 / 4;
 
     // cpu_set_log(0xffffffff);
     cpu_exec_init_all( 0 );
-    x50ng->env = cpu_init( "arm926" );
-    __GLOBAL_env = x50ng->env;
+    hdw_state->env = cpu_init( "arm926" );
+    __GLOBAL_env = hdw_state->env;
 
     //	cpu_set_log(cpu_str_to_log_mask("all"));
 
-    x50ng_timer_init( x50ng );
+    x50ng_timer_init( hdw_state );
 
-    x50ng->timer_ui_input = x50ng_new_timer( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, x50ng );
-    x50ng->timer_ui_output = x50ng_new_timer( X50NG_TIMER_VIRTUAL, ui_refresh_output, x50ng );
+    hdw_state->timer_ui_input = x50ng_new_timer( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, hdw_state );
+    hdw_state->timer_ui_output = x50ng_new_timer( X50NG_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
 
-    x50ng_s3c2410_arm_init( x50ng );
-    x50ng_flash_init( x50ng );
-    x50ng_sram_init( x50ng );
-    x50ng_s3c2410_init( x50ng );
+    x50ng_s3c2410_arm_init( hdw_state );
+    x50ng_flash_init( hdw_state );
+    x50ng_sram_init( hdw_state );
+    x50ng_s3c2410_init( hdw_state );
 
-    if ( x50ng_modules_init( x50ng ) )
+    if ( x50ng_modules_init( hdw_state ) )
         exit( EXIT_FAILURE );
 
-    int error = x50ng_modules_load( x50ng );
-    if ( error || opt.reinit >= X50NG_REINIT_REBOOT_ONLY ) {
+    int error = x50ng_modules_load( hdw_state );
+    if ( error || config.reinit >= X50NG_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
 
-        x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
+        x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
     }
 
-    x50ng_set_idle( x50ng, 0 );
+    x50ng_set_idle( hdw_state, 0 );
 
     // stl_phys(0x08000a1c, 0x55555555);
 
-    x50ng_mod_timer( x50ng->timer_ui_input, x50ng_get_clock() );
-    x50ng_mod_timer( x50ng->timer_ui_output, x50ng_get_clock() );
+    x50ng_mod_timer( hdw_state->timer_ui_input, x50ng_get_clock() );
+    x50ng_mod_timer( hdw_state->timer_ui_output, x50ng_get_clock() );
 
-    if ( opt.debug_port != 0 && opt.start_debugger ) {
-        gdbserver_start( opt.debug_port );
-        gdb_handlesig( x50ng->env, 0 );
+    if ( config.debug_port != 0 && config.start_debugger ) {
+        gdbserver_start( config.debug_port );
+        gdb_handlesig( hdw_state->env, 0 );
     }
 
-    if ( opt.sd_dir != NULL ) {
-        if ( opt.verbose )
-            fprintf( stderr, "> mounting --sd-dir %s\n", opt.sd_dir );
-        s3c2410_sdi_mount( x50ng, strdup( opt.sd_dir ) );
+    if ( config.sd_dir != NULL ) {
+        if ( config.verbose )
+            fprintf( stderr, "> mounting --sd-dir %s\n", config.sd_dir );
+        s3c2410_sdi_mount( hdw_state, strdup( config.sd_dir ) );
     }
+
+    return hdw_state;
 }
 
-void emulator_exit( void )
+void emulator_exit( config_t config )
 {
-    x50ng_modules_save( x50ng );
+    x50ng_modules_save( hdw_state );
 
-    if ( !opt.haz_config_file )
+    if ( !config.haz_config_file )
         save_config();
 
-    x50ng_modules_exit( x50ng );
+    x50ng_modules_exit( hdw_state );
 }
 
 static void x50ng_set_key_state( const x50ng_key_t key, bool state )
 {
     if ( key.eint >= 0 /* && key.row == 0 && key.column == 0 */ )
-        s3c2410_io_port_f_set_bit( x50ng, key.eint, state );
+        s3c2410_io_port_f_set_bit( hdw_state, key.eint, state );
     else
-        s3c2410_io_port_g_update( x50ng, key.column, key.row, state );
+        s3c2410_io_port_g_update( hdw_state, key.column, key.row, state );
 }
 
 void press_key( int hpkey )
@@ -345,14 +345,14 @@ bool is_key_pressed( int hpkey )
 
 bool is_display_on( void )
 {
-    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+    s3c2410_lcd_t* lcd = hdw_state->s3c2410_lcd;
 
     return ( lcd->lcdcon1 & 1 );
 }
 
 unsigned char get_annunciators( void )
 {
-    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+    s3c2410_lcd_t* lcd = hdw_state->s3c2410_lcd;
 
     char annunciators = 0;
 
@@ -367,7 +367,7 @@ int get_contrast( void ) { return 19; }
 
 void get_lcd_buffer( int* target )
 {
-    s3c2410_lcd_t* lcd = x50ng->s3c2410_lcd;
+    s3c2410_lcd_t* lcd = hdw_state->s3c2410_lcd;
 
     for ( int y = 0; y < LCD_HEIGHT; ++y )
         for ( int x = 0; x < LCD_WIDTH; ++x )

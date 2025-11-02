@@ -234,7 +234,7 @@ static void ncurses_refresh_annunciators( void )
 /* Public */
 /**********/
 
-void ncurses_refresh_lcd( x50ng_t* x50ng )
+void ncurses_refresh_lcd( x50ng_t* _hdw_state )
 {
     if ( !is_display_on() )
         return;
@@ -253,7 +253,7 @@ void ncurses_refresh_lcd( x50ng_t* x50ng )
     wrefresh( lcd_window );
 }
 
-void ncurses_handle_pending_inputs( x50ng_t* x50ng )
+void ncurses_handle_pending_inputs( x50ng_t* hdw_state )
 {
     bool new_keyboard_state[ NB_HP50g_KEYS ];
     uint32_t k;
@@ -450,8 +450,8 @@ void ncurses_handle_pending_inputs( x50ng_t* x50ng )
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                x50ng->arm_exit = 1;
-                cpu_exit( x50ng->env );
+                hdw_state->arm_exit = 1;
+                cpu_exit( hdw_state->env );
                 break;
         }
     }
@@ -479,7 +479,7 @@ void ncurses_exit( void )
     endwin();
 }
 
-void ncurses_init( x50ng_t* x50ng )
+void ncurses_init( x50ng_t* _hdw_state )
 {
     for ( int i = 0; i < NB_HP50g_KEYS; ++i )
         keyboard_state[ i ] = false;

@@ -15,7 +15,7 @@
 
 #define CONFIG_LUA_FILE_NAME "config.lua"
 
-options_t opt = {
+static config_t __config = {
     .verbose = false,
 
     .datadir = NULL,
@@ -102,28 +102,30 @@ static inline bool config_read( const char* filename )
 static char* config_to_string( void )
 {
     char* config;
-    if ( -1 == asprintf( &config,
-                         "--------------------------------------------------------------------------------\n"
-                         "-- Configuration file for x50ng\n"
-                         "-- This is a comment\n"
-                         "name = \"%s\"  -- this customize the title of the window\n"
-                         "\n"
-                         "frontend = \"%s\" -- possible values are: \"gui\" (default), \"tui\", \"tui-small\", \"tui-tiny\"\n"
-                         "\n"
-                         "-- the following only apply to 'gui' frontend \n"
-                         "style = \"%s\" -- CSS file (relative to this file) (gui only)\n"
-                         "zoom = %f -- (gui only)\n"
-                         "netbook = %s -- (gui only)\n"
-                         "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
-                         "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
-                         "legacy_keyboard = %s -- when true this put the Enter key where it belongs (gui only)\n"
-                         /* "\n" */
-                         /* "sd_dir = \"%s\"\n" */
-                         "--- End of x50ng configuration -----------------------------------------------\n",
-                         opt.name, opt.frontend == FRONTEND_GTK ? "gui" : ( opt.tiny ? "tui-tiny" : ( opt.small ? "tui-small" : "tui" ) ),
-                         opt.style_filename, opt.zoom, opt.netbook ? "true" : "false", opt.netbook_pivot_line,
-                         opt.newrpl_keyboard ? "true" : "false",
-                         opt.legacy_keyboard ? "true" : "false" /* , opt.sd_dir == NULL ? "" : opt.sd_dir */ ) )
+    if ( -1 ==
+         asprintf( &config,
+                   "--------------------------------------------------------------------------------\n"
+                   "-- Configuration file for x50ng\n"
+                   "-- This is a comment\n"
+                   "name = \"%s\"  -- this customize the title of the window\n"
+                   "\n"
+                   "frontend = \"%s\" -- possible values are: \"gui\" (default), \"tui\", \"tui-small\", \"tui-tiny\"\n"
+                   "\n"
+                   "-- the following only apply to 'gui' frontend \n"
+                   "style = \"%s\" -- CSS file (relative to this file) (gui only)\n"
+                   "zoom = %f -- (gui only)\n"
+                   "netbook = %s -- (gui only)\n"
+                   "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
+                   "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
+                   "legacy_keyboard = %s -- when true this put the Enter key where it belongs (gui only)\n"
+                   /* "\n" */
+                   /* "sd_dir = \"%s\"\n" */
+                   "--- End of x50ng configuration -----------------------------------------------\n",
+                   __config.name,
+                   __config.frontend == FRONTEND_GTK ? "gui" : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) ),
+                   __config.style_filename, __config.zoom, __config.netbook ? "true" : "false", __config.netbook_pivot_line,
+                   __config.newrpl_keyboard ? "true" : "false",
+                   __config.legacy_keyboard ? "true" : "false" /* , __config.sd_dir == NULL ? "" : __config.sd_dir */ ) )
         exit( EXIT_FAILURE );
 
     return config;
@@ -131,7 +133,7 @@ static char* config_to_string( void )
 
 int save_config( void )
 {
-    const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
+    const char* config_lua_filename = g_build_filename( __config.datadir, CONFIG_LUA_FILE_NAME, NULL );
     fprintf( stderr, "Loading configuration file: %s\n", config_lua_filename );
     int fd = open( config_lua_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
 
@@ -151,13 +153,13 @@ int save_config( void )
     close( fd );
     g_free( data );
 
-    if ( opt.verbose )
+    if ( __config.verbose )
         fprintf( stderr, "Current configuration has been written to %s\n", config_lua_filename );
 
     return EXIT_SUCCESS;
 }
 
-void config_init( int argc, char* argv[] )
+config_t* config_init( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
@@ -219,8 +221,8 @@ void config_init( int argc, char* argv[] )
         {0,                    0,                 0,                      0   }
     };
 
-    opt.progname = g_path_get_basename( argv[ 0 ] );
-    opt.progpath = g_path_get_dirname( argv[ 0 ] );
+    __config.progname = g_path_get_basename( argv[ 0 ] );
+    __config.progpath = g_path_get_dirname( argv[ 0 ] );
 
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
@@ -262,13 +264,13 @@ void config_init( int argc, char* argv[] )
                          "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
                          "   --bootloader[=filename]   bootloader file (default: %s)\n"
                          "   --firmware[=filename]     firmware file (default: %s)\n",
-                         opt.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, opt.progname, opt.progname, opt.progname,
-                         DEFAULT_GDBSTUB_PORT, opt.bootloader, opt.firmware );
+                         __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, __config.progname, __config.progname,
+                         __config.progname, DEFAULT_GDBSTUB_PORT, __config.bootloader, __config.firmware );
                 exit( EXIT_SUCCESS );
                 break;
             case 10:
                 do_enable_debugger = true;
-                opt.debug_port = atoi( optarg );
+                __config.debug_port = atoi( optarg );
                 break;
             case 11:
                 do_start_debugger = true;
@@ -281,10 +283,10 @@ void config_init( int argc, char* argv[] )
                 do_flash_full = true;
                 break;
             case 92:
-                opt.bootloader = strdup( optarg );
+                __config.bootloader = strdup( optarg );
                 break;
             case 93:
-                opt.firmware = strdup( optarg );
+                __config.firmware = strdup( optarg );
                 break;
             case 800:
                 clopt_sd_dir = strdup( optarg );
@@ -313,14 +315,14 @@ void config_init( int argc, char* argv[] )
                 clopt_netbook_pivot_line = atoi( optarg );
                 break;
             case 'd':
-                opt.datadir = strdup( optarg );
+                __config.datadir = strdup( optarg );
                 break;
             case 'n':
                 clopt_name = strdup( optarg );
                 break;
             case 'r':
-                if ( opt.reinit < X50NG_REINIT_REBOOT_ONLY )
-                    opt.reinit = X50NG_REINIT_REBOOT_ONLY;
+                if ( __config.reinit < X50NG_REINIT_REBOOT_ONLY )
+                    __config.reinit = X50NG_REINIT_REBOOT_ONLY;
                 break;
             case 's':
                 clopt_style_filename = strdup( optarg );
@@ -333,7 +335,7 @@ void config_init( int argc, char* argv[] )
                 exit( EXIT_SUCCESS );
                 break;
             case 'V':
-                opt.verbose = true;
+                __config.verbose = true;
                 break;
 
             default:
@@ -341,145 +343,147 @@ void config_init( int argc, char* argv[] )
         }
     }
 
-    if ( do_flash && ( opt.bootloader == NULL || opt.firmware == NULL ) ) {
+    if ( do_flash && ( __config.bootloader == NULL || __config.firmware == NULL ) ) {
         fprintf(
             stderr,
             "Error: --flash(-full) requires you to provide a bootloader and firmware using --bootloader and --firmware respectively!\n" );
         exit( EXIT_FAILURE );
     }
 
-    if ( opt.datadir == NULL )
-        opt.datadir = g_build_filename( g_get_user_config_dir(), opt.progname, NULL );
+    if ( __config.datadir == NULL )
+        __config.datadir = g_build_filename( g_get_user_config_dir(), __config.progname, NULL );
 
-    const char* config_lua_filename = g_build_filename( opt.datadir, CONFIG_LUA_FILE_NAME, NULL );
-    if ( opt.verbose )
+    const char* config_lua_filename = g_build_filename( __config.datadir, CONFIG_LUA_FILE_NAME, NULL );
+    if ( __config.verbose )
         fprintf( stderr, "Loading configuration file %s\n", config_lua_filename );
 
     /**********************/
     /* 1. read config.lua */
     /**********************/
-    opt.haz_config_file = config_read( config_lua_filename );
-    if ( opt.haz_config_file ) {
+    __config.haz_config_file = config_read( config_lua_filename );
+    if ( __config.haz_config_file ) {
         lua_getglobal( config_lua_values, "style" );
         const char* lua_style_filename = luaL_optstring( config_lua_values, -1, NULL );
         if ( lua_style_filename != NULL )
-            opt.style_filename = strdup( lua_style_filename );
+            __config.style_filename = strdup( lua_style_filename );
 
         lua_getglobal( config_lua_values, "name" );
         const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
         if ( lua_name != NULL )
-            opt.name = strdup( lua_name );
+            __config.name = strdup( lua_name );
 
         lua_getglobal( config_lua_values, "frontend" );
         const char* frontend = luaL_optstring( config_lua_values, -1, "gui" );
         if ( frontend != NULL ) {
             if ( strcmp( frontend, "gui" ) == 0 ) {
-                opt.frontend = FRONTEND_GTK;
-                opt.small = false;
-                opt.tiny = false;
+                __config.frontend = FRONTEND_GTK;
+                __config.small = false;
+                __config.tiny = false;
             }
             if ( strcmp( frontend, "tui" ) == 0 ) {
-                opt.frontend = FRONTEND_NCURSES;
-                opt.small = false;
-                opt.tiny = false;
+                __config.frontend = FRONTEND_NCURSES;
+                __config.small = false;
+                __config.tiny = false;
             }
             if ( strcmp( frontend, "tui-small" ) == 0 ) {
-                opt.frontend = FRONTEND_NCURSES;
-                opt.small = true;
-                opt.tiny = false;
+                __config.frontend = FRONTEND_NCURSES;
+                __config.small = true;
+                __config.tiny = false;
             }
             if ( strcmp( frontend, "tui-tiny" ) == 0 ) {
-                opt.frontend = FRONTEND_NCURSES;
-                opt.small = false;
-                opt.tiny = true;
+                __config.frontend = FRONTEND_NCURSES;
+                __config.small = false;
+                __config.tiny = true;
             }
         }
 
         /* lua_getglobal( config_lua_values, "sd_dir" ); */
         /* const char* lua_sd_dir = luaL_optstring( config_lua_values, -1, NULL ); */
         /* if ( lua_sd_dir != NULL && 0 < strlen( lua_sd_dir ) ) */
-        /*     opt.sd_dir = strdup( lua_sd_dir ); */
+        /*     __config.sd_dir = strdup( lua_sd_dir ); */
 
         lua_getglobal( config_lua_values, "zoom" );
-        opt.zoom = luaL_optnumber( config_lua_values, -1, opt.zoom );
+        __config.zoom = luaL_optnumber( config_lua_values, -1, __config.zoom );
 
         lua_getglobal( config_lua_values, "netbook" );
-        opt.netbook = lua_toboolean( config_lua_values, -1 );
+        __config.netbook = lua_toboolean( config_lua_values, -1 );
 
         /* lua_getglobal( config_lua_values, "tui" ); */
-        /* opt.tui = lua_toboolean( config_lua_values, -1 ); */
+        /* __config.tui = lua_toboolean( config_lua_values, -1 ); */
 
         lua_getglobal( config_lua_values, "netbook_pivot_line" );
-        opt.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, opt.netbook_pivot_line );
+        __config.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, __config.netbook_pivot_line );
 
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
-        opt.newrpl_keyboard = lua_toboolean( config_lua_values, -1 );
+        __config.newrpl_keyboard = lua_toboolean( config_lua_values, -1 );
 
         lua_getglobal( config_lua_values, "legacy_keyboard" );
-        opt.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
+        __config.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
     }
-    if ( opt.haz_config_file && overwrite_config )
-        opt.haz_config_file = false;
+    if ( __config.haz_config_file && overwrite_config )
+        __config.haz_config_file = false;
 
     /****************************************************/
     /* 2. treat command-line params which have priority */
     /****************************************************/
     if ( clopt_style_filename != NULL )
-        opt.style_filename = strdup( clopt_style_filename );
-    else if ( opt.style_filename == NULL )
-        opt.style_filename = "style-50g.css";
+        __config.style_filename = strdup( clopt_style_filename );
+    else if ( __config.style_filename == NULL )
+        __config.style_filename = "style-50g.css";
 
     if ( clopt_name != NULL )
-        opt.name = strdup( clopt_name );
-    else if ( opt.name == NULL )
-        opt.name = strdup( opt.progname );
+        __config.name = strdup( clopt_name );
+    else if ( __config.name == NULL )
+        __config.name = strdup( __config.progname );
 
     if ( clopt_sd_dir != NULL )
-        opt.sd_dir = strdup( clopt_sd_dir );
+        __config.sd_dir = strdup( clopt_sd_dir );
 
     if ( clopt_newrpl_keyboard != -1 )
-        opt.newrpl_keyboard = clopt_newrpl_keyboard;
+        __config.newrpl_keyboard = clopt_newrpl_keyboard;
 
     if ( clopt_legacy_keyboard != -1 )
-        opt.legacy_keyboard = clopt_legacy_keyboard;
+        __config.legacy_keyboard = clopt_legacy_keyboard;
 
     if ( clopt_zoom > 0 )
-        opt.zoom = clopt_zoom;
+        __config.zoom = clopt_zoom;
 
     if ( clopt_netbook != -1 )
-        opt.netbook = clopt_netbook;
+        __config.netbook = clopt_netbook;
 
     if ( clopt_frontend != -1 )
-        opt.frontend = clopt_frontend;
+        __config.frontend = clopt_frontend;
 
     if ( clopt_small != -1 )
-        opt.small = clopt_small;
+        __config.small = clopt_small;
 
     if ( clopt_tiny != -1 )
-        opt.tiny = clopt_tiny;
+        __config.tiny = clopt_tiny;
 
     if ( clopt_netbook_pivot_line != -1 )
-        opt.netbook_pivot_line = clopt_netbook_pivot_line;
+        __config.netbook_pivot_line = clopt_netbook_pivot_line;
 
     if ( print_config_and_exit ) {
         fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
         exit( EXIT_SUCCESS );
     }
 
-    if ( opt.verbose )
+    if ( __config.verbose )
         fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
 
     if ( do_enable_debugger ) {
-        if ( opt.debug_port == 0 )
-            opt.debug_port = DEFAULT_GDBSTUB_PORT;
+        if ( __config.debug_port == 0 )
+            __config.debug_port = DEFAULT_GDBSTUB_PORT;
 
-        opt.start_debugger = do_start_debugger;
+        __config.start_debugger = do_start_debugger;
     }
     if ( do_flash ) {
-        if ( opt.reinit < X50NG_REINIT_FLASH )
-            opt.reinit = X50NG_REINIT_FLASH;
+        if ( __config.reinit < X50NG_REINIT_FLASH )
+            __config.reinit = X50NG_REINIT_FLASH;
 
         if ( do_flash_full )
-            opt.reinit = X50NG_REINIT_FLASH_FULL;
+            __config.reinit = X50NG_REINIT_FLASH_FULL;
     }
+
+    return &__config;
 }

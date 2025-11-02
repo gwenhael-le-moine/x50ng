@@ -516,50 +516,50 @@ void newrplify_ui_buttons_hp50g()
 /********************/
 void ui_handle_pending_inputs( void* data )
 {
-    x50ng_t* x50ng = data;
+    x50ng_t* hdw_state = data;
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_handle_pending_inputs( x50ng );
+            ncurses_handle_pending_inputs( hdw_state );
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_handle_pending_inputs( x50ng );
+            gtk_ui_handle_pending_inputs( hdw_state );
             break;
     }
 
-    x50ng_mod_timer( x50ng->timer_ui_input, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+    x50ng_mod_timer( hdw_state->timer_ui_input, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
 
 void ui_refresh_output( void* data )
 {
-    x50ng_t* x50ng = data;
+    x50ng_t* hdw_state = data;
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_refresh_lcd( x50ng );
+            ncurses_refresh_lcd( hdw_state );
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_refresh_lcd( x50ng );
+            gtk_ui_refresh_lcd( hdw_state );
             break;
     }
 
-    x50ng_mod_timer( x50ng->timer_ui_output, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
+    x50ng_mod_timer( hdw_state->timer_ui_output, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
-void ui_init( x50ng_t* x50ng )
+void ui_init( x50ng_t* hdw_state )
 {
     if ( opt.newrpl_keyboard )
         newrplify_ui_buttons_hp50g();
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_init( x50ng );
+            ncurses_init( hdw_state );
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_init( x50ng );
+            gtk_ui_init( hdw_state );
             break;
     }
 }

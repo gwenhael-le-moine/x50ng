@@ -388,7 +388,7 @@ static int s3c2410_rtc_init( x50ng_module_t* module )
 
     rtc = malloc( sizeof( s3c2410_rtc_t ) );
     if ( NULL == rtc ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __func__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_rtc_data_init( rtc ) ) {

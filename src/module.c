@@ -322,7 +322,6 @@ int x50ng_module_set_string( x50ng_module_t* module, GKeyFile* key, const char* 
 
 int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** path )
 {
-    x50ng_t* x50ng = module->x50ng;
     int fd;
     int error;
 
@@ -338,7 +337,7 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
 
-        *path = g_build_filename( x50ng->progpath, name, NULL );
+        *path = g_build_filename( opt.progpath, name, NULL );
         if ( opt.verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {

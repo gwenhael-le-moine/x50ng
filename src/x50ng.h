@@ -75,8 +75,6 @@ struct x50ng_t {
     int arm_exit;
 
     GKeyFile* state;
-    const char* progname;
-    const char* progpath;
 };
 
 #endif /* !(_X50NG_H) */

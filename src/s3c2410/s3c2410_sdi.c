@@ -744,7 +744,7 @@ static int s3c2410_sdi_init( x50ng_module_t* module )
 
     sdi = malloc( sizeof( s3c2410_sdi_t ) );
     if ( NULL == sdi ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", module->x50ng->progname, __func__, __LINE__ );
+        fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
     if ( s3c2410_sdi_data_init( sdi ) ) {

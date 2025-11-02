@@ -16,13 +16,13 @@
 #  ifdef X50NG_DATADIR
 #    define GLOBAL_DATADIR X50NG_DATADIR
 #  else
-#    define GLOBAL_DATADIR x50ng->progpath
+#    define GLOBAL_DATADIR opt.progpath
 #  endif
 
 typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t;
 typedef enum { X50NG_REINIT_NONE = 0, X50NG_REINIT_REBOOT_ONLY, X50NG_REINIT_FLASH, X50NG_REINIT_FLASH_FULL } x50ng_reinit_t;
 
-typedef struct options_t {
+typedef struct config_t {
     char* progname;
     char* progpath;
 
@@ -50,14 +50,14 @@ typedef struct options_t {
     double zoom;
     bool netbook;
     int netbook_pivot_line;
-} options_t;
+} config_t;
 
-extern options_t opt;
+extern config_t opt;
 
 /*************/
 /* functions */
 /*************/
-extern void config_init( int argc, char* argv[] );
+extern config_t* config_init( int argc, char* argv[] );
 extern int save_config( void );
 
 #endif /* !_CONFIG_H */

@@ -15,7 +15,7 @@
 // #define TEST_PASTE true
 
 typedef struct {
-    x50ng_t* x50ng;
+    x50ng_t* hdw_state;
     const ui_button_t* key;
     GtkWidget* button;
     bool down;
@@ -40,7 +40,7 @@ static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 /*************************/
 /* Functions' prototypes */
 /*************************/
-static void gtk_ui_open_menu( int x, int y, x50ng_t* x50ng );
+static void gtk_ui_open_menu( int x, int y, x50ng_t* hdw_state );
 
 /*************/
 /* Functions */
@@ -109,47 +109,47 @@ static void gtk_ui_react_to_button_right_click_release( x50ng_ui_button_t* butto
     press_key( key->hpkey );
 }
 
-static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* x50ng )
+static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* hdw_state )
 {
     g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
     if ( file != NULL )
-        s3c2410_sdi_mount( x50ng, ( char* )g_file_peek_path( file ) );
+        s3c2410_sdi_mount( hdw_state, ( char* )g_file_peek_path( file ) );
 }
 
-static void gtk_ui_do_select_and_mount_sd_folder( x50ng_t* x50ng, GMenuItem* _menuitem )
+static void gtk_ui_do_select_and_mount_sd_folder( x50ng_t* hdw_state, GMenuItem* _menuitem )
 {
     g_autoptr( GtkFileDialog ) dialog =
         g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
 
     gtk_file_dialog_select_folder( dialog, GTK_WINDOW( gtk_ui_window ), NULL,
-                                   ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, x50ng );
+                                   ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, hdw_state );
 }
 
-static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* x50ng )
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* hdw_state )
 {
     if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
         gdbserver_start( opt.debug_port );
-        gdb_handlesig( x50ng->env, 0 );
+        gdb_handlesig( hdw_state->env, 0 );
     }
 }
 
-static void gtk_ui_do_reset( x50ng_t* x50ng, GMenuItem* _menuitem )
+static void gtk_ui_do_reset( x50ng_t* hdw_state, GMenuItem* _menuitem )
 {
-    x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
-    cpu_reset( x50ng->env );
-    x50ng_set_idle( x50ng, 0 );
+    x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
+    cpu_reset( hdw_state->env );
+    x50ng_set_idle( hdw_state, 0 );
 }
 
 #ifdef TEST_PASTE
-static void x50g_string_to_keys_sequence( x50ng_t* x50ng, const char* input )
+static void x50g_string_to_keys_sequence( x50ng_t* _hdw_state, const char* input )
 {
     for ( int i = 0; i < strlen( input ); i++ )
         fprintf( stderr, "%c", input[ i ] );
     fprintf( stderr, "\n" );
 }
 
-static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* x50ng )
+static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* hdw_state )
 {
     g_autofree char* text = NULL;
     g_autoptr( GError ) error = NULL;
@@ -161,43 +161,43 @@ static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, x
         return;
     }
 
-    x50g_string_to_keys_sequence( x50ng, text );
+    x50g_string_to_keys_sequence( hdw_state, text );
 }
 
-static void gtk_ui_do_paste( x50ng_t* x50ng, GtkWidget* _menuitem )
+static void gtk_ui_do_paste( x50ng_t* hdw_state, GtkWidget* _menuitem )
 {
     gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL,
-                                   ( GAsyncReadyCallback )gtk_ui_paste_callback, x50ng );
+                                   ( GAsyncReadyCallback )gtk_ui_paste_callback, hdw_state );
 }
 #endif
 
-static void gtk_ui_do_quit( x50ng_t* x50ng, GtkWidget* _menuitem ) { x50ng->arm_exit++; }
+static void gtk_ui_do_quit( x50ng_t* hdw_state, GtkWidget* _menuitem ) { hdw_state->arm_exit++; }
 
-static void gtk_ui_open_menu( int x, int y, x50ng_t* x50ng )
+static void gtk_ui_open_menu( int x, int y, x50ng_t* hdw_state )
 {
     g_autoptr( GMenu ) menu = g_menu_new();
     g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
 
 #ifdef TEST_PASTE
     g_autoptr( GSimpleAction ) act_paste = g_simple_action_new( "paste", NULL );
-    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gtk_ui_do_paste ), x50ng );
+    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gtk_ui_do_paste ), hdw_state );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
     g_menu_append( menu, "Paste", "app.paste" );
 #endif
 
     g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
-    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), x50ng );
-    if ( !s3c2410_sdi_is_mounted( x50ng ) )
+    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), hdw_state );
+    if ( !s3c2410_sdi_is_mounted( hdw_state ) )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
     g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
 
     g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
-    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), x50ng );
+    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), hdw_state );
     char* unmount_label;
-    if ( s3c2410_sdi_is_mounted( x50ng ) ) {
+    if ( s3c2410_sdi_is_mounted( hdw_state ) ) {
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
         char* sd_path;
-        s3c2410_sdi_get_path( x50ng, &sd_path );
+        s3c2410_sdi_get_path( hdw_state, &sd_path );
         if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
             exit( EXIT_FAILURE );
         free( sd_path );
@@ -207,18 +207,18 @@ static void gtk_ui_open_menu( int x, int y, x50ng_t* x50ng )
     free( unmount_label );
 
     g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
-    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), x50ng );
+    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), hdw_state );
     if ( opt.debug_port != 0 )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
     g_menu_append( menu, "Start gdb server", "app.debug" );
 
     g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
-    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), x50ng );
+    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), hdw_state );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
     g_menu_append( menu, "Reset", "app.reset" );
 
     g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
-    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), x50ng );
+    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), hdw_state );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
     g_menu_append( menu, "Quit", "app.quit" );
 
@@ -246,7 +246,7 @@ static void gtk_ui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, 
     cairo_paint( cr );
 }
 
-static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, key_event_t event_type )
+static bool gtk_ui_handle_key_event( int keyval, x50ng_t* hdw_state, key_event_t event_type )
 {
     int hpkey;
     switch ( keyval ) {
@@ -467,19 +467,19 @@ static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, key_event_t eve
 
         case GDK_KEY_F7:
         case GDK_KEY_F10:
-            x50ng->arm_exit = 1;
-            cpu_exit( x50ng->env );
+            hdw_state->arm_exit = 1;
+            cpu_exit( hdw_state->env );
             return GDK_EVENT_STOP;
 
         case GDK_KEY_F12:
             switch ( event_type ) {
                 case KEY_PRESS:
-                    x50ng_modules_reset( x50ng, X50NG_RESET_POWER_ON );
-                    cpu_reset( x50ng->env );
-                    x50ng_set_idle( x50ng, 1 );
+                    x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
+                    cpu_reset( hdw_state->env );
+                    x50ng_set_idle( hdw_state, 1 );
                     break;
                 case KEY_RELEASE:
-                    x50ng_set_idle( x50ng, 0 );
+                    x50ng_set_idle( hdw_state, 0 );
                     break;
                 default:
                     break;
@@ -487,7 +487,7 @@ static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, key_event_t eve
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            gtk_ui_open_menu( ( LCD_WIDTH * opt.zoom ) / 2, ( LCD_HEIGHT * opt.zoom ) / 2, x50ng );
+            gtk_ui_open_menu( ( LCD_WIDTH * opt.zoom ) / 2, ( LCD_HEIGHT * opt.zoom ) / 2, hdw_state );
             return GDK_EVENT_STOP;
 
         default:
@@ -510,20 +510,20 @@ static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, key_event_t eve
 }
 
 static bool gtk_ui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                       x50ng_t* x50ng )
+                                       x50ng_t* hdw_state )
 {
-    return gtk_ui_handle_key_event( keyval, x50ng, KEY_PRESS );
+    return gtk_ui_handle_key_event( keyval, hdw_state, KEY_PRESS );
 }
 
 static bool gtk_ui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                         x50ng_t* x50ng )
+                                         x50ng_t* hdw_state )
 {
-    return gtk_ui_handle_key_event( keyval, x50ng, KEY_RELEASE );
+    return gtk_ui_handle_key_event( keyval, hdw_state, KEY_RELEASE );
 }
 
-static void gtk_ui_react_to_display_click( x50ng_t* x50ng, GtkEventController* _gesture, gdouble x, gdouble y )
+static void gtk_ui_react_to_display_click( x50ng_t* hdw_state, GtkEventController* _gesture, gdouble x, gdouble y )
 {
-    gtk_ui_open_menu( ( int )x, ( int )y, x50ng );
+    gtk_ui_open_menu( ( int )x, ( int )y, hdw_state );
 }
 
 static GtkWidget* _gtk_ui_activate__create_annunciator_widget( const char* label )
@@ -551,7 +551,7 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
     return gtk_ui_label;
 }
 
-static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* x50ng )
+static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* hdw_state )
 {
     char* style_full_path = g_build_filename( opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
@@ -559,11 +559,11 @@ static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* x50ng )
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
         style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( x50ng->progpath, opt.style_filename, NULL );
+        style_full_path = g_build_filename( opt.progpath, opt.style_filename, NULL );
 
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
         fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", opt.style_filename, opt.datadir,
-                 opt.style_filename, GLOBAL_DATADIR, opt.style_filename, x50ng->progpath, opt.style_filename );
+                 opt.style_filename, GLOBAL_DATADIR, opt.style_filename, opt.progpath, opt.style_filename );
     else {
         g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
         gtk_css_provider_load_from_path( style_provider, style_full_path );
@@ -578,7 +578,7 @@ static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* x50ng )
     free( style_full_path );
 }
 
-static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
+static void gtk_ui_activate( GtkApplication* app, x50ng_t* hdw_state )
 {
     // create gtk_ui_window and widgets/stuff
     if ( app == NULL )
@@ -593,7 +593,7 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
     // Sets the title of this instance
     g_set_application_name( opt.name );
     // Sets the app_id of all instances
-    g_set_prgname( x50ng->progname );
+    g_set_prgname( opt.progname );
 
     GtkWidget* window_container = gtk_box_new( opt.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( window_container, "window-container" );
@@ -601,11 +601,11 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
 
     gtk_window_set_child( ( GtkWindow* )gtk_ui_window, window_container );
 
-    g_signal_connect_swapped( G_OBJECT( gtk_ui_window ), "destroy", G_CALLBACK( gtk_ui_do_quit ), x50ng );
+    g_signal_connect_swapped( G_OBJECT( gtk_ui_window ), "destroy", G_CALLBACK( gtk_ui_do_quit ), hdw_state );
 
     GtkEventController* keys_controller = gtk_event_controller_key_new();
-    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( gtk_ui_react_to_key_press ), x50ng );
-    g_signal_connect( keys_controller, "key-released", G_CALLBACK( gtk_ui_react_to_key_release ), x50ng );
+    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( gtk_ui_react_to_key_press ), hdw_state );
+    g_signal_connect( keys_controller, "key-released", G_CALLBACK( gtk_ui_react_to_key_release ), hdw_state );
     gtk_widget_add_controller( gtk_ui_window, keys_controller );
 
     /* for --netbook */
@@ -631,7 +631,7 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
 
     gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * opt.zoom ) );
     gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * opt.zoom ) );
-    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, x50ng, NULL );
+    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, hdw_state, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_widget_set_halign( lcd_container, GTK_ALIGN_CENTER );
@@ -664,7 +664,7 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
 
     GtkGesture* right_click_controller = gtk_gesture_click_new();
     gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
-    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_display_click ), x50ng );
+    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_display_click ), hdw_state );
     gtk_widget_add_controller( display_container, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
     // keyboard
@@ -731,7 +731,7 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
             button = &gtk_ui_buttons[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
-            button->x50ng = x50ng;
+            button->hdw_state = hdw_state;
             button->key = &ui_buttons_hp50g[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -799,14 +799,14 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* x50ng )
         }
     }
 
-    _gtk_ui_activate__load_and_apply_CSS( x50ng );
+    _gtk_ui_activate__load_and_apply_CSS( hdw_state );
 
     // finally show the window
     gtk_widget_realize( gtk_ui_window );
     gtk_window_present( GTK_WINDOW( gtk_ui_window ) );
 }
 
-void gtk_ui_handle_pending_inputs( x50ng_t* _x50ng )
+void gtk_ui_handle_pending_inputs( x50ng_t* _hdw_state )
 {
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
@@ -825,7 +825,7 @@ static void gtk_ui_refresh_annunciators( void )
         gtk_widget_set_opacity( gtk_ui_annunciators[ i ], ( annunciators >> i ) & 0x01 ? 1 : 0 );
 }
 
-void gtk_ui_refresh_lcd( x50ng_t* _x50ng )
+void gtk_ui_refresh_lcd( x50ng_t* _hdw_state )
 {
     if ( !is_display_on() )
         return;
@@ -853,16 +853,16 @@ void gtk_ui_refresh_lcd( x50ng_t* _x50ng )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( x50ng_t* x50ng )
+void gtk_ui_init( x50ng_t* hdw_state )
 {
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
-    /* g_signal_connect( app, "activate", G_CALLBACK( gtk_ui_activate ), x50ng ); */
+    /* g_signal_connect( app, "activate", G_CALLBACK( gtk_ui_activate ), hdw_state ); */
 
     /* g_application_run( G_APPLICATION( app ), 0, NULL ); */
 
     gtk_init();
-    gtk_ui_activate( NULL, x50ng );
+    gtk_ui_activate( NULL, hdw_state );
 }
 
 void gtk_ui_exit( void ) {}
