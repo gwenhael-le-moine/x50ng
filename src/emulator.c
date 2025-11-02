@@ -216,21 +216,21 @@ uint32_t do_arm_semihosting( CPUState* env )
     return 0;
 }
 
-void hdw_set_idle( hdw_t* x50ng, x50ng_arm_idle_t idle )
+void hdw_set_idle( hdw_t* hdw_state, x50ng_arm_idle_t idle )
 {
 #ifdef DEBUG_X50NG_ARM_IDLE
-    if ( idle != x50ng->arm_idle ) {
-        printf( "%s: arm_idle %u, idle %u\n", __func__, x50ng->arm_idle, idle );
+    if ( idle != hdw_state->arm_idle ) {
+        printf( "%s: arm_idle %u, idle %u\n", __func__, hdw_state->arm_idle, idle );
     }
 #endif
 
-    x50ng->arm_idle = idle;
+    hdw_state->arm_idle = idle;
 
-    if ( x50ng->arm_idle == X50NG_ARM_RUN )
-        x50ng->env->halted = 0;
+    if ( hdw_state->arm_idle == X50NG_ARM_RUN )
+        hdw_state->env->halted = 0;
     else {
-        x50ng->env->halted = 1;
-        cpu_exit( x50ng->env );
+        hdw_state->env->halted = 1;
+        cpu_exit( hdw_state->env );
     }
 }
 
@@ -246,7 +246,7 @@ hdw_t* emulator_init( config_t config )
 #ifdef DEBUG_X50NG_MAIN
     fprintf( stderr, "_SC_PAGE_SIZE: %08lx\n", sysconf( _SC_PAGE_SIZE ) );
 
-    printf( "%s:%u: x50ng: %p\n", __func__, __LINE__, x50ng );
+    printf( "%s:%u: x50ng: %p\n", __func__, __LINE__, hdw_state );
 #endif
 
     INIT_LIST_HEAD( &hdw_state->modules );

@@ -33,7 +33,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
     hdw_timer_t* tick_timer;
     hdw_timer_t* alarm_timer;
     int64_t interval; /* us */
@@ -73,7 +73,7 @@ static __inline__ uint32_t bcd2bin( uint32_t bcd ) { return ( ( bcd >> 4 ) * 10 
 static void s3c2410_rtc_timeout( void* user_data )
 {
     s3c2410_rtc_t* rtc = user_data;
-    hdw_t* x50ng = rtc->x50ng;
+    hdw_t* hdw_state = rtc->hdw_state;
     int64_t now, us;
 
     if ( !( rtc->ticnt & 0x80 ) ) {
@@ -84,7 +84,7 @@ static void s3c2410_rtc_timeout( void* user_data )
     printf( "RTC: assert TICK interrupt\n" );
 #endif
 
-    s3c2410_intc_assert( x50ng, INT_TICK, 0 );
+    s3c2410_intc_assert( hdw_state, INT_TICK, 0 );
 
     now = timer_get_clock();
     while ( rtc->expires <= now ) {
@@ -141,7 +141,7 @@ static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
 static void s3c2410_rtc_alarm( void* user_data )
 {
     s3c2410_rtc_t* rtc = user_data;
-    hdw_t* x50ng = rtc->x50ng;
+    hdw_t* hdw_state = rtc->hdw_state;
     struct tm* tm;
     struct timeval tv;
     int64_t now, us;
@@ -186,7 +186,7 @@ static void s3c2410_rtc_alarm( void* user_data )
 #ifdef DEBUG_S3C2410_RTC
         printf( "RTC: assert ALARM interrupt\n" );
 #endif
-        s3c2410_intc_assert( x50ng, INT_RTC, 0 );
+        s3c2410_intc_assert( hdw_state, INT_RTC, 0 );
     }
 
 #ifdef DEBUG_S3C2410_RTC
@@ -397,7 +397,7 @@ static int s3c2410_rtc_init( hdw_module_t* module )
     }
 
     module->user_data = rtc;
-    rtc->x50ng = module->x50ng;
+    rtc->hdw_state = module->hdw_state;
 
     rtc->tick_timer = timer_new( X50NG_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
     rtc->alarm_timer = timer_new( X50NG_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
@@ -432,12 +432,12 @@ static int s3c2410_rtc_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_rtc_init( hdw_t* x50ng )
+int x50ng_s3c2410_rtc_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-rtc", s3c2410_rtc_init, s3c2410_rtc_exit, s3c2410_rtc_reset, s3c2410_rtc_load, s3c2410_rtc_save,
-                            NULL, &module ) )
+    if ( x50ng_module_init( hdw_state, "s3c2410-rtc", s3c2410_rtc_init, s3c2410_rtc_exit, s3c2410_rtc_reset, s3c2410_rtc_load,
+                            s3c2410_rtc_save, NULL, &module ) )
         return -1;
 
     return x50ng_module_register( module );

@@ -35,7 +35,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } s3c2410_lcd_t;
 
 #define S3C2410_OFFSET(module, name, reset, data) \
@@ -362,8 +362,8 @@ extern int x50ng_s3c2410_adc_init(hdw_t *x50ng);
 extern int x50ng_s3c2410_spi_init(hdw_t *x50ng);
 extern int x50ng_s3c2410_sdi_init(hdw_t *x50ng);
 
-extern void s3c2410_io_port_g_update(hdw_t *x50ng, int column, int row, uint32_t new_state);
-extern void s3c2410_io_port_f_set_bit(hdw_t *x50ng, int n, uint32_t set);
+extern void s3c2410_io_port_g_update(hdw_t *hdw_state, int column, int row, uint32_t new_state);
+extern void s3c2410_io_port_f_set_bit(hdw_t *hdw_state, int n, uint32_t set);
 
 extern int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
 
@@ -371,9 +371,9 @@ extern unsigned long s3c2410_timer_next_interrupt(hdw_t *x50ng);
 extern unsigned long s3c2410_watchdog_next_interrupt(hdw_t *x50ng);
 
 /* s3c2410/s3c2410_sdi.c */
-extern void s3c2410_sdi_unmount( hdw_t* x50ng );
-extern int s3c2410_sdi_mount( hdw_t* x50ng, char* filename );
-extern bool s3c2410_sdi_is_mounted( hdw_t* x50ng );
-extern void s3c2410_sdi_get_path( hdw_t* x50ng, char** filename );
+extern void s3c2410_sdi_unmount( hdw_t* hdw_state );
+extern int s3c2410_sdi_mount( hdw_t* hdw_state, char* filename );
+extern bool s3c2410_sdi_is_mounted( hdw_t* hdw_state );
+extern void s3c2410_sdi_get_path( hdw_t* hdw_state, char** filename );
 
 #endif /* !(_X50NG_S3C2410_H) */

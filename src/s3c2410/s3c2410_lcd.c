@@ -181,8 +181,8 @@ static int s3c2410_lcd_init( hdw_module_t* module )
     }
 
     module->user_data = lcd;
-    module->x50ng->s3c2410_lcd = lcd;
-    lcd->x50ng = module->x50ng;
+    module->hdw_state->s3c2410_lcd = lcd;
+    lcd->hdw_state = module->hdw_state;
 
     iotype = cpu_register_io_memory( s3c2410_lcd_readfn, s3c2410_lcd_writefn, lcd );
 #ifdef DEBUG_S3C2410_LCD
@@ -239,12 +239,12 @@ int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
     }
 }
 
-int x50ng_s3c2410_lcd_init( hdw_t* x50ng )
+int x50ng_s3c2410_lcd_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-lcd", s3c2410_lcd_init, s3c2410_lcd_exit, s3c2410_lcd_reset, s3c2410_lcd_load, s3c2410_lcd_save,
-                            NULL, &module ) )
+    if ( x50ng_module_init( hdw_state, "s3c2410-lcd", s3c2410_lcd_init, s3c2410_lcd_exit, s3c2410_lcd_reset, s3c2410_lcd_load,
+                            s3c2410_lcd_save, NULL, &module ) )
         return -1;
 
     return x50ng_module_register( module );

@@ -17,7 +17,7 @@ typedef struct hdw_sram_t {
     int fd;
     size_t size;
     uint32_t offset;
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } hdw_sram_t;
 
 #define S3C2410_SRAM_BASE 0x08000000
@@ -82,7 +82,7 @@ static int sram_load( hdw_module_t* module, GKeyFile* key )
         return error;
     }
 
-    sram->x50ng->sram = phys_ram_base + sram->offset;
+    sram->hdw_state->sram = phys_ram_base + sram->offset;
 
     g_free( filename );
     return error;
@@ -141,7 +141,7 @@ static int sram_init( hdw_module_t* module )
     sram->fd = -1;
 
     module->user_data = sram;
-    sram->x50ng = module->x50ng;
+    sram->hdw_state = module->hdw_state;
 
     sram->data = ( void* )-1;
     sram->shadow = ( void* )-1;

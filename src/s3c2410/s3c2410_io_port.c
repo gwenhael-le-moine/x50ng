@@ -62,7 +62,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } s3c2410_io_port_t;
 
 static int s3c2410_io_port_data_init( s3c2410_io_port_t* io )
@@ -117,7 +117,7 @@ static int s3c2410_io_port_data_init( s3c2410_io_port_t* io )
     return 0;
 }
 
-static uint32_t s3c2410_scan_keys( hdw_t* x50ng, uint32_t gpgcon, uint32_t gpgdat )
+static uint32_t s3c2410_scan_keys( hdw_t* hdw_state, uint32_t gpgcon, uint32_t gpgdat )
 {
     uint32_t result;
     int col, row;
@@ -135,7 +135,7 @@ static uint32_t s3c2410_scan_keys( hdw_t* x50ng, uint32_t gpgcon, uint32_t gpgda
                 result |= gpgdat & ( 1 << ( col + 8 ) );
 
                 if ( 0 == ( gpgdat & ( 1 << ( col + 8 ) ) ) ) {
-                    result &= ~( x50ng->keybycol[ col ] );
+                    result &= ~( hdw_state->keybycol[ col ] );
                 }
                 break;
         }
@@ -152,7 +152,7 @@ static uint32_t s3c2410_scan_keys( hdw_t* x50ng, uint32_t gpgcon, uint32_t gpgda
                 result |= gpgdat & ( 1 << row );
 
                 if ( 0 == ( gpgdat & ( 1 << row ) ) ) {
-                    result &= ~( x50ng->keybyrow[ row ] << 8 );
+                    result &= ~( hdw_state->keybyrow[ row ] << 8 );
                 }
                 break;
         }
@@ -176,7 +176,7 @@ static uint32_t s3c2410_io_port_read( void* opaque, target_phys_addr_t offset )
 
     switch ( offset ) {
         case S3C2410_IO_PORT_MISCCR:
-            //		if (io->x50ng->arm->NresetSig != LOW) {
+            //		if (io->hdw_state->arm->NresetSig != LOW) {
             *( reg->datap ) |= 0x00010000;
             //		}
             break;
@@ -218,7 +218,7 @@ static uint32_t s3c2410_io_port_read( void* opaque, target_phys_addr_t offset )
             break;
 
         case S3C2410_IO_PORT_GPGDAT:
-            return s3c2410_scan_keys( io->x50ng, io->gpgcon, io->gpgdat );
+            return s3c2410_scan_keys( io->hdw_state, io->gpgcon, io->gpgdat );
 
         case S3C2410_IO_PORT_GPHDAT:
             if ( 0 == ( ( io->gphcon >> 14 ) & 3 ) ) {
@@ -284,9 +284,9 @@ static void s3c2410_io_port_write( void* opaque, target_phys_addr_t offset, uint
             *( reg->datap ) = data;
             if ( !( *( reg->datap ) & 0x00010000 ) ) {
                 *( reg->datap ) = 0x10330;
-                //			if (io->x50ng->arm->NresetSig != LOW) {
-                //				io->x50ng->arm->NresetSig = LOW;
-                //				io->x50ng->arm->Exception++;
+                //			if (io->hdw_state->arm->NresetSig != LOW) {
+                //				io->hdw_state->arm->NresetSig = LOW;
+                //				io->hdw_state->arm->Exception++;
                 //			}
             }
             break;
@@ -304,9 +304,9 @@ static void s3c2410_io_port_write( void* opaque, target_phys_addr_t offset, uint
             *( reg->datap ) &= ~( data );
 
             if ( 0 == ( *( reg->datap ) & 0x000000f0 ) )
-                s3c2410_intc_deassert( io->x50ng, EINT4_7 );
+                s3c2410_intc_deassert( io->hdw_state, EINT4_7 );
             if ( 0 == ( *( reg->datap ) & 0x00ffff00 ) )
-                s3c2410_intc_deassert( io->x50ng, EINT8_23 );
+                s3c2410_intc_deassert( io->hdw_state, EINT8_23 );
             break;
 
         default:
@@ -315,26 +315,26 @@ static void s3c2410_io_port_write( void* opaque, target_phys_addr_t offset, uint
     }
 }
 
-void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_state )
+void s3c2410_io_port_g_update( hdw_t* hdw_state, int column, int row, uint32_t new_state )
 {
-    s3c2410_io_port_t* io = x50ng->s3c2410_io_port;
+    s3c2410_io_port_t* io = hdw_state->s3c2410_io_port;
     unsigned char columnbit = 1 << column;
     unsigned char rowbit = 1 << row;
     uint32_t oldvalue, newvalue, change;
     int n;
 
-    oldvalue = s3c2410_scan_keys( x50ng, io->gpgcon, io->gpgdat );
+    oldvalue = s3c2410_scan_keys( hdw_state, io->gpgcon, io->gpgdat );
 
     if ( new_state ) {
-        x50ng->keybycol[ column ] |= rowbit;
-        x50ng->keybyrow[ row ] |= columnbit;
+        hdw_state->keybycol[ column ] |= rowbit;
+        hdw_state->keybyrow[ row ] |= columnbit;
 
     } else {
-        x50ng->keybycol[ column ] &= ~rowbit;
-        x50ng->keybyrow[ row ] &= ~columnbit;
+        hdw_state->keybycol[ column ] &= ~rowbit;
+        hdw_state->keybyrow[ row ] &= ~columnbit;
     }
 
-    newvalue = s3c2410_scan_keys( x50ng, io->gpgcon, io->gpgdat );
+    newvalue = s3c2410_scan_keys( hdw_state, io->gpgcon, io->gpgdat );
     change = newvalue ^ oldvalue;
 
     for ( n = 0; n < 15; ++n ) {
@@ -350,14 +350,14 @@ void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_s
                             if ( !( newvalue & ( 1 << n ) ) ) {
                                 io->eintpend |= 1 << ( n + 8 );
                                 if ( io->eintpend & ~( io->eintmask ) )
-                                    s3c2410_intc_assert( x50ng, EINT8_23, 1 );
+                                    s3c2410_intc_assert( hdw_state, EINT8_23, 1 );
                             }
                             break;
                         case 1: /* High Level */
                             if ( newvalue & ( 1 << n ) ) {
                                 io->eintpend |= 1 << ( n + 8 );
                                 if ( io->eintpend & ~( io->eintmask ) )
-                                    s3c2410_intc_assert( x50ng, EINT8_23, 1 );
+                                    s3c2410_intc_assert( hdw_state, EINT8_23, 1 );
                             }
                             break;
                         case 2: /* Falling Edge */
@@ -365,7 +365,7 @@ void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_s
                             if ( ( change & ( 1 << n ) ) && !( newvalue & ( 1 << n ) ) ) {
                                 io->eintpend |= 1 << ( n + 8 );
                                 if ( io->eintpend & ~( io->eintmask ) )
-                                    s3c2410_intc_assert( x50ng, EINT8_23, 1 );
+                                    s3c2410_intc_assert( hdw_state, EINT8_23, 1 );
                             }
                             break;
                         case 4: /* Rising Edge */
@@ -373,7 +373,7 @@ void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_s
                             if ( ( change & ( 1 << n ) ) && ( newvalue & ( 1 << n ) ) ) {
                                 io->eintpend |= 1 << ( n + 8 );
                                 if ( io->eintpend & ~( io->eintmask ) )
-                                    s3c2410_intc_assert( x50ng, EINT8_23, 1 );
+                                    s3c2410_intc_assert( hdw_state, EINT8_23, 1 );
                             }
                             break;
                         case 6: /* Any Edge */
@@ -381,7 +381,7 @@ void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_s
                             if ( change & ( 1 << n ) ) {
                                 io->eintpend |= 1 << ( n + 8 );
                                 if ( io->eintpend & ~( io->eintmask ) )
-                                    s3c2410_intc_assert( x50ng, EINT8_23, 1 );
+                                    s3c2410_intc_assert( hdw_state, EINT8_23, 1 );
                             }
                             break;
                     }
@@ -397,16 +397,16 @@ void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_s
     return;
 }
 
-void s3c2410_io_port_f_set_bit( hdw_t* x50ng, int n, uint32_t value )
+void s3c2410_io_port_f_set_bit( hdw_t* hdw_state, int n, uint32_t value )
 {
-    s3c2410_io_port_t* io = x50ng->s3c2410_io_port;
+    s3c2410_io_port_t* io = hdw_state->s3c2410_io_port;
     uint32_t change;
     int pending, level;
 
     if ( n > 7 )
         return;
 
-    //	g_mutex_lock(x50ng->memlock);
+    //	g_mutex_lock(hdw_state->memlock);
 
     change = 0;
     switch ( ( io->gpfcon >> ( 2 * n ) ) & 3 ) {
@@ -465,16 +465,16 @@ void s3c2410_io_port_f_set_bit( hdw_t* x50ng, int n, uint32_t value )
 
     switch ( n ) {
         case 0:
-            s3c2410_intc_assert( x50ng, EINT0, level );
+            s3c2410_intc_assert( hdw_state, EINT0, level );
             break;
         case 1:
-            s3c2410_intc_assert( x50ng, EINT1, level );
+            s3c2410_intc_assert( hdw_state, EINT1, level );
             break;
         case 2:
-            s3c2410_intc_assert( x50ng, EINT2, level );
+            s3c2410_intc_assert( hdw_state, EINT2, level );
             break;
         case 3:
-            s3c2410_intc_assert( x50ng, EINT3, level );
+            s3c2410_intc_assert( hdw_state, EINT3, level );
             break;
         case 4:
         case 5:
@@ -482,12 +482,12 @@ void s3c2410_io_port_f_set_bit( hdw_t* x50ng, int n, uint32_t value )
         case 7:
             io->eintpend |= ( 1 << n );
             if ( io->eintpend & ~( io->eintmask ) )
-                s3c2410_intc_assert( x50ng, EINT4_7, 1 );
+                s3c2410_intc_assert( hdw_state, EINT4_7, 1 );
             break;
     }
 
 out:
-    //	g_mutex_unlock(x50ng->memlock);
+    //	g_mutex_unlock(hdw_state->memlock);
 
     return;
 }
@@ -593,8 +593,8 @@ static int s3c2410_io_port_init( hdw_module_t* module )
     }
 
     module->user_data = io;
-    module->x50ng->s3c2410_io_port = io;
-    io->x50ng = module->x50ng;
+    module->hdw_state->s3c2410_io_port = io;
+    io->hdw_state = module->hdw_state;
 
     iotype = cpu_register_io_memory( s3c2410_io_port_readfn, s3c2410_io_port_writefn, io );
 #ifdef DEBUG_S3C2410_IO_PORT
@@ -625,11 +625,11 @@ static int s3c2410_io_port_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_io_port_init( hdw_t* x50ng )
+int x50ng_s3c2410_io_port_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-io-port", s3c2410_io_port_init, s3c2410_io_port_exit, s3c2410_io_port_reset,
+    if ( x50ng_module_init( hdw_state, "s3c2410-io-port", s3c2410_io_port_init, s3c2410_io_port_exit, s3c2410_io_port_reset,
                             s3c2410_io_port_load, s3c2410_io_port_save, NULL, &module ) )
         return -1;
 

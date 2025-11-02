@@ -18,7 +18,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 
     unsigned long interval;
     hdw_timer_t* timer;
@@ -47,7 +47,7 @@ static int s3c2410_watchdog_data_init( s3c2410_watchdog_t* watchdog )
 static void s3c2410_watchdog_tick( void* data )
 {
     s3c2410_watchdog_t* watchdog = data;
-    hdw_t* x50ng = watchdog->x50ng;
+    hdw_t* hdw_state = watchdog->hdw_state;
 
     if ( watchdog->wtcnt > 0 )
         watchdog->wtcnt--;
@@ -64,11 +64,11 @@ static void s3c2410_watchdog_tick( void* data )
 #ifdef DEBUG_S3C2410_WATCHDOG
         printf( "WATCHDOG: assert WDT interrupt\n" );
 #endif
-        //		g_mutex_lock(x50ng->memlock);
+        //		g_mutex_lock(hdw_state->memlock);
 
-        s3c2410_intc_assert( x50ng, INT_WDT, 0 );
+        s3c2410_intc_assert( hdw_state, INT_WDT, 0 );
 
-        //		g_mutex_unlock(x50ng->memlock);
+        //		g_mutex_unlock(hdw_state->memlock);
     }
 
     if ( watchdog->wtcon & 0x0001 ) {
@@ -76,12 +76,12 @@ static void s3c2410_watchdog_tick( void* data )
         printf( "WATCHDOG: assert internal RESET\n" );
 #endif
 
-        x50ng_modules_reset( x50ng, X50NG_RESET_WATCHDOG );
-        cpu_reset( x50ng->env );
+        x50ng_modules_reset( hdw_state, X50NG_RESET_WATCHDOG );
+        cpu_reset( hdw_state->env );
 
-        //		if (x50ng->arm->NresetSig != LOW) {
-        //			x50ng->arm->NresetSig = LOW;
-        //			x50ng->arm->Exception++;
+        //		if (hdw_state->arm->NresetSig != LOW) {
+        //			hdw_state->arm->NresetSig = LOW;
+        //			hdw_state->arm->Exception++;
         //		}
         return;
     }
@@ -90,9 +90,9 @@ static void s3c2410_watchdog_tick( void* data )
     timer_mod( watchdog->timer, timer_get_clock() + watchdog->interval );
 }
 
-unsigned long s3c2410_watchdog_next_interrupt( hdw_t* x50ng )
+unsigned long s3c2410_watchdog_next_interrupt( hdw_t* hdw_state )
 {
-    s3c2410_watchdog_t* watchdog = x50ng->s3c2410_watchdog;
+    s3c2410_watchdog_t* watchdog = hdw_state->s3c2410_watchdog;
     unsigned long irq;
     unsigned long ticks;
 
@@ -285,8 +285,8 @@ static int s3c2410_watchdog_init( hdw_module_t* module )
 
     module->user_data = watchdog;
 
-    watchdog->x50ng = module->x50ng;
-    module->x50ng->s3c2410_watchdog = watchdog;
+    watchdog->hdw_state = module->hdw_state;
+    module->hdw_state->s3c2410_watchdog = watchdog;
 
     watchdog->timer = timer_new( X50NG_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
 
@@ -319,11 +319,11 @@ static int s3c2410_watchdog_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_watchdog_init( hdw_t* x50ng )
+int x50ng_s3c2410_watchdog_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-watchdog", s3c2410_watchdog_init, s3c2410_watchdog_exit, s3c2410_watchdog_reset,
+    if ( x50ng_module_init( hdw_state, "s3c2410-watchdog", s3c2410_watchdog_init, s3c2410_watchdog_exit, s3c2410_watchdog_reset,
                             s3c2410_watchdog_load, s3c2410_watchdog_save, NULL, &module ) )
         return -1;
 

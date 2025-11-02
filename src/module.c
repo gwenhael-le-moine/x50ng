@@ -198,7 +198,7 @@ int x50ng_modules_save( hdw_t* hdw_state )
 
 int x50ng_module_register( hdw_module_t* module )
 {
-    hdw_t* hdw_state = module->x50ng;
+    hdw_t* hdw_state = module->hdw_state;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u: %s\n", __func__, __LINE__, module->name );
@@ -410,7 +410,7 @@ int x50ng_module_init( hdw_t* hdw_state, const char* name, int ( *init )( hdw_mo
     module->user_data = user_data;
 
     //	module->mutex = g_mutex_new();
-    module->x50ng = hdw_state;
+    module->hdw_state = hdw_state;
 
     *modulep = module;
     return 0;

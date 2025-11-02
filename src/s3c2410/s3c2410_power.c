@@ -24,7 +24,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } s3c2410_power_t;
 
 static int s3c2410_power_data_init( s3c2410_power_t* power )
@@ -70,7 +70,7 @@ static uint32_t s3c2410_power_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_power_t* power = opaque;
-    hdw_t* x50ng = power->x50ng;
+    hdw_t* hdw_state = power->hdw_state;
     s3c2410_offset_t* reg;
     uint32_t mMdiv, mPdiv, mSdiv;
     uint32_t uMdiv, uPdiv, uSdiv;
@@ -94,13 +94,13 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
                 printf( "POWER: enter POWER_OFF\n" );
 #endif
 
-                x50ng_modules_reset( x50ng, X50NG_RESET_POWER_OFF );
+                x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_OFF );
 
-                //			if (x50ng->arm->NresetSig != LOW) {
-                //				x50ng->arm->NresetSig = LOW;
-                //				x50ng->arm->Exception++;
+                //			if (hdw_state->arm->NresetSig != LOW) {
+                //				hdw_state->arm->NresetSig = LOW;
+                //				hdw_state->arm->Exception++;
                 //			}
-                hdw_set_idle( x50ng, X50NG_ARM_OFF );
+                hdw_set_idle( hdw_state, X50NG_ARM_OFF );
                 return;
             }
 
@@ -109,7 +109,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
 #ifdef DEBUG_S3C2410_POWER
                 printf( "POWER: enter IDLE\n" );
 #endif
-                hdw_set_idle( x50ng, X50NG_ARM_SLEEP );
+                hdw_set_idle( hdw_state, X50NG_ARM_SLEEP );
                 return;
             }
 
@@ -128,58 +128,58 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
     mMdiv = ( power->mpllcon >> 12 ) & 0xff;
     mPdiv = ( power->mpllcon >> 4 ) & 0x3f;
     mSdiv = ( power->mpllcon >> 0 ) & 0x03;
-    x50ng->MCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( mMdiv + 8 ) ) ) / ( ( u64 )( ( mPdiv + 2 ) * ( 1 << mSdiv ) ) );
+    hdw_state->MCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( mMdiv + 8 ) ) ) / ( ( u64 )( ( mPdiv + 2 ) * ( 1 << mSdiv ) ) );
 
     uMdiv = ( power->upllcon >> 12 ) & 0xff;
     uPdiv = ( power->upllcon >> 4 ) & 0x3f;
     uSdiv = ( power->upllcon >> 0 ) & 0x03;
-    x50ng->UCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( uMdiv + 8 ) ) ) / ( ( u64 )( ( uPdiv + 2 ) * ( 1 << uSdiv ) ) );
+    hdw_state->UCLK = ( ( ( u64 )EXTCLK ) * ( ( u64 )( uMdiv + 8 ) ) ) / ( ( u64 )( ( uPdiv + 2 ) * ( 1 << uSdiv ) ) );
 
     slow_bit = ( power->clkslow & 0x10 );
     if ( slow_bit ) {
         slow_val = ( power->clkslow >> 0 ) & 0x07;
         if ( 0 == slow_val )
-            x50ng->FCLK = EXTCLK;
+            hdw_state->FCLK = EXTCLK;
         else
-            x50ng->FCLK = EXTCLK / ( 2 * slow_val );
+            hdw_state->FCLK = EXTCLK / ( 2 * slow_val );
     } else {
-        x50ng->FCLK = x50ng->MCLK;
+        hdw_state->FCLK = hdw_state->MCLK;
     }
 
     if ( power->clkdivn & 4 ) {
-        x50ng->HCLK = x50ng->FCLK / 4;
-        x50ng->PCLK = x50ng->FCLK / 4;
-        x50ng->PCLK_ratio = 4;
+        hdw_state->HCLK = hdw_state->FCLK / 4;
+        hdw_state->PCLK = hdw_state->FCLK / 4;
+        hdw_state->PCLK_ratio = 4;
     } else {
         switch ( power->clkdivn & 3 ) {
             case 0:
-                x50ng->HCLK = x50ng->FCLK;
-                x50ng->PCLK = x50ng->HCLK;
-                x50ng->PCLK_ratio = 1;
+                hdw_state->HCLK = hdw_state->FCLK;
+                hdw_state->PCLK = hdw_state->HCLK;
+                hdw_state->PCLK_ratio = 1;
                 break;
             case 1:
-                x50ng->HCLK = x50ng->FCLK;
-                x50ng->PCLK = x50ng->HCLK / 2;
-                x50ng->PCLK_ratio = 2;
+                hdw_state->HCLK = hdw_state->FCLK;
+                hdw_state->PCLK = hdw_state->HCLK / 2;
+                hdw_state->PCLK_ratio = 2;
                 break;
             case 2:
-                x50ng->HCLK = x50ng->FCLK / 2;
-                x50ng->PCLK = x50ng->HCLK;
-                x50ng->PCLK_ratio = 2;
+                hdw_state->HCLK = hdw_state->FCLK / 2;
+                hdw_state->PCLK = hdw_state->HCLK;
+                hdw_state->PCLK_ratio = 2;
                 break;
             case 3:
-                x50ng->HCLK = x50ng->FCLK / 2;
-                x50ng->PCLK = x50ng->HCLK / 2;
-                x50ng->PCLK_ratio = 4;
+                hdw_state->HCLK = hdw_state->FCLK / 2;
+                hdw_state->PCLK = hdw_state->HCLK / 2;
+                hdw_state->PCLK_ratio = 4;
                 break;
         }
     }
 
 #ifdef DEBUG_S3C2410_POWER
-    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: MCLK %u\n", __func__, EXTCLK, mMdiv, mPdiv, mSdiv, x50ng->MCLK );
-    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: UCLK %u\n", __func__, EXTCLK, uMdiv, uPdiv, uSdiv, x50ng->UCLK );
-    printf( "%s: FCLK %s: %u\n", __func__, slow_bit ? "(slow)" : "", x50ng->FCLK );
-    printf( "%s: HCLK %u, PCLK %u\n", __func__, x50ng->HCLK, x50ng->PCLK );
+    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: MCLK %u\n", __func__, EXTCLK, mMdiv, mPdiv, mSdiv, hdw_state->MCLK );
+    printf( "%s: EXTCLK %u, mdiv %u, pdiv %u, sdiv %u: UCLK %u\n", __func__, EXTCLK, uMdiv, uPdiv, uSdiv, hdw_state->UCLK );
+    printf( "%s: FCLK %s: %u\n", __func__, slow_bit ? "(slow)" : "", hdw_state->FCLK );
+    printf( "%s: HCLK %u, PCLK %u\n", __func__, hdw_state->HCLK, hdw_state->PCLK );
 #endif
 }
 
@@ -280,7 +280,7 @@ static int s3c2410_power_init( hdw_module_t* module )
     }
 
     module->user_data = power;
-    power->x50ng = module->x50ng;
+    power->hdw_state = module->hdw_state;
 
     iotype = cpu_register_io_memory( s3c2410_power_readfn, s3c2410_power_writefn, power );
 #ifdef DEBUG_S3C2410_POWER
@@ -311,11 +311,11 @@ static int s3c2410_power_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_power_init( hdw_t* x50ng )
+int x50ng_s3c2410_power_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-power", s3c2410_power_init, s3c2410_power_exit, s3c2410_power_reset, s3c2410_power_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-power", s3c2410_power_init, s3c2410_power_exit, s3c2410_power_reset, s3c2410_power_load,
                             s3c2410_power_save, NULL, &module ) )
         return -1;
 

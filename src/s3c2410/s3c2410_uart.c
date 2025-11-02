@@ -30,7 +30,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } s3c2410_uart_reg_t;
 
 typedef struct {
@@ -114,7 +114,7 @@ static int s3c2410_uart_data_init( s3c2410_uart_t* uart )
 static uint32_t s3c2410_uart_read( void* opaque, target_phys_addr_t offset )
 {
     s3c2410_uart_reg_t* uart_regs = opaque;
-    hdw_t* x50ng = uart_regs->x50ng;
+    hdw_t* hdw_state = uart_regs->hdw_state;
     s3c2410_offset_t* reg;
 #ifdef DEBUG_S3C2410_UART
     const char* module;
@@ -157,7 +157,7 @@ static uint32_t s3c2410_uart_read( void* opaque, target_phys_addr_t offset )
             uart_regs->utrstat &= ~( 1 << 0 );
 
             if ( uart_regs->ucon & ( 1 << 8 ) ) {
-                s3c2410_intc_sub_deassert( x50ng, uart_regs->int_rxd );
+                s3c2410_intc_sub_deassert( hdw_state, uart_regs->int_rxd );
             }
 
             break;
@@ -169,7 +169,7 @@ static uint32_t s3c2410_uart_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_uart_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_uart_reg_t* uart_regs = opaque;
-    hdw_t* x50ng = uart_regs->x50ng;
+    hdw_t* hdw_state = uart_regs->hdw_state;
     s3c2410_offset_t* reg;
     uint32_t base;
 #ifdef DEBUG_S3C2410_UART
@@ -214,51 +214,51 @@ static void s3c2410_uart_write( void* opaque, target_phys_addr_t offset, uint32_
     switch ( offset ) {
         case S3C2410_UART0_UCON:
             if ( *( reg->datap ) & ( 1 << 9 ) )
-                s3c2410_intc_sub_assert( x50ng, uart_regs->int_txd, 1 );
+                s3c2410_intc_sub_assert( hdw_state, uart_regs->int_txd, 1 );
             if ( *( reg->datap ) & ( 1 << 8 ) )
-                s3c2410_intc_sub_deassert( x50ng, uart_regs->int_rxd );
+                s3c2410_intc_sub_deassert( hdw_state, uart_regs->int_rxd );
             break;
 
         case S3C2410_UART0_UBRDIV:
 #ifdef DEBUG_S3C2410_UART
             ubrdivn = ( data >> 0 ) & 0xffff;
             if ( uart_regs->ucon & ( 1 << 10 ) ) {
-                baud = x50ng->UCLK / 16 / ( ubrdivn + 1 );
-                printf( "%s: UEXTCLK %u, ubrdivn %u, baud %u\n", module, x50ng->UCLK, ubrdivn, baud );
+                baud = hdw_state->UCLK / 16 / ( ubrdivn + 1 );
+                printf( "%s: UEXTCLK %u, ubrdivn %u, baud %u\n", module, hdw_state->UCLK, ubrdivn, baud );
             } else {
-                baud = x50ng->PCLK / 16 / ( ubrdivn + 1 );
-                printf( "%s: PCLK %u, ubrdivn %u, baud %u\n", module, x50ng->PCLK, ubrdivn, baud );
+                baud = hdw_state->PCLK / 16 / ( ubrdivn + 1 );
+                printf( "%s: PCLK %u, ubrdivn %u, baud %u\n", module, hdw_state->PCLK, ubrdivn, baud );
             }
 #endif
             break;
 
         case S3C2410_UART0_UTXH:
             if ( uart_regs->ucon & ( 1 << 9 ) )
-                s3c2410_intc_sub_deassert( x50ng, uart_regs->int_txd );
+                s3c2410_intc_sub_deassert( hdw_state, uart_regs->int_txd );
 
             uart_regs->utrstat |= ( 1 << 2 ) | ( 1 << 1 );
 
             if ( uart_regs->ucon & ( 1 << 9 ) )
-                s3c2410_intc_sub_assert( x50ng, uart_regs->int_txd, 1 );
+                s3c2410_intc_sub_assert( hdw_state, uart_regs->int_txd, 1 );
             else
-                s3c2410_intc_sub_assert( x50ng, uart_regs->int_txd, 0 );
+                s3c2410_intc_sub_assert( hdw_state, uart_regs->int_txd, 0 );
 
             if ( uart_regs->ucon & ( 1 << 5 ) ) {
                 uart_regs->urxh = data;
                 uart_regs->utrstat |= ( 1 << 0 );
 
                 if ( uart_regs->ucon & ( 1 << 8 ) )
-                    s3c2410_intc_sub_assert( x50ng, uart_regs->int_rxd, 1 );
+                    s3c2410_intc_sub_assert( hdw_state, uart_regs->int_rxd, 1 );
                 else
-                    s3c2410_intc_sub_assert( x50ng, uart_regs->int_rxd, 0 );
+                    s3c2410_intc_sub_assert( hdw_state, uart_regs->int_rxd, 0 );
             } else if ( base == 2 ) {
                 uart_regs->urxh = data;
                 uart_regs->utrstat |= ( 1 << 0 );
 
                 if ( uart_regs->ucon & ( 1 << 8 ) )
-                    s3c2410_intc_sub_assert( x50ng, uart_regs->int_rxd, 1 );
+                    s3c2410_intc_sub_assert( hdw_state, uart_regs->int_rxd, 1 );
                 else
-                    s3c2410_intc_sub_assert( x50ng, uart_regs->int_rxd, 0 );
+                    s3c2410_intc_sub_assert( hdw_state, uart_regs->int_rxd, 0 );
             }
 
             break;
@@ -375,7 +375,7 @@ static int s3c2410_uart_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_uart_init( hdw_t* x50ng )
+int x50ng_s3c2410_uart_init( hdw_t* hdw_state )
 {
     s3c2410_uart_t* uart;
     hdw_module_t* module;
@@ -392,25 +392,25 @@ int x50ng_s3c2410_uart_init( hdw_t* x50ng )
         return -ENOMEM;
     }
 
-    uart->uart[ 0 ].x50ng = x50ng;
-    uart->uart[ 1 ].x50ng = x50ng;
-    uart->uart[ 2 ].x50ng = x50ng;
+    uart->uart[ 0 ].hdw_state = hdw_state;
+    uart->uart[ 1 ].hdw_state = hdw_state;
+    uart->uart[ 2 ].hdw_state = hdw_state;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-uart0", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-uart0", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
                             s3c2410_uart_save, &uart->uart[ 0 ], &module ) )
         return -1;
 
     if ( x50ng_module_register( module ) )
         return -1;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-uart1", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-uart1", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
                             s3c2410_uart_save, &uart->uart[ 1 ], &module ) )
         return -1;
 
     if ( x50ng_module_register( module ) )
         return -1;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-uart2", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-uart2", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
                             s3c2410_uart_save, &uart->uart[ 2 ], &module ) )
         return -1;
 

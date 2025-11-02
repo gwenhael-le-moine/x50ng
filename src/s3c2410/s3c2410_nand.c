@@ -199,11 +199,11 @@ static int s3c2410_nand_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_nand_init( hdw_t* x50ng )
+int x50ng_s3c2410_nand_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-nand", s3c2410_nand_init, s3c2410_nand_exit, s3c2410_nand_reset, s3c2410_nand_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-nand", s3c2410_nand_init, s3c2410_nand_exit, s3c2410_nand_reset, s3c2410_nand_load,
                             s3c2410_nand_save, NULL, &module ) )
         return -1;
 

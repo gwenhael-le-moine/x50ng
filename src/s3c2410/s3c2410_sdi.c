@@ -37,7 +37,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 
     char* filename;
     BlockDriverState* bs;
@@ -575,9 +575,9 @@ static void s3c2410_sdi_write( void* opaque, target_phys_addr_t offset, uint32_t
     }
 }
 
-void s3c2410_sdi_unmount( hdw_t* x50ng )
+void s3c2410_sdi_unmount( hdw_t* hdw_state )
 {
-    s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
+    s3c2410_sdi_t* sdi = hdw_state->s3c2410_sdi;
 
     if ( sdi->bs ) {
         bdrv_delete( sdi->bs );
@@ -592,24 +592,24 @@ void s3c2410_sdi_unmount( hdw_t* x50ng )
     g_free( sdi->filename );
     sdi->filename = g_strdup( "" );
 
-    s3c2410_io_port_f_set_bit( x50ng, 3, 0 );
+    s3c2410_io_port_f_set_bit( hdw_state, 3, 0 );
 }
 
-bool s3c2410_sdi_is_mounted( hdw_t* x50ng )
+bool s3c2410_sdi_is_mounted( hdw_t* hdw_state )
 {
-    s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
+    s3c2410_sdi_t* sdi = hdw_state->s3c2410_sdi;
 
     return ( sdi->bs != NULL ) || ( sdi->fd >= 0 );
 }
 
-int s3c2410_sdi_mount( hdw_t* x50ng, char* filename )
+int s3c2410_sdi_mount( hdw_t* hdw_state, char* filename )
 {
-    s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
+    s3c2410_sdi_t* sdi = hdw_state->s3c2410_sdi;
     struct stat st;
     char vvfat_name[ 1024 ];
     int error = 0;
 
-    s3c2410_sdi_unmount( x50ng );
+    s3c2410_sdi_unmount( hdw_state );
     g_free( sdi->filename );
     sdi->filename = g_strdup( filename );
 
@@ -632,21 +632,21 @@ int s3c2410_sdi_mount( hdw_t* x50ng, char* filename )
         }
     }
 
-    s3c2410_io_port_f_set_bit( x50ng, 3, s3c2410_sdi_is_mounted( x50ng ) ? 1 : 0 );
+    s3c2410_io_port_f_set_bit( hdw_state, 3, s3c2410_sdi_is_mounted( hdw_state ) ? 1 : 0 );
 
     return error;
 }
 
-void s3c2410_sdi_get_path( hdw_t* x50ng, char** path )
+void s3c2410_sdi_get_path( hdw_t* hdw_state, char** path )
 {
-    s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
+    s3c2410_sdi_t* sdi = hdw_state->s3c2410_sdi;
 
     *path = strdup( sdi->filename );
 }
 
 static int s3c2410_sdi_load( hdw_module_t* module, GKeyFile* key )
 {
-    hdw_t* x50ng = module->x50ng;
+    hdw_t* hdw_state = module->hdw_state;
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
     char *filename, *filepath;
@@ -661,11 +661,11 @@ static int s3c2410_sdi_load( hdw_module_t* module, GKeyFile* key )
 
     int error = x50ng_module_get_filename( module, key, "filename", "", &filename, &filepath );
     if ( strcmp( filename, "" ) ) {
-        int error2 = s3c2410_sdi_mount( x50ng, filepath );
+        int error2 = s3c2410_sdi_mount( hdw_state, filepath );
         if ( 0 == error )
             error = error2;
     } else
-        s3c2410_sdi_unmount( x50ng );
+        s3c2410_sdi_unmount( hdw_state );
 
     g_free( sdi->filename );
     sdi->filename = filename;
@@ -753,8 +753,8 @@ static int s3c2410_sdi_init( hdw_module_t* module )
     }
 
     module->user_data = sdi;
-    module->x50ng->s3c2410_sdi = sdi;
-    sdi->x50ng = module->x50ng;
+    module->hdw_state->s3c2410_sdi = sdi;
+    sdi->hdw_state = module->hdw_state;
 
     iotype = cpu_register_io_memory( s3c2410_sdi_readfn, s3c2410_sdi_writefn, sdi );
 #ifdef DEBUG_S3C2410_SDI
@@ -787,12 +787,12 @@ static int s3c2410_sdi_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_sdi_init( hdw_t* x50ng )
+int x50ng_s3c2410_sdi_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-sdi", s3c2410_sdi_init, s3c2410_sdi_exit, s3c2410_sdi_reset, s3c2410_sdi_load, s3c2410_sdi_save,
-                            NULL, &module ) )
+    if ( x50ng_module_init( hdw_state, "s3c2410-sdi", s3c2410_sdi_init, s3c2410_sdi_exit, s3c2410_sdi_reset, s3c2410_sdi_load,
+                            s3c2410_sdi_save, NULL, &module ) )
         return -1;
 
     return x50ng_module_register( module );

@@ -29,7 +29,7 @@ struct __s3c2410_timer_s__ {
     uint32_t tcon;
     uint32_t prev_tcon;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
@@ -96,14 +96,14 @@ static void s3c2410_timer_timeout( void* data )
 {
     struct s3c2410_timeout* t = data;
     s3c2410_timer_t* timer = t->main;
-    hdw_t* x50ng = timer->x50ng;
+    hdw_t* hdw_state = timer->hdw_state;
     int64_t timeout;
 
 #ifdef DEBUG_S3C2410_TIMER
     printf( "s3c2410-timer: assert TIMER%u interrupt\n", t->index );
 #endif
 
-    s3c2410_intc_assert( timer->x50ng, t->tconfig->irq, 0 );
+    s3c2410_intc_assert( timer->hdw_state, t->tconfig->irq, 0 );
 
     if ( timer->tcon & t->tconfig->reload_bit ) {
         t->tcnt = t->tcntb;
@@ -113,16 +113,16 @@ static void s3c2410_timer_timeout( void* data )
         return;
     }
 
-    timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
+    timeout = 1000000LL * t->tcnt * t->interval / hdw_state->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
     printf( "s3c2410-timer: reload TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval, ( unsigned long long )timeout );
 #endif
     timer_mod( t->timer, timer_get_clock() + timeout );
 }
 
-unsigned long s3c2410_timer_next_interrupt( hdw_t* x50ng )
+unsigned long s3c2410_timer_next_interrupt( hdw_t* hdw_state )
 {
-    s3c2410_timer_t* timer = x50ng->s3c2410_timer;
+    s3c2410_timer_t* timer = hdw_state->s3c2410_timer;
     struct s3c2410_timeout* t;
     unsigned long irq, next;
     unsigned long ticks;
@@ -165,7 +165,7 @@ unsigned long s3c2410_timer_next_interrupt( hdw_t* x50ng )
 static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 {
     struct s3c2410_timeout* t;
-    hdw_t* x50ng = timer->x50ng;
+    hdw_t* hdw_state = timer->hdw_state;
     uint32_t pre, mux;
     int64_t timeout;
     int i;
@@ -187,7 +187,7 @@ static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
         printf( "s3c2410-timer: TIMER%u: pre %u, mux %u, tick %lu PCLKs\n", t->index, pre, mux, t->interval );
 #endif
         if ( is_timer_pendinig( t->timer ) ) {
-            timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
+            timeout = 1000000LL * t->tcnt * t->interval / hdw_state->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
             printf( "s3c2410-timer: mod TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval,
                     ( unsigned long long )timeout );
@@ -200,7 +200,7 @@ static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 {
     struct s3c2410_timeout* t;
-    hdw_t* x50ng = timer->x50ng;
+    hdw_t* hdw_state = timer->hdw_state;
     int64_t timeout;
     uint32_t change;
     int i;
@@ -222,7 +222,7 @@ static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 
         if ( change & t->tconfig->start_bit ) {
             if ( timer->tcon & t->tconfig->start_bit ) {
-                timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
+                timeout = 1000000LL * t->tcnt * t->interval / hdw_state->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
                 printf( "s3c2410-timer: start TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval,
                         ( unsigned long long )timeout );
@@ -241,7 +241,7 @@ static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 static uint32_t s3c2410_read_tcnt( s3c2410_timer_t* timer, int index )
 {
     struct s3c2410_timeout* t = &timer->timeout[ index ];
-    hdw_t* x50ng = timer->x50ng;
+    hdw_t* hdw_state = timer->hdw_state;
     int64_t now, expires, timeout;
 
     if ( !( timer->tcon & t->tconfig->start_bit ) )
@@ -255,7 +255,7 @@ static uint32_t s3c2410_read_tcnt( s3c2410_timer_t* timer, int index )
         if ( timeout <= 0 )
             return 0;
 
-        t->tcnt = timeout * x50ng->PCLK / ( 1000000LL * t->interval );
+        t->tcnt = timeout * hdw_state->PCLK / ( 1000000LL * t->interval );
     }
 
     return t->tcnt;
@@ -441,8 +441,8 @@ static int s3c2410_timer_init( hdw_module_t* module )
 
     module->user_data = timer;
 
-    timer->x50ng = module->x50ng;
-    module->x50ng->s3c2410_timer = timer;
+    timer->hdw_state = module->hdw_state;
+    module->hdw_state->s3c2410_timer = timer;
 
     for ( i = 0; i < 5; i++ ) {
         t = &timer->timeout[ i ];
@@ -484,11 +484,11 @@ static int s3c2410_timer_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_timer_init( hdw_t* x50ng )
+int x50ng_s3c2410_timer_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-timer", s3c2410_timer_init, s3c2410_timer_exit, s3c2410_timer_reset, s3c2410_timer_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-timer", s3c2410_timer_init, s3c2410_timer_exit, s3c2410_timer_reset, s3c2410_timer_load,
                             s3c2410_timer_save, NULL, &module ) )
         return -1;
 

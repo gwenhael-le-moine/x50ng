@@ -27,7 +27,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } s3c2410_memc_t;
 
 static int s3c2410_memc_data_init( s3c2410_memc_t* memc )
@@ -99,7 +99,7 @@ static void s3c2410_memc_write( void* opaque, target_phys_addr_t offset, uint32_
     *( reg->datap ) = data;
 
 #ifdef DEBUG_S3C2410_MEMC
-    printf( "%s:%u: env %p\n", __func__, __LINE__, memc->x50ng->env );
+    printf( "%s:%u: env %p\n", __func__, __LINE__, memc->hdw_state->env );
 #endif
 }
 
@@ -195,7 +195,7 @@ static int s3c2410_memc_init( hdw_module_t* module )
     }
 
     module->user_data = memc;
-    memc->x50ng = module->x50ng;
+    memc->hdw_state = module->hdw_state;
 
     iotype = cpu_register_io_memory( s3c2410_memc_readfn, s3c2410_memc_writefn, memc );
 #ifdef DEBUG_S3C2410_MEMC
@@ -226,11 +226,11 @@ static int s3c2410_memc_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_memc_init( hdw_t* x50ng )
+int x50ng_s3c2410_memc_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-memc", s3c2410_memc_init, s3c2410_memc_exit, s3c2410_memc_reset, s3c2410_memc_load,
+    if ( x50ng_module_init( hdw_state, "s3c2410-memc", s3c2410_memc_init, s3c2410_memc_exit, s3c2410_memc_reset, s3c2410_memc_load,
                             s3c2410_memc_save, NULL, &module ) )
         return -1;
 

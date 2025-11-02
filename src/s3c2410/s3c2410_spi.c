@@ -27,7 +27,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    hdw_t* x50ng;
+    hdw_t* hdw_state;
 } s3c2410_spi_t;
 
 static int s3c2410_spi_data_init( s3c2410_spi_t* spi )
@@ -86,7 +86,7 @@ uint32_t s3c2410_spi_read( void* opaque, target_phys_addr_t offset )
 void s3c2410_spi_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_spi_t* spi = opaque;
-    hdw_t* x50ng = spi->x50ng;
+    hdw_t* hdw_state = spi->hdw_state;
     s3c2410_offset_t* reg;
 
     if ( !S3C2410_OFFSET_OK( spi, offset ) )
@@ -103,12 +103,12 @@ void s3c2410_spi_write( void* opaque, target_phys_addr_t offset, uint32_t data )
     switch ( offset ) {
         case S3C2410_SPI_SPTDAT0:
             spi->spista0 |= 1;
-            s3c2410_intc_assert( x50ng, INT_SPI0, 0 );
+            s3c2410_intc_assert( hdw_state, INT_SPI0, 0 );
             break;
 
         case S3C2410_SPI_SPTDAT1:
             spi->spista1 |= 1;
-            s3c2410_intc_assert( x50ng, INT_SPI1, 0 );
+            s3c2410_intc_assert( hdw_state, INT_SPI1, 0 );
             break;
     }
 }
@@ -205,7 +205,7 @@ static int s3c2410_spi_init( hdw_module_t* module )
     }
 
     module->user_data = spi;
-    spi->x50ng = module->x50ng;
+    spi->hdw_state = module->hdw_state;
 
     iotype = cpu_register_io_memory( s3c2410_spi_readfn, s3c2410_spi_writefn, spi );
 #ifdef DEBUG_S3C2410_SPI
@@ -236,12 +236,12 @@ static int s3c2410_spi_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_spi_init( hdw_t* x50ng )
+int x50ng_s3c2410_spi_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-spi", s3c2410_spi_init, s3c2410_spi_exit, s3c2410_spi_reset, s3c2410_spi_load, s3c2410_spi_save,
-                            NULL, &module ) )
+    if ( x50ng_module_init( hdw_state, "s3c2410-spi", s3c2410_spi_init, s3c2410_spi_exit, s3c2410_spi_reset, s3c2410_spi_load,
+                            s3c2410_spi_save, NULL, &module ) )
         return -1;
 
     return x50ng_module_register( module );

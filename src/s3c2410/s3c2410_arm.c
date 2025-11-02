@@ -126,7 +126,7 @@ static int s3c2410_arm_load( hdw_module_t* module, GKeyFile* key )
 
     if ( 0 == error ) {
         if ( env->halted )
-            module->x50ng->arm_idle = 1;
+            module->hdw_state->arm_idle = 1;
     } else {
         memset( &env->cp15, 0, sizeof( env->cp15 ) );
     }
@@ -225,13 +225,13 @@ static int s3c2410_arm_reset( hdw_module_t* module, x50ng_reset_t reset )
 
 static int s3c2410_arm_init( hdw_module_t* module )
 {
-    hdw_t* x50ng = module->x50ng;
+    hdw_t* hdw_state = module->hdw_state;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    module->user_data = x50ng->env;
+    module->user_data = hdw_state->env;
     return 0;
 }
 
@@ -244,12 +244,12 @@ static int s3c2410_arm_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_arm_init( hdw_t* x50ng )
+int x50ng_s3c2410_arm_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "s3c2410-arm", s3c2410_arm_init, s3c2410_arm_exit, s3c2410_arm_reset, s3c2410_arm_load, s3c2410_arm_save,
-                            NULL, &module ) )
+    if ( x50ng_module_init( hdw_state, "s3c2410-arm", s3c2410_arm_init, s3c2410_arm_exit, s3c2410_arm_reset, s3c2410_arm_load,
+                            s3c2410_arm_save, NULL, &module ) )
         return -1;
 
     return x50ng_module_register( module );
