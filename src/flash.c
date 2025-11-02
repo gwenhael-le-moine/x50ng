@@ -29,6 +29,15 @@
 #define FLASH_STATE_CFI_QUERY 11
 #define FLASH_STATE_WORD_PROG 12
 
+#define SST29VF160_VENDOR_ID 0x00bf
+#define SST29VF160_DEVICE_ID 0x2782
+
+#define SST29VF160_SECTOR_SIZE 0x00001000
+#define SST29VF160_BLOCK_SIZE 0x00010000
+#define SST29VF160_SIZE 0x00200000
+
+#define BOOT_SIZE 0x00004000
+
 typedef struct hdw_flash_t {
     void* data;
     int state;
@@ -46,14 +55,7 @@ typedef struct hdw_flash_t {
     uint32_t offset;
 } hdw_flash_t;
 
-#define SST29VF160_VENDOR_ID 0x00bf
-#define SST29VF160_DEVICE_ID 0x2782
-
-#define SST29VF160_SECTOR_SIZE 0x00001000
-#define SST29VF160_BLOCK_SIZE 0x00010000
-#define SST29VF160_SIZE 0x00200000
-
-#define BOOT_SIZE 0x00004000
+static config_t* __config;
 
 static const unsigned short sst29vf160_cfi_data[] = {
     [0x10] = 0x0051, [0x11] = 0x0052, [0x12] = 0x0059, [0x13] = 0x0001, [0x14] = 0x0007, [0x15] = 0x0000, [0x16] = 0x0000,
@@ -418,23 +420,23 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
 
     if ( ( long int )( flash->size ) > st.st_size ) {
         fprintf( stderr, "Flash too small, rebuilding\n" );
-        opt.reinit = HDW_REINIT_FLASH_FULL;
+        __config->reinit = HDW_REINIT_FLASH_FULL;
     }
-    if ( opt.reinit >= HDW_REINIT_FLASH ) {
+    if ( __config->reinit >= HDW_REINIT_FLASH ) {
 
-        if ( opt.reinit == HDW_REINIT_FLASH_FULL )
+        if ( __config->reinit == HDW_REINIT_FLASH_FULL )
             memset( phys_ram_base + flash->offset, 0xff, flash->size - st.st_size );
 
-        if ( opt.bootloader == NULL ) {
+        if ( __config->bootloader == NULL ) {
             fprintf( stderr, "Error: no bootloader provided! Please provide one with --bootloader" );
             exit( -1 );
         }
-        if ( opt.firmware == NULL ) {
+        if ( __config->firmware == NULL ) {
             fprintf( stderr, "Error: no firmware provided! Please provide one with --firmware" );
             exit( -1 );
         }
 
-        bootfd = module_open_rodata( module, opt.bootloader, &bootfile );
+        bootfd = module_open_rodata( module, __config->bootloader, &bootfile );
 
         if ( bootfd < 0 ) {
             g_free( filename );
@@ -458,7 +460,7 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
         close( bootfd );
         g_free( bootfile );
 
-        if ( opt.reinit == HDW_REINIT_FLASH_FULL ) {
+        if ( __config->reinit == HDW_REINIT_FLASH_FULL ) {
             /* The stock firmware expects special markers in certain
                spots across the flash. Without these, the user banks
                act up and are not usable, and PINIT apparently won't
@@ -475,12 +477,12 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
         }
 
 retry:
-        fwfd = module_open_rodata( module, opt.firmware, &firmwarefile );
+        fwfd = module_open_rodata( module, __config->firmware, &firmwarefile );
         if ( fwfd < 0 ) {
             fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, firmwarefile, strerror( errno ) );
             /* Mark firmware as invalid if there is one */
             memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-            if ( opt.firmware != NULL ) {
+            if ( __config->firmware != NULL ) {
                 fprintf( stderr, "Warning: Could not "
                                  "open selected firmware, "
                                  "falling back to bootloader "
@@ -494,11 +496,11 @@ retry:
         } else {
             bytes_read = read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE, 16 );
             if ( bytes_read < 0 ) {
-                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, opt.firmware, strerror( errno ) );
+                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, __config->firmware, strerror( errno ) );
                 /* Mark firmware as invalid
                    if there is one */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                if ( opt.firmware != NULL ) {
+                if ( __config->firmware != NULL ) {
                     fprintf( stderr, "Warning: "
                                      "Could not read "
                                      "selected firmware, "
@@ -515,14 +517,14 @@ retry:
             } else if ( bytes_read < 16 || memcmp( phys_ram_base + flash->offset + BOOT_SIZE, "KINPOUPDATEIMAGE", 16 ) != 0 ) {
                 /* Mark firmware as invalid */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                if ( opt.firmware != NULL ) {
+                if ( __config->firmware != NULL ) {
                     fprintf( stderr,
                              "Warning: "
                              "Firmware is invalid, "
                              "falling back to "
                              "bootloader recovery "
                              "tools (tried with firmware = %s)\n",
-                             opt.firmware );
+                             __config->firmware );
                 } else {
                     fprintf( stderr, "Selected "
                                      "firmware "
@@ -535,11 +537,11 @@ retry:
                    read will just give us what it sees.
                    The space after that will remain empty. */
             } else if ( read( fwfd, phys_ram_base + flash->offset + BOOT_SIZE + 16, SST29VF160_SIZE - ( BOOT_SIZE + 16 ) ) < 0 ) {
-                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, opt.firmware, strerror( errno ) );
+                fprintf( stderr, "%s: %s:%u: read %s: %s\n", module->name, __func__, __LINE__, __config->firmware, strerror( errno ) );
                 /* Mark firmware as invalid
                    if there is one */
                 memset( phys_ram_base + flash->offset + BOOT_SIZE, 0, 16 );
-                if ( opt.firmware != NULL ) {
+                if ( __config->firmware != NULL ) {
                     fprintf( stderr, "Warning: "
                                      "Could not read "
                                      "selected firmware, "
@@ -669,8 +671,10 @@ static int flash_exit( hdw_module_t* module )
     return 0;
 }
 
-int init_flash( hdw_t* hdw_state )
+int init_flash( hdw_t* hdw_state, config_t* config )
 {
+    __config = config;
+
     hdw_module_t* module;
 
     if ( x50ng_module_init( hdw_state, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) )

@@ -14,8 +14,8 @@
 
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( opt.tiny ? 4 : ( opt.small ? 2 : 1 ) ) )
-#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( opt.small || opt.tiny ? 2 : 1 ) ) + 1
+#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( __config->tiny ? 4 : ( __config->small ? 2 : 1 ) ) )
+#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( __config->small || __config->tiny ? 2 : 1 ) ) + 1
 
 /*************/
 /* variables */
@@ -29,6 +29,7 @@ static WINDOW* lcd_window;
 static WINDOW* help_window;
 
 static hdw_t* __hdw_state;
+static config_t* __config;
 
 /****************************/
 /* functions implementation */
@@ -247,9 +248,9 @@ void ncurses_refresh_lcd( void )
 
     get_lcd_buffer( display_buffer_grayscale );
 
-    if ( opt.small )
+    if ( __config->small )
         ncurses_draw_lcd_small();
-    else if ( opt.tiny )
+    else if ( __config->tiny )
         ncurses_draw_lcd_tiny();
     else
         ncurses_draw_lcd_fullsize();
@@ -482,9 +483,10 @@ void ncurses_exit( void )
     endwin();
 }
 
-void ncurses_init( hdw_t* hdw_state )
+void ncurses_init( hdw_t* hdw_state, config_t* config )
 {
     __hdw_state = hdw_state;
+    __config = config;
 
     for ( int i = 0; i < NB_HP50g_KEYS; ++i )
         keyboard_state[ i ] = false;
@@ -504,7 +506,7 @@ void ncurses_init( hdw_t* hdw_state )
     wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, LCD_RIGHT / 2, "< %s v%i.%i.%i >", opt.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, LCD_RIGHT / 2, "< %s v%i.%i.%i >", __config->name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     wrefresh( lcd_window );
 }

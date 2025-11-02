@@ -27,7 +27,7 @@ extern char* ui_annunciators[ NB_ANNUNCIATORS ];
 extern button_t buttons_hp50g[ NB_HP50g_KEYS ];
 extern int buttons_order_normal[ NB_HP50g_KEYS ];
 extern int buttons_order_legacy[ NB_HP50g_KEYS ];
-#  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( opt.legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
+#  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( __config->legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
 
 extern void newrplify_buttons_hp50g();
 

@@ -21,9 +21,7 @@
 #include "timer.h"
 #include "options.h"
 
-config_t opt;
-
-static hdw_t* hdw_state;
+static hdw_t* __hdw_state;
 
 /*******************/
 /* signal handlers */
@@ -34,11 +32,11 @@ void signal_handler( int sig )
         case SIGINT:
         case SIGQUIT:
         case SIGTERM:
-            hdw_stop( hdw_state );
+            hdw_stop( __hdw_state );
             break;
         case SIGUSR1:
             //		stop_simulator = 1;
-            //		hdw_state->arm->CallDebug ^= 1;
+            //		__hdw_state->arm->CallDebug ^= 1;
             break;
         default:
             fprintf( stderr, "%s: sig %u\n", __func__, sig );
@@ -48,22 +46,22 @@ void signal_handler( int sig )
 
 int main( int argc, char** argv )
 {
-    opt = *config_init( argc, argv ); /* initialize global variable `opt` */
+    config_t* __config = config_init( argc, argv );
 
-    hdw_state = emulator_init( opt ); /* initialize global variable `hdw_state` */
+    __hdw_state = emulator_init( __config );
 
     signal( SIGINT, signal_handler );
     signal( SIGTERM, signal_handler );
     signal( SIGQUIT, signal_handler );
     signal( SIGUSR1, signal_handler );
 
-    ui_init( hdw_state );
+    ui_init( __hdw_state, __config );
 
-    main_loop( hdw_state );
+    main_loop( __hdw_state );
 
     ui_exit();
 
-    emulator_exit( opt );
+    emulator_exit( __config );
 
     return EXIT_SUCCESS;
 }

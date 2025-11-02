@@ -16,8 +16,12 @@
 
 #define STATE_FILE_NAME "state"
 
-int init_modules( hdw_t* hdw_state )
+static config_t* __config;
+
+int init_modules( hdw_t* hdw_state, config_t* config )
 {
+    __config = config;
+
     hdw_module_t* module;
     int error;
 
@@ -96,13 +100,13 @@ int load_modules( hdw_t* hdw_state )
     hdw_module_t* module;
     GError* gerror = NULL;
     int error, result;
-    const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
+    const char* filename = g_build_filename( __config->datadir, STATE_FILE_NAME, NULL );
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
-    if ( g_mkdir_with_parents( opt.datadir, 0755 ) ) {
+    if ( g_mkdir_with_parents( __config->datadir, 0755 ) ) {
         error = -errno;
         fprintf( stderr, "%s:%u: g_mkdir_with_parents: %s\n", __func__, __LINE__, strerror( errno ) );
         return error;
@@ -155,7 +159,7 @@ int save_modules( hdw_t* hdw_state )
     gsize length;
     int error;
     int fd;
-    const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
+    const char* filename = g_build_filename( __config->datadir, STATE_FILE_NAME, NULL );
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u:\n", __func__, __LINE__ );
@@ -229,7 +233,7 @@ int module_get_filename( hdw_module_t* module, GKeyFile* key, const char* name, 
         return error;
     }
 
-    *path = g_build_filename( opt.datadir, *valuep, NULL );
+    *path = g_build_filename( __config->datadir, *valuep, NULL );
     if ( NULL == path ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
         g_free( *valuep );
@@ -326,7 +330,7 @@ int module_open_rodata( hdw_module_t* module, const char* name, char** path )
     int error;
 
     *path = g_build_filename( name, NULL );
-    if ( opt.verbose )
+    if ( __config->verbose )
         fprintf( stderr, "reading %s\n", *path );
     if ( NULL == *path ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
@@ -337,8 +341,8 @@ int module_open_rodata( hdw_module_t* module, const char* name, char** path )
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
 
-        *path = g_build_filename( opt.progpath, name, NULL );
-        if ( opt.verbose )
+        *path = g_build_filename( __config->progpath, name, NULL );
+        if ( __config->verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
             fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
@@ -350,8 +354,8 @@ int module_open_rodata( hdw_module_t* module, const char* name, char** path )
     if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
         g_free( *path );
 
-        *path = g_build_filename( opt.datadir, name, NULL );
-        if ( opt.verbose )
+        *path = g_build_filename( __config->datadir, name, NULL );
+        if ( __config->verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
             fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
@@ -365,7 +369,7 @@ int module_open_rodata( hdw_module_t* module, const char* name, char** path )
         g_free( *path );
 
         *path = g_build_filename( X50NG_DATADIR, name, NULL );
-        if ( opt.verbose )
+        if ( __config->verbose )
             fprintf( stderr, "reading %s\n", *path );
         if ( NULL == *path ) {
             fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );

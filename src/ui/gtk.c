@@ -39,6 +39,7 @@ static char last_annunciators = 0;
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 
 static hdw_t* __hdw_state;
+static config_t* __config;
 
 /*************************/
 /* Functions' prototypes */
@@ -130,8 +131,8 @@ static void gtk_ui_do_select_and_mount_sd_folder( hdw_t* hdw_state, GMenuItem* _
 
 static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, hdw_t* hdw_state )
 {
-    if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
-        gdbserver_start( opt.debug_port );
+    if ( __config->debug_port != 0 && !gdbserver_isactive() ) {
+        gdbserver_start( __config->debug_port );
         gdb_handlesig( hdw_state->env, 0 );
     }
 }
@@ -210,7 +211,7 @@ static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state )
 
     g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
     g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), hdw_state );
-    if ( opt.debug_port != 0 )
+    if ( __config->debug_port != 0 )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
     g_menu_append( menu, "Start gdb server", "app.debug" );
 
@@ -488,7 +489,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            gtk_ui_open_menu( ( LCD_WIDTH * opt.zoom ) / 2, ( LCD_HEIGHT * opt.zoom ) / 2, hdw_state );
+            gtk_ui_open_menu( ( LCD_WIDTH * __config->zoom ) / 2, ( LCD_HEIGHT * __config->zoom ) / 2, hdw_state );
             return GDK_EVENT_STOP;
 
         default:
@@ -554,17 +555,18 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
 
 static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
 {
-    char* style_full_path = g_build_filename( opt.style_filename, NULL );
+    char* style_full_path = g_build_filename( __config->style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( opt.datadir, opt.style_filename, NULL );
+        style_full_path = g_build_filename( __config->datadir, __config->style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( GLOBAL_DATADIR, opt.style_filename, NULL );
+        style_full_path = g_build_filename( GLOBAL_DATADIR, __config->style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( opt.progpath, opt.style_filename, NULL );
+        style_full_path = g_build_filename( __config->progpath, __config->style_filename, NULL );
 
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", opt.style_filename, opt.datadir,
-                 opt.style_filename, GLOBAL_DATADIR, opt.style_filename, opt.progpath, opt.style_filename );
+        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", __config->style_filename,
+                 __config->datadir, __config->style_filename, GLOBAL_DATADIR, __config->style_filename, __config->progpath,
+                 __config->style_filename );
     else {
         g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
         gtk_css_provider_load_from_path( style_provider, style_full_path );
@@ -572,7 +574,7 @@ static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
         gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                     GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
 
-        if ( opt.verbose )
+        if ( __config->verbose )
             fprintf( stderr, "Loaded style from %s\n", style_full_path );
     }
 
@@ -589,14 +591,14 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
     gtk_window_set_decorated( GTK_WINDOW( gtk_ui_window ), true );
     gtk_window_set_resizable( GTK_WINDOW( gtk_ui_window ), true );
-    gtk_window_set_title( GTK_WINDOW( gtk_ui_window ), opt.name );
+    gtk_window_set_title( GTK_WINDOW( gtk_ui_window ), __config->name );
     gtk_window_set_decorated( GTK_WINDOW( gtk_ui_window ), true );
     // Sets the title of this instance
-    g_set_application_name( opt.name );
+    g_set_application_name( __config->name );
     // Sets the app_id of all instances
-    g_set_prgname( opt.progname );
+    g_set_prgname( __config->progname );
 
-    GtkWidget* window_container = gtk_box_new( opt.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
+    GtkWidget* window_container = gtk_box_new( __config->netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( window_container, "window-container" );
     gtk_widget_set_name( window_container, "window-container" );
 
@@ -630,8 +632,8 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
     gtk_widget_add_css_class( gtk_ui_lcd_canvas, "lcd" );
     gtk_widget_set_name( gtk_ui_lcd_canvas, "lcd" );
 
-    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * opt.zoom ) );
-    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * opt.zoom ) );
+    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * __config->zoom ) );
+    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * __config->zoom ) );
     gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, hdw_state, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -639,7 +641,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
     gtk_widget_add_css_class( lcd_container, "lcd-container" );
     gtk_widget_set_name( lcd_container, "lcd-container" );
 
-    gtk_widget_set_size_request( lcd_container, ( LCD_WIDTH * opt.zoom ), ( LCD_HEIGHT * opt.zoom ) );
+    gtk_widget_set_size_request( lcd_container, ( LCD_WIDTH * __config->zoom ), ( LCD_HEIGHT * __config->zoom ) );
     gtk_box_append( GTK_BOX( lcd_container ), gtk_ui_lcd_canvas );
     gtk_widget_set_halign( GTK_WIDGET( gtk_ui_lcd_canvas ), GTK_ALIGN_CENTER );
     gtk_widget_set_hexpand( GTK_WIDGET( gtk_ui_lcd_canvas ), false );
@@ -706,7 +708,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         gtk_widget_add_css_class( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
-        gtk_box_append( ( GTK_BOX( row < opt.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ) ),
+        gtk_box_append( ( GTK_BOX( row < __config->netbook_pivot_line ? high_keyboard_container : low_keyboard_container ) ),
                         rows_containers[ row ] );
 
         switch ( row ) {
@@ -854,9 +856,10 @@ void gtk_ui_refresh_lcd( void )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( hdw_t* hdw_state )
+void gtk_ui_init( hdw_t* hdw_state, config_t* config )
 {
     __hdw_state = hdw_state;
+    __config = config;
 
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 

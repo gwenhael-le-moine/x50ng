@@ -19,6 +19,8 @@
 
 char* ui_annunciators[ NB_ANNUNCIATORS ] = { "⮢", "⮣", "α", "🪫", "⌛", "⇄" };
 
+static config_t* __config;
+
 /*************/
 /* functions */
 /*************/
@@ -91,7 +93,7 @@ void ui_handle_pending_inputs( void* data )
 {
     hdw_t* hdw_state = data;
 
-    switch ( opt.frontend ) {
+    switch ( __config->frontend ) {
         case FRONTEND_NCURSES:
             ncurses_handle_pending_inputs();
             break;
@@ -108,7 +110,7 @@ void ui_refresh_output( void* data )
 {
     hdw_t* hdw_state = data;
 
-    switch ( opt.frontend ) {
+    switch ( __config->frontend ) {
         case FRONTEND_NCURSES:
             ncurses_refresh_lcd();
             break;
@@ -121,25 +123,27 @@ void ui_refresh_output( void* data )
     timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
-void ui_init( hdw_t* hdw_state )
+void ui_init( hdw_t* hdw_state, config_t* config )
 {
-    if ( opt.newrpl_keyboard )
+    __config = config;
+
+    if ( __config->newrpl_keyboard )
         newrplify_buttons_hp50g();
 
-    switch ( opt.frontend ) {
+    switch ( __config->frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_init( hdw_state );
+            ncurses_init( hdw_state, __config );
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_init( hdw_state );
+            gtk_ui_init( hdw_state, __config );
             break;
     }
 }
 
 void ui_exit( void )
 {
-    switch ( opt.frontend ) {
+    switch ( __config->frontend ) {
         case FRONTEND_NCURSES:
             ncurses_exit();
             break;

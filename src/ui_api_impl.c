@@ -215,11 +215,11 @@ uint32_t do_arm_semihosting( CPUState* env )
     return 0;
 }
 
-hdw_t* emulator_init( config_t config )
+hdw_t* emulator_init( config_t* config )
 {
     hdw_state = malloc( sizeof( hdw_t ) );
     if ( NULL == hdw_state ) {
-        fprintf( stderr, "%s: %s:%u: Out of memory\n", config.progname, __func__, __LINE__ );
+        fprintf( stderr, "%s: %s:%u: Out of memory\n", config->progname, __func__, __LINE__ );
         exit( EXIT_FAILURE );
     }
     memset( hdw_state, 0, sizeof( hdw_t ) );
@@ -250,15 +250,15 @@ hdw_t* emulator_init( config_t config )
     hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
 
     init_s3c2410_arm( hdw_state );
-    init_flash( hdw_state );
+    init_flash( hdw_state, config );
     init_sram( hdw_state );
     init_s3c2410( hdw_state );
 
-    if ( init_modules( hdw_state ) )
+    if ( init_modules( hdw_state, config ) )
         exit( EXIT_FAILURE );
 
     int error = load_modules( hdw_state );
-    if ( error || config.reinit >= HDW_REINIT_REBOOT_ONLY ) {
+    if ( error || config->reinit >= HDW_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
 
@@ -272,25 +272,25 @@ hdw_t* emulator_init( config_t config )
     timer_mod( hdw_state->timer_ui_input, timer_get_clock() );
     timer_mod( hdw_state->timer_ui_output, timer_get_clock() );
 
-    if ( config.debug_port != 0 && config.start_debugger ) {
-        gdbserver_start( config.debug_port );
+    if ( config->debug_port != 0 && config->start_debugger ) {
+        gdbserver_start( config->debug_port );
         gdb_handlesig( hdw_state->env, 0 );
     }
 
-    if ( config.sd_dir != NULL ) {
-        if ( config.verbose )
-            fprintf( stderr, "> mounting --sd-dir %s\n", config.sd_dir );
-        s3c2410_sdi_mount( hdw_state, strdup( config.sd_dir ) );
+    if ( config->sd_dir != NULL ) {
+        if ( config->verbose )
+            fprintf( stderr, "> mounting --sd-dir %s\n", config->sd_dir );
+        s3c2410_sdi_mount( hdw_state, strdup( config->sd_dir ) );
     }
 
     return hdw_state;
 }
 
-void emulator_exit( config_t config )
+void emulator_exit( config_t* config )
 {
     save_modules( hdw_state );
 
-    if ( !config.haz_config_file )
+    if ( !config->haz_config_file )
         save_config();
 
     exit_modules( hdw_state );
