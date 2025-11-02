@@ -3,8 +3,8 @@
 
 #  include "../types.h"
 
-void ncurses_refresh_lcd( hdw_t* hdw_state );
-void ncurses_handle_pending_inputs( hdw_t* hdw_state );
+void ncurses_refresh_lcd( void );
+void ncurses_handle_pending_inputs( void );
 void ncurses_init( hdw_t* hdw_state );
 void ncurses_exit( void );
 

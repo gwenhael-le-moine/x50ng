@@ -93,11 +93,11 @@ void ui_handle_pending_inputs( void* data )
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_handle_pending_inputs( hdw_state );
+            ncurses_handle_pending_inputs();
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_handle_pending_inputs( hdw_state );
+            gtk_ui_handle_pending_inputs();
             break;
     }
 
@@ -110,11 +110,11 @@ void ui_refresh_output( void* data )
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_refresh_lcd( hdw_state );
+            ncurses_refresh_lcd();
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_refresh_lcd( hdw_state );
+            gtk_ui_refresh_lcd();
             break;
     }
 

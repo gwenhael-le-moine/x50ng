@@ -38,6 +38,8 @@ static cairo_surface_t* gtk_ui_lcd_surface;
 static char last_annunciators = 0;
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 
+static hdw_t* __hdw_state;
+
 /*************************/
 /* Functions' prototypes */
 /*************************/
@@ -467,7 +469,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
 
         case GDK_KEY_F7:
         case GDK_KEY_F10:
-            hdw_stop( hdw_state );
+            hdw_stop( __hdw_state );
             return GDK_EVENT_STOP;
 
         case GDK_KEY_F12:
@@ -805,7 +807,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
     gtk_window_present( GTK_WINDOW( gtk_ui_window ) );
 }
 
-void gtk_ui_handle_pending_inputs( hdw_t* _hdw_state )
+void gtk_ui_handle_pending_inputs( void )
 {
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
@@ -824,7 +826,7 @@ static void gtk_ui_refresh_annunciators( void )
         gtk_widget_set_opacity( gtk_ui_annunciators[ i ], ( annunciators >> i ) & 0x01 ? 1 : 0 );
 }
 
-void gtk_ui_refresh_lcd( hdw_t* _hdw_state )
+void gtk_ui_refresh_lcd( void )
 {
     if ( !is_display_on() )
         return;
@@ -854,6 +856,8 @@ void gtk_ui_refresh_lcd( hdw_t* _hdw_state )
 
 void gtk_ui_init( hdw_t* hdw_state )
 {
+    __hdw_state = hdw_state;
+
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
     /* g_signal_connect( app, "activate", G_CALLBACK( gtk_ui_activate ), hdw_state ); */
@@ -861,7 +865,7 @@ void gtk_ui_init( hdw_t* hdw_state )
     /* g_application_run( G_APPLICATION( app ), 0, NULL ); */
 
     gtk_init();
-    gtk_ui_activate( NULL, hdw_state );
+    gtk_ui_activate( NULL, __hdw_state );
 }
 
 void gtk_ui_exit( void ) {}

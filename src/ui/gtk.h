@@ -3,8 +3,8 @@
 
 #  include "../types.h"
 
-void gtk_ui_refresh_lcd( hdw_t* hdw_state );
-void gtk_ui_handle_pending_inputs( hdw_t* hdw_state );
+void gtk_ui_refresh_lcd( void );
+void gtk_ui_handle_pending_inputs( void );
 void gtk_ui_init( hdw_t* hdw_state );
 void gtk_ui_exit( void );
 
