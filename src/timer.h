@@ -26,6 +26,6 @@ bool is_timer_pendinig( hdw_timer_t* );
 int64_t timer_expires_when( hdw_timer_t* );
 
 void main_loop( hdw_t* );
-void timer_init( void );
+void init_timer( void );
 
 #endif /* !(_X50NG_TIMER_H) */

@@ -3,6 +3,6 @@
 
 #  include "types.h"
 
-int x50ng_flash_init( hdw_t* );
+extern int init_flash( hdw_t* );
 
 #endif /* !(_X50NG_FLASH_H) */

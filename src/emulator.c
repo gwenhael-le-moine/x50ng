@@ -263,25 +263,25 @@ hdw_t* emulator_init( config_t config )
 
     //	cpu_set_log(cpu_str_to_log_mask("all"));
 
-    timer_init();
+    init_timer();
 
     hdw_state->timer_ui_input = timer_new( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, hdw_state );
     hdw_state->timer_ui_output = timer_new( X50NG_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
 
-    x50ng_s3c2410_arm_init( hdw_state );
-    x50ng_flash_init( hdw_state );
-    x50ng_sram_init( hdw_state );
-    x50ng_s3c2410_init( hdw_state );
+    init_s3c2410_arm( hdw_state );
+    init_flash( hdw_state );
+    init_sram( hdw_state );
+    init_s3c2410( hdw_state );
 
-    if ( x50ng_modules_init( hdw_state ) )
+    if ( init_modules( hdw_state ) )
         exit( EXIT_FAILURE );
 
-    int error = x50ng_modules_load( hdw_state );
-    if ( error || config.reinit >= X50NG_REINIT_REBOOT_ONLY ) {
+    int error = load_modules( hdw_state );
+    if ( error || config.reinit >= HDW_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
 
-        x50ng_modules_reset( hdw_state, HDW_RESET_POWER_ON );
+        reset_modules( hdw_state, HDW_RESET_POWER_ON );
     }
 
     hdw_set_idle( hdw_state, 0 );
@@ -307,12 +307,12 @@ hdw_t* emulator_init( config_t config )
 
 void emulator_exit( config_t config )
 {
-    x50ng_modules_save( hdw_state );
+    save_modules( hdw_state );
 
     if ( !config.haz_config_file )
         save_config();
 
-    x50ng_modules_exit( hdw_state );
+    exit_modules( hdw_state );
 }
 
 static void x50ng_set_key_state( const hp50g_key_t key, bool state )
@@ -357,7 +357,7 @@ unsigned char get_annunciators( void )
     char annunciators = 0;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; ++i )
-        if ( x50ng_s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
+        if ( s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
             annunciators |= 0x01 << i;
 
     return annunciators;
@@ -371,5 +371,5 @@ void get_lcd_buffer( int* target )
 
     for ( int y = 0; y < LCD_HEIGHT; ++y )
         for ( int x = 0; x < LCD_WIDTH; ++x )
-            target[ ( y * LCD_WIDTH ) + x ] = x50ng_s3c2410_get_pixel_color( lcd, x, y );
+            target[ ( y * LCD_WIDTH ) + x ] = s3c2410_get_pixel_color( lcd, x, y );
 }

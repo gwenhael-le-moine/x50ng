@@ -538,7 +538,7 @@ static int s3c2410_intc_load( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -573,7 +573,7 @@ static int s3c2410_intc_save( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
@@ -656,7 +656,7 @@ static int s3c2410_intc_exit( hdw_module_t* module )
         free( intc );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
@@ -670,5 +670,5 @@ int x50ng_s3c2410_intc_init( hdw_t* hdw_state )
                             s3c2410_intc_save, NULL, &module ) )
         return -1;
 
-    return x50ng_module_register( module );
+    return module_register( module );
 }

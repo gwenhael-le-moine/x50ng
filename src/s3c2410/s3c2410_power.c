@@ -94,7 +94,7 @@ static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32
                 printf( "POWER: enter POWER_OFF\n" );
 #endif
 
-                x50ng_modules_reset( hdw_state, HDW_RESET_POWER_OFF );
+                reset_modules( hdw_state, HDW_RESET_POWER_OFF );
 
                 //			if (hdw_state->arm->NresetSig != LOW) {
                 //				hdw_state->arm->NresetSig = LOW;
@@ -200,7 +200,7 @@ static int s3c2410_power_load( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -228,7 +228,7 @@ static int s3c2410_power_save( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
@@ -305,7 +305,7 @@ static int s3c2410_power_exit( hdw_module_t* module )
         free( power );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
@@ -319,5 +319,5 @@ int x50ng_s3c2410_power_init( hdw_t* hdw_state )
                             s3c2410_power_save, NULL, &module ) )
         return -1;
 
-    return x50ng_module_register( module );
+    return module_register( module );
 }

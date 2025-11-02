@@ -25,7 +25,7 @@
  * SPI Interface:		0x59000000
  * SDI Interface:		0x5a000000
  */
-int x50ng_s3c2410_init( hdw_t* hdw_state )
+int init_s3c2410( hdw_t* hdw_state )
 {
     x50ng_s3c2410_sram_init( hdw_state );
     x50ng_s3c2410_memc_init( hdw_state );

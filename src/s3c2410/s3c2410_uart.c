@@ -282,7 +282,7 @@ static int s3c2410_uart_load( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -305,7 +305,7 @@ static int s3c2410_uart_save( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
@@ -369,7 +369,7 @@ static int s3c2410_uart_exit( hdw_module_t* module )
             free( uart_regs->regs );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
@@ -400,21 +400,21 @@ int x50ng_s3c2410_uart_init( hdw_t* hdw_state )
                             s3c2410_uart_save, &uart->uart[ 0 ], &module ) )
         return -1;
 
-    if ( x50ng_module_register( module ) )
+    if ( module_register( module ) )
         return -1;
 
     if ( x50ng_module_init( hdw_state, "s3c2410-uart1", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
                             s3c2410_uart_save, &uart->uart[ 1 ], &module ) )
         return -1;
 
-    if ( x50ng_module_register( module ) )
+    if ( module_register( module ) )
         return -1;
 
     if ( x50ng_module_init( hdw_state, "s3c2410-uart2", s3c2410_uart_init, s3c2410_uart_exit, s3c2410_uart_reset, s3c2410_uart_load,
                             s3c2410_uart_save, &uart->uart[ 2 ], &module ) )
         return -1;
 
-    if ( x50ng_module_register( module ) )
+    if ( module_register( module ) )
         return -1;
 
     return 0;

@@ -212,7 +212,7 @@ void main_loop( hdw_t* hdw_state )
     }
 }
 
-void timer_init( void )
+void init_timer( void )
 {
     struct sigaction sa;
     struct itimerval it;

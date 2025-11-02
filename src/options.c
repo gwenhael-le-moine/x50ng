@@ -27,7 +27,7 @@ static config_t __config = {
     .start_debugger = false,
     .bootloader = "firmware/boot-50g.bin",
     .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
-    .reinit = X50NG_REINIT_NONE,
+    .reinit = HDW_REINIT_NONE,
 
     .frontend = FRONTEND_GTK,
     .small = false,
@@ -321,8 +321,8 @@ config_t* config_init( int argc, char* argv[] )
                 clopt_name = strdup( optarg );
                 break;
             case 'r':
-                if ( __config.reinit < X50NG_REINIT_REBOOT_ONLY )
-                    __config.reinit = X50NG_REINIT_REBOOT_ONLY;
+                if ( __config.reinit < HDW_REINIT_REBOOT_ONLY )
+                    __config.reinit = HDW_REINIT_REBOOT_ONLY;
                 break;
             case 's':
                 clopt_style_filename = strdup( optarg );
@@ -478,11 +478,11 @@ config_t* config_init( int argc, char* argv[] )
         __config.start_debugger = do_start_debugger;
     }
     if ( do_flash ) {
-        if ( __config.reinit < X50NG_REINIT_FLASH )
-            __config.reinit = X50NG_REINIT_FLASH;
+        if ( __config.reinit < HDW_REINIT_FLASH )
+            __config.reinit = HDW_REINIT_FLASH;
 
         if ( do_flash_full )
-            __config.reinit = X50NG_REINIT_FLASH_FULL;
+            __config.reinit = HDW_REINIT_FLASH_FULL;
     }
 
     return &__config;

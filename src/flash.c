@@ -377,7 +377,7 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    error = x50ng_module_get_filename( module, key, "filename", "flash", &( flash->filename ), &filename );
+    error = module_get_filename( module, key, "filename", "flash", &( flash->filename ), &filename );
 
     flash->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( flash->fd < 0 ) {
@@ -418,11 +418,11 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
 
     if ( ( long int )( flash->size ) > st.st_size ) {
         fprintf( stderr, "Flash too small, rebuilding\n" );
-        opt.reinit = X50NG_REINIT_FLASH_FULL;
+        opt.reinit = HDW_REINIT_FLASH_FULL;
     }
-    if ( opt.reinit >= X50NG_REINIT_FLASH ) {
+    if ( opt.reinit >= HDW_REINIT_FLASH ) {
 
-        if ( opt.reinit == X50NG_REINIT_FLASH_FULL )
+        if ( opt.reinit == HDW_REINIT_FLASH_FULL )
             memset( phys_ram_base + flash->offset, 0xff, flash->size - st.st_size );
 
         if ( opt.bootloader == NULL ) {
@@ -434,7 +434,7 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
             exit( -1 );
         }
 
-        bootfd = x50ng_module_open_rodata( module, opt.bootloader, &bootfile );
+        bootfd = module_open_rodata( module, opt.bootloader, &bootfile );
 
         if ( bootfd < 0 ) {
             g_free( filename );
@@ -458,7 +458,7 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
         close( bootfd );
         g_free( bootfile );
 
-        if ( opt.reinit == X50NG_REINIT_FLASH_FULL ) {
+        if ( opt.reinit == HDW_REINIT_FLASH_FULL ) {
             /* The stock firmware expects special markers in certain
                spots across the flash. Without these, the user banks
                act up and are not usable, and PINIT apparently won't
@@ -475,7 +475,7 @@ static int flash_load( hdw_module_t* module, GKeyFile* key )
         }
 
 retry:
-        fwfd = x50ng_module_open_rodata( module, opt.firmware, &firmwarefile );
+        fwfd = module_open_rodata( module, opt.firmware, &firmwarefile );
         if ( fwfd < 0 ) {
             fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, firmwarefile, strerror( errno ) );
             /* Mark firmware as invalid if there is one */
@@ -574,7 +574,7 @@ static int flash_save( hdw_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    x50ng_module_set_filename( module, key, "filename", flash->filename );
+    module_set_filename( module, key, "filename", flash->filename );
 
     error = msync( flash->data, flash->size, MS_ASYNC );
     if ( error ) {
@@ -663,18 +663,18 @@ static int flash_exit( hdw_module_t* module )
         free( flash );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x50ng_flash_init( hdw_t* hdw_state )
+int init_flash( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
     if ( x50ng_module_init( hdw_state, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) )
         return -1;
 
-    return x50ng_module_register( module );
+    return module_register( module );
 }

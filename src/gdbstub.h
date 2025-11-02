@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "qemu-common.h"
+#include "qemu/qemu-common.h"
 
 #define DEFAULT_GDBSTUB_PORT 1234
 

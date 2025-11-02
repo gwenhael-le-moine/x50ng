@@ -41,7 +41,7 @@ static int sram_load( hdw_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    error = x50ng_module_get_filename( module, key, "filename", "sram", &( sram->filename ), &filename );
+    error = module_get_filename( module, key, "filename", "sram", &( sram->filename ), &filename );
 
     sram->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( sram->fd < 0 ) {
@@ -97,7 +97,7 @@ static int sram_save( hdw_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    x50ng_module_set_filename( module, key, "filename", sram->filename );
+    module_set_filename( module, key, "filename", sram->filename );
 
     error = msync( sram->data, sram->size, MS_ASYNC );
     if ( error ) {
@@ -179,18 +179,18 @@ static int sram_exit( hdw_module_t* module )
         free( sram );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
 }
 
-int x50ng_sram_init( hdw_t* hdw_state )
+int init_sram( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 
     if ( x50ng_module_init( hdw_state, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) )
         return -1;
 
-    return x50ng_module_register( module );
+    return module_register( module );
 }

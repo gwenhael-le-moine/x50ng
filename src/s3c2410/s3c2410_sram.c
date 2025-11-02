@@ -29,7 +29,7 @@ static int s3c2410_sram_load( hdw_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    error = x50ng_module_get_filename( module, key, "filename", "s3c2410-sram", &( filemap->filename ), &filename );
+    error = module_get_filename( module, key, "filename", "s3c2410-sram", &( filemap->filename ), &filename );
 
     filemap->fd = open( filename, O_RDWR | O_CREAT, 0644 );
     if ( filemap->fd < 0 ) {
@@ -73,7 +73,7 @@ static int s3c2410_sram_save( hdw_module_t* module, GKeyFile* key )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    x50ng_module_set_filename( module, key, "filename", filemap->filename );
+    module_set_filename( module, key, "filename", filemap->filename );
 
     error = msync( filemap->data, filemap->size, MS_ASYNC );
     if ( error ) {
@@ -148,7 +148,7 @@ static int s3c2410_sram_exit( hdw_module_t* module )
         free( filemap );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
@@ -162,5 +162,5 @@ int x50ng_s3c2410_sram_init( hdw_t* hdw_state )
                             s3c2410_sram_save, NULL, &module ) )
         return -1;
 
-    return x50ng_module_register( module );
+    return module_register( module );
 }

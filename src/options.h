@@ -20,7 +20,7 @@
 #  endif
 
 typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t;
-typedef enum { X50NG_REINIT_NONE = 0, X50NG_REINIT_REBOOT_ONLY, X50NG_REINIT_FLASH, X50NG_REINIT_FLASH_FULL } x50ng_reinit_t;
+typedef enum { HDW_REINIT_NONE = 0, HDW_REINIT_REBOOT_ONLY, HDW_REINIT_FLASH, HDW_REINIT_FLASH_FULL } hdw_reinit_t;
 
 typedef struct config_t {
     char* progname;
@@ -38,7 +38,7 @@ typedef struct config_t {
     int start_debugger;
     char* bootloader;
     char* firmware;
-    x50ng_reinit_t reinit;
+    hdw_reinit_t reinit;
 
     frontend_t frontend;
     bool small;

@@ -76,7 +76,7 @@ static void s3c2410_watchdog_tick( void* data )
         printf( "WATCHDOG: assert internal RESET\n" );
 #endif
 
-        x50ng_modules_reset( hdw_state, HDW_RESET_WATCHDOG );
+        reset_modules( hdw_state, HDW_RESET_WATCHDOG );
         cpu_reset( hdw_state->env );
 
         //		if (hdw_state->arm->NresetSig != LOW) {
@@ -205,7 +205,7 @@ static int s3c2410_watchdog_load( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        if ( x50ng_module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
+        if ( module_get_u32( module, key, reg->name, reg->reset, reg->datap ) )
             error = -EAGAIN;
     }
 
@@ -230,7 +230,7 @@ static int s3c2410_watchdog_save( hdw_module_t* module, GKeyFile* key )
         if ( NULL == reg->name )
             continue;
 
-        x50ng_module_set_u32( module, key, reg->name, *( reg->datap ) );
+        module_set_u32( module, key, reg->name, *( reg->datap ) );
     }
 
     return 0;
@@ -313,7 +313,7 @@ static int s3c2410_watchdog_exit( hdw_module_t* module )
         free( watchdog );
     }
 
-    x50ng_module_unregister( module );
+    module_unregister( module );
     free( module );
 
     return 0;
@@ -327,5 +327,5 @@ int x50ng_s3c2410_watchdog_init( hdw_t* hdw_state )
                             s3c2410_watchdog_load, s3c2410_watchdog_save, NULL, &module ) )
         return -1;
 
-    return x50ng_module_register( module );
+    return module_register( module );
 }
