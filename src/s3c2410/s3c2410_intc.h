@@ -1,6 +1,8 @@
 #ifndef _X50NG_S3C2410_INTC_H
 #  define _X50NG_S3C2410_INTC_H 1
 
+#  include "../types.h"
+
 #  define INT_ADC 31
 #  define INT_RTC 30
 #  define INT_SPI1 29

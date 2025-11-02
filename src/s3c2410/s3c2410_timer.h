@@ -3,7 +3,7 @@
 
 #  include <time.h>
 
-#  include "types.h"
+#  include "../types.h"
 
 #  define TCFG0_DEAD_SHIFT 16
 #  define TCFG0_DEAD_MASK 0xff
