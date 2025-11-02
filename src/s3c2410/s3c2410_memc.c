@@ -226,7 +226,7 @@ static int s3c2410_memc_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_memc_init( hdw_t* hdw_state )
+int s3c2410_init_module_memc( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 

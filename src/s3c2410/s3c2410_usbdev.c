@@ -281,7 +281,7 @@ static int s3c2410_usbdev_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_usbdev_init( hdw_t* hdw_state )
+int s3c2410_init_module_usbdev( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 

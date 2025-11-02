@@ -343,21 +343,21 @@ typedef struct {
 #define S3C2410_SDI_SDIIMSK		0x0040
 
 
-extern int x50ng_s3c2410_sram_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_memc_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_intc_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_power_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_lcd_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_nand_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_uart_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_timer_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_usbdev_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_watchdog_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_io_port_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_rtc_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_adc_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_spi_init(hdw_t* hdw_state);
-extern int x50ng_s3c2410_sdi_init(hdw_t* hdw_state);
+extern int s3c2410_init_module_sram(hdw_t* hdw_state);
+extern int s3c2410_init_module_memc(hdw_t* hdw_state);
+extern int s3c2410_init_module_intc(hdw_t* hdw_state);
+extern int s3c2410_init_module_power(hdw_t* hdw_state);
+extern int s3c2410_init_module_lcd(hdw_t* hdw_state);
+extern int s3c2410_init_module_nand(hdw_t* hdw_state);
+extern int s3c2410_init_module_uart(hdw_t* hdw_state);
+extern int s3c2410_init_module_timer(hdw_t* hdw_state);
+extern int s3c2410_init_module_usbdev(hdw_t* hdw_state);
+extern int s3c2410_init_module_watchdog(hdw_t* hdw_state);
+extern int s3c2410_init_module_io_port(hdw_t* hdw_state);
+extern int s3c2410_init_module_rtc(hdw_t* hdw_state);
+extern int s3c2410_init_module_adc(hdw_t* hdw_state);
+extern int s3c2410_init_module_spi(hdw_t* hdw_state);
+extern int s3c2410_init_module_sdi(hdw_t* hdw_state);
 
 extern void s3c2410_io_port_g_update(hdw_t *hdw_state, int column, int row, uint32_t new_state);
 extern void s3c2410_io_port_f_set_bit(hdw_t *hdw_state, int n, uint32_t set);

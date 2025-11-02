@@ -375,7 +375,7 @@ static int s3c2410_uart_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_uart_init( hdw_t* hdw_state )
+int s3c2410_init_module_uart( hdw_t* hdw_state )
 {
     s3c2410_uart_t* uart;
     hdw_module_t* module;

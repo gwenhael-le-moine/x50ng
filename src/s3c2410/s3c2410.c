@@ -27,27 +27,23 @@
  */
 int init_s3c2410( hdw_t* hdw_state )
 {
-    x50ng_s3c2410_sram_init( hdw_state );
-    x50ng_s3c2410_memc_init( hdw_state );
-    /* x50ng_s3c2410_usbhost_init(x50ng); */
-    x50ng_s3c2410_intc_init( hdw_state );
-    /* x50ng_s3c2410_dma_init(x50ng); */
-    x50ng_s3c2410_power_init( hdw_state );
-    x50ng_s3c2410_lcd_init( hdw_state );
-    x50ng_s3c2410_nand_init( hdw_state );
-    x50ng_s3c2410_uart_init( hdw_state );
-    x50ng_s3c2410_timer_init( hdw_state );
-    x50ng_s3c2410_usbdev_init( hdw_state );
-    x50ng_s3c2410_watchdog_init( hdw_state );
-    /* x50ng_s3c2410_i2c_init(x50ng); */
-    /* x50ng_s3c2410_iis_init(x50ng); */
-    x50ng_s3c2410_io_port_init( hdw_state );
-    x50ng_s3c2410_rtc_init( hdw_state );
-    x50ng_s3c2410_adc_init( hdw_state );
-    x50ng_s3c2410_spi_init( hdw_state );
-    x50ng_s3c2410_sdi_init( hdw_state );
+    s3c2410_init_module_sram( hdw_state );
+    s3c2410_init_module_memc( hdw_state );
+    s3c2410_init_module_intc( hdw_state );
+    s3c2410_init_module_power( hdw_state );
+    s3c2410_init_module_lcd( hdw_state );
+    s3c2410_init_module_nand( hdw_state );
+    s3c2410_init_module_uart( hdw_state );
+    s3c2410_init_module_timer( hdw_state );
+    s3c2410_init_module_usbdev( hdw_state );
+    s3c2410_init_module_watchdog( hdw_state );
+    s3c2410_init_module_io_port( hdw_state );
+    s3c2410_init_module_rtc( hdw_state );
+    s3c2410_init_module_adc( hdw_state );
+    s3c2410_init_module_spi( hdw_state );
+    s3c2410_init_module_sdi( hdw_state );
 
     return 0;
 }
 
-int s3c2410_exit( hdw_t* hdw_state ) { return 0; }
+int s3c2410_exit( hdw_t* _hdw_state ) { return 0; }

@@ -3,7 +3,7 @@
 
 #  include <stdint.h>
 
-#  include "qemu-common.h"
+#  include "../qemu/qemu-common.h"
 
 #  define BDRV_O_RDONLY 0x0000
 #  define BDRV_O_RDWR 0x0002
