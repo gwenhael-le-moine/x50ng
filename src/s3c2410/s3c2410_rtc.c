@@ -33,7 +33,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
     hdw_timer_t* tick_timer;
     hdw_timer_t* alarm_timer;
     int64_t interval; /* us */
@@ -73,7 +73,7 @@ static __inline__ uint32_t bcd2bin( uint32_t bcd ) { return ( ( bcd >> 4 ) * 10 
 static void s3c2410_rtc_timeout( void* user_data )
 {
     s3c2410_rtc_t* rtc = user_data;
-    x50ng_t* x50ng = rtc->x50ng;
+    hdw_t* x50ng = rtc->x50ng;
     int64_t now, us;
 
     if ( !( rtc->ticnt & 0x80 ) ) {
@@ -141,7 +141,7 @@ static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
 static void s3c2410_rtc_alarm( void* user_data )
 {
     s3c2410_rtc_t* rtc = user_data;
-    x50ng_t* x50ng = rtc->x50ng;
+    hdw_t* x50ng = rtc->x50ng;
     struct tm* tm;
     struct timeval tv;
     int64_t now, us;
@@ -432,7 +432,7 @@ static int s3c2410_rtc_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_rtc_init( x50ng_t* x50ng )
+int x50ng_s3c2410_rtc_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

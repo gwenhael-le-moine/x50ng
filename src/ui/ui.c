@@ -516,7 +516,7 @@ void newrplify_ui_buttons_hp50g()
 /********************/
 void ui_handle_pending_inputs( void* data )
 {
-    x50ng_t* hdw_state = data;
+    hdw_t* hdw_state = data;
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
@@ -533,7 +533,7 @@ void ui_handle_pending_inputs( void* data )
 
 void ui_refresh_output( void* data )
 {
-    x50ng_t* hdw_state = data;
+    hdw_t* hdw_state = data;
 
     switch ( opt.frontend ) {
         case FRONTEND_NCURSES:
@@ -548,7 +548,7 @@ void ui_refresh_output( void* data )
     timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
-void ui_init( x50ng_t* hdw_state )
+void ui_init( hdw_t* hdw_state )
 {
     if ( opt.newrpl_keyboard )
         newrplify_ui_buttons_hp50g();

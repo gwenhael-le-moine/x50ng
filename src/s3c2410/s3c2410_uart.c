@@ -30,7 +30,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 } s3c2410_uart_reg_t;
 
 typedef struct {
@@ -114,7 +114,7 @@ static int s3c2410_uart_data_init( s3c2410_uart_t* uart )
 static uint32_t s3c2410_uart_read( void* opaque, target_phys_addr_t offset )
 {
     s3c2410_uart_reg_t* uart_regs = opaque;
-    x50ng_t* x50ng = uart_regs->x50ng;
+    hdw_t* x50ng = uart_regs->x50ng;
     s3c2410_offset_t* reg;
 #ifdef DEBUG_S3C2410_UART
     const char* module;
@@ -169,7 +169,7 @@ static uint32_t s3c2410_uart_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_uart_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_uart_reg_t* uart_regs = opaque;
-    x50ng_t* x50ng = uart_regs->x50ng;
+    hdw_t* x50ng = uart_regs->x50ng;
     s3c2410_offset_t* reg;
     uint32_t base;
 #ifdef DEBUG_S3C2410_UART
@@ -375,7 +375,7 @@ static int s3c2410_uart_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_uart_init( x50ng_t* x50ng )
+int x50ng_s3c2410_uart_init( hdw_t* x50ng )
 {
     s3c2410_uart_t* uart;
     hdw_module_t* module;

@@ -35,11 +35,11 @@ typedef struct hdw_module_t {
 
     void* user_data;
 
-    struct x50ng_t* x50ng;
+    struct hdw_t* x50ng;
     struct list_head list;
 } hdw_module_t;
 
-struct x50ng_t {
+struct hdw_t {
     CPUARMState* env;
 
     struct list_head modules;

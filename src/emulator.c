@@ -21,7 +21,7 @@
 #include "module.h"
 #include "emulator.h"
 
-static x50ng_t* hdw_state;
+static hdw_t* hdw_state;
 
 hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
     {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
@@ -216,7 +216,7 @@ uint32_t do_arm_semihosting( CPUState* env )
     return 0;
 }
 
-void hdw_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
+void hdw_set_idle( hdw_t* x50ng, x50ng_arm_idle_t idle )
 {
 #ifdef DEBUG_X50NG_ARM_IDLE
     if ( idle != x50ng->arm_idle ) {
@@ -234,14 +234,14 @@ void hdw_set_idle( x50ng_t* x50ng, x50ng_arm_idle_t idle )
     }
 }
 
-x50ng_t* emulator_init( config_t config )
+hdw_t* emulator_init( config_t config )
 {
-    hdw_state = malloc( sizeof( x50ng_t ) );
+    hdw_state = malloc( sizeof( hdw_t ) );
     if ( NULL == hdw_state ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", config.progname, __func__, __LINE__ );
         exit( EXIT_FAILURE );
     }
-    memset( hdw_state, 0, sizeof( x50ng_t ) );
+    memset( hdw_state, 0, sizeof( hdw_t ) );
 
 #ifdef DEBUG_X50NG_MAIN
     fprintf( stderr, "_SC_PAGE_SIZE: %08lx\n", sysconf( _SC_PAGE_SIZE ) );

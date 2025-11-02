@@ -62,7 +62,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 } s3c2410_io_port_t;
 
 static int s3c2410_io_port_data_init( s3c2410_io_port_t* io )
@@ -117,7 +117,7 @@ static int s3c2410_io_port_data_init( s3c2410_io_port_t* io )
     return 0;
 }
 
-static uint32_t s3c2410_scan_keys( x50ng_t* x50ng, uint32_t gpgcon, uint32_t gpgdat )
+static uint32_t s3c2410_scan_keys( hdw_t* x50ng, uint32_t gpgcon, uint32_t gpgdat )
 {
     uint32_t result;
     int col, row;
@@ -315,7 +315,7 @@ static void s3c2410_io_port_write( void* opaque, target_phys_addr_t offset, uint
     }
 }
 
-void s3c2410_io_port_g_update( x50ng_t* x50ng, int column, int row, uint32_t new_state )
+void s3c2410_io_port_g_update( hdw_t* x50ng, int column, int row, uint32_t new_state )
 {
     s3c2410_io_port_t* io = x50ng->s3c2410_io_port;
     unsigned char columnbit = 1 << column;
@@ -397,7 +397,7 @@ void s3c2410_io_port_g_update( x50ng_t* x50ng, int column, int row, uint32_t new
     return;
 }
 
-void s3c2410_io_port_f_set_bit( x50ng_t* x50ng, int n, uint32_t value )
+void s3c2410_io_port_f_set_bit( hdw_t* x50ng, int n, uint32_t value )
 {
     s3c2410_io_port_t* io = x50ng->s3c2410_io_port;
     uint32_t change;
@@ -625,7 +625,7 @@ static int s3c2410_io_port_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_io_port_init( x50ng_t* x50ng )
+int x50ng_s3c2410_io_port_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

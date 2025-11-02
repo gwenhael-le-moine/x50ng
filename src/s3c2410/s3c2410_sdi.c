@@ -37,7 +37,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 
     char* filename;
     BlockDriverState* bs;
@@ -575,7 +575,7 @@ static void s3c2410_sdi_write( void* opaque, target_phys_addr_t offset, uint32_t
     }
 }
 
-void s3c2410_sdi_unmount( x50ng_t* x50ng )
+void s3c2410_sdi_unmount( hdw_t* x50ng )
 {
     s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
 
@@ -595,14 +595,14 @@ void s3c2410_sdi_unmount( x50ng_t* x50ng )
     s3c2410_io_port_f_set_bit( x50ng, 3, 0 );
 }
 
-bool s3c2410_sdi_is_mounted( x50ng_t* x50ng )
+bool s3c2410_sdi_is_mounted( hdw_t* x50ng )
 {
     s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
 
     return ( sdi->bs != NULL ) || ( sdi->fd >= 0 );
 }
 
-int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
+int s3c2410_sdi_mount( hdw_t* x50ng, char* filename )
 {
     s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
     struct stat st;
@@ -637,7 +637,7 @@ int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename )
     return error;
 }
 
-void s3c2410_sdi_get_path( x50ng_t* x50ng, char** path )
+void s3c2410_sdi_get_path( hdw_t* x50ng, char** path )
 {
     s3c2410_sdi_t* sdi = x50ng->s3c2410_sdi;
 
@@ -646,7 +646,7 @@ void s3c2410_sdi_get_path( x50ng_t* x50ng, char** path )
 
 static int s3c2410_sdi_load( hdw_module_t* module, GKeyFile* key )
 {
-    x50ng_t* x50ng = module->x50ng;
+    hdw_t* x50ng = module->x50ng;
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
     char *filename, *filepath;
@@ -787,7 +787,7 @@ static int s3c2410_sdi_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_sdi_init( x50ng_t* x50ng )
+int x50ng_s3c2410_sdi_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

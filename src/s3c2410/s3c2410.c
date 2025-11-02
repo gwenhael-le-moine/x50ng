@@ -25,7 +25,7 @@
  * SPI Interface:		0x59000000
  * SDI Interface:		0x5a000000
  */
-int x50ng_s3c2410_init( x50ng_t* x50ng )
+int x50ng_s3c2410_init( hdw_t* x50ng )
 {
     x50ng_s3c2410_sram_init( x50ng );
     x50ng_s3c2410_memc_init( x50ng );
@@ -50,4 +50,4 @@ int x50ng_s3c2410_init( x50ng_t* x50ng )
     return 0;
 }
 
-int s3c2410_exit( x50ng_t* x50ng ) { return 0; }
+int s3c2410_exit( hdw_t* x50ng ) { return 0; }

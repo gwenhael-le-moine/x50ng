@@ -225,7 +225,7 @@ static int s3c2410_arm_reset( hdw_module_t* module, x50ng_reset_t reset )
 
 static int s3c2410_arm_init( hdw_module_t* module )
 {
-    x50ng_t* x50ng = module->x50ng;
+    hdw_t* x50ng = module->x50ng;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
@@ -244,7 +244,7 @@ static int s3c2410_arm_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_arm_init( x50ng_t* x50ng )
+int x50ng_s3c2410_arm_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

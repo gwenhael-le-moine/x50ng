@@ -11,6 +11,6 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
-typedef struct x50ng_t x50ng_t;
+typedef struct hdw_t hdw_t;
 
 #endif /* !(_TYPES_H) */

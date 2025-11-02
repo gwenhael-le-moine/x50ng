@@ -669,7 +669,7 @@ static int flash_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_flash_init( x50ng_t* hdw_state )
+int x50ng_flash_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 

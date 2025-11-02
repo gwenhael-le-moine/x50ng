@@ -35,7 +35,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 } s3c2410_lcd_t;
 
 #define S3C2410_OFFSET(module, name, reset, data) \
@@ -343,37 +343,37 @@ typedef struct {
 #define S3C2410_SDI_SDIIMSK		0x0040
 
 
-extern int x50ng_s3c2410_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_arm_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_mmu_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_sram_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_memc_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_intc_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_power_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_lcd_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_nand_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_uart_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_timer_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_usbdev_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_watchdog_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_io_port_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_rtc_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_adc_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_spi_init(x50ng_t *x50ng);
-extern int x50ng_s3c2410_sdi_init(x50ng_t *x50ng);
+extern int x50ng_s3c2410_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_arm_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_mmu_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_sram_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_memc_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_intc_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_power_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_lcd_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_nand_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_uart_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_timer_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_usbdev_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_watchdog_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_io_port_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_rtc_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_adc_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_spi_init(hdw_t *x50ng);
+extern int x50ng_s3c2410_sdi_init(hdw_t *x50ng);
 
-extern void s3c2410_io_port_g_update(x50ng_t *x50ng, int column, int row, uint32_t new_state);
-extern void s3c2410_io_port_f_set_bit(x50ng_t *x50ng, int n, uint32_t set);
+extern void s3c2410_io_port_g_update(hdw_t *x50ng, int column, int row, uint32_t new_state);
+extern void s3c2410_io_port_f_set_bit(hdw_t *x50ng, int n, uint32_t set);
 
 extern int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y );
 
-extern unsigned long s3c2410_timer_next_interrupt(x50ng_t *x50ng);
-extern unsigned long s3c2410_watchdog_next_interrupt(x50ng_t *x50ng);
+extern unsigned long s3c2410_timer_next_interrupt(hdw_t *x50ng);
+extern unsigned long s3c2410_watchdog_next_interrupt(hdw_t *x50ng);
 
 /* s3c2410/s3c2410_sdi.c */
-extern void s3c2410_sdi_unmount( x50ng_t* x50ng );
-extern int s3c2410_sdi_mount( x50ng_t* x50ng, char* filename );
-extern bool s3c2410_sdi_is_mounted( x50ng_t* x50ng );
-extern void s3c2410_sdi_get_path( x50ng_t* x50ng, char** filename );
+extern void s3c2410_sdi_unmount( hdw_t* x50ng );
+extern int s3c2410_sdi_mount( hdw_t* x50ng, char* filename );
+extern bool s3c2410_sdi_is_mounted( hdw_t* x50ng );
+extern void s3c2410_sdi_get_path( hdw_t* x50ng, char** filename );
 
 #endif /* !(_X50NG_S3C2410_H) */

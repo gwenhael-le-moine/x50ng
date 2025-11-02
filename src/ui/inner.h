@@ -2,7 +2,7 @@
 #  define _UI_INNER_H 1
 
 #  include "../emulator.h"
-#  include "../types.h" /* x50ng_t */
+#  include "../types.h" /* hdw_t */
 
 #  define UI_EVENTS_REFRESH_INTERVAL 30000LL
 #  define UI_LCD_REFRESH_INTERVAL 50000LL

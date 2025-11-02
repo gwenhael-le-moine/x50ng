@@ -3,6 +3,6 @@
 
 #  include "types.h"
 
-int x50ng_sram_init( x50ng_t* );
+int x50ng_sram_init( hdw_t* );
 
 #endif /* !(_X50NG_SRAM_H) */

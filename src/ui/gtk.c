@@ -15,7 +15,7 @@
 // #define TEST_PASTE true
 
 typedef struct {
-    x50ng_t* hdw_state;
+    hdw_t* hdw_state;
     const ui_button_t* key;
     GtkWidget* button;
     bool down;
@@ -40,7 +40,7 @@ static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 /*************************/
 /* Functions' prototypes */
 /*************************/
-static void gtk_ui_open_menu( int x, int y, x50ng_t* hdw_state );
+static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state );
 
 /*************/
 /* Functions */
@@ -109,7 +109,7 @@ static void gtk_ui_react_to_button_right_click_release( x50ng_ui_button_t* butto
     press_key( key->hpkey );
 }
 
-static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, x50ng_t* hdw_state )
+static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, hdw_t* hdw_state )
 {
     g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
@@ -117,7 +117,7 @@ static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, 
         s3c2410_sdi_mount( hdw_state, ( char* )g_file_peek_path( file ) );
 }
 
-static void gtk_ui_do_select_and_mount_sd_folder( x50ng_t* hdw_state, GMenuItem* _menuitem )
+static void gtk_ui_do_select_and_mount_sd_folder( hdw_t* hdw_state, GMenuItem* _menuitem )
 {
     g_autoptr( GtkFileDialog ) dialog =
         g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
@@ -126,7 +126,7 @@ static void gtk_ui_do_select_and_mount_sd_folder( x50ng_t* hdw_state, GMenuItem*
                                    ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, hdw_state );
 }
 
-static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* hdw_state )
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, hdw_t* hdw_state )
 {
     if ( opt.debug_port != 0 && !gdbserver_isactive() ) {
         gdbserver_start( opt.debug_port );
@@ -134,7 +134,7 @@ static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, x50ng_t* hdw_state
     }
 }
 
-static void gtk_ui_do_reset( x50ng_t* hdw_state, GMenuItem* _menuitem )
+static void gtk_ui_do_reset( hdw_t* hdw_state, GMenuItem* _menuitem )
 {
     x50ng_modules_reset( hdw_state, X50NG_RESET_POWER_ON );
     cpu_reset( hdw_state->env );
@@ -142,14 +142,14 @@ static void gtk_ui_do_reset( x50ng_t* hdw_state, GMenuItem* _menuitem )
 }
 
 #ifdef TEST_PASTE
-static void x50g_string_to_keys_sequence( x50ng_t* _hdw_state, const char* input )
+static void x50g_string_to_keys_sequence( hdw_t* _hdw_state, const char* input )
 {
     for ( int i = 0; i < strlen( input ); i++ )
         fprintf( stderr, "%c", input[ i ] );
     fprintf( stderr, "\n" );
 }
 
-static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, x50ng_t* hdw_state )
+static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, hdw_t* hdw_state )
 {
     g_autofree char* text = NULL;
     g_autoptr( GError ) error = NULL;
@@ -164,16 +164,16 @@ static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, x
     x50g_string_to_keys_sequence( hdw_state, text );
 }
 
-static void gtk_ui_do_paste( x50ng_t* hdw_state, GtkWidget* _menuitem )
+static void gtk_ui_do_paste( hdw_t* hdw_state, GtkWidget* _menuitem )
 {
     gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL,
                                    ( GAsyncReadyCallback )gtk_ui_paste_callback, hdw_state );
 }
 #endif
 
-static void gtk_ui_do_quit( x50ng_t* hdw_state, GtkWidget* _menuitem ) { hdw_state->arm_exit++; }
+static void gtk_ui_do_quit( hdw_t* hdw_state, GtkWidget* _menuitem ) { hdw_state->arm_exit++; }
 
-static void gtk_ui_open_menu( int x, int y, x50ng_t* hdw_state )
+static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state )
 {
     g_autoptr( GMenu ) menu = g_menu_new();
     g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
@@ -246,7 +246,7 @@ static void gtk_ui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, 
     cairo_paint( cr );
 }
 
-static bool gtk_ui_handle_key_event( int keyval, x50ng_t* hdw_state, key_event_t event_type )
+static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t event_type )
 {
     int hpkey;
     switch ( keyval ) {
@@ -510,18 +510,18 @@ static bool gtk_ui_handle_key_event( int keyval, x50ng_t* hdw_state, key_event_t
 }
 
 static bool gtk_ui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                       x50ng_t* hdw_state )
+                                       hdw_t* hdw_state )
 {
     return gtk_ui_handle_key_event( keyval, hdw_state, KEY_PRESS );
 }
 
 static bool gtk_ui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                         x50ng_t* hdw_state )
+                                         hdw_t* hdw_state )
 {
     return gtk_ui_handle_key_event( keyval, hdw_state, KEY_RELEASE );
 }
 
-static void gtk_ui_react_to_display_click( x50ng_t* hdw_state, GtkEventController* _gesture, gdouble x, gdouble y )
+static void gtk_ui_react_to_display_click( hdw_t* hdw_state, GtkEventController* _gesture, gdouble x, gdouble y )
 {
     gtk_ui_open_menu( ( int )x, ( int )y, hdw_state );
 }
@@ -551,7 +551,7 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
     return gtk_ui_label;
 }
 
-static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* hdw_state )
+static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
 {
     char* style_full_path = g_build_filename( opt.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
@@ -578,7 +578,7 @@ static void _gtk_ui_activate__load_and_apply_CSS( x50ng_t* hdw_state )
     free( style_full_path );
 }
 
-static void gtk_ui_activate( GtkApplication* app, x50ng_t* hdw_state )
+static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 {
     // create gtk_ui_window and widgets/stuff
     if ( app == NULL )
@@ -806,7 +806,7 @@ static void gtk_ui_activate( GtkApplication* app, x50ng_t* hdw_state )
     gtk_window_present( GTK_WINDOW( gtk_ui_window ) );
 }
 
-void gtk_ui_handle_pending_inputs( x50ng_t* _hdw_state )
+void gtk_ui_handle_pending_inputs( hdw_t* _hdw_state )
 {
     while ( g_main_context_pending( NULL ) )
         g_main_context_iteration( NULL, false );
@@ -825,7 +825,7 @@ static void gtk_ui_refresh_annunciators( void )
         gtk_widget_set_opacity( gtk_ui_annunciators[ i ], ( annunciators >> i ) & 0x01 ? 1 : 0 );
 }
 
-void gtk_ui_refresh_lcd( x50ng_t* _hdw_state )
+void gtk_ui_refresh_lcd( hdw_t* _hdw_state )
 {
     if ( !is_display_on() )
         return;
@@ -853,7 +853,7 @@ void gtk_ui_refresh_lcd( x50ng_t* _hdw_state )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( x50ng_t* hdw_state )
+void gtk_ui_init( hdw_t* hdw_state )
 {
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 

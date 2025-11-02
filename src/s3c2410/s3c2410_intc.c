@@ -62,7 +62,7 @@ typedef struct {
 
     s3c2410_arb_data_t arb_data[ INTC_NR_ARB ];
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 
     uint32_t src_pending;
     uint32_t subsrc_pending;
@@ -235,7 +235,7 @@ void s3c2410_IRQ( CPUState* env ) { cpu_interrupt( env, CPU_INTERRUPT_HARD ); }
 
 static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 {
-    x50ng_t* x50ng = intc->x50ng;
+    hdw_t* x50ng = intc->x50ng;
     uint32_t fiq, service;
     int offset[ 6 ], index;
     const s3c2410_arb_t* arb;
@@ -338,7 +338,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
     cpu_reset_interrupt( x50ng->env, CPU_INTERRUPT_HARD );
 }
 
-void s3c2410_intc_assert( x50ng_t* x50ng, int irq, int level )
+void s3c2410_intc_assert( hdw_t* x50ng, int irq, int level )
 {
     s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
@@ -363,7 +363,7 @@ void s3c2410_intc_assert( x50ng_t* x50ng, int irq, int level )
     }
 }
 
-void s3c2410_intc_deassert( x50ng_t* x50ng, int irq )
+void s3c2410_intc_deassert( hdw_t* x50ng, int irq )
 {
     s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
@@ -379,7 +379,7 @@ void s3c2410_intc_deassert( x50ng_t* x50ng, int irq )
 
 static void s3c2410_intc_gen_int_from_sub_int( s3c2410_intc_t* intc )
 {
-    x50ng_t* x50ng = intc->x50ng;
+    hdw_t* x50ng = intc->x50ng;
     uint32_t service;
 
     service = intc->subsrcpnd & ~( intc->intsubmsk );
@@ -415,7 +415,7 @@ static void s3c2410_intc_gen_int_from_sub_int( s3c2410_intc_t* intc )
     intc->subsrcpnd = intc->subsrc_pending;
 }
 
-void s3c2410_intc_sub_assert( x50ng_t* x50ng, int sub_irq, int level )
+void s3c2410_intc_sub_assert( hdw_t* x50ng, int sub_irq, int level )
 {
     s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
@@ -435,7 +435,7 @@ void s3c2410_intc_sub_assert( x50ng_t* x50ng, int sub_irq, int level )
     }
 }
 
-void s3c2410_intc_sub_deassert( x50ng_t* x50ng, int sub_irq )
+void s3c2410_intc_sub_deassert( hdw_t* x50ng, int sub_irq )
 {
     s3c2410_intc_t* intc = x50ng->s3c2410_intc;
 
@@ -662,7 +662,7 @@ static int s3c2410_intc_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_intc_init( x50ng_t* x50ng )
+int x50ng_s3c2410_intc_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

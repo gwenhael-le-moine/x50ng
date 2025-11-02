@@ -23,7 +23,7 @@
 
 config_t opt;
 
-static x50ng_t* hdw_state;
+static hdw_t* hdw_state;
 
 /*******************/
 /* signal handlers */

@@ -239,7 +239,7 @@ int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
     }
 }
 
-int x50ng_s3c2410_lcd_init( x50ng_t* x50ng )
+int x50ng_s3c2410_lcd_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

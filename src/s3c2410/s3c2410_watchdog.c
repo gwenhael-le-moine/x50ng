@@ -18,7 +18,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 
     unsigned long interval;
     hdw_timer_t* timer;
@@ -47,7 +47,7 @@ static int s3c2410_watchdog_data_init( s3c2410_watchdog_t* watchdog )
 static void s3c2410_watchdog_tick( void* data )
 {
     s3c2410_watchdog_t* watchdog = data;
-    x50ng_t* x50ng = watchdog->x50ng;
+    hdw_t* x50ng = watchdog->x50ng;
 
     if ( watchdog->wtcnt > 0 )
         watchdog->wtcnt--;
@@ -90,7 +90,7 @@ static void s3c2410_watchdog_tick( void* data )
     timer_mod( watchdog->timer, timer_get_clock() + watchdog->interval );
 }
 
-unsigned long s3c2410_watchdog_next_interrupt( x50ng_t* x50ng )
+unsigned long s3c2410_watchdog_next_interrupt( hdw_t* x50ng )
 {
     s3c2410_watchdog_t* watchdog = x50ng->s3c2410_watchdog;
     unsigned long irq;
@@ -319,7 +319,7 @@ static int s3c2410_watchdog_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_watchdog_init( x50ng_t* x50ng )
+int x50ng_s3c2410_watchdog_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

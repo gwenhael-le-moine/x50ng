@@ -17,7 +17,7 @@ typedef struct hdw_sram_t {
     int fd;
     size_t size;
     uint32_t offset;
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 } hdw_sram_t;
 
 #define S3C2410_SRAM_BASE 0x08000000
@@ -185,7 +185,7 @@ static int sram_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_sram_init( x50ng_t* hdw_state )
+int x50ng_sram_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
 

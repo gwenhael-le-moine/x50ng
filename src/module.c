@@ -16,7 +16,7 @@
 
 #define STATE_FILE_NAME "state"
 
-int x50ng_modules_init( x50ng_t* hdw_state )
+int x50ng_modules_init( hdw_t* hdw_state )
 {
     hdw_module_t* module;
     int error;
@@ -53,7 +53,7 @@ int x50ng_modules_init( x50ng_t* hdw_state )
     return 0;
 }
 
-int x50ng_modules_exit( x50ng_t* hdw_state )
+int x50ng_modules_exit( hdw_t* hdw_state )
 {
     hdw_module_t *module, *next;
     int error;
@@ -72,7 +72,7 @@ int x50ng_modules_exit( x50ng_t* hdw_state )
     return 0;
 }
 
-int x50ng_modules_reset( x50ng_t* hdw_state, x50ng_reset_t reset )
+int x50ng_modules_reset( hdw_t* hdw_state, x50ng_reset_t reset )
 {
     hdw_module_t* module;
     int error;
@@ -91,7 +91,7 @@ int x50ng_modules_reset( x50ng_t* hdw_state, x50ng_reset_t reset )
     return 0;
 }
 
-int x50ng_modules_load( x50ng_t* hdw_state )
+int x50ng_modules_load( hdw_t* hdw_state )
 {
     hdw_module_t* module;
     GError* gerror = NULL;
@@ -147,7 +147,7 @@ int x50ng_modules_load( x50ng_t* hdw_state )
     return result;
 }
 
-int x50ng_modules_save( x50ng_t* hdw_state )
+int x50ng_modules_save( hdw_t* hdw_state )
 {
     hdw_module_t* module;
     GError* gerror = NULL;
@@ -198,7 +198,7 @@ int x50ng_modules_save( x50ng_t* hdw_state )
 
 int x50ng_module_register( hdw_module_t* module )
 {
-    x50ng_t* hdw_state = module->x50ng;
+    hdw_t* hdw_state = module->x50ng;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u: %s\n", __func__, __LINE__, module->name );
@@ -386,7 +386,7 @@ int x50ng_module_open_rodata( hdw_module_t* module, const char* name, char** pat
     return fd;
 }
 
-int x50ng_module_init( x50ng_t* hdw_state, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
+int x50ng_module_init( hdw_t* hdw_state, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
                        int ( *reset )( hdw_module_t*, x50ng_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),
                        int ( *save )( hdw_module_t*, GKeyFile* ), void* user_data, hdw_module_t** modulep )
 {

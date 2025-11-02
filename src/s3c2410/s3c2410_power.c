@@ -24,7 +24,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 } s3c2410_power_t;
 
 static int s3c2410_power_data_init( s3c2410_power_t* power )
@@ -70,7 +70,7 @@ static uint32_t s3c2410_power_read( void* opaque, target_phys_addr_t offset )
 static void s3c2410_power_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_power_t* power = opaque;
-    x50ng_t* x50ng = power->x50ng;
+    hdw_t* x50ng = power->x50ng;
     s3c2410_offset_t* reg;
     uint32_t mMdiv, mPdiv, mSdiv;
     uint32_t uMdiv, uPdiv, uSdiv;
@@ -311,7 +311,7 @@ static int s3c2410_power_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_power_init( x50ng_t* x50ng )
+int x50ng_s3c2410_power_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

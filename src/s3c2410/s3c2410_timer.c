@@ -29,7 +29,7 @@ struct __s3c2410_timer_s__ {
     uint32_t tcon;
     uint32_t prev_tcon;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
@@ -96,7 +96,7 @@ static void s3c2410_timer_timeout( void* data )
 {
     struct s3c2410_timeout* t = data;
     s3c2410_timer_t* timer = t->main;
-    x50ng_t* x50ng = timer->x50ng;
+    hdw_t* x50ng = timer->x50ng;
     int64_t timeout;
 
 #ifdef DEBUG_S3C2410_TIMER
@@ -120,7 +120,7 @@ static void s3c2410_timer_timeout( void* data )
     timer_mod( t->timer, timer_get_clock() + timeout );
 }
 
-unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
+unsigned long s3c2410_timer_next_interrupt( hdw_t* x50ng )
 {
     s3c2410_timer_t* timer = x50ng->s3c2410_timer;
     struct s3c2410_timeout* t;
@@ -165,7 +165,7 @@ unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
 static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 {
     struct s3c2410_timeout* t;
-    x50ng_t* x50ng = timer->x50ng;
+    hdw_t* x50ng = timer->x50ng;
     uint32_t pre, mux;
     int64_t timeout;
     int i;
@@ -200,7 +200,7 @@ static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 {
     struct s3c2410_timeout* t;
-    x50ng_t* x50ng = timer->x50ng;
+    hdw_t* x50ng = timer->x50ng;
     int64_t timeout;
     uint32_t change;
     int i;
@@ -241,7 +241,7 @@ static void s3c2410_update_tcon( s3c2410_timer_t* timer )
 static uint32_t s3c2410_read_tcnt( s3c2410_timer_t* timer, int index )
 {
     struct s3c2410_timeout* t = &timer->timeout[ index ];
-    x50ng_t* x50ng = timer->x50ng;
+    hdw_t* x50ng = timer->x50ng;
     int64_t now, expires, timeout;
 
     if ( !( timer->tcon & t->tconfig->start_bit ) )
@@ -484,7 +484,7 @@ static int s3c2410_timer_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_timer_init( x50ng_t* x50ng )
+int x50ng_s3c2410_timer_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

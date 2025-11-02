@@ -27,7 +27,7 @@ typedef struct {
     unsigned int nr_regs;
     s3c2410_offset_t* regs;
 
-    x50ng_t* x50ng;
+    hdw_t* x50ng;
 } s3c2410_spi_t;
 
 static int s3c2410_spi_data_init( s3c2410_spi_t* spi )
@@ -86,7 +86,7 @@ uint32_t s3c2410_spi_read( void* opaque, target_phys_addr_t offset )
 void s3c2410_spi_write( void* opaque, target_phys_addr_t offset, uint32_t data )
 {
     s3c2410_spi_t* spi = opaque;
-    x50ng_t* x50ng = spi->x50ng;
+    hdw_t* x50ng = spi->x50ng;
     s3c2410_offset_t* reg;
 
     if ( !S3C2410_OFFSET_OK( spi, offset ) )
@@ -236,7 +236,7 @@ static int s3c2410_spi_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_s3c2410_spi_init( x50ng_t* x50ng )
+int x50ng_s3c2410_spi_init( hdw_t* x50ng )
 {
     hdw_module_t* module;
 

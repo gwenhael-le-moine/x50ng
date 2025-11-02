@@ -18,7 +18,7 @@ typedef timer_callback_t QEMUTimerCB;
 typedef void* QEMUClock;
 
 struct hdw_timer_s {
-    x50ng_timer_type_t type;
+    hdw_timer_type_t type;
     int64_t expires;
     timer_callback_t callback;
     void* user_data;
@@ -63,7 +63,7 @@ static void alarm_handler( int _sig )
         cpu_exit( cpu_single_env );
 }
 
-static void main_loop_wait( x50ng_t* hdw_state, int timeout )
+static void main_loop_wait( hdw_t* hdw_state, int timeout )
 {
     if ( gdb_poll( hdw_state->env ) )
         gdb_handlesig( hdw_state->env, 0 );
@@ -85,7 +85,7 @@ int64_t timer_get_clock( void )
     return ( tv.tv_sec * 1000000LL + tv.tv_usec );
 }
 
-hdw_timer_t* timer_new( x50ng_timer_type_t type, timer_callback_t callback, void* user_data )
+hdw_timer_t* timer_new( hdw_timer_type_t type, timer_callback_t callback, void* user_data )
 {
     hdw_timer_t* ts = malloc( sizeof( hdw_timer_t ) );
 
@@ -171,7 +171,7 @@ int qemu_timer_pending( QEMUTimer* ts ) { return is_timer_pendinig( ( void* )ts 
 
 int64_t qemu_get_clock( QEMUClock* clock ) { return timer_get_clock(); }
 
-void main_loop( x50ng_t* hdw_state )
+void main_loop( hdw_t* hdw_state )
 {
     x50ng_arm_idle_t prev_idle;
     int ret, timeout;
