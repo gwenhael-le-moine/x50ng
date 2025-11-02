@@ -15,17 +15,17 @@ typedef struct hdw_timer_s hdw_timer_t;
 /* extern QEMUClock* vm_clock; */
 extern int64_t ticks_per_sec;
 
-int64_t timer_get_clock( void );
+extern int64_t timer_get_clock( void );
 
-hdw_timer_t* timer_new( hdw_timer_type_t type, timer_callback_t, void* user_data );
-void timer_free( hdw_timer_t* );
+extern hdw_timer_t* timer_new( hdw_timer_type_t type, timer_callback_t, void* user_data );
+extern void timer_free( hdw_timer_t* );
 
-void timer_mod( hdw_timer_t*, int64_t expires );
-void timer_del( hdw_timer_t* );
-bool is_timer_pendinig( hdw_timer_t* );
-int64_t timer_expires_when( hdw_timer_t* );
+extern void timer_mod( hdw_timer_t*, int64_t expires );
+extern void timer_del( hdw_timer_t* );
+extern bool is_timer_pendinig( hdw_timer_t* );
+extern int64_t timer_expires_when( hdw_timer_t* );
 
-void main_loop( hdw_t* );
-void init_timer( void );
+extern void main_loop( hdw_t* );
+extern void init_timer( void );
 
 #endif /* !(_HDW_TIMER_H) */
