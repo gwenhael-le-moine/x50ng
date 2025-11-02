@@ -16,7 +16,7 @@
 
 #define STATE_FILE_NAME "state"
 
-int x50ng_modules_init( x50ng_t* x50ng )
+int x50ng_modules_init( x50ng_t* hdw_state )
 {
     hdw_module_t* module;
     int error;
@@ -27,7 +27,7 @@ int x50ng_modules_init( x50ng_t* x50ng )
 
     phys_ram_size = 0;
 
-    list_for_each_entry( module, &x50ng->modules, list )
+    list_for_each_entry( module, &hdw_state->modules, list )
     {
         error = module->init( module );
         if ( error )
@@ -53,7 +53,7 @@ int x50ng_modules_init( x50ng_t* x50ng )
     return 0;
 }
 
-int x50ng_modules_exit( x50ng_t* x50ng )
+int x50ng_modules_exit( x50ng_t* hdw_state )
 {
     hdw_module_t *module, *next;
     int error;
@@ -62,7 +62,7 @@ int x50ng_modules_exit( x50ng_t* x50ng )
     printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
-    list_for_each_entry_safe_reverse( module, next, &x50ng->modules, list )
+    list_for_each_entry_safe_reverse( module, next, &hdw_state->modules, list )
     {
         error = module->exit( module );
         if ( error )
@@ -72,7 +72,7 @@ int x50ng_modules_exit( x50ng_t* x50ng )
     return 0;
 }
 
-int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
+int x50ng_modules_reset( x50ng_t* hdw_state, x50ng_reset_t reset )
 {
     hdw_module_t* module;
     int error;
@@ -81,7 +81,7 @@ int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
     printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
-    list_for_each_entry( module, &x50ng->modules, list )
+    list_for_each_entry( module, &hdw_state->modules, list )
     {
         error = module->reset( module, reset );
         if ( error )
@@ -91,7 +91,7 @@ int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
     return 0;
 }
 
-int x50ng_modules_load( x50ng_t* x50ng )
+int x50ng_modules_load( x50ng_t* hdw_state )
 {
     hdw_module_t* module;
     GError* gerror = NULL;
@@ -108,24 +108,24 @@ int x50ng_modules_load( x50ng_t* x50ng )
         return error;
     }
 
-    x50ng->state = g_key_file_new();
-    if ( NULL == x50ng->state ) {
+    hdw_state->state = g_key_file_new();
+    if ( NULL == hdw_state->state ) {
         fprintf( stderr, "%s:%u: g_key_file_new: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
 
-    if ( !g_key_file_load_from_file( x50ng->state, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
+    if ( !g_key_file_load_from_file( hdw_state->state, filename, G_KEY_FILE_KEEP_COMMENTS, &gerror ) &&
          !g_error_matches( gerror, G_FILE_ERROR, G_FILE_ERROR_NOENT ) ) {
         fprintf( stderr, "%s:%u: g_key_file_load_from_file: %s\n", __func__, __LINE__, gerror->message );
-        g_key_file_free( x50ng->state );
+        g_key_file_free( hdw_state->state );
         return -EIO;
     }
 
     result = 0;
 
-    list_for_each_entry( module, &x50ng->modules, list )
+    list_for_each_entry( module, &hdw_state->modules, list )
     {
-        error = module->load( module, x50ng->state );
+        error = module->load( module, hdw_state->state );
         if ( error ) {
             if ( error == -EAGAIN )
                 result = -EAGAIN;
@@ -147,7 +147,7 @@ int x50ng_modules_load( x50ng_t* x50ng )
     return result;
 }
 
-int x50ng_modules_save( x50ng_t* x50ng )
+int x50ng_modules_save( x50ng_t* hdw_state )
 {
     hdw_module_t* module;
     GError* gerror = NULL;
@@ -161,14 +161,14 @@ int x50ng_modules_save( x50ng_t* x50ng )
     printf( "%s:%u:\n", __func__, __LINE__ );
 #endif
 
-    list_for_each_entry( module, &x50ng->modules, list )
+    list_for_each_entry( module, &hdw_state->modules, list )
     {
-        error = module->save( module, x50ng->state );
+        error = module->save( module, hdw_state->state );
         if ( error )
             return error;
     }
 
-    data = g_key_file_to_data( x50ng->state, &length, &gerror );
+    data = g_key_file_to_data( hdw_state->state, &length, &gerror );
     if ( NULL == data ) {
         fprintf( stderr, "%s:%u: g_key_file_to_data: %s\n", __func__, __LINE__, gerror->message );
         return -ENOMEM;
@@ -198,13 +198,13 @@ int x50ng_modules_save( x50ng_t* x50ng )
 
 int x50ng_module_register( hdw_module_t* module )
 {
-    x50ng_t* x50ng = module->x50ng;
+    x50ng_t* hdw_state = module->x50ng;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u: %s\n", __func__, __LINE__, module->name );
 #endif
 
-    list_add_tail( &module->list, &x50ng->modules );
+    list_add_tail( &module->list, &hdw_state->modules );
 
     return 0;
 }
@@ -386,7 +386,7 @@ int x50ng_module_open_rodata( hdw_module_t* module, const char* name, char** pat
     return fd;
 }
 
-int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
+int x50ng_module_init( x50ng_t* hdw_state, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
                        int ( *reset )( hdw_module_t*, x50ng_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),
                        int ( *save )( hdw_module_t*, GKeyFile* ), void* user_data, hdw_module_t** modulep )
 {
@@ -410,7 +410,7 @@ int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( hdw_modu
     module->user_data = user_data;
 
     //	module->mutex = g_mutex_new();
-    module->x50ng = x50ng;
+    module->x50ng = hdw_state;
 
     *modulep = module;
     return 0;

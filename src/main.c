@@ -60,7 +60,7 @@ int main( int argc, char** argv )
 
     ui_init( hdw_state );
 
-    x50ng_main_loop( hdw_state );
+    main_loop( hdw_state );
 
     ui_exit();
 

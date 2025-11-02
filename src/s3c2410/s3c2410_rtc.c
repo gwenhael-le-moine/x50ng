@@ -86,7 +86,7 @@ static void s3c2410_rtc_timeout( void* user_data )
 
     s3c2410_intc_assert( x50ng, INT_TICK, 0 );
 
-    now = x50ng_get_clock();
+    now = timer_get_clock();
     while ( rtc->expires <= now ) {
         rtc->expires += rtc->interval;
     }
@@ -99,15 +99,15 @@ static void s3c2410_rtc_timeout( void* user_data )
     printf( "RTC: restart TICK timer (%llu us)\n", ( unsigned long long )us );
 #endif
 
-    x50ng_mod_timer( rtc->tick_timer, rtc->expires );
+    timer_mod( rtc->tick_timer, rtc->expires );
 }
 
 static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
 {
     int64_t now, us;
 
-    if ( x50ng_timer_pending( rtc->tick_timer ) ) {
-        x50ng_del_timer( rtc->tick_timer );
+    if ( is_timer_pendinig( rtc->tick_timer ) ) {
+        timer_del( rtc->tick_timer );
 #ifdef DEBUG_S3C2410_RTC
         printf( "RTC: stop TICK timer\n" );
 #endif
@@ -123,7 +123,7 @@ static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
     if ( rtc->interval < 1000 )
         rtc->interval = 1000;
 
-    now = x50ng_get_clock();
+    now = timer_get_clock();
     rtc->expires = now + rtc->interval;
 
     us = rtc->expires - now;
@@ -134,7 +134,7 @@ static int s3c2410_rtc_set_ticnt( s3c2410_rtc_t* rtc )
     printf( "RTC: start TICK timer (%lld us)\n", ( unsigned long long )us );
 #endif
 
-    x50ng_mod_timer( rtc->tick_timer, rtc->expires );
+    timer_mod( rtc->tick_timer, rtc->expires );
     return 0;
 }
 
@@ -154,7 +154,7 @@ static void s3c2410_rtc_alarm( void* user_data )
     gettimeofday( &tv, NULL );
     tm = localtime( &tv.tv_sec );
 
-    now = x50ng_get_clock();
+    now = timer_get_clock();
     us = 1000000LL - tv.tv_usec;
 
     if ( match && ( rtc->rtcalm & 0x01 ) ) {
@@ -193,7 +193,7 @@ static void s3c2410_rtc_alarm( void* user_data )
     printf( "RTC: reload ALARM timer (%lld us)\n", ( unsigned long long )us );
 #endif
 
-    x50ng_mod_timer( rtc->alarm_timer, now + us );
+    timer_mod( rtc->alarm_timer, now + us );
 }
 
 static int s3c2410_rtc_set_rtcalm( s3c2410_rtc_t* rtc )
@@ -202,20 +202,20 @@ static int s3c2410_rtc_set_rtcalm( s3c2410_rtc_t* rtc )
     int64_t now, us;
 
     if ( !( rtc->rtcalm & 0x40 ) ) {
-        x50ng_del_timer( rtc->alarm_timer );
+        timer_del( rtc->alarm_timer );
         return 0;
     }
 
     gettimeofday( &tv, NULL );
 
-    now = x50ng_get_clock();
+    now = timer_get_clock();
     us = 1000000LL - tv.tv_usec;
 
 #ifdef DEBUG_S3C2410_RTC
     printf( "RTC: start ALARM timer (%lld us)\n", ( unsigned long long )us );
 #endif
 
-    x50ng_mod_timer( rtc->alarm_timer, now + us );
+    timer_mod( rtc->alarm_timer, now + us );
     return 0;
 }
 
@@ -399,8 +399,8 @@ static int s3c2410_rtc_init( hdw_module_t* module )
     module->user_data = rtc;
     rtc->x50ng = module->x50ng;
 
-    rtc->tick_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
-    rtc->alarm_timer = x50ng_new_timer( X50NG_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
+    rtc->tick_timer = timer_new( X50NG_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
+    rtc->alarm_timer = timer_new( X50NG_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
 
     iotype = cpu_register_io_memory( s3c2410_rtc_readfn, s3c2410_rtc_writefn, rtc );
 #ifdef DEBUG_S3C2410_RTC

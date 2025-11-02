@@ -56,7 +56,7 @@ static void s3c2410_watchdog_tick( void* data )
 
     if ( watchdog->wtcnt > 0 ) {
         //		watchdog->timer.expires += watchdog->interval;
-        x50ng_mod_timer( watchdog->timer, x50ng_get_clock() + watchdog->interval );
+        timer_mod( watchdog->timer, timer_get_clock() + watchdog->interval );
         return;
     }
 
@@ -87,7 +87,7 @@ static void s3c2410_watchdog_tick( void* data )
     }
 
     //	watchdog->timer.expires += watchdog->interval;
-    x50ng_mod_timer( watchdog->timer, x50ng_get_clock() + watchdog->interval );
+    timer_mod( watchdog->timer, timer_get_clock() + watchdog->interval );
 }
 
 unsigned long s3c2410_watchdog_next_interrupt( x50ng_t* x50ng )
@@ -96,13 +96,13 @@ unsigned long s3c2410_watchdog_next_interrupt( x50ng_t* x50ng )
     unsigned long irq;
     unsigned long ticks;
 
-    ticks = x50ng_get_clock();
+    ticks = timer_get_clock();
 
     if ( !( watchdog->wtcon & 0x0020 ) )
         return ~( 0 );
 
-    if ( x50ng_timer_pending( watchdog->timer ) )
-        irq = x50ng_timer_expires( watchdog->timer ) - ticks;
+    if ( is_timer_pendinig( watchdog->timer ) )
+        irq = timer_expires_when( watchdog->timer ) - ticks;
     else
         irq = 0;
 
@@ -113,7 +113,7 @@ unsigned long s3c2410_watchdog_next_interrupt( x50ng_t* x50ng )
 
 #ifdef DEBUG_S3C2410_WATCHDOG
     printf( "WATCHDOG: wtcnt %u, interval %lu, expires %llu, next irq %lu\n", watchdog->wtcnt, watchdog->interval,
-            ( unsigned long long )( x50ng_timer_pending( watchdog->timer ) ? x50ng_timer_expires( watchdog->timer ) : 0 ), irq );
+            ( unsigned long long )( is_timer_pendinig( watchdog->timer ) ? timer_expires_when( watchdog->timer ) : 0 ), irq );
 #endif
 
     return irq;
@@ -124,7 +124,7 @@ static int s3c2410_watchdog_update( s3c2410_watchdog_t* watchdog )
     uint32_t pre, mux;
 
     if ( !( watchdog->wtcon & 0x0020 ) ) {
-        x50ng_del_timer( watchdog->timer );
+        timer_del( watchdog->timer );
 #ifdef DEBUG_S3C2410_WATCHDOG
         printf( "WATCHDOG: stop timer\n" );
 #endif
@@ -139,7 +139,7 @@ static int s3c2410_watchdog_update( s3c2410_watchdog_t* watchdog )
 #ifdef DEBUG_S3C2410_WATCHDOG
     printf( "WATCHDOG: start tick (%lu PCLKs)\n", watchdog->interval );
 #endif
-    x50ng_mod_timer( watchdog->timer, x50ng_get_clock() + watchdog->interval );
+    timer_mod( watchdog->timer, timer_get_clock() + watchdog->interval );
 
     return 0;
 }
@@ -288,7 +288,7 @@ static int s3c2410_watchdog_init( hdw_module_t* module )
     watchdog->x50ng = module->x50ng;
     module->x50ng->s3c2410_watchdog = watchdog;
 
-    watchdog->timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
+    watchdog->timer = timer_new( X50NG_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
 
     iotype = cpu_register_io_memory( s3c2410_watchdog_readfn, s3c2410_watchdog_writefn, watchdog );
 #ifdef DEBUG_S3C2410_WATCHDOG

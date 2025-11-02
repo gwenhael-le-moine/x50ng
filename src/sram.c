@@ -10,7 +10,7 @@
 
 #include "module.h"
 
-typedef struct {
+typedef struct hdw_sram_t {
     void* data;
     void* shadow;
     char* filename;
@@ -18,7 +18,7 @@ typedef struct {
     size_t size;
     uint32_t offset;
     x50ng_t* x50ng;
-} x50ng_sram_t;
+} hdw_sram_t;
 
 #define S3C2410_SRAM_BASE 0x08000000
 #define S3C2410_SRAM_SIZE 0x00080000
@@ -33,7 +33,7 @@ typedef struct {
 
 static int sram_load( hdw_module_t* module, GKeyFile* key )
 {
-    x50ng_sram_t* sram = module->user_data;
+    hdw_sram_t* sram = module->user_data;
     char* filename;
     int error;
 
@@ -90,7 +90,7 @@ static int sram_load( hdw_module_t* module, GKeyFile* key )
 
 static int sram_save( hdw_module_t* module, GKeyFile* key )
 {
-    x50ng_sram_t* sram = module->user_data;
+    hdw_sram_t* sram = module->user_data;
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
@@ -125,18 +125,18 @@ static int sram_reset( hdw_module_t* module, x50ng_reset_t reset )
 
 static int sram_init( hdw_module_t* module )
 {
-    x50ng_sram_t* sram;
+    hdw_sram_t* sram;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    sram = malloc( sizeof( x50ng_sram_t ) );
+    sram = malloc( sizeof( hdw_sram_t ) );
     if ( NULL == sram ) {
         fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return -ENOMEM;
     }
-    memset( sram, 0, sizeof( x50ng_sram_t ) );
+    memset( sram, 0, sizeof( hdw_sram_t ) );
 
     sram->fd = -1;
 
@@ -158,7 +158,7 @@ static int sram_init( hdw_module_t* module )
 
 static int sram_exit( hdw_module_t* module )
 {
-    x50ng_sram_t* sram;
+    hdw_sram_t* sram;
 
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
@@ -185,11 +185,11 @@ static int sram_exit( hdw_module_t* module )
     return 0;
 }
 
-int x50ng_sram_init( x50ng_t* x50ng )
+int x50ng_sram_init( x50ng_t* hdw_state )
 {
     hdw_module_t* module;
 
-    if ( x50ng_module_init( x50ng, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) )
+    if ( x50ng_module_init( hdw_state, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) )
         return -1;
 
     return x50ng_module_register( module );

@@ -4,7 +4,7 @@
 #  include "types.h"
 #  include "x50ng.h"
 
-int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
+int x50ng_module_init( x50ng_t* hdw_state, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
                        int ( *reset )( hdw_module_t*, x50ng_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),
                        int ( *save )( hdw_module_t*, GKeyFile* ), void* user_data, hdw_module_t** module );
 

@@ -263,10 +263,10 @@ x50ng_t* emulator_init( config_t config )
 
     //	cpu_set_log(cpu_str_to_log_mask("all"));
 
-    x50ng_timer_init( hdw_state );
+    timer_init();
 
-    hdw_state->timer_ui_input = x50ng_new_timer( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, hdw_state );
-    hdw_state->timer_ui_output = x50ng_new_timer( X50NG_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
+    hdw_state->timer_ui_input = timer_new( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, hdw_state );
+    hdw_state->timer_ui_output = timer_new( X50NG_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
 
     x50ng_s3c2410_arm_init( hdw_state );
     x50ng_flash_init( hdw_state );
@@ -288,8 +288,8 @@ x50ng_t* emulator_init( config_t config )
 
     // stl_phys(0x08000a1c, 0x55555555);
 
-    x50ng_mod_timer( hdw_state->timer_ui_input, x50ng_get_clock() );
-    x50ng_mod_timer( hdw_state->timer_ui_output, x50ng_get_clock() );
+    timer_mod( hdw_state->timer_ui_input, timer_get_clock() );
+    timer_mod( hdw_state->timer_ui_output, timer_get_clock() );
 
     if ( config.debug_port != 0 && config.start_debugger ) {
         gdbserver_start( config.debug_port );

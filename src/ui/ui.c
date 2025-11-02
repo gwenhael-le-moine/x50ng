@@ -528,7 +528,7 @@ void ui_handle_pending_inputs( void* data )
             break;
     }
 
-    x50ng_mod_timer( hdw_state->timer_ui_input, x50ng_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+    timer_mod( hdw_state->timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
 
 void ui_refresh_output( void* data )
@@ -545,7 +545,7 @@ void ui_refresh_output( void* data )
             break;
     }
 
-    x50ng_mod_timer( hdw_state->timer_ui_output, x50ng_get_clock() + UI_LCD_REFRESH_INTERVAL );
+    timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
 void ui_init( x50ng_t* hdw_state )

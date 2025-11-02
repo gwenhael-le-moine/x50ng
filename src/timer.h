@@ -6,23 +6,26 @@
 
 #  include "types.h"
 
-#  define X50NG_TIMER_VIRTUAL 0
-#  define X50NG_TIMER_REALTIME 1
+typedef enum { X50NG_TIMER_VIRTUAL, X50NG_TIMER_REALTIME } x50ng_timer_type_t;
 
-typedef void ( *x50ng_timer_cb_t )( void* );
-typedef struct x50ng_timer_s hdw_timer_t;
+typedef void ( *timer_callback_t )( void* );
+typedef struct hdw_timer_s hdw_timer_t;
 
-int64_t x50ng_get_clock( void );
+/* extern QEMUClock* rt_clock; */
+/* extern QEMUClock* vm_clock; */
+extern int64_t ticks_per_sec;
 
-hdw_timer_t* x50ng_new_timer( long type, x50ng_timer_cb_t, void* user_data );
-void x50ng_free_timer( hdw_timer_t* );
+int64_t timer_get_clock( void );
 
-void x50ng_mod_timer( hdw_timer_t*, int64_t expires );
-void x50ng_del_timer( hdw_timer_t* );
-bool x50ng_timer_pending( hdw_timer_t* );
-int64_t x50ng_timer_expires( hdw_timer_t* );
+hdw_timer_t* timer_new( x50ng_timer_type_t type, timer_callback_t, void* user_data );
+void timer_free( hdw_timer_t* );
 
-void x50ng_main_loop( x50ng_t* );
-void x50ng_timer_init( x50ng_t* );
+void timer_mod( hdw_timer_t*, int64_t expires );
+void timer_del( hdw_timer_t* );
+bool is_timer_pendinig( hdw_timer_t* );
+int64_t timer_expires_when( hdw_timer_t* );
+
+void main_loop( x50ng_t* );
+void timer_init( void );
 
 #endif /* !(_X50NG_TIMER_H) */

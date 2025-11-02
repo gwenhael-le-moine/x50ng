@@ -117,7 +117,7 @@ static void s3c2410_timer_timeout( void* data )
 #ifdef DEBUG_S3C2410_TIMER
     printf( "s3c2410-timer: reload TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval, ( unsigned long long )timeout );
 #endif
-    x50ng_mod_timer( t->timer, x50ng_get_clock() + timeout );
+    timer_mod( t->timer, timer_get_clock() + timeout );
 }
 
 unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
@@ -128,7 +128,7 @@ unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
     unsigned long ticks;
     int i;
 
-    ticks = x50ng_get_clock();
+    ticks = timer_get_clock();
 
     next = ~( 0 );
     for ( i = 0; i < 5; i++ ) {
@@ -137,8 +137,8 @@ unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
         if ( !( timer->tcon & t->tconfig->start_bit ) )
             continue;
 
-        if ( x50ng_timer_pending( t->timer ) )
-            irq = x50ng_timer_expires( t->timer ) - ticks;
+        if ( is_timer_pendinig( t->timer ) )
+            irq = timer_expires_when( t->timer ) - ticks;
         else
             irq = 0;
 
@@ -155,7 +155,7 @@ unsigned long s3c2410_timer_next_interrupt( x50ng_t* x50ng )
 
 #ifdef DEBUG_S3C2410_TIMER
         printf( "s3c2410-timer: TIMER%u: tcnt %u, interval %lu, pending %u, next irq %lu\n", t->index, t->tcnt, t->interval,
-                x50ng_timer_pending( t->timer ), irq );
+                is_timer_pendinig( t->timer ), irq );
 #endif
     }
 
@@ -186,13 +186,13 @@ static void s3c2410_update_tcfg( s3c2410_timer_t* timer )
 #ifdef DEBUG_S3C2410_TIMER
         printf( "s3c2410-timer: TIMER%u: pre %u, mux %u, tick %lu PCLKs\n", t->index, pre, mux, t->interval );
 #endif
-        if ( x50ng_timer_pending( t->timer ) ) {
+        if ( is_timer_pendinig( t->timer ) ) {
             timeout = 1000000LL * t->tcnt * t->interval / x50ng->PCLK;
 #ifdef DEBUG_S3C2410_TIMER
             printf( "s3c2410-timer: mod TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval,
                     ( unsigned long long )timeout );
 #endif
-            x50ng_mod_timer( t->timer, x50ng_get_clock() + timeout );
+            timer_mod( t->timer, timer_get_clock() + timeout );
         }
     }
 }
@@ -227,9 +227,9 @@ static void s3c2410_update_tcon( s3c2410_timer_t* timer )
                 printf( "s3c2410-timer: start TIMER%u: CNT %u (%lu PCLKs): %llu us\n", t->index, t->tcnt, t->interval,
                         ( unsigned long long )timeout );
 #endif
-                x50ng_mod_timer( t->timer, x50ng_get_clock() + timeout );
+                timer_mod( t->timer, timer_get_clock() + timeout );
             } else {
-                x50ng_del_timer( t->timer );
+                timer_del( t->timer );
 #ifdef DEBUG_S3C2410_TIMER
                 printf( "s3c2410-timer: stop TIMER%u\n", t->index );
 #endif
@@ -247,9 +247,9 @@ static uint32_t s3c2410_read_tcnt( s3c2410_timer_t* timer, int index )
     if ( !( timer->tcon & t->tconfig->start_bit ) )
         return t->tcnt;
 
-    if ( x50ng_timer_pending( t->timer ) ) {
-        now = x50ng_get_clock();
-        expires = x50ng_timer_expires( t->timer );
+    if ( is_timer_pendinig( t->timer ) ) {
+        now = timer_get_clock();
+        expires = timer_expires_when( t->timer );
 
         timeout = expires - now;
         if ( timeout <= 0 )
@@ -452,7 +452,7 @@ static int s3c2410_timer_init( hdw_module_t* module )
 
         t->main = timer;
 
-        t->timer = x50ng_new_timer( X50NG_TIMER_VIRTUAL, s3c2410_timer_timeout, t );
+        t->timer = timer_new( X50NG_TIMER_VIRTUAL, s3c2410_timer_timeout, t );
     }
 
     iotype = cpu_register_io_memory( s3c2410_timer_readfn, s3c2410_timer_writefn, timer );
