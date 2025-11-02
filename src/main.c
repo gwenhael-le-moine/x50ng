@@ -61,7 +61,7 @@ int main( int argc, char** argv )
 
     ui_exit();
 
-    emulator_exit( __config );
+    emulator_exit();
 
     return EXIT_SUCCESS;
 }

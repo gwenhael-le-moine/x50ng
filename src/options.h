@@ -52,8 +52,6 @@ typedef struct config_t {
     int netbook_pivot_line;
 } config_t;
 
-// extern config_t opt;
-
 /*************/
 /* functions */
 /*************/
