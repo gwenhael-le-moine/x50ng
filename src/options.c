@@ -32,6 +32,7 @@ static config_t __config = {
     .frontend = FRONTEND_GTK,
     .small = false,
     .tiny = false,
+    .chromeless = false,
 
     .newrpl_keyboard = false,
     .legacy_keyboard = false,
@@ -180,6 +181,7 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_frontend = -1;
     int clopt_small = -1;
     int clopt_tiny = -1;
+    int clopt_chromeless = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -202,6 +204,7 @@ config_t* config_init( int argc, char* argv[] )
         {"tui",                no_argument,       NULL,                   901 },
         {"tui-small",          no_argument,       NULL,                   902 },
         {"tui-tiny",           no_argument,       NULL,                   903 },
+        {"chromeless",         no_argument,       &clopt_chromeless,      true},
 
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
@@ -248,6 +251,7 @@ config_t* config_init( int argc, char* argv[] )
                          "   --tui                     use TUI (Terminal text UI) (default: false)\n"
                          "   --tui-small               use TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
                          "   --tui-tiny                use TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
+                         "   --chromeless              borderless LCD (TUI only) (default: false)\n"
                          "   --netbook                 horizontal window (GUI only) (default: false)\n"
                          "   --netbook-pivot-line      at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
                          "   --newrpl-keyboard         label keyboard for newRPL (GUI only)\n"
@@ -459,6 +463,9 @@ config_t* config_init( int argc, char* argv[] )
 
     if ( clopt_tiny != -1 )
         __config.tiny = clopt_tiny;
+
+    if ( clopt_chromeless != -1 )
+        __config.chromeless = clopt_chromeless == true;
 
     if ( clopt_netbook_pivot_line != -1 )
         __config.netbook_pivot_line = clopt_netbook_pivot_line;

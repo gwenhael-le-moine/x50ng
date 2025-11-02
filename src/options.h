@@ -43,6 +43,7 @@ typedef struct config_t {
     frontend_t frontend;
     bool small;
     bool tiny;
+    bool chromeless;
 
     bool newrpl_keyboard;
     bool legacy_keyboard;
