@@ -26,7 +26,7 @@ typedef struct {
     const char* right;
     const char* below;
 
-    x50ng_ui_hpkey_t hpkey;
+    hp50g_keynames_t hpkey;
 } x50ng_ui_key_t;
 
 typedef struct {

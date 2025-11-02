@@ -67,7 +67,7 @@ typedef enum {
     HPKEY_PLUS, /* 50 */
 
     NB_KEYS
-} x50ng_ui_hpkey_t;
+} hp50g_keynames_t;
 
 typedef struct {
     int column;
@@ -85,10 +85,10 @@ typedef struct {
 extern x50ng_key_t x50ng_keys[ NB_KEYS ];
 extern x50ng_annunciator_t x50ng_annunciators[ 6 ];
 
-void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
+extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
 
-void emulator_init( void );
-void emulator_exit( void );
+extern void emulator_init( void );
+extern void emulator_exit( void );
 
 extern void press_key( int hpkey );
 extern void release_key( int hpkey );
