@@ -68,8 +68,8 @@ struct x50ng_t {
     unsigned char keybycol[ 8 ];
     unsigned char keybyrow[ 8 ];
 
-    x50ng_timer_t* timer_ui_input;
-    x50ng_timer_t* timer_ui_output;
+    hdw_timer_t* timer_ui_input;
+    hdw_timer_t* timer_ui_output;
 
     x50ng_arm_idle_t arm_idle;
     int arm_exit;

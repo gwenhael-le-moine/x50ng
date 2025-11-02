@@ -34,8 +34,8 @@ typedef struct {
     s3c2410_offset_t* regs;
 
     x50ng_t* x50ng;
-    x50ng_timer_t* tick_timer;
-    x50ng_timer_t* alarm_timer;
+    hdw_timer_t* tick_timer;
+    hdw_timer_t* alarm_timer;
     int64_t interval; /* us */
     int64_t expires;  /* us */
 } s3c2410_rtc_t;

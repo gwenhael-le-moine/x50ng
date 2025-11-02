@@ -23,7 +23,7 @@ struct x50ng_timer_s {
     int64_t expires;
     x50ng_timer_cb_t cb;
     void* user_data;
-    x50ng_timer_t* next;
+    hdw_timer_t* next;
 };
 
 typedef x50ng_timer_cb_t QEMUTimerCB;
@@ -32,7 +32,7 @@ QEMUClock* rt_clock = ( void* )X50NG_TIMER_REALTIME;
 QEMUClock* vm_clock = ( void* )X50NG_TIMER_VIRTUAL;
 int64_t ticks_per_sec = 1000000;
 
-static x50ng_timer_t* x50ng_timer_lists[ 2 ];
+static hdw_timer_t* x50ng_timer_lists[ 2 ];
 
 int64_t x50ng_get_clock( void )
 {
@@ -43,14 +43,14 @@ int64_t x50ng_get_clock( void )
     return ( tv.tv_sec * 1000000LL + tv.tv_usec );
 }
 
-x50ng_timer_t* x50ng_new_timer( long type, x50ng_timer_cb_t cb, void* user_data )
+hdw_timer_t* x50ng_new_timer( long type, x50ng_timer_cb_t cb, void* user_data )
 {
-    x50ng_timer_t* ts = malloc( sizeof( x50ng_timer_t ) );
+    hdw_timer_t* ts = malloc( sizeof( hdw_timer_t ) );
 
     if ( NULL == ts )
         return NULL;
 
-    memset( ts, 0, sizeof( x50ng_timer_t ) );
+    memset( ts, 0, sizeof( hdw_timer_t ) );
 
     ts->type = type;
     ts->cb = cb;
@@ -59,11 +59,11 @@ x50ng_timer_t* x50ng_new_timer( long type, x50ng_timer_cb_t cb, void* user_data 
     return ts;
 }
 
-void x50ng_free_timer( x50ng_timer_t* ts ) { free( ts ); }
+void x50ng_free_timer( hdw_timer_t* ts ) { free( ts ); }
 
-void x50ng_del_timer( x50ng_timer_t* ts )
+void x50ng_del_timer( hdw_timer_t* ts )
 {
-    x50ng_timer_t **pt, *t;
+    hdw_timer_t **pt, *t;
 
     // printf("%s: ts %p\n", __func__, ts);
     pt = &x50ng_timer_lists[ ts->type ];
@@ -80,9 +80,9 @@ void x50ng_del_timer( x50ng_timer_t* ts )
     }
 }
 
-void x50ng_mod_timer( x50ng_timer_t* ts, int64_t expires )
+void x50ng_mod_timer( hdw_timer_t* ts, int64_t expires )
 {
-    x50ng_timer_t **pt, *t;
+    hdw_timer_t **pt, *t;
 
     x50ng_del_timer( ts );
 
@@ -101,18 +101,18 @@ void x50ng_mod_timer( x50ng_timer_t* ts, int64_t expires )
     *pt = ts;
 }
 
-bool x50ng_timer_pending( x50ng_timer_t* ts )
+bool x50ng_timer_pending( hdw_timer_t* ts )
 {
-    for ( x50ng_timer_t* t = x50ng_timer_lists[ ts->type ]; t; t = t->next )
+    for ( hdw_timer_t* t = x50ng_timer_lists[ ts->type ]; t; t = t->next )
         if ( t == ts )
             return true;
 
     return false;
 }
 
-int64_t x50ng_timer_expires( x50ng_timer_t* ts ) { return ts->expires; }
+int64_t x50ng_timer_expires( hdw_timer_t* ts ) { return ts->expires; }
 
-static int x50ng_timer_expired( x50ng_timer_t* timer_head, int64_t current_time )
+static int x50ng_timer_expired( hdw_timer_t* timer_head, int64_t current_time )
 {
     if ( NULL == timer_head )
         return 0;
@@ -137,9 +137,9 @@ int qemu_timer_pending( QEMUTimer* ts ) { return x50ng_timer_pending( ( void* )t
 
 int64_t qemu_get_clock( QEMUClock* clock ) { return x50ng_get_clock(); }
 
-static void x50ng_run_timers( x50ng_timer_t** ptimer_head, int64_t current_time )
+static void x50ng_run_timers( hdw_timer_t** ptimer_head, int64_t current_time )
 {
-    x50ng_timer_t* ts;
+    hdw_timer_t* ts;
 
     while ( true ) {
         ts = *ptimer_head;

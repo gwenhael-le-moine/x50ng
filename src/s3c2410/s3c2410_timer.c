@@ -46,7 +46,7 @@ struct __s3c2410_timer_s__ {
         s3c2410_timer_t* main;
 
         unsigned long interval;
-        x50ng_timer_t* timer;
+        hdw_timer_t* timer;
     } timeout[ 5 ];
 };
 

@@ -21,7 +21,7 @@ typedef struct {
     x50ng_t* x50ng;
 
     unsigned long interval;
-    x50ng_timer_t* timer;
+    hdw_timer_t* timer;
 } s3c2410_watchdog_t;
 
 static int s3c2410_watchdog_data_init( s3c2410_watchdog_t* watchdog )
