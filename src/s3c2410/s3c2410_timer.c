@@ -452,7 +452,7 @@ static int s3c2410_timer_init( hdw_module_t* module )
 
         t->main = timer;
 
-        t->timer = timer_new( X50NG_TIMER_VIRTUAL, s3c2410_timer_timeout, t );
+        t->timer = timer_new( HDW_TIMER_VIRTUAL, s3c2410_timer_timeout, t );
     }
 
     iotype = cpu_register_io_memory( s3c2410_timer_readfn, s3c2410_timer_writefn, timer );

@@ -288,7 +288,7 @@ static int s3c2410_watchdog_init( hdw_module_t* module )
     watchdog->hdw_state = module->hdw_state;
     module->hdw_state->s3c2410_watchdog = watchdog;
 
-    watchdog->timer = timer_new( X50NG_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
+    watchdog->timer = timer_new( HDW_TIMER_VIRTUAL, s3c2410_watchdog_tick, watchdog );
 
     iotype = cpu_register_io_memory( s3c2410_watchdog_readfn, s3c2410_watchdog_writefn, watchdog );
 #ifdef DEBUG_S3C2410_WATCHDOG

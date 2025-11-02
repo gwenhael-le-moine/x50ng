@@ -265,8 +265,8 @@ hdw_t* emulator_init( config_t config )
 
     init_timer();
 
-    hdw_state->timer_ui_input = timer_new( X50NG_TIMER_REALTIME, ui_handle_pending_inputs, hdw_state );
-    hdw_state->timer_ui_output = timer_new( X50NG_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
+    hdw_state->timer_ui_input = timer_new( HDW_TIMER_REALTIME, ui_handle_pending_inputs, hdw_state );
+    hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, ui_refresh_output, hdw_state );
 
     init_s3c2410_arm( hdw_state );
     init_flash( hdw_state );
@@ -315,7 +315,7 @@ void emulator_exit( config_t config )
     exit_modules( hdw_state );
 }
 
-static void x50ng_set_key_state( const hp50g_key_t key, bool state )
+static void set_key_state( const hp50g_key_t key, bool state )
 {
     if ( key.eint >= 0 /* && key.row == 0 && key.column == 0 */ )
         s3c2410_io_port_f_set_bit( hdw_state, key.eint, state );
@@ -325,13 +325,13 @@ static void x50ng_set_key_state( const hp50g_key_t key, bool state )
 
 void press_key( int hpkey )
 {
-    x50ng_set_key_state( KEYBOARD[ hpkey ], true );
+    set_key_state( KEYBOARD[ hpkey ], true );
     KEYBOARD[ hpkey ].pressed = true;
 }
 
 void release_key( int hpkey )
 {
-    x50ng_set_key_state( KEYBOARD[ hpkey ], false );
+    set_key_state( KEYBOARD[ hpkey ], false );
     KEYBOARD[ hpkey ].pressed = false;
 }
 

@@ -399,8 +399,8 @@ static int s3c2410_rtc_init( hdw_module_t* module )
     module->user_data = rtc;
     rtc->hdw_state = module->hdw_state;
 
-    rtc->tick_timer = timer_new( X50NG_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
-    rtc->alarm_timer = timer_new( X50NG_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
+    rtc->tick_timer = timer_new( HDW_TIMER_REALTIME, s3c2410_rtc_timeout, rtc );
+    rtc->alarm_timer = timer_new( HDW_TIMER_REALTIME, s3c2410_rtc_alarm, rtc );
 
     iotype = cpu_register_io_memory( s3c2410_rtc_readfn, s3c2410_rtc_writefn, rtc );
 #ifdef DEBUG_S3C2410_RTC

@@ -25,8 +25,8 @@ struct hdw_timer_s {
     hdw_timer_t* next;
 };
 
-QEMUClock* rt_clock = ( void* )X50NG_TIMER_REALTIME;
-QEMUClock* vm_clock = ( void* )X50NG_TIMER_VIRTUAL;
+QEMUClock* rt_clock = ( void* )HDW_TIMER_REALTIME;
+QEMUClock* vm_clock = ( void* )HDW_TIMER_VIRTUAL;
 int64_t ticks_per_sec = 1000000;
 
 static hdw_timer_t* timers_list[ 2 ];
@@ -57,8 +57,8 @@ static void run_timers( hdw_timer_t** ptimer_head, int64_t current_time )
 
 static void alarm_handler( int _sig )
 {
-    if ( ( is_timer_expired( timers_list[ X50NG_TIMER_VIRTUAL ], timer_get_clock() ) ||
-           is_timer_expired( timers_list[ X50NG_TIMER_REALTIME ], timer_get_clock() ) ) &&
+    if ( ( is_timer_expired( timers_list[ HDW_TIMER_VIRTUAL ], timer_get_clock() ) ||
+           is_timer_expired( timers_list[ HDW_TIMER_REALTIME ], timer_get_clock() ) ) &&
          ( cpu_single_env && !cpu_single_env->exit_request ) )
         cpu_exit( cpu_single_env );
 }
@@ -71,9 +71,9 @@ static void main_loop_wait( hdw_t* hdw_state, int timeout )
         poll( NULL, 0, timeout );
 
     if ( hdw_state->arm_idle != HDW_ARM_OFF )
-        run_timers( &timers_list[ X50NG_TIMER_VIRTUAL ], timer_get_clock() );
+        run_timers( &timers_list[ HDW_TIMER_VIRTUAL ], timer_get_clock() );
 
-    run_timers( &timers_list[ X50NG_TIMER_REALTIME ], timer_get_clock() );
+    run_timers( &timers_list[ HDW_TIMER_REALTIME ], timer_get_clock() );
 }
 
 int64_t timer_get_clock( void )
@@ -180,11 +180,11 @@ void main_loop( hdw_t* hdw_state )
         prev_idle = hdw_state->arm_idle;
 
         if ( hdw_state->arm_idle == HDW_ARM_RUN ) {
-#ifdef DEBUG_X50NG_TIMER_IDLE
+#ifdef DEBUG_HDW_TIMER_IDLE
             printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )timer_get_clock(), __func__, hdw_state->env );
 #endif
             ret = cpu_exec( hdw_state->env );
-#ifdef DEBUG_X50NG_TIMER_IDLE
+#ifdef DEBUG_HDW_TIMER_IDLE
             printf( "%lld: %s: cpu_exec(): %d, PC %08x\n", ( unsigned long long )timer_get_clock(), __func__, ret,
                     hdw_state->env->regs[ 15 ] );
 #endif
@@ -217,8 +217,8 @@ void init_timer( void )
     struct sigaction sa;
     struct itimerval it;
 
-    timers_list[ X50NG_TIMER_VIRTUAL ] = NULL;
-    timers_list[ X50NG_TIMER_REALTIME ] = NULL;
+    timers_list[ HDW_TIMER_VIRTUAL ] = NULL;
+    timers_list[ HDW_TIMER_REALTIME ] = NULL;
 
     sigfillset( &sa.sa_mask );
     sa.sa_flags = SA_RESTART;

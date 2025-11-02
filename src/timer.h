@@ -1,12 +1,12 @@
-#ifndef _X50NG_TIMER_H
-#  define _X50NG_TIMER_H 1
+#ifndef _HDW_TIMER_H
+#  define _HDW_TIMER_H 1
 
 #  include <stdbool.h>
 #  include <stdint.h>
 
 #  include "types.h"
 
-typedef enum { X50NG_TIMER_VIRTUAL, X50NG_TIMER_REALTIME } hdw_timer_type_t;
+typedef enum { HDW_TIMER_VIRTUAL, HDW_TIMER_REALTIME } hdw_timer_type_t;
 
 typedef void ( *timer_callback_t )( void* );
 typedef struct hdw_timer_s hdw_timer_t;
@@ -28,4 +28,4 @@ int64_t timer_expires_when( hdw_timer_t* );
 void main_loop( hdw_t* );
 void init_timer( void );
 
-#endif /* !(_X50NG_TIMER_H) */
+#endif /* !(_HDW_TIMER_H) */
