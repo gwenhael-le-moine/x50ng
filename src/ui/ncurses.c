@@ -244,15 +244,16 @@ static inline void ncurses_draw_lcd_fullsize( void )
                     break;
             }
 
+            wcsncat( line, &pixel, 1 );
+
             /* if ( has_colors() ) */
             /*     attron( COLOR_PAIR( LCD_PIXEL_OFF + val ) ); */
 
-            /* cchar_t t = { 0, pixel }; */
-            /* mvwadd_wch( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X + x, &t ); */
+            /* cchar_t cpixel = { 0, pixel }; */
+            /* mvwadd_wch( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X + x, &cpixel ); */
 
             /* if ( has_colors() ) */
             /*     attroff( COLOR_PAIR( LCD_PIXEL_OFF + val ) ); */
-            wcsncat( line, &pixel, 1 );
         }
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
