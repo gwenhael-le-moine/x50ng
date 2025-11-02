@@ -15,7 +15,6 @@
 #include "s3c2410_io_port.h"
 #include "s3c2410_lcd.h"
 #include "s3c2410_memc.h"
-// #include "s3c2410_mmu.h"
 #include "s3c2410_nand.h"
 #include "s3c2410_power.h"
 #include "s3c2410_rtc.h"
