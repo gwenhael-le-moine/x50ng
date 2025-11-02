@@ -4,6 +4,8 @@
 #  include "types.h"
 #  include "x50ng.h"
 
+#  define NB_ANNUNCIATORS ( 6 )
+
 typedef enum {
     HP50g_KEY_A = 0,
     HP50g_KEY_B,
@@ -77,7 +79,7 @@ typedef struct {
 } x50ng_key_t;
 
 extern x50ng_key_t x50ng_keys[ NB_HP50g_KEYS ];
-extern int x50ng_annunciators_index[ 6 ];
+extern int x50ng_annunciators_index[ NB_ANNUNCIATORS ];
 
 extern void x50ng_set_idle( x50ng_t*, x50ng_arm_idle_t idle );
 

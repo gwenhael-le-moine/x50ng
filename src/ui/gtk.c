@@ -246,7 +246,7 @@ static void gtk_ui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, 
     cairo_paint( cr );
 }
 
-static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, int event_type )
+static bool gtk_ui_handle_key_event( int keyval, x50ng_t* x50ng, key_event_t event_type )
 {
     int hpkey;
     switch ( keyval ) {

@@ -7,15 +7,14 @@
 #  define UI_EVENTS_REFRESH_INTERVAL 30000LL
 #  define UI_LCD_REFRESH_INTERVAL 50000LL
 
-#  define NB_ANNUNCIATORS 6
+// #  define NB_ANNUNCIATORS 6
 
 #  define KB_NB_ROWS ( 10 )
 
 #  define LCD_WIDTH ( 131 )
 #  define LCD_HEIGHT ( 80 )
 
-#  define KEY_PRESS 1
-#  define KEY_RELEASE 2
+typedef enum { KEY_PRESS, KEY_RELEASE } key_event_t;
 
 typedef struct {
     const char* css_class;
