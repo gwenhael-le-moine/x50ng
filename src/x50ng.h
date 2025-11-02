@@ -22,22 +22,22 @@ extern int phys_ram_size;
 typedef enum { X50NG_ARM_RUN = 0, X50NG_ARM_SLEEP, X50NG_ARM_OFF } x50ng_arm_idle_t;
 typedef enum { X50NG_RESET_POWER_ON = 0, X50NG_RESET_POWER_OFF, X50NG_RESET_WATCHDOG } x50ng_reset_t;
 
-typedef struct x50ng_module_t {
+typedef struct hdw_module_t {
     const char* name;
 
-    int ( *init )( struct x50ng_module_t* );
-    int ( *exit )( struct x50ng_module_t* );
+    int ( *init )( struct hdw_module_t* );
+    int ( *exit )( struct hdw_module_t* );
 
-    int ( *reset )( struct x50ng_module_t*, x50ng_reset_t );
+    int ( *reset )( struct hdw_module_t*, x50ng_reset_t );
 
-    int ( *load )( struct x50ng_module_t*, GKeyFile* );
-    int ( *save )( struct x50ng_module_t*, GKeyFile* );
+    int ( *load )( struct hdw_module_t*, GKeyFile* );
+    int ( *save )( struct hdw_module_t*, GKeyFile* );
 
     void* user_data;
 
     struct x50ng_t* x50ng;
     struct list_head list;
-} x50ng_module_t;
+} hdw_module_t;
 
 struct x50ng_t {
     CPUARMState* env;

@@ -644,7 +644,7 @@ void s3c2410_sdi_get_path( x50ng_t* x50ng, char** path )
     *path = strdup( sdi->filename );
 }
 
-static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_sdi_load( hdw_module_t* module, GKeyFile* key )
 {
     x50ng_t* x50ng = module->x50ng;
     s3c2410_sdi_t* sdi = module->user_data;
@@ -683,7 +683,7 @@ static int s3c2410_sdi_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_sdi_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_sdi_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
@@ -707,7 +707,7 @@ static int s3c2410_sdi_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_sdi_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_sdi_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_sdi_t* sdi = module->user_data;
     s3c2410_offset_t* reg;
@@ -733,7 +733,7 @@ static CPUReadMemoryFunc* s3c2410_sdi_readfn[] = { s3c2410_sdi_read, s3c2410_sdi
 
 static CPUWriteMemoryFunc* s3c2410_sdi_writefn[] = { s3c2410_sdi_write, s3c2410_sdi_write, s3c2410_sdi_write };
 
-static int s3c2410_sdi_init( x50ng_module_t* module )
+static int s3c2410_sdi_init( hdw_module_t* module )
 {
     s3c2410_sdi_t* sdi;
     int iotype;
@@ -766,7 +766,7 @@ static int s3c2410_sdi_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_sdi_exit( x50ng_module_t* module )
+static int s3c2410_sdi_exit( hdw_module_t* module )
 {
     s3c2410_sdi_t* sdi;
 
@@ -789,7 +789,7 @@ static int s3c2410_sdi_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_sdi_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-sdi", s3c2410_sdi_init, s3c2410_sdi_exit, s3c2410_sdi_reset, s3c2410_sdi_load, s3c2410_sdi_save,
                             NULL, &module ) )

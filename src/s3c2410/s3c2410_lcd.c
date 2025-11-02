@@ -92,7 +92,7 @@ static void s3c2410_lcd_write( void* opaque, target_phys_addr_t offset, uint32_t
     }
 }
 
-static int s3c2410_lcd_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_lcd_load( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
@@ -115,7 +115,7 @@ static int s3c2410_lcd_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_lcd_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_lcd_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
@@ -136,7 +136,7 @@ static int s3c2410_lcd_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_lcd_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_lcd_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_lcd_t* lcd = module->user_data;
     s3c2410_offset_t* reg;
@@ -161,7 +161,7 @@ static CPUReadMemoryFunc* s3c2410_lcd_readfn[] = { s3c2410_lcd_read, s3c2410_lcd
 
 static CPUWriteMemoryFunc* s3c2410_lcd_writefn[] = { s3c2410_lcd_write, s3c2410_lcd_write, s3c2410_lcd_write };
 
-static int s3c2410_lcd_init( x50ng_module_t* module )
+static int s3c2410_lcd_init( hdw_module_t* module )
 {
     s3c2410_lcd_t* lcd;
     int iotype;
@@ -193,7 +193,7 @@ static int s3c2410_lcd_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_lcd_exit( x50ng_module_t* module )
+static int s3c2410_lcd_exit( hdw_module_t* module )
 {
     s3c2410_lcd_t* lcd;
 
@@ -241,7 +241,7 @@ int x50ng_s3c2410_get_pixel_color( s3c2410_lcd_t* lcd, int x, int y )
 
 int x50ng_s3c2410_lcd_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-lcd", s3c2410_lcd_init, s3c2410_lcd_exit, s3c2410_lcd_reset, s3c2410_lcd_load, s3c2410_lcd_save,
                             NULL, &module ) )

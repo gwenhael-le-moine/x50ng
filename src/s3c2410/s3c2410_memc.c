@@ -103,7 +103,7 @@ static void s3c2410_memc_write( void* opaque, target_phys_addr_t offset, uint32_
 #endif
 }
 
-static int s3c2410_memc_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_memc_load( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
@@ -127,7 +127,7 @@ static int s3c2410_memc_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_memc_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_memc_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
@@ -149,7 +149,7 @@ static int s3c2410_memc_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_memc_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_memc_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_memc_t* memc = module->user_data;
     s3c2410_offset_t* reg;
@@ -175,7 +175,7 @@ static CPUReadMemoryFunc* s3c2410_memc_readfn[] = { s3c2410_memc_read, s3c2410_m
 
 static CPUWriteMemoryFunc* s3c2410_memc_writefn[] = { s3c2410_memc_write, s3c2410_memc_write, s3c2410_memc_write };
 
-static int s3c2410_memc_init( x50ng_module_t* module )
+static int s3c2410_memc_init( hdw_module_t* module )
 {
     s3c2410_memc_t* memc;
     int iotype;
@@ -205,7 +205,7 @@ static int s3c2410_memc_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_memc_exit( x50ng_module_t* module )
+static int s3c2410_memc_exit( hdw_module_t* module )
 {
     s3c2410_memc_t* memc;
 
@@ -228,7 +228,7 @@ static int s3c2410_memc_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_memc_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-memc", s3c2410_memc_init, s3c2410_memc_exit, s3c2410_memc_reset, s3c2410_memc_load,
                             s3c2410_memc_save, NULL, &module ) )

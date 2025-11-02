@@ -19,7 +19,7 @@ typedef struct {
     size_t size;
 } filemap_t;
 
-static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_sram_load( hdw_module_t* module, GKeyFile* key )
 {
     filemap_t* filemap = module->user_data;
     char* filename;
@@ -64,7 +64,7 @@ static int s3c2410_sram_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_sram_save( hdw_module_t* module, GKeyFile* key )
 {
     filemap_t* filemap = module->user_data;
     int error;
@@ -90,7 +90,7 @@ static int s3c2410_sram_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_sram_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
@@ -99,7 +99,7 @@ static int s3c2410_sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
     return 0;
 }
 
-static int s3c2410_sram_init( x50ng_module_t* module )
+static int s3c2410_sram_init( hdw_module_t* module )
 {
     filemap_t* filemap;
 
@@ -127,7 +127,7 @@ static int s3c2410_sram_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_sram_exit( x50ng_module_t* module )
+static int s3c2410_sram_exit( hdw_module_t* module )
 {
     filemap_t* filemap;
 
@@ -156,7 +156,7 @@ static int s3c2410_sram_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_sram_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-sram", s3c2410_sram_init, s3c2410_sram_exit, s3c2410_sram_reset, s3c2410_sram_load,
                             s3c2410_sram_save, NULL, &module ) )

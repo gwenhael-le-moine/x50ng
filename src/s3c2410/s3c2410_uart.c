@@ -265,7 +265,7 @@ static void s3c2410_uart_write( void* opaque, target_phys_addr_t offset, uint32_
     }
 }
 
-static int s3c2410_uart_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_uart_load( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_uart_reg_t* uart_regs = module->user_data;
     s3c2410_offset_t* reg;
@@ -289,7 +289,7 @@ static int s3c2410_uart_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_uart_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_uart_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_uart_reg_t* uart_regs = module->user_data;
     s3c2410_offset_t* reg;
@@ -311,7 +311,7 @@ static int s3c2410_uart_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_uart_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_uart_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_uart_reg_t* uart_regs = module->user_data;
     s3c2410_offset_t* reg;
@@ -337,7 +337,7 @@ static CPUReadMemoryFunc* s3c2410_uart_readfn[] = { s3c2410_uart_read, s3c2410_u
 
 static CPUWriteMemoryFunc* s3c2410_uart_writefn[] = { s3c2410_uart_write, s3c2410_uart_write, s3c2410_uart_write };
 
-static int s3c2410_uart_init( x50ng_module_t* module )
+static int s3c2410_uart_init( hdw_module_t* module )
 {
     s3c2410_uart_reg_t* uart_regs = module->user_data;
     int iotype;
@@ -355,7 +355,7 @@ static int s3c2410_uart_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_uart_exit( x50ng_module_t* module )
+static int s3c2410_uart_exit( hdw_module_t* module )
 {
     s3c2410_uart_reg_t* uart_regs;
 
@@ -378,7 +378,7 @@ static int s3c2410_uart_exit( x50ng_module_t* module )
 int x50ng_s3c2410_uart_init( x50ng_t* x50ng )
 {
     s3c2410_uart_t* uart;
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     uart = malloc( sizeof( s3c2410_uart_t ) );
     if ( NULL == uart ) {

@@ -360,7 +360,7 @@ static void flash_writel( void* opaque, target_phys_addr_t offset, uint32_t data
     flash_put_halfword( flash, offset + 0, ( data >> 0 ) & 0xffff );
 }
 
-static int flash_load( x50ng_module_t* module, GKeyFile* key )
+static int flash_load( hdw_module_t* module, GKeyFile* key )
 {
     x50ng_flash_t* flash = module->user_data;
     char* filename;
@@ -565,7 +565,7 @@ retry:
     return error;
 }
 
-static int flash_save( x50ng_module_t* module, GKeyFile* key )
+static int flash_save( hdw_module_t* module, GKeyFile* key )
 {
     x50ng_flash_t* flash = module->user_data;
     int error;
@@ -591,7 +591,7 @@ static int flash_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int flash_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int flash_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     x50ng_flash_t* flash = module->user_data;
 
@@ -607,7 +607,7 @@ static CPUReadMemoryFunc* flash_readfn[] = { flash_readb, flash_readw, flash_rea
 
 static CPUWriteMemoryFunc* flash_writefn[] = { flash_writeb, flash_writew, flash_writel };
 
-static int flash_init( x50ng_module_t* module )
+static int flash_init( hdw_module_t* module )
 {
     x50ng_flash_t* flash;
 
@@ -643,7 +643,7 @@ static int flash_init( x50ng_module_t* module )
     return 0;
 }
 
-static int flash_exit( x50ng_module_t* module )
+static int flash_exit( hdw_module_t* module )
 {
     x50ng_flash_t* flash;
 
@@ -671,7 +671,7 @@ static int flash_exit( x50ng_module_t* module )
 
 int x50ng_flash_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "flash", flash_init, flash_exit, flash_reset, flash_load, flash_save, NULL, &module ) )
         return -1;

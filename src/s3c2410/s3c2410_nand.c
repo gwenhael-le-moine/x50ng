@@ -77,7 +77,7 @@ void s3c2410_nand_write( void* opaque, target_phys_addr_t offset, uint32_t data 
     *( reg->datap ) = data;
 }
 
-static int s3c2410_nand_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_nand_load( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_nand_t* nand = module->user_data;
     s3c2410_offset_t* reg;
@@ -101,7 +101,7 @@ static int s3c2410_nand_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_nand_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_nand_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_nand_t* nand = module->user_data;
     s3c2410_offset_t* reg;
@@ -123,7 +123,7 @@ static int s3c2410_nand_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_nand_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_nand_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_nand_t* nand = module->user_data;
     s3c2410_offset_t* reg;
@@ -149,7 +149,7 @@ static CPUReadMemoryFunc* s3c2410_nand_readfn[] = { s3c2410_nand_read, s3c2410_n
 
 static CPUWriteMemoryFunc* s3c2410_nand_writefn[] = { s3c2410_nand_write, s3c2410_nand_write, s3c2410_nand_write };
 
-static int s3c2410_nand_init( x50ng_module_t* module )
+static int s3c2410_nand_init( hdw_module_t* module )
 {
     s3c2410_nand_t* nand;
     int iotype;
@@ -178,7 +178,7 @@ static int s3c2410_nand_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_nand_exit( x50ng_module_t* module )
+static int s3c2410_nand_exit( hdw_module_t* module )
 {
     s3c2410_nand_t* nand;
 
@@ -201,7 +201,7 @@ static int s3c2410_nand_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_nand_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-nand", s3c2410_nand_init, s3c2410_nand_exit, s3c2410_nand_reset, s3c2410_nand_load,
                             s3c2410_nand_save, NULL, &module ) )

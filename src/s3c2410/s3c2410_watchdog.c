@@ -188,7 +188,7 @@ static void s3c2410_watchdog_write( void* opaque, target_phys_addr_t offset, uin
     }
 }
 
-static int s3c2410_watchdog_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_watchdog_load( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_watchdog_t* watchdog = module->user_data;
     s3c2410_offset_t* reg;
@@ -214,7 +214,7 @@ static int s3c2410_watchdog_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_watchdog_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_watchdog_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_watchdog_t* watchdog = module->user_data;
     s3c2410_offset_t* reg;
@@ -236,7 +236,7 @@ static int s3c2410_watchdog_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_watchdog_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_watchdog_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_watchdog_t* watchdog = module->user_data;
     s3c2410_offset_t* reg;
@@ -264,7 +264,7 @@ static CPUReadMemoryFunc* s3c2410_watchdog_readfn[] = { s3c2410_watchdog_read, s
 
 static CPUWriteMemoryFunc* s3c2410_watchdog_writefn[] = { s3c2410_watchdog_write, s3c2410_watchdog_write, s3c2410_watchdog_write };
 
-static int s3c2410_watchdog_init( x50ng_module_t* module )
+static int s3c2410_watchdog_init( hdw_module_t* module )
 {
     s3c2410_watchdog_t* watchdog;
     int iotype;
@@ -298,7 +298,7 @@ static int s3c2410_watchdog_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_watchdog_exit( x50ng_module_t* module )
+static int s3c2410_watchdog_exit( hdw_module_t* module )
 {
     s3c2410_watchdog_t* watchdog;
 
@@ -321,7 +321,7 @@ static int s3c2410_watchdog_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_watchdog_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-watchdog", s3c2410_watchdog_init, s3c2410_watchdog_exit, s3c2410_watchdog_reset,
                             s3c2410_watchdog_load, s3c2410_watchdog_save, NULL, &module ) )

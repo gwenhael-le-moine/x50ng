@@ -31,7 +31,7 @@ typedef struct {
     uint8_t s;
 } hp_real_t;
 
-static int sram_load( x50ng_module_t* module, GKeyFile* key )
+static int sram_load( hdw_module_t* module, GKeyFile* key )
 {
     x50ng_sram_t* sram = module->user_data;
     char* filename;
@@ -88,7 +88,7 @@ static int sram_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int sram_save( x50ng_module_t* module, GKeyFile* key )
+static int sram_save( hdw_module_t* module, GKeyFile* key )
 {
     x50ng_sram_t* sram = module->user_data;
     int error;
@@ -114,7 +114,7 @@ static int sram_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int sram_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
@@ -123,7 +123,7 @@ static int sram_reset( x50ng_module_t* module, x50ng_reset_t reset )
     return 0;
 }
 
-static int sram_init( x50ng_module_t* module )
+static int sram_init( hdw_module_t* module )
 {
     x50ng_sram_t* sram;
 
@@ -156,7 +156,7 @@ static int sram_init( x50ng_module_t* module )
     return 0;
 }
 
-static int sram_exit( x50ng_module_t* module )
+static int sram_exit( hdw_module_t* module )
 {
     x50ng_sram_t* sram;
 
@@ -187,7 +187,7 @@ static int sram_exit( x50ng_module_t* module )
 
 int x50ng_sram_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "sram", sram_init, sram_exit, sram_reset, sram_load, sram_save, NULL, &module ) )
         return -1;

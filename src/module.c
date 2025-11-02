@@ -18,7 +18,7 @@
 
 int x50ng_modules_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
@@ -55,7 +55,7 @@ int x50ng_modules_init( x50ng_t* x50ng )
 
 int x50ng_modules_exit( x50ng_t* x50ng )
 {
-    x50ng_module_t *module, *next;
+    hdw_module_t *module, *next;
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
@@ -74,7 +74,7 @@ int x50ng_modules_exit( x50ng_t* x50ng )
 
 int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
     int error;
 
 #ifdef DEBUG_X50NG_MODULES
@@ -93,7 +93,7 @@ int x50ng_modules_reset( x50ng_t* x50ng, x50ng_reset_t reset )
 
 int x50ng_modules_load( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
     GError* gerror = NULL;
     int error, result;
     const char* filename = g_build_filename( opt.datadir, STATE_FILE_NAME, NULL );
@@ -149,7 +149,7 @@ int x50ng_modules_load( x50ng_t* x50ng )
 
 int x50ng_modules_save( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
     GError* gerror = NULL;
     gchar* data;
     gsize length;
@@ -196,7 +196,7 @@ int x50ng_modules_save( x50ng_t* x50ng )
     return 0;
 }
 
-int x50ng_module_register( x50ng_module_t* module )
+int x50ng_module_register( hdw_module_t* module )
 {
     x50ng_t* x50ng = module->x50ng;
 
@@ -209,7 +209,7 @@ int x50ng_module_register( x50ng_module_t* module )
     return 0;
 }
 
-int x50ng_module_unregister( x50ng_module_t* module )
+int x50ng_module_unregister( hdw_module_t* module )
 {
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s:%u: %s\n", __func__, __LINE__, module->name );
@@ -220,7 +220,7 @@ int x50ng_module_unregister( x50ng_module_t* module )
     return 0;
 }
 
-int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep, char** path )
+int x50ng_module_get_filename( hdw_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep, char** path )
 {
     int error = x50ng_module_get_string( module, key, name, reset, valuep );
 
@@ -239,17 +239,17 @@ int x50ng_module_get_filename( x50ng_module_t* module, GKeyFile* key, const char
     return error;
 }
 
-int x50ng_module_set_filename( x50ng_module_t* module, GKeyFile* key, const char* name, const char* value )
+int x50ng_module_set_filename( hdw_module_t* module, GKeyFile* key, const char* name, const char* value )
 {
     return x50ng_module_set_string( module, key, name, value );
 }
 
-int x50ng_module_get_int( x50ng_module_t* module, GKeyFile* key, const char* name, int reset, int* valuep )
+int x50ng_module_get_int( hdw_module_t* module, GKeyFile* key, const char* name, int reset, int* valuep )
 {
     return x50ng_module_get_u32( module, key, name, reset, ( uint32_t* )valuep );
 }
 
-int x50ng_module_set_int( x50ng_module_t* module, GKeyFile* key, const char* name, int value )
+int x50ng_module_set_int( hdw_module_t* module, GKeyFile* key, const char* name, int value )
 {
     char data[ 16 ];
 
@@ -260,7 +260,7 @@ int x50ng_module_set_int( x50ng_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile* key, const char* name, uint32_t reset, uint32_t* valuep )
+int x50ng_module_get_u32( hdw_module_t* module, GKeyFile* key, const char* name, uint32_t reset, uint32_t* valuep )
 {
     GError* gerror = NULL;
     char *data, *end;
@@ -286,7 +286,7 @@ int x50ng_module_get_u32( x50ng_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x50ng_module_set_u32( x50ng_module_t* module, GKeyFile* key, const char* name, uint32_t value )
+int x50ng_module_set_u32( hdw_module_t* module, GKeyFile* key, const char* name, uint32_t value )
 {
     char data[ 16 ];
 
@@ -297,7 +297,7 @@ int x50ng_module_set_u32( x50ng_module_t* module, GKeyFile* key, const char* nam
     return 0;
 }
 
-int x50ng_module_get_string( x50ng_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep )
+int x50ng_module_get_string( hdw_module_t* module, GKeyFile* key, const char* name, char* reset, char** valuep )
 {
     GError* gerror = NULL;
     char* data;
@@ -313,14 +313,14 @@ int x50ng_module_get_string( x50ng_module_t* module, GKeyFile* key, const char* 
     return 0;
 }
 
-int x50ng_module_set_string( x50ng_module_t* module, GKeyFile* key, const char* name, const char* value )
+int x50ng_module_set_string( hdw_module_t* module, GKeyFile* key, const char* name, const char* value )
 {
     g_key_file_set_value( key, module->name, name, value );
 
     return 0;
 }
 
-int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** path )
+int x50ng_module_open_rodata( hdw_module_t* module, const char* name, char** path )
 {
     int fd;
     int error;
@@ -386,18 +386,18 @@ int x50ng_module_open_rodata( x50ng_module_t* module, const char* name, char** p
     return fd;
 }
 
-int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( x50ng_module_t* ), int ( *exit )( x50ng_module_t* ),
-                       int ( *reset )( x50ng_module_t*, x50ng_reset_t ), int ( *load )( x50ng_module_t*, GKeyFile* ),
-                       int ( *save )( x50ng_module_t*, GKeyFile* ), void* user_data, x50ng_module_t** modulep )
+int x50ng_module_init( x50ng_t* x50ng, const char* name, int ( *init )( hdw_module_t* ), int ( *exit )( hdw_module_t* ),
+                       int ( *reset )( hdw_module_t*, x50ng_reset_t ), int ( *load )( hdw_module_t*, GKeyFile* ),
+                       int ( *save )( hdw_module_t*, GKeyFile* ), void* user_data, hdw_module_t** modulep )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
-    module = malloc( sizeof( x50ng_module_t ) );
+    module = malloc( sizeof( hdw_module_t ) );
     if ( NULL == module ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", name, __func__, __LINE__ );
         return -1;
     }
-    memset( module, 0, sizeof( x50ng_module_t ) );
+    memset( module, 0, sizeof( hdw_module_t ) );
 
     module->name = name;
 

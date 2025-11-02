@@ -340,7 +340,7 @@ static void s3c2410_timer_write( void* opaque, target_phys_addr_t offset, uint32
     }
 }
 
-static int s3c2410_timer_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_timer_load( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_timer_t* timer = module->user_data;
     s3c2410_offset_t* reg;
@@ -367,7 +367,7 @@ static int s3c2410_timer_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_timer_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_timer_save( hdw_module_t* module, GKeyFile* key )
 {
     s3c2410_timer_t* timer = module->user_data;
     s3c2410_offset_t* reg;
@@ -389,7 +389,7 @@ static int s3c2410_timer_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_timer_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_timer_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     s3c2410_timer_t* timer = module->user_data;
     s3c2410_offset_t* reg;
@@ -418,7 +418,7 @@ static CPUReadMemoryFunc* s3c2410_timer_readfn[] = { s3c2410_timer_read, s3c2410
 
 static CPUWriteMemoryFunc* s3c2410_timer_writefn[] = { s3c2410_timer_write, s3c2410_timer_write, s3c2410_timer_write };
 
-static int s3c2410_timer_init( x50ng_module_t* module )
+static int s3c2410_timer_init( hdw_module_t* module )
 {
     s3c2410_timer_t* timer;
     struct s3c2410_timeout* t;
@@ -463,7 +463,7 @@ static int s3c2410_timer_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_timer_exit( x50ng_module_t* module )
+static int s3c2410_timer_exit( hdw_module_t* module )
 {
     s3c2410_timer_t* timer;
 
@@ -486,7 +486,7 @@ static int s3c2410_timer_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_timer_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-timer", s3c2410_timer_init, s3c2410_timer_exit, s3c2410_timer_reset, s3c2410_timer_load,
                             s3c2410_timer_save, NULL, &module ) )

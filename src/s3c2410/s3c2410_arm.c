@@ -11,7 +11,7 @@
 
 #include "cpu-all.h"
 
-static int s3c2410_arm_load( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_arm_load( hdw_module_t* module, GKeyFile* key )
 {
     struct CPUARMState* env = module->user_data;
     char name[ 32 ];
@@ -136,7 +136,7 @@ static int s3c2410_arm_load( x50ng_module_t* module, GKeyFile* key )
     return error;
 }
 
-static int s3c2410_arm_save( x50ng_module_t* module, GKeyFile* key )
+static int s3c2410_arm_save( hdw_module_t* module, GKeyFile* key )
 {
     struct CPUARMState* env = module->user_data;
     char name[ 32 ];
@@ -209,7 +209,7 @@ static int s3c2410_arm_save( x50ng_module_t* module, GKeyFile* key )
     return 0;
 }
 
-static int s3c2410_arm_reset( x50ng_module_t* module, x50ng_reset_t reset )
+static int s3c2410_arm_reset( hdw_module_t* module, x50ng_reset_t reset )
 {
     struct CPUARMState* env = module->user_data;
 
@@ -223,7 +223,7 @@ static int s3c2410_arm_reset( x50ng_module_t* module, x50ng_reset_t reset )
     return 0;
 }
 
-static int s3c2410_arm_init( x50ng_module_t* module )
+static int s3c2410_arm_init( hdw_module_t* module )
 {
     x50ng_t* x50ng = module->x50ng;
 
@@ -235,7 +235,7 @@ static int s3c2410_arm_init( x50ng_module_t* module )
     return 0;
 }
 
-static int s3c2410_arm_exit( x50ng_module_t* module )
+static int s3c2410_arm_exit( hdw_module_t* module )
 {
 #ifdef DEBUG_X50NG_MODULES
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
@@ -246,7 +246,7 @@ static int s3c2410_arm_exit( x50ng_module_t* module )
 
 int x50ng_s3c2410_arm_init( x50ng_t* x50ng )
 {
-    x50ng_module_t* module;
+    hdw_module_t* module;
 
     if ( x50ng_module_init( x50ng, "s3c2410-arm", s3c2410_arm_init, s3c2410_arm_exit, s3c2410_arm_reset, s3c2410_arm_load, s3c2410_arm_save,
                             NULL, &module ) )
