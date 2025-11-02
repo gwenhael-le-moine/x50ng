@@ -17,43 +17,43 @@
 #define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( __config->tiny ? 4 : ( __config->small ? 2 : 1 ) ) )
 #define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( __config->small || __config->tiny ? 2 : 1 ) ) + 1
 
-typedef enum {
-    LCD_COLOR_BG = 30,
-    LCD_COLOR_FG_0x1,
-    LCD_COLOR_FG_0x2,
-    LCD_COLOR_FG_0x3,
-    LCD_COLOR_FG_0x4,
-    LCD_COLOR_FG_0x5,
-    LCD_COLOR_FG_0x6,
-    LCD_COLOR_FG_0x7,
-    LCD_COLOR_FG_0x8,
-    LCD_COLOR_FG_0x9,
-    LCD_COLOR_FG_0xA,
-    LCD_COLOR_FG_0xB,
-    LCD_COLOR_FG_0xC,
-    LCD_COLOR_FG_0xD,
-    LCD_COLOR_FG_0xE,
-    LCD_COLOR_FG_0xF
-} nc_color_t;
+/* typedef enum { */
+/*     LCD_COLOR_BG = 30, */
+/*     LCD_COLOR_FG_0x1, */
+/*     LCD_COLOR_FG_0x2, */
+/*     LCD_COLOR_FG_0x3, */
+/*     LCD_COLOR_FG_0x4, */
+/*     LCD_COLOR_FG_0x5, */
+/*     LCD_COLOR_FG_0x6, */
+/*     LCD_COLOR_FG_0x7, */
+/*     LCD_COLOR_FG_0x8, */
+/*     LCD_COLOR_FG_0x9, */
+/*     LCD_COLOR_FG_0xA, */
+/*     LCD_COLOR_FG_0xB, */
+/*     LCD_COLOR_FG_0xC, */
+/*     LCD_COLOR_FG_0xD, */
+/*     LCD_COLOR_FG_0xE, */
+/*     LCD_COLOR_FG_0xF */
+/* } nc_color_t; */
 
-typedef enum {
-    LCD_PIXEL_OFF = 60,
-    LCD_PIXEL_ON_0x1,
-    LCD_PIXEL_ON_0x2,
-    LCD_PIXEL_ON_0x3,
-    LCD_PIXEL_ON_0x4,
-    LCD_PIXEL_ON_0x5,
-    LCD_PIXEL_ON_0x6,
-    LCD_PIXEL_ON_0x7,
-    LCD_PIXEL_ON_0x8,
-    LCD_PIXEL_ON_0x9,
-    LCD_PIXEL_ON_0xA,
-    LCD_PIXEL_ON_0xB,
-    LCD_PIXEL_ON_0xC,
-    LCD_PIXEL_ON_0xD,
-    LCD_PIXEL_ON_0xE,
-    LCD_PIXEL_ON_0xF
-} nc_color_pair_t;
+/* typedef enum { */
+/*     LCD_PIXEL_OFF = 60, */
+/*     LCD_PIXEL_ON_0x1, */
+/*     LCD_PIXEL_ON_0x2, */
+/*     LCD_PIXEL_ON_0x3, */
+/*     LCD_PIXEL_ON_0x4, */
+/*     LCD_PIXEL_ON_0x5, */
+/*     LCD_PIXEL_ON_0x6, */
+/*     LCD_PIXEL_ON_0x7, */
+/*     LCD_PIXEL_ON_0x8, */
+/*     LCD_PIXEL_ON_0x9, */
+/*     LCD_PIXEL_ON_0xA, */
+/*     LCD_PIXEL_ON_0xB, */
+/*     LCD_PIXEL_ON_0xC, */
+/*     LCD_PIXEL_ON_0xD, */
+/*     LCD_PIXEL_ON_0xE, */
+/*     LCD_PIXEL_ON_0xF */
+/* } nc_color_pair_t; */
 
 /*************/
 /* variables */
@@ -112,8 +112,8 @@ static inline void ncurses_draw_lcd_tiny( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
-    if ( has_colors() )
-        attron( COLOR_PAIR( COLOR_RED ) );
+    /* if ( has_colors() ) */
+    /*     attron( COLOR_PAIR( COLOR_RED ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
@@ -141,8 +141,8 @@ static inline void ncurses_draw_lcd_tiny( void )
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    if ( has_colors() )
-        attroff( COLOR_PAIR( COLOR_RED ) );
+    /* if ( has_colors() ) */
+    /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
 }
 
 static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
@@ -184,8 +184,8 @@ static inline void ncurses_draw_lcd_small( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
-    if ( has_colors() )
-        attron( COLOR_PAIR( COLOR_RED ) );
+    /* if ( has_colors() ) */
+    /*     attron( COLOR_PAIR( COLOR_RED ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
@@ -209,8 +209,8 @@ static inline void ncurses_draw_lcd_small( void )
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    if ( has_colors() )
-        attroff( COLOR_PAIR( COLOR_RED ) );
+    /* if ( has_colors() ) */
+    /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
 }
 
 static inline void ncurses_draw_lcd_fullsize( void )
@@ -567,18 +567,18 @@ void ncurses_init( hdw_t* hdw_state, config_t* config )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    if ( has_colors() ) {
-        start_color();
+    /* if ( has_colors() ) { */
+    /*     start_color(); */
 
-        int step = 1000 / 15;
-        int rgb = 0;
-        for ( int i = 0; i < 16; i++ ) {
-            rgb = ( i * step );
-            init_color( LCD_COLOR_BG + i, 0, rgb, 0 );
+    /*     int step = 1000 / 15; */
+    /*     int rgb = 0; */
+    /*     for ( int i = 0; i < 16; i++ ) { */
+    /*         rgb = ( i * step ); */
+    /*         init_color( LCD_COLOR_BG + i, 0, rgb, 0 ); */
 
-            init_pair( LCD_PIXEL_OFF + i, LCD_COLOR_BG + i, COLOR_BLACK );
-        }
-    }
+    /*         init_pair( LCD_PIXEL_OFF + i, LCD_COLOR_BG + i, COLOR_BLACK ); */
+    /*     } */
+    /* } */
 
     lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
     refresh();
