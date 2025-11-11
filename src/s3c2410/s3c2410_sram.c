@@ -6,6 +6,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#include "../for_qemu.h"
 #include "../hdw.h"
 #include "../module.h"
 

@@ -9,6 +9,7 @@
 #include <glib.h>
 #include <gio/gio.h>
 
+#include "for_qemu.h"
 #include "list.h"
 #include "hdw.h"
 #include "options.h"

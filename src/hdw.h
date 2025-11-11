@@ -3,13 +3,13 @@
 
 #include <memory.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/times.h>
 
 #include <glib.h>
 
-#include "target-arm/cpu.h"
+#include <stdio.h> /* HACK: this is for next line */
+#include "../qemu/target-arm/cpu.h"
 
 #include "types.h"
 #include "timer.h"
@@ -72,10 +72,6 @@ struct hdw_t {
 
     GKeyFile* state;
 };
-
-/* LD TEMPO HACK */
-extern uint8_t* phys_ram_base;
-extern int phys_ram_size;
 
 extern void hdw_set_idle( hdw_t*, hdw_arm_idle_t idle );
 extern void hdw_stop( hdw_t* );

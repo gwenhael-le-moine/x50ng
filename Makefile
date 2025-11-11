@@ -160,6 +160,7 @@ SRCS = \
 	./src/ui/api.c \
 	./src/ui/gtk.c \
 	./src/ui/ncurses.c \
+	./src/for_qemu.c \
 	./src/hdw.c \
 	./src/emulator_api.c \
 	./src/flash.c \

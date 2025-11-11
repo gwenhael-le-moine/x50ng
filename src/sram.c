@@ -8,6 +8,7 @@
 
 #include <memory.h>
 
+#include "for_qemu.h"
 #include "module.h"
 
 typedef struct hdw_sram_t {
