@@ -26,6 +26,18 @@ typedef struct {
 /*************/
 /* Variables */
 /*************/
+static hdw_t* __hdw_state;
+static config_t* __config;
+
+static void ( *emulator_press_key )( int hpkey );
+static void ( *emulator_release_key )( int hpkey );
+static bool ( *emulator_is_key_pressed )( int hpkey );
+
+static bool ( *emulator_is_display_on )( void );
+static unsigned char ( *emulator_get_annunciators )( void );
+static void ( *emulator_get_lcd_buffer )( int* target );
+static int ( *emulator_get_contrast )( void );
+
 static GtkWidget* gtk_ui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
 static gtk_button_t* gtk_ui_buttons;
@@ -37,9 +49,6 @@ static cairo_surface_t* gtk_ui_lcd_surface;
 
 static char last_annunciators = 0;
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
-
-static hdw_t* __hdw_state;
-static config_t* __config;
 
 /*************************/
 /* Functions' prototypes */
@@ -61,7 +70,7 @@ static void gtk_ui_release_button( gtk_button_t* button )
 
     gtk_widget_remove_css_class( button->button, "key-down" );
 
-    release_key( key->hpkey );
+    emulator_release_key( key->hpkey );
 }
 
 static bool gtk_ui_press_button( gtk_button_t* button, bool hold )
@@ -81,7 +90,7 @@ static bool gtk_ui_press_button( gtk_button_t* button, bool hold )
 
     gtk_widget_add_css_class( button->button, "key-down" );
 
-    press_key( key->hpkey );
+    emulator_press_key( key->hpkey );
 
     return GDK_EVENT_STOP;
 }
@@ -92,7 +101,7 @@ static void gtk_ui_react_to_button_press( GtkGesture* _gesture, int _n_press, do
 
     gtk_ui_press_button( button, false );
 
-    press_key( key->hpkey );
+    emulator_press_key( key->hpkey );
 }
 
 static void gtk_ui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, gtk_button_t* button )
@@ -109,7 +118,7 @@ static void gtk_ui_react_to_button_right_click_release( gtk_button_t* button, Gt
 
     gtk_ui_press_button( button, true );
 
-    press_key( key->hpkey );
+    emulator_press_key( key->hpkey );
 }
 
 static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, hdw_t* hdw_state )
@@ -817,7 +826,7 @@ void gtk_ui_handle_pending_inputs( void )
 
 static void gtk_ui_refresh_annunciators( void )
 {
-    int annunciators = get_annunciators();
+    int annunciators = emulator_get_annunciators();
 
     if ( last_annunciators == annunciators )
         return;
@@ -830,7 +839,7 @@ static void gtk_ui_refresh_annunciators( void )
 
 void gtk_ui_refresh_lcd( void )
 {
-    if ( !is_display_on() )
+    if ( !emulator_is_display_on() )
         return;
 
     gtk_ui_refresh_annunciators();
@@ -840,7 +849,7 @@ void gtk_ui_refresh_lcd( void )
     gtk_ui_lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
     cairo_t* cr = cairo_create( gtk_ui_lcd_surface );
 
-    get_lcd_buffer( display_buffer_grayscale );
+    emulator_get_lcd_buffer( display_buffer_grayscale );
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
             cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] / 15.0 );
@@ -856,10 +865,22 @@ void gtk_ui_refresh_lcd( void )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( hdw_t* hdw_state, config_t* config )
+void gtk_ui_init( hdw_t* hdw_state, config_t* config, void ( *api_emulator_press_key )( int hpkey ),
+                  void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
+                  bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
+                  void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) )
 {
     __hdw_state = hdw_state;
     __config = config;
+
+    emulator_press_key = api_emulator_press_key;
+    emulator_release_key = api_emulator_release_key;
+    emulator_is_key_pressed = api_emulator_is_key_pressed;
+
+    emulator_is_display_on = api_emulator_is_display_on;
+    emulator_get_annunciators = api_emulator_get_annunciators;
+    emulator_get_lcd_buffer = api_emulator_get_lcd_buffer;
+    emulator_get_contrast = api_emulator_get_contrast;
 
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 

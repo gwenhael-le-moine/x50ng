@@ -12,7 +12,6 @@
 #include "s3c2410/s3c2410_lcd.h"
 #include "s3c2410/s3c2410_sdi.h"
 
-#include "ui/common.h"
 #include "ui/api.h"
 
 #include "list.h"
@@ -22,6 +21,13 @@
 #include "sram.h"
 #include "flash.h"
 #include "module.h"
+
+typedef struct hp50g_key_t {
+    int column;
+    int row;
+    int eint;
+    bool pressed;
+} hp50g_key_t;
 
 static hdw_t* __hdw_state;
 static config_t* __config;

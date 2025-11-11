@@ -157,11 +157,11 @@ SRCS = \
 	./src/s3c2410/s3c2410_usbdev.c \
 	./src/s3c2410/s3c2410_watchdog.c \
 	./src/ui/50g.c \
-	./src/ui/common.c \
+	./src/ui/api.c \
 	./src/ui/gtk.c \
 	./src/ui/ncurses.c \
 	./src/hdw.c \
-	./src/ui_api_impl.c \
+	./src/emulator_api.c \
 	./src/flash.c \
 	./src/gdbstub.c \
 	./src/main.c \

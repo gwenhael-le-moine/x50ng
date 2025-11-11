@@ -1,8 +1,8 @@
-#ifndef _X50NG_EMULATOR_H
-#  define _X50NG_EMULATOR_H 1
+#ifndef _X50NG_UI_H
+#  define _X50NG_UI_H 1
 
-#  include "../types.h"
 #  include "../options.h"
+#  include "../types.h" /* hdw_t */
 
 #  define LCD_WIDTH ( 131 )
 #  define LCD_HEIGHT ( 80 )
@@ -74,32 +74,12 @@ typedef enum {
     NB_HP50g_KEYS
 } hp50g_keynames_t;
 
-typedef struct hp50g_key_t {
-    int column;
-    int row;
-    int eint;
-    bool pressed;
-} hp50g_key_t;
+extern void ui_handle_pending_inputs( void* data );
+extern void ui_refresh_output( void* data );
+extern void ui_init( hdw_t* hdw_state, config_t* opt, void ( *api_emulator_press_key )( int hpkey ),
+                     void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
+                     bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
+                     void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) );
+extern void ui_exit( void );
 
-/*************/
-/* variables */
-/*************/
-extern hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ];
-extern int x50ng_annunciators_index[ NB_ANNUNCIATORS ];
-
-/*************/
-/* functions */
-/*************/
-extern hdw_t* emulator_init( config_t* config );
-extern void emulator_exit( void );
-
-extern void press_key( int hpkey );
-extern void release_key( int hpkey );
-extern bool is_key_pressed( int hpkey );
-
-extern bool is_display_on( void );
-extern unsigned char get_annunciators( void );
-extern void get_lcd_buffer( int* target );
-extern int get_contrast( void );
-
-#endif /* !(_X50NG_EMULATOR_H) */
+#endif /* !(_X50NG_UI_H) */

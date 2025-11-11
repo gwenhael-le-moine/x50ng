@@ -12,13 +12,20 @@
 #include "../timer.h"
 #include "../types.h"
 
-// #include "../s3c2410/s3c2410.h"
-
 #include "inner.h"
 #include "gtk.h"
 #include "ncurses.h"
 
 char* ui_annunciators[ NB_ANNUNCIATORS ] = { "⮢", "⮣", "α", "🪫", "⌛", "⇄" };
+
+void ( *emulator_press_key )( int hpkey );
+void ( *emulator_release_key )( int hpkey );
+bool ( *emulator_is_key_pressed )( int hpkey );
+
+bool ( *emulator_is_display_on )( void );
+unsigned char ( *emulator_get_annunciators )( void );
+void ( *emulator_get_lcd_buffer )( int* target );
+int ( *emulator_get_contrast )( void );
 
 static config_t* __config;
 
@@ -124,7 +131,10 @@ void ui_refresh_output( void* data )
     timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
-void ui_init( hdw_t* hdw_state, config_t* config )
+void ui_init( hdw_t* hdw_state, config_t* config, void ( *api_emulator_press_key )( int hpkey ),
+              void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
+              bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
+              void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) )
 {
     __config = config;
 
@@ -133,11 +143,15 @@ void ui_init( hdw_t* hdw_state, config_t* config )
 
     switch ( __config->frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_init( hdw_state, __config );
+            ncurses_init( hdw_state, __config, api_emulator_press_key, api_emulator_release_key, api_emulator_is_key_pressed,
+                          api_emulator_is_display_on, api_emulator_get_annunciators, api_emulator_get_lcd_buffer,
+                          api_emulator_get_contrast );
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_init( hdw_state, __config );
+            gtk_ui_init( hdw_state, __config, api_emulator_press_key, api_emulator_release_key, api_emulator_is_key_pressed,
+                         api_emulator_is_display_on, api_emulator_get_annunciators, api_emulator_get_lcd_buffer,
+                         api_emulator_get_contrast );
             break;
     }
 }

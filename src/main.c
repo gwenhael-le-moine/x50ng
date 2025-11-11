@@ -14,9 +14,9 @@
 
 #include <memory.h>
 
-#include "ui/common.h"
 #include "ui/api.h"
 
+#include "emulator_api.h"
 #include "hdw.h"
 #include "timer.h"
 #include "options.h"
@@ -55,7 +55,7 @@ int main( int argc, char** argv )
     signal( SIGQUIT, signal_handler );
     signal( SIGUSR1, signal_handler );
 
-    ui_init( __hdw_state, __config );
+    ui_init( __hdw_state, __config, press_key, release_key, is_key_pressed, is_display_on, get_annunciators, get_lcd_buffer, get_contrast );
 
     main_loop( __hdw_state );
 
