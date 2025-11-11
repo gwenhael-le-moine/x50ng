@@ -45,27 +45,27 @@ QEMU_INCLUDES = \
 	-I$(QEMU_DIR)/arm-softmmu
 
 QEMU_SRCS = \
-	$(QEMU_DIR)/arm-softmmu/exec.o \
-	$(QEMU_DIR)/arm-softmmu/translate-all.o \
-	$(QEMU_DIR)/arm-softmmu/cpu-exec.o \
-	$(QEMU_DIR)/arm-softmmu/translate.o \
-	$(QEMU_DIR)/arm-softmmu/fpu/softfloat.o \
-	$(QEMU_DIR)/arm-softmmu/op_helper.o \
-	$(QEMU_DIR)/arm-softmmu/helper.o \
-	$(QEMU_DIR)/arm-softmmu/disas.o \
-	$(QEMU_DIR)/arm-softmmu/i386-dis.o \
-	$(QEMU_DIR)/arm-softmmu/arm-dis.o \
-	$(QEMU_DIR)/arm-softmmu/tcg/tcg.o \
-	$(QEMU_DIR)/arm-softmmu/iwmmxt_helper.o \
-	$(QEMU_DIR)/arm-softmmu/neon_helper.o
+	$(QEMU_DIR)/arm-softmmu/exec.c \
+	$(QEMU_DIR)/arm-softmmu/translate-all.c \
+	$(QEMU_DIR)/arm-softmmu/cpu-exec.c \
+	$(QEMU_DIR)/arm-softmmu/translate.c \
+	$(QEMU_DIR)/arm-softmmu/fpu/softfloat.c \
+	$(QEMU_DIR)/arm-softmmu/op_helper.c \
+	$(QEMU_DIR)/arm-softmmu/helper.c \
+	$(QEMU_DIR)/arm-softmmu/disas.c \
+	$(QEMU_DIR)/arm-softmmu/i386-dis.c \
+	$(QEMU_DIR)/arm-softmmu/arm-dis.c \
+	$(QEMU_DIR)/arm-softmmu/tcg/tcg.c \
+	$(QEMU_DIR)/arm-softmmu/iwmmxt_helper.c \
+	$(QEMU_DIR)/arm-softmmu/neon_helper.c
 QEMU_OBJS = $(QEMU_SRCS:.c=.o)
 
 # TEMPO hack
 VVFAT_SRCS =	\
-	$(QEMU_DIR)/cutils.o \
-	./src/s3c2410/block-vvfat.o \
-	./src/s3c2410/block-qcow.o \
-	./src/s3c2410/block-raw.o
+	$(QEMU_DIR)/cutils.c \
+	./src/s3c2410/block-vvfat.c \
+	./src/s3c2410/block-qcow.c \
+	./src/s3c2410/block-raw.c
 VVFAT_OBJS = $(VVFAT_SRCS:.c=.o)
 
 X50NG_DEBUG = \
