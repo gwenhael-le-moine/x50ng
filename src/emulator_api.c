@@ -32,7 +32,7 @@ typedef struct hp50g_key_t {
 static hdw_t* __hdw_state;
 static config_t* __config;
 
-hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
+static hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
     {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
     {.column = 5, .row = 2, .eint = -1 /* 2 */, .pressed = false},
     {.column = 5, .row = 3, .eint = -1 /* 3 */, .pressed = false},
@@ -96,7 +96,7 @@ hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
 };
 #define KEYBOARD x50ng_keys
 
-int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
+static int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
 
 /* LD TEMPO HACK */
 CPUState* __GLOBAL_env;
