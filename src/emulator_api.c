@@ -98,9 +98,6 @@ static hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
 
 static int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
 
-/* LD TEMPO HACK */
-CPUState* __GLOBAL_env;
-
 int semihosting_enabled = 1;
 
 uint8_t* phys_ram_base;
@@ -251,7 +248,6 @@ hdw_t* emulator_init( config_t* config )
     // cpu_set_log(0xffffffff);
     cpu_exec_init_all( 0 );
     __hdw_state->env = cpu_init( "arm926" );
-    __GLOBAL_env = __hdw_state->env;
 
     //	cpu_set_log(cpu_str_to_log_mask("all"));
 
