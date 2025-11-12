@@ -1,18 +1,10 @@
-#include "api.h"
 #include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
 #include <stdbool.h>
-#include <string.h>
 #include <fcntl.h>
 #include <sys/times.h>
 
-#include "../hdw.h"
-#include "../options.h"
-#include "../timer.h"
-#include "../types.h"
-
+#include "api.h"
 #include "inner.h"
 #include "gtk.h"
 #include "ncurses.h"
