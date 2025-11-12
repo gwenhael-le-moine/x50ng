@@ -64,6 +64,7 @@ struct hdw_t {
     unsigned char keybycol[ 8 ];
     unsigned char keybyrow[ 8 ];
 
+    /* FIXME: do these timers belog here? */
     hdw_timer_t* timer_ui_input;
     hdw_timer_t* timer_ui_output;
 
