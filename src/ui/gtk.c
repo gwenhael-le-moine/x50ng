@@ -30,7 +30,7 @@ static GtkWidget* gtk_ui_lcd_canvas;
 static cairo_surface_t* gtk_ui_lcd_surface;
 
 static char last_annunciators = 0;
-static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
+static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 
 /*************************/
 /* Functions' prototypes */

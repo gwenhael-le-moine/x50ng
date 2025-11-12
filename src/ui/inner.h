@@ -5,6 +5,9 @@
 
 #  define KB_NB_ROWS ( 10 )
 
+// #  define NB_KEYS ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP49_KEYS )
+#  define NB_KEYS ( NB_HP50g_KEYS )
+
 typedef enum { KEY_PRESS, KEY_RELEASE } key_event_t;
 
 typedef struct button_t {
@@ -25,8 +28,6 @@ extern button_t buttons_hp50g[ NB_HP50g_KEYS ];
 extern int buttons_order_normal[ NB_HP50g_KEYS ];
 extern int buttons_order_legacy[ NB_HP50g_KEYS ];
 #  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( ui4x_config.legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
-
-extern ui4x_config_t ui4x_config;
 
 /********************************************/
 /* API for UI to interact with the emulator */

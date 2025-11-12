@@ -4,7 +4,7 @@
 #  include <stdbool.h>
 
 #  define LCD_WIDTH ( 131 )
-#  define LCD_HEIGHT ( 80 )
+#  define LCD_HEIGHT ( ui4x_config.model == MODEL_50G ? 80 : 64 )
 
 #  define NB_ANNUNCIATORS ( 6 )
 
@@ -73,9 +73,6 @@ typedef enum {
     NB_HP50g_KEYS
 } hp50g_keynames_t;
 
-// #  define NB_KEYS ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP49_KEYS )
-#  define NB_KEYS ( NB_HP50g_KEYS )
-
 typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } ui4x_frontend_t;
 
 typedef enum { MODEL_48SX = 485, MODEL_48GX = 486, MODEL_40G = 406, MODEL_49G = 496, MODEL_50G = 506 } ui4x_model_t;
@@ -115,6 +112,8 @@ typedef struct ui4x_config_t {
 
     char* sd_dir;
 } ui4x_config_t;
+
+extern ui4x_config_t ui4x_config; /* exposed as it's indirectly used outside of ui/ by LCD_HEIGHT */
 
 extern void ui_handle_pending_inputs( void );
 extern void ui_refresh_output( void );
