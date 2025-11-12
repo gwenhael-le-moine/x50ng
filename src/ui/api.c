@@ -106,10 +106,8 @@ static void newrplify_buttons_hp50g()
 /********************/
 /* Public functions */
 /********************/
-void ui_handle_pending_inputs( void* data )
+void ui_handle_pending_inputs( void )
 {
-    hdw_t* hdw_state = data;
-
     switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
             ncurses_handle_pending_inputs();
@@ -119,14 +117,10 @@ void ui_handle_pending_inputs( void* data )
             gtk_ui_handle_pending_inputs();
             break;
     }
-
-    timer_mod( hdw_state->timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
 
-void ui_refresh_output( void* data )
+void ui_refresh_output( void )
 {
-    hdw_t* hdw_state = data;
-
     switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
             ncurses_refresh_lcd();
@@ -136,8 +130,6 @@ void ui_refresh_output( void* data )
             gtk_ui_refresh_lcd();
             break;
     }
-
-    timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
 void ui_init( ui4x_config_t* config, void ( *api_emulator_press_key )( int hpkey ), void ( *api_emulator_release_key )( int hpkey ),

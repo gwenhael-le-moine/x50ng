@@ -201,6 +201,27 @@ void emulator_debug( void )
 /****************/
 /* used in main */
 /****************/
+#define UI_EVENTS_REFRESH_INTERVAL 30000LL
+#define UI_LCD_REFRESH_INTERVAL 50000LL
+
+static void callback_handle_pending_inputs( void* data )
+{
+    hdw_t* hdw_state = data;
+
+    ui_handle_pending_inputs();
+
+    timer_mod( hdw_state->timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+}
+
+static void callback_refresh_output( void* data )
+{
+    hdw_t* hdw_state = data;
+
+    ui_refresh_output();
+
+    timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
+}
+
 hdw_t* emulator_init( config_t* config )
 {
     __config = config;
@@ -232,8 +253,8 @@ hdw_t* emulator_init( config_t* config )
 
     init_timer();
 
-    __hdw_state->timer_ui_input = timer_new( HDW_TIMER_REALTIME, ui_handle_pending_inputs, __hdw_state );
-    __hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, ui_refresh_output, __hdw_state );
+    __hdw_state->timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, __hdw_state );
+    __hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, callback_refresh_output, __hdw_state );
 
     init_s3c2410_arm( __hdw_state );
     init_flash( __hdw_state, config );

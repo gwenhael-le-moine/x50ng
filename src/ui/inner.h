@@ -3,9 +3,6 @@
 
 #  include "api.h"
 
-#  define UI_EVENTS_REFRESH_INTERVAL 30000LL
-#  define UI_LCD_REFRESH_INTERVAL 50000LL
-
 #  define KB_NB_ROWS ( 10 )
 
 typedef enum { KEY_PRESS, KEY_RELEASE } key_event_t;
@@ -28,5 +25,32 @@ extern button_t buttons_hp50g[ NB_HP50g_KEYS ];
 extern int buttons_order_normal[ NB_HP50g_KEYS ];
 extern int buttons_order_legacy[ NB_HP50g_KEYS ];
 #  define NORMALIZED_BUTTONS_ORDER( hpkey ) ( ( ui4x_config.legacy_keyboard ? buttons_order_legacy : buttons_order_normal )[ hpkey ] )
+
+extern ui4x_config_t ui4x_config;
+
+/********************************************/
+/* API for UI to interact with the emulator */
+/********************************************/
+/* keyboard */
+extern void ( *emulator_press_key )( int hpkey );
+extern void ( *emulator_release_key )( int hpkey );
+extern bool ( *emulator_is_key_pressed )( int hpkey );
+/* display */
+extern bool ( *emulator_is_display_on )( void );
+extern unsigned char ( *emulator_get_annunciators )( void );
+extern int ( *emulator_get_contrast )( void );
+extern void ( *emulator_get_lcd_buffer )( int* target );
+/* machine */
+extern void ( *emulator_do_reset )( void );
+extern void ( *emulator_do_stop )( void );
+extern void ( *emulator_do_sleep )( void );
+extern void ( *emulator_do_wake )( void );
+/* SD card */
+extern int ( *emulator_do_mount_sd )( char* filename );
+extern void ( *emulator_do_unmount_sd )( void );
+extern bool ( *emulator_do_is_sd_mounted )( void );
+extern void ( *emulator_do_get_sd_path )( char** filename );
+/* debugger */
+extern void ( *emulator_do_debug )( void );
 
 #endif /* !(_UI_INNER_H) */
