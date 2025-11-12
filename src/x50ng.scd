@@ -84,8 +84,6 @@ Note: this path is persisted in _<datadir>/state_ so this option is only needed 
 
 *--newrpl-keyboard*            label keyboard for newRPL (GUI only)
 
-*--legacy-keyboard*            place Enter key where it belongs (GUI only)
-
 *--enable-debug*[=_port_]        enable the debugger interface (default port: 1234)
 
 *--debug*                      use along --enable-debug to also start the debugger immediately
@@ -132,7 +130,6 @@ zoom = 2.0 -- (gui only)
 netbook = false -- (gui only)
 netbook_pivot_line = 3 -- this marks the transition between higher and lower keyboard (gui only)
 newrpl_keyboard = false -- when true this makes the keyboard labels more suited to newRPL use (gui only)
-legacy_keyboard = false -- when true this put the Enter key where it belongs (gui only)
 --- End of x50ng configuration -----------------------------------------------
 ```
 

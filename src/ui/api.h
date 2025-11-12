@@ -96,7 +96,6 @@ typedef struct ui4x_config_t {
 
     bool verbose;
 
-    bool legacy_keyboard;
     double zoom;
     bool netbook;
     int netbook_pivot_line;

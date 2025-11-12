@@ -41,7 +41,6 @@ typedef struct config_t {
     bool chromeless;
 
     bool newrpl_keyboard;
-    bool legacy_keyboard;
     char* name;
     double zoom;
     bool netbook;

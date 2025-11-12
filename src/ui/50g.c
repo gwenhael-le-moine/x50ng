@@ -407,25 +407,3 @@ button_t buttons_hp50g[ NB_HP50g_KEYS ] = {
      .below = NULL,
      .hpkey = HP50g_KEY_PLUS                                                                                                                    },
 };
-
-int buttons_order_normal[ NB_HP50g_KEYS ] = {
-    HP50g_KEY_A,        HP50g_KEY_B,          HP50g_KEY_C,  HP50g_KEY_D,     HP50g_KEY_E,  HP50g_KEY_F,     HP50g_KEY_G,
-    HP50g_KEY_H,        HP50g_KEY_I,          HP50g_KEY_UP, HP50g_KEY_J,     HP50g_KEY_K,  HP50g_KEY_L,     HP50g_KEY_LEFT,
-    HP50g_KEY_DOWN,     HP50g_KEY_RIGHT,      HP50g_KEY_M,  HP50g_KEY_N,     HP50g_KEY_O,  HP50g_KEY_P,     HP50g_KEY_BACKSPACE,
-    HP50g_KEY_Q,        HP50g_KEY_R,          HP50g_KEY_S,  HP50g_KEY_T,     HP50g_KEY_U,  HP50g_KEY_V,     HP50g_KEY_W,
-    HP50g_KEY_X,        HP50g_KEY_Y,          HP50g_KEY_Z,  HP50g_KEY_ALPHA, HP50g_KEY_7,  HP50g_KEY_8,     HP50g_KEY_9,
-    HP50g_KEY_MULTIPLY, HP50g_KEY_SHIFT_LEFT, HP50g_KEY_4,  HP50g_KEY_5,     HP50g_KEY_6,  HP50g_KEY_MINUS, HP50g_KEY_SHIFT_RIGHT,
-    HP50g_KEY_1,        HP50g_KEY_2,          HP50g_KEY_3,  HP50g_KEY_PLUS,  HP50g_KEY_ON, HP50g_KEY_0,     HP50g_KEY_PERIOD,
-    HP50g_KEY_SPACE,    HP50g_KEY_ENTER,
-};
-
-int buttons_order_legacy[ NB_HP50g_KEYS ] = {
-    HP50g_KEY_A,     HP50g_KEY_B,          HP50g_KEY_C,  HP50g_KEY_D,     HP50g_KEY_E,  HP50g_KEY_F,        HP50g_KEY_G,
-    HP50g_KEY_H,     HP50g_KEY_I,          HP50g_KEY_UP, HP50g_KEY_J,     HP50g_KEY_K,  HP50g_KEY_L,        HP50g_KEY_LEFT,
-    HP50g_KEY_DOWN,  HP50g_KEY_RIGHT,      HP50g_KEY_M,  HP50g_KEY_N,     HP50g_KEY_O,  HP50g_KEY_P,        HP50g_KEY_BACKSPACE,
-    HP50g_KEY_Q,     HP50g_KEY_R,          HP50g_KEY_S,  HP50g_KEY_T,     HP50g_KEY_U,  HP50g_KEY_ENTER,    HP50g_KEY_V,
-    HP50g_KEY_W,     HP50g_KEY_X,          HP50g_KEY_Y,  HP50g_KEY_ALPHA, HP50g_KEY_7,  HP50g_KEY_8,        HP50g_KEY_9,
-    HP50g_KEY_Z,     HP50g_KEY_SHIFT_LEFT, HP50g_KEY_4,  HP50g_KEY_5,     HP50g_KEY_6,  HP50g_KEY_MULTIPLY, HP50g_KEY_SHIFT_RIGHT,
-    HP50g_KEY_1,     HP50g_KEY_2,          HP50g_KEY_3,  HP50g_KEY_MINUS, HP50g_KEY_ON, HP50g_KEY_0,        HP50g_KEY_PERIOD,
-    HP50g_KEY_SPACE, HP50g_KEY_PLUS,
-};

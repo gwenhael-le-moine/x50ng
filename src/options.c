@@ -34,7 +34,6 @@ static config_t __config = {
     .chromeless = false,
 
     .newrpl_keyboard = false,
-    .legacy_keyboard = false,
     .name = NULL,
     .zoom = 2.0,
     .netbook = false,
@@ -117,15 +116,13 @@ static char* config_to_string( void )
                    "netbook = %s -- (gui only)\n"
                    "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
                    "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
-                   "legacy_keyboard = %s -- when true this put the Enter key where it belongs (gui only)\n"
                    /* "\n" */
                    /* "sd_dir = \"%s\"\n" */
                    "--- End of x50ng configuration -----------------------------------------------\n",
                    __config.name,
                    __config.frontend == FRONTEND_GTK ? "gui" : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) ),
                    __config.style_filename, __config.zoom, __config.netbook ? "true" : "false", __config.netbook_pivot_line,
-                   __config.newrpl_keyboard ? "true" : "false",
-                   __config.legacy_keyboard ? "true" : "false" /* , __config.sd_dir == NULL ? "" : __config.sd_dir */ ) )
+                   __config.newrpl_keyboard ? "true" : "false" ) )
         exit( EXIT_FAILURE );
 
     return config;
@@ -189,7 +186,6 @@ config_t* config_init( int argc, char* argv[] )
     char* clopt_name = NULL;
     char* clopt_sd_dir = NULL;
     int clopt_newrpl_keyboard = -1;
-    int clopt_legacy_keyboard = -1;
     double clopt_zoom = -1.0;
     int clopt_netbook = -1;
     int clopt_netbook_pivot_line = -1;
@@ -222,7 +218,6 @@ config_t* config_init( int argc, char* argv[] )
         {"chromeless",         no_argument,       &clopt_chromeless,      true},
 
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
-        {"legacy-keyboard",    no_argument,       &clopt_legacy_keyboard, true},
         {"style",              required_argument, NULL,                   's' },
         {"zoom",               required_argument, NULL,                   'z' },
         {"netbook",            no_argument,       &clopt_netbook,         true},
@@ -270,7 +265,6 @@ config_t* config_init( int argc, char* argv[] )
                          "   --netbook                 horizontal window (GUI only) (default: false)\n"
                          "   --netbook-pivot-line      at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
                          "   --newrpl-keyboard         label keyboard for newRPL (GUI only)\n"
-                         "   --legacy-keyboard         place Enter key where it belongs (GUI only)\n"
                          "-s --style[=filename]        css filename in <datadir> (GUI only) (default: style-50g.css)\n"
                          "-z --zoom[=X]                scale LCD by X (GUI only) (default: 2.0)\n"
                          "\n"
@@ -428,9 +422,6 @@ config_t* config_init( int argc, char* argv[] )
 
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
         __config.newrpl_keyboard = lua_toboolean( config_lua_values, -1 );
-
-        lua_getglobal( config_lua_values, "legacy_keyboard" );
-        __config.legacy_keyboard = lua_toboolean( config_lua_values, -1 );
     }
     if ( __config.haz_config_file && overwrite_config )
         __config.haz_config_file = false;
@@ -453,9 +444,6 @@ config_t* config_init( int argc, char* argv[] )
 
     if ( clopt_newrpl_keyboard != -1 )
         __config.newrpl_keyboard = clopt_newrpl_keyboard;
-
-    if ( clopt_legacy_keyboard != -1 )
-        __config.legacy_keyboard = clopt_legacy_keyboard;
 
     if ( clopt_zoom > 0 )
         __config.zoom = clopt_zoom;

@@ -63,7 +63,6 @@ int main( int argc, char** argv )
 
         .frontend = __config.frontend,
         .newrpl_keyboard = __config.newrpl_keyboard,
-        .legacy_keyboard = __config.legacy_keyboard,
 
         .mono = false,
         .gray = false,
