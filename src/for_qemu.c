@@ -10,14 +10,13 @@
 
 #include "qemu/qemu-common.h"
 
+/* for qemu */
+int singlestep;
 int semihosting_enabled = 1;
 
 uint8_t* phys_ram_base;
 int phys_ram_size;
 ram_addr_t ram_size = 0x80000; // LD ???
-
-/* for qemu */
-int singlestep;
 
 #if !( defined( __APPLE__ ) || defined( _POSIX_C_SOURCE ) && !defined( __sun__ ) )
 static void* oom_check( void* ptr )
