@@ -91,8 +91,9 @@ int main( int argc, char** argv )
 
         .sd_dir = __config.sd_dir,
     };
-    ui_init( __hdw_state, &config_ui, press_key, release_key, is_key_pressed, is_display_on, get_annunciators, get_lcd_buffer, get_contrast,
-             emulator_stop, emulator_debug );
+    ui_init( &config_ui, press_key, release_key, is_key_pressed, is_display_on, get_annunciators, get_lcd_buffer, get_contrast,
+             emulator_reset, emulator_stop, emulator_sleep, emulator_wake, emulator_debug, emulator_mount_sd, emulator_unmount_sd,
+             emulator_is_sd_mounted, emulator_get_sd_path );
 
     main_loop( __hdw_state );
 

@@ -4,11 +4,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "../options.h"
-#include "../module.h"
-#include "../s3c2410/s3c2410_sdi.h"
-#include "../gdbstub.h"
-#include "../types.h"
-#include "../hdw.h"
 
 #include "api.h"
 #include "inner.h"
@@ -16,7 +11,6 @@
 // #define TEST_PASTE true
 
 typedef struct {
-    hdw_t* hdw_state;
     const button_t* key;
     GtkWidget* button;
     bool down;
@@ -26,8 +20,6 @@ typedef struct {
 /*************/
 /* Variables */
 /*************/
-static hdw_t* __hdw_state;
-
 static GtkWidget* gtk_ui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
 static gtk_button_t* gtk_ui_buttons;
@@ -43,7 +35,7 @@ static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 /*************************/
 /* Functions' prototypes */
 /*************************/
-static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state );
+static void gtk_ui_open_menu( int x, int y, void* data );
 
 /*************/
 /* Functions */
@@ -111,41 +103,36 @@ static void gtk_ui_react_to_button_right_click_release( gtk_button_t* button, Gt
     emulator_press_key( key->hpkey );
 }
 
-static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, hdw_t* hdw_state )
+static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, void* _data )
 {
     g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
     if ( file != NULL )
-        s3c2410_sdi_mount( hdw_state, ( char* )g_file_peek_path( file ) );
+        emulator_do_mount_sd( ( char* )g_file_peek_path( file ) );
 }
 
-static void gtk_ui_do_select_and_mount_sd_folder( hdw_t* hdw_state, GMenuItem* _menuitem )
+static void gtk_ui_do_select_and_mount_sd_folder( void* data, GMenuItem* _menuitem )
 {
     g_autoptr( GtkFileDialog ) dialog =
         g_object_new( GTK_TYPE_FILE_DIALOG, "title", "Choose SD folder…", "accept-label", "_Open", "modal", TRUE, NULL );
 
     gtk_file_dialog_select_folder( dialog, GTK_WINDOW( gtk_ui_window ), NULL,
-                                   ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, hdw_state );
+                                   ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, data );
 }
 
-static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, hdw_t* hdw_state ) { emulator_do_debug(); }
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, void* _data ) { emulator_do_debug(); }
 
-static void gtk_ui_do_reset( hdw_t* hdw_state, GMenuItem* _menuitem )
-{
-    reset_modules( hdw_state, HDW_RESET_POWER_ON );
-    cpu_reset( hdw_state->env );
-    hdw_set_idle( hdw_state, 0 );
-}
+static void gtk_ui_do_reset( void* _data, GMenuItem* _menuitem ) { emulator_do_reset(); }
 
 #ifdef TEST_PASTE
-static void x50g_string_to_keys_sequence( hdw_t* _hdw_state, const char* input )
+static void x50g_string_to_keys_sequence( void* _data, const char* input )
 {
     for ( int i = 0; i < strlen( input ); i++ )
         fprintf( stderr, "%c", input[ i ] );
     fprintf( stderr, "\n" );
 }
 
-static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, hdw_t* hdw_state )
+static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, void* data )
 {
     g_autofree char* text = NULL;
     g_autoptr( GError ) error = NULL;
@@ -157,43 +144,43 @@ static void gtk_ui_paste_callback( GdkClipboard* source, GAsyncResult* result, h
         return;
     }
 
-    x50g_string_to_keys_sequence( hdw_state, text );
+    x50g_string_to_keys_sequence( data, text );
 }
 
-static void gtk_ui_do_paste( hdw_t* hdw_state, GtkWidget* _menuitem )
+static void gtk_ui_do_paste( void* data, GtkWidget* _menuitem )
 {
     gdk_clipboard_read_text_async( gdk_display_get_clipboard( gdk_display_get_default() ), NULL,
-                                   ( GAsyncReadyCallback )gtk_ui_paste_callback, hdw_state );
+                                   ( GAsyncReadyCallback )gtk_ui_paste_callback, data );
 }
 #endif
 
-static void gtk_ui_do_quit( hdw_t* hdw_state, GtkWidget* _menuitem ) { hdw_state->arm_exit++; }
+static void gtk_ui_do_quit( void* _data, GtkWidget* _menuitem ) { emulator_do_stop(); }
 
-static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state )
+static void gtk_ui_open_menu( int x, int y, void* data )
 {
     g_autoptr( GMenu ) menu = g_menu_new();
     g_autoptr( GSimpleActionGroup ) action_group = g_simple_action_group_new();
 
 #ifdef TEST_PASTE
     g_autoptr( GSimpleAction ) act_paste = g_simple_action_new( "paste", NULL );
-    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gtk_ui_do_paste ), hdw_state );
+    g_signal_connect_swapped( act_paste, "activate", G_CALLBACK( gtk_ui_do_paste ), data );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_paste ) );
     g_menu_append( menu, "Paste", "app.paste" );
 #endif
 
     g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
-    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), hdw_state );
-    if ( !s3c2410_sdi_is_mounted( hdw_state ) )
+    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), data );
+    if ( !emulator_do_is_sd_mounted() )
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
     g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
 
     g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
-    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( s3c2410_sdi_unmount ), hdw_state );
+    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( emulator_do_unmount_sd ), data );
     char* unmount_label;
-    if ( s3c2410_sdi_is_mounted( hdw_state ) ) {
+    if ( emulator_do_is_sd_mounted() ) {
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
         char* sd_path;
-        s3c2410_sdi_get_path( hdw_state, &sd_path );
+        emulator_do_get_sd_path( &sd_path );
         if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
             exit( EXIT_FAILURE );
         free( sd_path );
@@ -203,18 +190,18 @@ static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state )
     free( unmount_label );
 
     g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
-    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), hdw_state );
+    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), data );
     /* if ( ui4x_config.debug_port != 0 ) */
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
     g_menu_append( menu, "Start gdb server", "app.debug" );
 
     g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
-    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), hdw_state );
+    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), data );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
     g_menu_append( menu, "Reset", "app.reset" );
 
     g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
-    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), hdw_state );
+    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), data );
     g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
     g_menu_append( menu, "Quit", "app.quit" );
 
@@ -242,7 +229,7 @@ static void gtk_ui_redraw_lcd( GtkDrawingArea* _widget, cairo_t* cr, int width, 
     cairo_paint( cr );
 }
 
-static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t event_type )
+static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_type )
 {
     int hpkey;
     switch ( keyval ) {
@@ -469,12 +456,11 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
         case GDK_KEY_F12:
             switch ( event_type ) {
                 case KEY_PRESS:
-                    reset_modules( hdw_state, HDW_RESET_POWER_ON );
-                    cpu_reset( hdw_state->env );
-                    hdw_set_idle( hdw_state, 1 );
+                    emulator_do_reset();
+                    emulator_do_sleep();
                     break;
                 case KEY_RELEASE:
-                    hdw_set_idle( hdw_state, 0 );
+                    emulator_do_wake();
                     break;
                 default:
                     break;
@@ -482,7 +468,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            gtk_ui_open_menu( ( LCD_WIDTH * ui4x_config.zoom ) / 2, ( LCD_HEIGHT * ui4x_config.zoom ) / 2, hdw_state );
+            gtk_ui_open_menu( ( LCD_WIDTH * ui4x_config.zoom ) / 2, ( LCD_HEIGHT * ui4x_config.zoom ) / 2, data );
             return GDK_EVENT_STOP;
 
         default:
@@ -504,21 +490,19 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
     return GDK_EVENT_STOP;
 }
 
-static bool gtk_ui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                       hdw_t* hdw_state )
+static bool gtk_ui_react_to_key_press( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, void* data )
 {
-    return gtk_ui_handle_key_event( keyval, hdw_state, KEY_PRESS );
+    return gtk_ui_handle_key_event( keyval, data, KEY_PRESS );
 }
 
-static bool gtk_ui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state,
-                                         hdw_t* hdw_state )
+static bool gtk_ui_react_to_key_release( GtkEventControllerKey* controller, guint keyval, guint keycode, GdkModifierType state, void* data )
 {
-    return gtk_ui_handle_key_event( keyval, hdw_state, KEY_RELEASE );
+    return gtk_ui_handle_key_event( keyval, data, KEY_RELEASE );
 }
 
-static void gtk_ui_react_to_display_click( hdw_t* hdw_state, GtkEventController* _gesture, gdouble x, gdouble y )
+static void gtk_ui_react_to_display_click( void* data, GtkEventController* _gesture, gdouble x, gdouble y )
 {
-    gtk_ui_open_menu( ( int )x, ( int )y, hdw_state );
+    gtk_ui_open_menu( ( int )x, ( int )y, data );
 }
 
 static GtkWidget* _gtk_ui_activate__create_annunciator_widget( const char* label )
@@ -546,7 +530,7 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
     return gtk_ui_label;
 }
 
-static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
+static void _gtk_ui_activate__load_and_apply_CSS( void )
 {
     char* style_full_path = g_build_filename( ui4x_config.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
@@ -574,7 +558,7 @@ static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
     free( style_full_path );
 }
 
-static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
+static void gtk_ui_activate( GtkApplication* app, void* data )
 {
     // create gtk_ui_window and widgets/stuff
     if ( app == NULL )
@@ -597,11 +581,11 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
     gtk_window_set_child( ( GtkWindow* )gtk_ui_window, window_container );
 
-    g_signal_connect_swapped( G_OBJECT( gtk_ui_window ), "destroy", G_CALLBACK( gtk_ui_do_quit ), hdw_state );
+    g_signal_connect_swapped( G_OBJECT( gtk_ui_window ), "destroy", G_CALLBACK( gtk_ui_do_quit ), data );
 
     GtkEventController* keys_controller = gtk_event_controller_key_new();
-    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( gtk_ui_react_to_key_press ), hdw_state );
-    g_signal_connect( keys_controller, "key-released", G_CALLBACK( gtk_ui_react_to_key_release ), hdw_state );
+    g_signal_connect( keys_controller, "key-pressed", G_CALLBACK( gtk_ui_react_to_key_press ), data );
+    g_signal_connect( keys_controller, "key-released", G_CALLBACK( gtk_ui_react_to_key_release ), data );
     gtk_widget_add_controller( gtk_ui_window, keys_controller );
 
     /* for --netbook */
@@ -627,7 +611,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
     gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * ui4x_config.zoom ) );
     gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * ui4x_config.zoom ) );
-    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, hdw_state, NULL );
+    gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, data, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
     gtk_widget_set_halign( lcd_container, GTK_ALIGN_CENTER );
@@ -660,7 +644,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
     GtkGesture* right_click_controller = gtk_gesture_click_new();
     gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
-    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_display_click ), hdw_state );
+    g_signal_connect_swapped( right_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_display_click ), data );
     gtk_widget_add_controller( display_container, GTK_EVENT_CONTROLLER( right_click_controller ) );
 
     // keyboard
@@ -727,7 +711,6 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
             button = &gtk_ui_buttons[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
-            button->hdw_state = hdw_state;
             button->key = &buttons_hp50g[ NORMALIZED_BUTTONS_ORDER( key_index ) ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -795,7 +778,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
         }
     }
 
-    _gtk_ui_activate__load_and_apply_CSS( hdw_state );
+    _gtk_ui_activate__load_and_apply_CSS();
 
     // finally show the window
     gtk_widget_realize( gtk_ui_window );
@@ -849,18 +832,16 @@ void gtk_ui_refresh_lcd( void )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( hdw_t* hdw_state )
+void gtk_ui_init( void )
 {
-    __hdw_state = hdw_state;
-
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
-    /* g_signal_connect( app, "activate", G_CALLBACK( gtk_ui_activate ), hdw_state ); */
+    /* g_signal_connect( app, "activate", G_CALLBACK( gtk_ui_activate ), NULL ); */
 
     /* g_application_run( G_APPLICATION( app ), 0, NULL ); */
 
     gtk_init();
-    gtk_ui_activate( NULL, __hdw_state );
+    gtk_ui_activate( NULL, NULL );
 }
 
 void gtk_ui_exit( void ) {}

@@ -258,7 +258,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #endif
         cpu_interrupt( hdw_state->env, CPU_INTERRUPT_FIQ );
 
-        hdw_set_idle( hdw_state, 0 );
+        hdw_set_idle( hdw_state, HDW_ARM_RUN );
         return;
     } else {
         cpu_reset_interrupt( hdw_state->env, CPU_INTERRUPT_FIQ );
@@ -277,7 +277,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #endif
         cpu_interrupt( hdw_state->env, CPU_INTERRUPT_HARD );
 
-        hdw_set_idle( hdw_state, 0 );
+        hdw_set_idle( hdw_state, HDW_ARM_RUN );
         return;
     }
 
@@ -328,7 +328,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #endif
         cpu_interrupt( hdw_state->env, CPU_INTERRUPT_HARD );
 
-        hdw_set_idle( hdw_state, 0 );
+        hdw_set_idle( hdw_state, HDW_ARM_RUN );
         return;
     }
 
@@ -360,7 +360,7 @@ void s3c2410_intc_assert( hdw_t* hdw_state, int irq, int level )
 
     if ( hdw_state->arm_idle == 2 ) {
         if ( irq == EINT0 || irq == INT_RTC )
-            hdw_set_idle( hdw_state, 0 );
+            hdw_set_idle( hdw_state, HDW_ARM_RUN );
     }
 }
 

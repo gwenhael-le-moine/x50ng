@@ -120,23 +120,41 @@ typedef struct ui4x_config_t {
 
 extern ui4x_config_t ui4x_config;
 
+/********************************************/
+/* API for UI to interact with the emulator */
+/********************************************/
+/* keyboard */
 extern void ( *emulator_press_key )( int hpkey );
 extern void ( *emulator_release_key )( int hpkey );
 extern bool ( *emulator_is_key_pressed )( int hpkey );
+/* display */
 extern bool ( *emulator_is_display_on )( void );
 extern unsigned char ( *emulator_get_annunciators )( void );
-extern void ( *emulator_get_lcd_buffer )( int* target );
 extern int ( *emulator_get_contrast )( void );
+extern void ( *emulator_get_lcd_buffer )( int* target );
+/* machine */
+extern void ( *emulator_do_reset )( void );
 extern void ( *emulator_do_stop )( void );
+extern void ( *emulator_do_sleep )( void );
+extern void ( *emulator_do_wake )( void );
+/* SD card */
+extern int ( *emulator_do_mount_sd )( char* filename );
+extern void ( *emulator_do_unmount_sd )( void );
+extern bool ( *emulator_do_is_sd_mounted )( void );
+extern void ( *emulator_do_get_sd_path )( char** filename );
+/* debugger */
 extern void ( *emulator_do_debug )( void );
 
 extern void ui_handle_pending_inputs( void* data );
 extern void ui_refresh_output( void* data );
-extern void ui_init( hdw_t* hdw_state, ui4x_config_t* opt, void ( *api_emulator_press_key )( int hpkey ),
-                     void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
-                     bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
-                     void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ),
-                     void ( *api_emulator_stop )( void ), void ( *api_emulator_debug )( void ) );
+extern void ui_init( ui4x_config_t* opt, void ( *api_emulator_press_key )( int hpkey ), void ( *api_emulator_release_key )( int hpkey ),
+                     bool ( *api_emulator_is_key_pressed )( int hpkey ), bool ( *api_emulator_is_display_on )( void ),
+                     unsigned char ( *api_emulator_get_annunciators )( void ), void ( *api_emulator_get_lcd_buffer )( int* target ),
+                     int ( *api_emulator_get_contrast )( void ), void ( *api_emulator_do_reset )( void ),
+                     void ( *api_emulator_stop )( void ), void ( *api_emulator_sleep )( void ), void ( *api_emulator_wake )( void ),
+                     void ( *api_emulator_debug )( void ), int ( *api_emulator_do_mount_sd )( char* filename ),
+                     void ( *api_emulator_do_unmount_sd )( void ), bool ( *api_emulator_do_is_sd_mounted )( void ),
+                     void ( *api_emulator_do_get_sd_path )( char** filename ) );
 extern void ui_exit( void );
 
 #endif /* !(_X50NG_UI_H) */

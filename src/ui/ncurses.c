@@ -56,10 +56,10 @@
 /*************/
 /* variables */
 /*************/
-static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
-static char last_annunciators = 0;
+static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
+static char last_annunciators = -1;
 
-static bool keyboard_state[ NB_HP50g_KEYS ];
+static bool keyboard_state[ NB_KEYS ];
 
 static WINDOW* lcd_window;
 static WINDOW* help_window;
@@ -78,21 +78,21 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     wchar_t chr = 0x2800;
 
     if ( b1 )
-        chr |= 1; // 0b0000000000000001;
+        chr |= 0b0000000000000001;
     if ( b2 )
-        chr |= 2; // 0b0000000000000010;
+        chr |= 0b0000000000000010;
     if ( b3 )
-        chr |= 4; // 0b0000000000000100;
+        chr |= 0b0000000000000100;
     if ( b4 )
-        chr |= 8; // 0b0000000000001000;
+        chr |= 0b0000000000001000;
     if ( b5 )
-        chr |= 16; // 0b0000000000010000;
+        chr |= 0b0000000000010000;
     if ( b6 )
-        chr |= 32; // 0b0000000000100000;
+        chr |= 0b0000000000100000;
     if ( b7 )
-        chr |= 64; // 0b0000000001000000;
+        chr |= 0b0000000001000000;
     if ( b8 )
-        chr |= 128; // 0b0000000010000000;
+        chr |= 0b0000000010000000;
 
     return chr;
 }
@@ -107,7 +107,7 @@ static inline void ncurses_draw_lcd_tiny( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
-    /* if ( has_colors() ) */
+    /* if ( !ui4x_config.mono && has_colors() ) */
     /*     attron( COLOR_PAIR( COLOR_RED ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
@@ -136,7 +136,7 @@ static inline void ncurses_draw_lcd_tiny( void )
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    /* if ( has_colors() ) */
+    /* if ( !ui4x_config.mono && has_colors() ) */
     /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
 }
 
@@ -179,7 +179,7 @@ static inline void ncurses_draw_lcd_small( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
-    /* if ( has_colors() ) */
+    /* if ( !ui4x_config.mono && has_colors() ) */
     /*     attron( COLOR_PAIR( COLOR_RED ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
@@ -204,16 +204,20 @@ static inline void ncurses_draw_lcd_small( void )
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    /* if ( has_colors() ) */
+    /* if ( !ui4x_config.mono && has_colors() ) */
     /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
 }
 
 static inline void ncurses_draw_lcd_fullsize( void )
 {
     int val;
+    /* int color = COLOR_RED; */
+    wchar_t pixel;
 
     wchar_t line[ LCD_WIDTH ];
-    wchar_t pixel;
+
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attron( COLOR_PAIR( color ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         wcscpy( line, L"" );
@@ -240,18 +244,12 @@ static inline void ncurses_draw_lcd_fullsize( void )
             }
 
             wcsncat( line, &pixel, 1 );
-
-            /* if ( has_colors() ) */
-            /*     attron( COLOR_PAIR( LCD_PIXEL_OFF + val ) ); */
-
-            /* cchar_t cpixel = { 0, pixel }; */
-            /* mvwadd_wch( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X + x, &cpixel ); */
-
-            /* if ( has_colors() ) */
-            /*     attroff( COLOR_PAIR( LCD_PIXEL_OFF + val ) ); */
         }
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
+
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attroff( COLOR_PAIR( color ) ); */
 }
 
 static void toggle_help_window( void )
@@ -277,7 +275,6 @@ static void toggle_help_window( void )
     } else {
         wclear( help_window );
         wrefresh( help_window );
-        // delwin( help_window );
         refresh();
 
         help_window = NULL;
@@ -300,7 +297,6 @@ static void ncurses_refresh_annunciators( void )
 /**********/
 /* Public */
 /**********/
-
 void ncurses_refresh_lcd( void )
 {
     if ( !emulator_is_display_on() )
@@ -519,6 +515,10 @@ void ncurses_handle_pending_inputs( void )
             case KEY_F( 10 ):
                 emulator_do_stop();
                 break;
+
+            case KEY_F( 12 ):
+                emulator_do_reset();
+                break;
         }
     }
 
@@ -547,7 +547,7 @@ void ncurses_exit( void )
 
 void ncurses_init( void )
 {
-    for ( int i = 0; i < NB_HP50g_KEYS; ++i )
+    for ( int i = 0; i < NB_KEYS; ++i )
         keyboard_state[ i ] = false;
 
     setlocale( LC_ALL, "" );
@@ -559,7 +559,7 @@ void ncurses_init( void )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    /* if ( has_colors() ) { */
+    /* if ( !ui4x_config.mono && has_colors() ) { */
     /*     start_color(); */
 
     /*     int step = 1000 / 15; */

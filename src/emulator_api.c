@@ -1,4 +1,3 @@
-#include "emulator_api.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +11,7 @@
 
 #include "ui/api.h"
 
+#include "emulator_api.h"
 #include "list.h"
 #include "hdw.h"
 #include "gdbstub.h"
@@ -20,6 +20,9 @@
 #include "flash.h"
 #include "module.h"
 
+static hdw_t* __hdw_state;
+static config_t* __config;
+
 typedef struct hp50g_key_t {
     int column;
     int row;
@@ -27,10 +30,7 @@ typedef struct hp50g_key_t {
     bool pressed;
 } hp50g_key_t;
 
-static hdw_t* __hdw_state;
-static config_t* __config;
-
-static hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
+static hp50g_key_t x50ng_keyboard[ NB_HP50g_KEYS ] = {
     {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
     {.column = 5, .row = 2, .eint = -1 /* 2 */, .pressed = false},
     {.column = 5, .row = 3, .eint = -1 /* 3 */, .pressed = false},
@@ -92,10 +92,115 @@ static hp50g_key_t x50ng_keys[ NB_HP50g_KEYS ] = {
     {.column = 1, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 0, .row = 6, .eint = -1 /* 6 */, .pressed = false},
 };
-#define KEYBOARD x50ng_keys
 
 static int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
 
+/***********/
+/* SD card */
+/***********/
+int emulator_mount_sd( char* filename ) { return s3c2410_sdi_mount( __hdw_state, strdup( filename ) ); }
+
+void emulator_unmount_sd( void ) { s3c2410_sdi_unmount( __hdw_state ); }
+
+bool emulator_is_sd_mounted( void ) { return s3c2410_sdi_is_mounted( __hdw_state ); }
+
+void emulator_get_sd_path( char** filename ) { s3c2410_sdi_get_path( __hdw_state, filename ); }
+
+/***********/
+/* machine */
+/***********/
+void emulator_stop( void ) { hdw_stop( __hdw_state ); }
+
+void emulator_sleep( void ) { hdw_set_idle( __hdw_state, HDW_ARM_SLEEP ); }
+
+void emulator_wake( void ) { hdw_set_idle( __hdw_state, HDW_ARM_RUN ); }
+
+void emulator_reset( void )
+{
+    reset_modules( __hdw_state, HDW_RESET_POWER_ON );
+    cpu_reset( __hdw_state->env );
+    emulator_wake();
+}
+
+/************/
+/* keyboard */
+/************/
+static void set_key_state( const hp50g_key_t key, bool state )
+{
+    if ( key.eint >= 0 /* && key.row == 0 && key.column == 0 */ )
+        s3c2410_io_port_f_set_bit( __hdw_state, key.eint, state );
+    else
+        s3c2410_io_port_g_update( __hdw_state, key.column, key.row, state );
+}
+
+void press_key( int hpkey )
+{
+    set_key_state( x50ng_keyboard[ hpkey ], true );
+    x50ng_keyboard[ hpkey ].pressed = true;
+}
+
+void release_key( int hpkey )
+{
+    set_key_state( x50ng_keyboard[ hpkey ], false );
+    x50ng_keyboard[ hpkey ].pressed = false;
+}
+
+bool is_key_pressed( int hpkey )
+{
+    if ( hpkey < 0 || hpkey > NB_HP50g_KEYS )
+        return false;
+
+    return x50ng_keyboard[ hpkey ].pressed;
+}
+
+/***********/
+/* display */
+/***********/
+bool is_display_on( void )
+{
+    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
+
+    return ( lcd->lcdcon1 & 1 );
+}
+
+unsigned char get_annunciators( void )
+{
+    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
+
+    char annunciators = 0;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; ++i )
+        if ( s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
+            annunciators |= 0x01 << i;
+
+    return annunciators;
+}
+
+int get_contrast( void ) { return 19; }
+
+void get_lcd_buffer( int* target )
+{
+    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
+
+    for ( int y = 0; y < LCD_HEIGHT; ++y )
+        for ( int x = 0; x < LCD_WIDTH; ++x )
+            target[ ( y * LCD_WIDTH ) + x ] = s3c2410_get_pixel_color( lcd, x, y );
+}
+
+/************/
+/* debugger */
+/************/
+void emulator_debug( void )
+{
+    if ( __config->debug_port != 0 && !gdbserver_isactive() ) {
+        gdbserver_start( __config->debug_port );
+        gdb_handlesig( __hdw_state->env, 0 );
+    }
+}
+
+/****************/
+/* used in main */
+/****************/
 hdw_t* emulator_init( config_t* config )
 {
     __config = config;
@@ -146,7 +251,7 @@ hdw_t* emulator_init( config_t* config )
         reset_modules( __hdw_state, HDW_RESET_POWER_ON );
     }
 
-    hdw_set_idle( __hdw_state, 0 );
+    emulator_wake();
 
     // stl_phys(0x08000a1c, 0x55555555);
 
@@ -161,7 +266,8 @@ hdw_t* emulator_init( config_t* config )
     if ( __config->sd_dir != NULL ) {
         if ( __config->verbose )
             fprintf( stderr, "> mounting --sd-dir %s\n", __config->sd_dir );
-        s3c2410_sdi_mount( __hdw_state, strdup( __config->sd_dir ) );
+        // s3c2410_sdi_mount( __hdw_state, strdup( __config->sd_dir ) );
+        emulator_mount_sd( __config->sd_dir );
     }
 
     return __hdw_state;
@@ -175,73 +281,4 @@ void emulator_exit( void )
         save_config();
 
     exit_modules( __hdw_state );
-}
-
-void emulator_stop( void ) { hdw_stop( __hdw_state ); }
-
-void emulator_debug( void )
-{
-    if ( __config->debug_port != 0 && !gdbserver_isactive() ) {
-        gdbserver_start( __config->debug_port );
-        gdb_handlesig( __hdw_state->env, 0 );
-    }
-}
-
-static void set_key_state( const hp50g_key_t key, bool state )
-{
-    if ( key.eint >= 0 /* && key.row == 0 && key.column == 0 */ )
-        s3c2410_io_port_f_set_bit( __hdw_state, key.eint, state );
-    else
-        s3c2410_io_port_g_update( __hdw_state, key.column, key.row, state );
-}
-
-void press_key( int hpkey )
-{
-    set_key_state( KEYBOARD[ hpkey ], true );
-    KEYBOARD[ hpkey ].pressed = true;
-}
-
-void release_key( int hpkey )
-{
-    set_key_state( KEYBOARD[ hpkey ], false );
-    KEYBOARD[ hpkey ].pressed = false;
-}
-
-bool is_key_pressed( int hpkey )
-{
-    if ( hpkey < 0 || hpkey > NB_HP50g_KEYS )
-        return false;
-
-    return KEYBOARD[ hpkey ].pressed;
-}
-
-bool is_display_on( void )
-{
-    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
-
-    return ( lcd->lcdcon1 & 1 );
-}
-
-unsigned char get_annunciators( void )
-{
-    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
-
-    char annunciators = 0;
-
-    for ( int i = 0; i < NB_ANNUNCIATORS; ++i )
-        if ( s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
-            annunciators |= 0x01 << i;
-
-    return annunciators;
-}
-
-int get_contrast( void ) { return 19; }
-
-void get_lcd_buffer( int* target )
-{
-    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
-
-    for ( int y = 0; y < LCD_HEIGHT; ++y )
-        for ( int x = 0; x < LCD_WIDTH; ++x )
-            target[ ( y * LCD_WIDTH ) + x ] = s3c2410_get_pixel_color( lcd, x, y );
 }

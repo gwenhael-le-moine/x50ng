@@ -8,8 +8,16 @@
 
 extern hdw_t* emulator_init( config_t* config );
 extern void emulator_exit( void );
+extern void emulator_reset( void );
 extern void emulator_stop( void );
+extern void emulator_sleep( void );
+extern void emulator_wake( void );
 extern void emulator_debug( void );
+
+extern int emulator_mount_sd( char* filename );
+extern void emulator_unmount_sd( void );
+extern bool emulator_is_sd_mounted( void );
+extern void emulator_get_sd_path( char** filename );
 
 extern void press_key( int hpkey );
 extern void release_key( int hpkey );
