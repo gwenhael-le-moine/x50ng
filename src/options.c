@@ -8,6 +8,7 @@
 
 #include <lua.h>
 #include <lauxlib.h>
+#include <string.h>
 
 #include "options.h"
 
@@ -25,8 +26,6 @@ static config_t __config = {
 
     .debug_port = 0,
     .start_debugger = false,
-    .bootloader = "firmware/boot-50g.bin",
-    .firmware = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin",
     .reinit = HDW_REINIT_NONE,
 
     .frontend = FRONTEND_GTK,
@@ -132,6 +131,19 @@ static char* config_to_string( void )
     return config;
 }
 
+static char* make_filename_absolute( char* filename )
+{
+    char* full_path = g_build_filename( filename, NULL );
+    if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        full_path = g_build_filename( __config.datadir, filename, NULL );
+    if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        full_path = g_build_filename( GLOBAL_DATADIR, filename, NULL );
+    if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        full_path = g_build_filename( __config.progpath, filename, NULL );
+
+    return full_path;
+}
+
 int save_config( void )
 {
     const char* config_lua_filename = g_build_filename( __config.datadir, CONFIG_LUA_FILE_NAME, NULL );
@@ -170,6 +182,9 @@ config_t* config_init( int argc, char* argv[] )
     bool do_flash = false;
     bool do_flash_full = false;
 
+    char* bootloader_filename = NULL;
+    char* firmware_filename = NULL;
+    char* style_filename = NULL;
     char* clopt_style_filename = NULL;
     char* clopt_name = NULL;
     char* clopt_sd_dir = NULL;
@@ -269,7 +284,7 @@ config_t* config_init( int argc, char* argv[] )
                          "   --bootloader[=filename]   bootloader file (default: %s)\n"
                          "   --firmware[=filename]     firmware file (default: %s)\n",
                          __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, __config.progname, __config.progname,
-                         __config.progname, DEFAULT_GDBSTUB_PORT, __config.bootloader, __config.firmware );
+                         __config.progname, DEFAULT_GDBSTUB_PORT, bootloader_filename, firmware_filename );
                 exit( EXIT_SUCCESS );
                 break;
             case 10:
@@ -287,10 +302,10 @@ config_t* config_init( int argc, char* argv[] )
                 do_flash_full = true;
                 break;
             case 92:
-                __config.bootloader = strdup( optarg );
+                bootloader_filename = strdup( optarg );
                 break;
             case 93:
-                __config.firmware = strdup( optarg );
+                firmware_filename = strdup( optarg );
                 break;
             case 800:
                 clopt_sd_dir = strdup( optarg );
@@ -347,13 +362,6 @@ config_t* config_init( int argc, char* argv[] )
         }
     }
 
-    if ( do_flash && ( __config.bootloader == NULL || __config.firmware == NULL ) ) {
-        fprintf(
-            stderr,
-            "Error: --flash(-full) requires you to provide a bootloader and firmware using --bootloader and --firmware respectively!\n" );
-        exit( EXIT_FAILURE );
-    }
-
     if ( __config.datadir == NULL )
         __config.datadir = g_build_filename( g_get_user_config_dir(), __config.progname, NULL );
 
@@ -369,7 +377,7 @@ config_t* config_init( int argc, char* argv[] )
         lua_getglobal( config_lua_values, "style" );
         const char* lua_style_filename = luaL_optstring( config_lua_values, -1, NULL );
         if ( lua_style_filename != NULL )
-            __config.style_filename = strdup( lua_style_filename );
+            style_filename = strdup( lua_style_filename );
 
         lua_getglobal( config_lua_values, "name" );
         const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
@@ -431,9 +439,9 @@ config_t* config_init( int argc, char* argv[] )
     /* 2. treat command-line params which have priority */
     /****************************************************/
     if ( clopt_style_filename != NULL )
-        __config.style_filename = strdup( clopt_style_filename );
-    else if ( __config.style_filename == NULL )
-        __config.style_filename = "style-50g.css";
+        style_filename = strdup( clopt_style_filename );
+    else if ( style_filename == NULL )
+        style_filename = "style-50g.css";
 
     if ( clopt_name != NULL )
         __config.name = strdup( clopt_name );
@@ -490,6 +498,27 @@ config_t* config_init( int argc, char* argv[] )
 
         if ( do_flash_full )
             __config.reinit = HDW_REINIT_FLASH_FULL;
+    }
+
+    if ( bootloader_filename == NULL )
+        bootloader_filename = "firmware/boot-50g.bin";
+    if ( firmware_filename == NULL )
+        firmware_filename = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin";
+
+    __config.style_filename = make_filename_absolute( style_filename );
+    __config.bootloader = make_filename_absolute( bootloader_filename );
+    __config.firmware = make_filename_absolute( firmware_filename );
+
+    free( style_filename );
+    free( clopt_style_filename );
+    free( clopt_name );
+    free( clopt_sd_dir );
+
+    if ( do_flash && ( __config.bootloader == NULL || __config.firmware == NULL ) ) {
+        fprintf(
+            stderr,
+            "Error: --flash(-full) requires you to provide a bootloader and firmware using --bootloader and --firmware respectively!\n" );
+        exit( EXIT_FAILURE );
     }
 
     return &__config;

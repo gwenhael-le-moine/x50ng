@@ -3,8 +3,6 @@
 
 #include <curses.h>
 
-#include "../options.h"
-
 #include "api.h"
 #include "inner.h"
 

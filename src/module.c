@@ -327,59 +327,20 @@ int module_set_string( hdw_module_t* module, GKeyFile* key, const char* name, co
 
 int module_open_rodata( hdw_module_t* module, const char* name, char** path )
 {
+    /* This is only used to open bootloader and firmware files when flashing */
+
     int fd;
     int error;
 
-    *path = g_build_filename( name, NULL );
+    *path = strdup( name );
     if ( __config->verbose )
         fprintf( stderr, "reading %s\n", *path );
     if ( NULL == *path ) {
         fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
         return -ENOMEM;
     }
+
     fd = open( *path, O_RDONLY );
-
-    if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
-        g_free( *path );
-
-        *path = g_build_filename( __config->progpath, name, NULL );
-        if ( __config->verbose )
-            fprintf( stderr, "reading %s\n", *path );
-        if ( NULL == *path ) {
-            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
-            return -ENOMEM;
-        }
-        fd = open( *path, O_RDONLY );
-    }
-
-    if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
-        g_free( *path );
-
-        *path = g_build_filename( __config->datadir, name, NULL );
-        if ( __config->verbose )
-            fprintf( stderr, "reading %s\n", *path );
-        if ( NULL == *path ) {
-            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
-            return -ENOMEM;
-        }
-        fd = open( *path, O_RDONLY );
-    }
-
-#ifdef X50NG_DATADIR
-    if ( fd < 0 && ( errno == EACCES || errno == ENOENT ) ) {
-        g_free( *path );
-
-        *path = g_build_filename( X50NG_DATADIR, name, NULL );
-        if ( __config->verbose )
-            fprintf( stderr, "reading %s\n", *path );
-        if ( NULL == *path ) {
-            fprintf( stderr, "%s: %s:%u: Out of memory\n", module->name, __func__, __LINE__ );
-            return -ENOMEM;
-        }
-        fd = open( *path, O_RDONLY );
-    }
-#endif
-
     if ( fd < 0 ) {
         error = -errno;
         fprintf( stderr, "%s: %s:%u: open %s: %s\n", module->name, __func__, __LINE__, *path, strerror( errno ) );

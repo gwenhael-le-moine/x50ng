@@ -3,8 +3,6 @@
 #include <cairo.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "../options.h"
-
 #include "api.h"
 #include "inner.h"
 
@@ -532,30 +530,18 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
 
 static void _gtk_ui_activate__load_and_apply_CSS( void )
 {
-    char* style_full_path = g_build_filename( ui4x_config.style_filename, NULL );
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( ui4x_config.datadir, ui4x_config.style_filename, NULL );
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( GLOBAL_DATADIR, ui4x_config.style_filename, NULL );
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( ui4x_config.progpath, ui4x_config.style_filename, NULL );
-
-    if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", ui4x_config.style_filename,
-                 ui4x_config.datadir, ui4x_config.style_filename, GLOBAL_DATADIR, ui4x_config.style_filename, ui4x_config.progpath,
-                 ui4x_config.style_filename );
+    if ( !g_file_test( ui4x_config.style_filename, G_FILE_TEST_EXISTS ) )
+        fprintf( stderr, "Can't load style %s\n", ui4x_config.style_filename );
     else {
         g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
-        gtk_css_provider_load_from_path( style_provider, style_full_path );
+        gtk_css_provider_load_from_path( style_provider, ui4x_config.style_filename );
 
         gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                     GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
 
         if ( ui4x_config.verbose )
-            fprintf( stderr, "Loaded style from %s\n", style_full_path );
+            fprintf( stderr, "Loaded style from %s\n", ui4x_config.style_filename );
     }
-
-    free( style_full_path );
 }
 
 static void gtk_ui_activate( GtkApplication* app, void* data )
