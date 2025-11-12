@@ -1,3 +1,4 @@
+#include "api.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,16 +19,17 @@
 
 char* ui_annunciators[ NB_ANNUNCIATORS ] = { "⮢", "⮣", "α", "🪫", "⌛", "⇄" };
 
+ui4x_config_t ui4x_config;
+
 void ( *emulator_press_key )( int hpkey );
 void ( *emulator_release_key )( int hpkey );
 bool ( *emulator_is_key_pressed )( int hpkey );
-
 bool ( *emulator_is_display_on )( void );
 unsigned char ( *emulator_get_annunciators )( void );
 void ( *emulator_get_lcd_buffer )( int* target );
 int ( *emulator_get_contrast )( void );
-
-static config_t* __config;
+void ( *emulator_do_stop )( void );
+void ( *emulator_do_debug )( void );
 
 /*************/
 /* functions */
@@ -101,7 +103,7 @@ void ui_handle_pending_inputs( void* data )
 {
     hdw_t* hdw_state = data;
 
-    switch ( __config->frontend ) {
+    switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
             ncurses_handle_pending_inputs();
             break;
@@ -118,7 +120,7 @@ void ui_refresh_output( void* data )
 {
     hdw_t* hdw_state = data;
 
-    switch ( __config->frontend ) {
+    switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
             ncurses_refresh_lcd();
             break;
@@ -131,34 +133,41 @@ void ui_refresh_output( void* data )
     timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
-void ui_init( hdw_t* hdw_state, config_t* config, void ( *api_emulator_press_key )( int hpkey ),
+void ui_init( hdw_t* hdw_state, ui4x_config_t* config, void ( *api_emulator_press_key )( int hpkey ),
               void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
               bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
-              void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) )
+              void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ),
+              void ( *api_emulator_stop )( void ), void ( *api_emulator_debug )( void ) )
 {
-    __config = config;
+    ui4x_config = *config;
+    emulator_press_key = api_emulator_press_key;
+    emulator_release_key = api_emulator_release_key;
+    emulator_is_key_pressed = api_emulator_is_key_pressed;
 
-    if ( __config->newrpl_keyboard )
+    emulator_is_display_on = api_emulator_is_display_on;
+    emulator_get_annunciators = api_emulator_get_annunciators;
+    emulator_get_lcd_buffer = api_emulator_get_lcd_buffer;
+    emulator_get_contrast = api_emulator_get_contrast;
+    emulator_do_stop = api_emulator_stop;
+    emulator_do_debug = api_emulator_debug;
+
+    if ( ui4x_config.newrpl_keyboard )
         newrplify_buttons_hp50g();
 
-    switch ( __config->frontend ) {
+    switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
-            ncurses_init( hdw_state, __config, api_emulator_press_key, api_emulator_release_key, api_emulator_is_key_pressed,
-                          api_emulator_is_display_on, api_emulator_get_annunciators, api_emulator_get_lcd_buffer,
-                          api_emulator_get_contrast );
+            ncurses_init();
             break;
         case FRONTEND_GTK:
         default:
-            gtk_ui_init( hdw_state, __config, api_emulator_press_key, api_emulator_release_key, api_emulator_is_key_pressed,
-                         api_emulator_is_display_on, api_emulator_get_annunciators, api_emulator_get_lcd_buffer,
-                         api_emulator_get_contrast );
+            gtk_ui_init( hdw_state );
             break;
     }
 }
 
 void ui_exit( void )
 {
-    switch ( __config->frontend ) {
+    switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
             ncurses_exit();
             break;

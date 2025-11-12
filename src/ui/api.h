@@ -1,7 +1,8 @@
 #ifndef _X50NG_UI_H
 #  define _X50NG_UI_H 1
 
-#  include "../options.h"
+#  include <stdbool.h>
+
 #  include "../types.h" /* hdw_t */
 
 #  define LCD_WIDTH ( 131 )
@@ -74,12 +75,68 @@ typedef enum {
     NB_HP50g_KEYS
 } hp50g_keynames_t;
 
+// #  define NB_KEYS ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP49_KEYS )
+#  define NB_KEYS ( NB_HP50g_KEYS )
+
+typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } ui4x_frontend_t;
+
+typedef enum { MODEL_48SX = 485, MODEL_48GX = 486, MODEL_40G = 406, MODEL_49G = 496, MODEL_50G = 506 } ui4x_model_t;
+
+typedef struct ui4x_config_t {
+    ui4x_model_t model;
+    bool shiftless;
+    bool big_screen;
+    bool black_lcd;
+    bool newrpl_keyboard;
+
+    ui4x_frontend_t frontend;
+    bool mono;
+    bool gray;
+
+    bool chromeless;
+    bool fullscreen;
+
+    bool tiny;
+    bool small;
+
+    bool verbose;
+
+    bool legacy_keyboard;
+    double zoom;
+    bool netbook;
+    int netbook_pivot_line;
+
+    char* name;
+    char* progname;
+    char* progpath;
+    char* wire_name;
+    char* ir_name;
+
+    char* datadir;
+    char* style_filename;
+
+    char* sd_dir;
+} ui4x_config_t;
+
+extern ui4x_config_t ui4x_config;
+
+extern void ( *emulator_press_key )( int hpkey );
+extern void ( *emulator_release_key )( int hpkey );
+extern bool ( *emulator_is_key_pressed )( int hpkey );
+extern bool ( *emulator_is_display_on )( void );
+extern unsigned char ( *emulator_get_annunciators )( void );
+extern void ( *emulator_get_lcd_buffer )( int* target );
+extern int ( *emulator_get_contrast )( void );
+extern void ( *emulator_do_stop )( void );
+extern void ( *emulator_do_debug )( void );
+
 extern void ui_handle_pending_inputs( void* data );
 extern void ui_refresh_output( void* data );
-extern void ui_init( hdw_t* hdw_state, config_t* opt, void ( *api_emulator_press_key )( int hpkey ),
+extern void ui_init( hdw_t* hdw_state, ui4x_config_t* opt, void ( *api_emulator_press_key )( int hpkey ),
                      void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
                      bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
-                     void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) );
+                     void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ),
+                     void ( *api_emulator_stop )( void ), void ( *api_emulator_debug )( void ) );
 extern void ui_exit( void );
 
 #endif /* !(_X50NG_UI_H) */

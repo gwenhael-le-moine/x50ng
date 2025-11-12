@@ -1,3 +1,4 @@
+#include "emulator_api.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -174,6 +175,16 @@ void emulator_exit( void )
         save_config();
 
     exit_modules( __hdw_state );
+}
+
+void emulator_stop( void ) { hdw_stop( __hdw_state ); }
+
+void emulator_debug( void )
+{
+    if ( __config->debug_port != 0 && !gdbserver_isactive() ) {
+        gdbserver_start( __config->debug_port );
+        gdb_handlesig( __hdw_state->env, 0 );
+    }
 }
 
 static void set_key_state( const hp50g_key_t key, bool state )

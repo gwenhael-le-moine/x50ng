@@ -46,16 +46,53 @@ void signal_handler( int sig )
 
 int main( int argc, char** argv )
 {
-    config_t* __config = config_init( argc, argv );
+    config_t __config = *config_init( argc, argv );
 
-    __hdw_state = emulator_init( __config );
+    __hdw_state = emulator_init( &__config );
 
     signal( SIGINT, signal_handler );
     signal( SIGTERM, signal_handler );
     signal( SIGQUIT, signal_handler );
     signal( SIGUSR1, signal_handler );
 
-    ui_init( __hdw_state, __config, press_key, release_key, is_key_pressed, is_display_on, get_annunciators, get_lcd_buffer, get_contrast );
+    ui4x_config_t config_ui = {
+        .model = MODEL_50G,
+        .shiftless = false,
+        .big_screen = true,
+        .black_lcd = true,
+
+        .frontend = __config.frontend,
+        .newrpl_keyboard = __config.newrpl_keyboard,
+        .legacy_keyboard = __config.legacy_keyboard,
+
+        .mono = false,
+        .gray = false,
+
+        .chromeless = false,
+        .fullscreen = false,
+        .zoom = __config.zoom,
+
+        .tiny = __config.tiny,
+        .small = __config.small,
+
+        .netbook = __config.netbook,
+        .netbook_pivot_line = __config.netbook_pivot_line,
+
+        .verbose = __config.verbose,
+
+        .name = __config.name,
+        .progname = __config.progname,
+        .progpath = __config.progpath,
+        .wire_name = NULL,
+        .ir_name = NULL,
+
+        .datadir = __config.datadir,
+        .style_filename = __config.style_filename,
+
+        .sd_dir = __config.sd_dir,
+    };
+    ui_init( __hdw_state, &config_ui, press_key, release_key, is_key_pressed, is_display_on, get_annunciators, get_lcd_buffer, get_contrast,
+             emulator_stop, emulator_debug );
 
     main_loop( __hdw_state );
 

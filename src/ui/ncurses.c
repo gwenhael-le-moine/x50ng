@@ -6,16 +6,14 @@
 #include <curses.h>
 
 #include "../options.h"
-#include "../types.h"
-#include "../hdw.h"
 
 #include "api.h"
 #include "inner.h"
 
-#define LCD_OFFSET_X ( __config->chromeless ? 0 : 1 )
+#define LCD_OFFSET_X ( ui4x_config.chromeless ? 0 : 1 )
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( __config->tiny ? 4 : ( __config->small ? 2 : 1 ) ) )
-#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( __config->small || __config->tiny ? 2 : 1 ) ) + 1
+#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( ui4x_config.tiny ? 4 : ( ui4x_config.small ? 2 : 1 ) ) )
+#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( ui4x_config.small || ui4x_config.tiny ? 2 : 1 ) ) + 1
 
 /* typedef enum { */
 /*     LCD_COLOR_BG = 30, */
@@ -58,18 +56,6 @@
 /*************/
 /* variables */
 /*************/
-static hdw_t* __hdw_state;
-static config_t* __config;
-
-static void ( *emulator_press_key )( int hpkey );
-static void ( *emulator_release_key )( int hpkey );
-static bool ( *emulator_is_key_pressed )( int hpkey );
-
-static bool ( *emulator_is_display_on )( void );
-static unsigned char ( *emulator_get_annunciators )( void );
-static void ( *emulator_get_lcd_buffer )( int* target );
-static int ( *emulator_get_contrast )( void );
-
 static int display_buffer_grayscale[ LCD_WIDTH * LCD_HEIGHT ];
 static char last_annunciators = 0;
 
@@ -270,13 +256,13 @@ static inline void ncurses_draw_lcd_fullsize( void )
 
 static void toggle_help_window( void )
 {
-    int border_width = __config->chromeless ? 0 : 1;
+    int border_width = ui4x_config.chromeless ? 0 : 1;
 
     if ( help_window == NULL ) {
         help_window = newwin( 7, LCD_RIGHT + border_width, LCD_BOTTOM + 1, 0 );
         refresh();
 
-        if ( !__config->chromeless )
+        if ( !ui4x_config.chromeless )
             wborder( help_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
         mvwprintw( help_window, 0, 1 + border_width, "[ Help ]" );
@@ -324,9 +310,9 @@ void ncurses_refresh_lcd( void )
 
     emulator_get_lcd_buffer( display_buffer_grayscale );
 
-    if ( __config->small )
+    if ( ui4x_config.small )
         ncurses_draw_lcd_small();
-    else if ( __config->tiny )
+    else if ( ui4x_config.tiny )
         ncurses_draw_lcd_tiny();
     else
         ncurses_draw_lcd_fullsize();
@@ -531,7 +517,7 @@ void ncurses_handle_pending_inputs( void )
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                hdw_stop( __hdw_state );
+                emulator_do_stop();
                 break;
         }
     }
@@ -559,23 +545,8 @@ void ncurses_exit( void )
     endwin();
 }
 
-void ncurses_init( hdw_t* hdw_state, config_t* config, void ( *api_emulator_press_key )( int hpkey ),
-                   void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
-                   bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
-                   void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) )
+void ncurses_init( void )
 {
-    __hdw_state = hdw_state;
-    __config = config;
-
-    emulator_press_key = api_emulator_press_key;
-    emulator_release_key = api_emulator_release_key;
-    emulator_is_key_pressed = api_emulator_is_key_pressed;
-
-    emulator_is_display_on = api_emulator_is_display_on;
-    emulator_get_annunciators = api_emulator_get_annunciators;
-    emulator_get_lcd_buffer = api_emulator_get_lcd_buffer;
-    emulator_get_contrast = api_emulator_get_contrast;
-
     for ( int i = 0; i < NB_HP50g_KEYS; ++i )
         keyboard_state[ i ] = false;
 
@@ -604,14 +575,14 @@ void ncurses_init( hdw_t* hdw_state, config_t* config, void ( *api_emulator_pres
     lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
     refresh();
 
-    if ( !__config->chromeless ) {
+    if ( !ui4x_config.chromeless ) {
         wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
         toggle_help_window();
     }
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", __config->name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", ui4x_config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     wrefresh( lcd_window );
 }

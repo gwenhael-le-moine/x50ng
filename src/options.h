@@ -3,6 +3,8 @@
 
 #  include <stdbool.h>
 
+#  include "ui/api.h"
+
 #  ifndef VERSION_MAJOR
 #    define VERSION_MAJOR 0
 #  endif
@@ -19,7 +21,7 @@
 #    define GLOBAL_DATADIR opt.progpath
 #  endif
 
-typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t;
+/* typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t; */
 typedef enum { HDW_REINIT_NONE = 0, HDW_REINIT_REBOOT_ONLY, HDW_REINIT_FLASH, HDW_REINIT_FLASH_FULL } hdw_reinit_t;
 
 typedef struct config_t {
@@ -27,20 +29,13 @@ typedef struct config_t {
     char* progpath;
 
     bool verbose;
-    bool haz_config_file;
 
     char* datadir;
     char* style_filename;
 
     char* sd_dir;
 
-    int debug_port;
-    int start_debugger;
-    char* bootloader;
-    char* firmware;
-    hdw_reinit_t reinit;
-
-    frontend_t frontend;
+    ui4x_frontend_t frontend;
     bool small;
     bool tiny;
     bool chromeless;
@@ -51,6 +46,14 @@ typedef struct config_t {
     double zoom;
     bool netbook;
     int netbook_pivot_line;
+
+    /* options below not copied to UI */
+    bool haz_config_file;
+    int debug_port;
+    int start_debugger;
+    char* bootloader;
+    char* firmware;
+    hdw_reinit_t reinit;
 } config_t;
 
 /*************/

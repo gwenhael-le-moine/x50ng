@@ -27,16 +27,6 @@ typedef struct {
 /* Variables */
 /*************/
 static hdw_t* __hdw_state;
-static config_t* __config;
-
-static void ( *emulator_press_key )( int hpkey );
-static void ( *emulator_release_key )( int hpkey );
-static bool ( *emulator_is_key_pressed )( int hpkey );
-
-static bool ( *emulator_is_display_on )( void );
-static unsigned char ( *emulator_get_annunciators )( void );
-static void ( *emulator_get_lcd_buffer )( int* target );
-static int ( *emulator_get_contrast )( void );
 
 static GtkWidget* gtk_ui_annunciators[ NB_ANNUNCIATORS ] = { NULL, NULL, NULL, NULL, NULL, NULL };
 
@@ -138,13 +128,7 @@ static void gtk_ui_do_select_and_mount_sd_folder( hdw_t* hdw_state, GMenuItem* _
                                    ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, hdw_state );
 }
 
-static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, hdw_t* hdw_state )
-{
-    if ( __config->debug_port != 0 && !gdbserver_isactive() ) {
-        gdbserver_start( __config->debug_port );
-        gdb_handlesig( hdw_state->env, 0 );
-    }
-}
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, hdw_t* hdw_state ) { emulator_do_debug(); }
 
 static void gtk_ui_do_reset( hdw_t* hdw_state, GMenuItem* _menuitem )
 {
@@ -220,8 +204,8 @@ static void gtk_ui_open_menu( int x, int y, hdw_t* hdw_state )
 
     g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
     g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), hdw_state );
-    if ( __config->debug_port != 0 )
-        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
+    /* if ( ui4x_config.debug_port != 0 ) */
+    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
     g_menu_append( menu, "Start gdb server", "app.debug" );
 
     g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
@@ -479,7 +463,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
 
         case GDK_KEY_F7:
         case GDK_KEY_F10:
-            hdw_stop( __hdw_state );
+            emulator_do_stop();
             return GDK_EVENT_STOP;
 
         case GDK_KEY_F12:
@@ -498,7 +482,7 @@ static bool gtk_ui_handle_key_event( int keyval, hdw_t* hdw_state, key_event_t e
             return GDK_EVENT_STOP;
 
         case GDK_KEY_Menu:
-            gtk_ui_open_menu( ( LCD_WIDTH * __config->zoom ) / 2, ( LCD_HEIGHT * __config->zoom ) / 2, hdw_state );
+            gtk_ui_open_menu( ( LCD_WIDTH * ui4x_config.zoom ) / 2, ( LCD_HEIGHT * ui4x_config.zoom ) / 2, hdw_state );
             return GDK_EVENT_STOP;
 
         default:
@@ -564,18 +548,18 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
 
 static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
 {
-    char* style_full_path = g_build_filename( __config->style_filename, NULL );
+    char* style_full_path = g_build_filename( ui4x_config.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( __config->datadir, __config->style_filename, NULL );
+        style_full_path = g_build_filename( ui4x_config.datadir, ui4x_config.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( GLOBAL_DATADIR, __config->style_filename, NULL );
+        style_full_path = g_build_filename( GLOBAL_DATADIR, ui4x_config.style_filename, NULL );
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        style_full_path = g_build_filename( __config->progpath, __config->style_filename, NULL );
+        style_full_path = g_build_filename( ui4x_config.progpath, ui4x_config.style_filename, NULL );
 
     if ( !g_file_test( style_full_path, G_FILE_TEST_EXISTS ) )
-        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", __config->style_filename,
-                 __config->datadir, __config->style_filename, GLOBAL_DATADIR, __config->style_filename, __config->progpath,
-                 __config->style_filename );
+        fprintf( stderr, "Can't load style %s neither from %s/%s nor from %s/%s nor from %s/%s\n", ui4x_config.style_filename,
+                 ui4x_config.datadir, ui4x_config.style_filename, GLOBAL_DATADIR, ui4x_config.style_filename, ui4x_config.progpath,
+                 ui4x_config.style_filename );
     else {
         g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
         gtk_css_provider_load_from_path( style_provider, style_full_path );
@@ -583,7 +567,7 @@ static void _gtk_ui_activate__load_and_apply_CSS( hdw_t* hdw_state )
         gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
                                                     GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
 
-        if ( __config->verbose )
+        if ( ui4x_config.verbose )
             fprintf( stderr, "Loaded style from %s\n", style_full_path );
     }
 
@@ -600,14 +584,14 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
 
     gtk_window_set_decorated( GTK_WINDOW( gtk_ui_window ), true );
     gtk_window_set_resizable( GTK_WINDOW( gtk_ui_window ), true );
-    gtk_window_set_title( GTK_WINDOW( gtk_ui_window ), __config->name );
+    gtk_window_set_title( GTK_WINDOW( gtk_ui_window ), ui4x_config.name );
     gtk_window_set_decorated( GTK_WINDOW( gtk_ui_window ), true );
     // Sets the title of this instance
-    g_set_application_name( __config->name );
+    g_set_application_name( ui4x_config.name );
     // Sets the app_id of all instances
-    g_set_prgname( __config->progname );
+    g_set_prgname( ui4x_config.progname );
 
-    GtkWidget* window_container = gtk_box_new( __config->netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
+    GtkWidget* window_container = gtk_box_new( ui4x_config.netbook ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0 );
     gtk_widget_add_css_class( window_container, "window-container" );
     gtk_widget_set_name( window_container, "window-container" );
 
@@ -641,8 +625,8 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
     gtk_widget_add_css_class( gtk_ui_lcd_canvas, "lcd" );
     gtk_widget_set_name( gtk_ui_lcd_canvas, "lcd" );
 
-    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * __config->zoom ) );
-    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * __config->zoom ) );
+    gtk_drawing_area_set_content_width( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_WIDTH * ui4x_config.zoom ) );
+    gtk_drawing_area_set_content_height( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), ( LCD_HEIGHT * ui4x_config.zoom ) );
     gtk_drawing_area_set_draw_func( GTK_DRAWING_AREA( gtk_ui_lcd_canvas ), gtk_ui_redraw_lcd, hdw_state, NULL );
 
     GtkWidget* lcd_container = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -650,7 +634,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
     gtk_widget_add_css_class( lcd_container, "lcd-container" );
     gtk_widget_set_name( lcd_container, "lcd-container" );
 
-    gtk_widget_set_size_request( lcd_container, ( LCD_WIDTH * __config->zoom ), ( LCD_HEIGHT * __config->zoom ) );
+    gtk_widget_set_size_request( lcd_container, ( LCD_WIDTH * ui4x_config.zoom ), ( LCD_HEIGHT * ui4x_config.zoom ) );
     gtk_box_append( GTK_BOX( lcd_container ), gtk_ui_lcd_canvas );
     gtk_widget_set_halign( GTK_WIDGET( gtk_ui_lcd_canvas ), GTK_ALIGN_CENTER );
     gtk_widget_set_hexpand( GTK_WIDGET( gtk_ui_lcd_canvas ), false );
@@ -717,7 +701,7 @@ static void gtk_ui_activate( GtkApplication* app, hdw_t* hdw_state )
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         gtk_widget_add_css_class( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
-        gtk_box_append( ( GTK_BOX( row < __config->netbook_pivot_line ? high_keyboard_container : low_keyboard_container ) ),
+        gtk_box_append( ( GTK_BOX( row < ui4x_config.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ) ),
                         rows_containers[ row ] );
 
         switch ( row ) {
@@ -865,22 +849,9 @@ void gtk_ui_refresh_lcd( void )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( hdw_t* hdw_state, config_t* config, void ( *api_emulator_press_key )( int hpkey ),
-                  void ( *api_emulator_release_key )( int hpkey ), bool ( *api_emulator_is_key_pressed )( int hpkey ),
-                  bool ( *api_emulator_is_display_on )( void ), unsigned char ( *api_emulator_get_annunciators )( void ),
-                  void ( *api_emulator_get_lcd_buffer )( int* target ), int ( *api_emulator_get_contrast )( void ) )
+void gtk_ui_init( hdw_t* hdw_state )
 {
     __hdw_state = hdw_state;
-    __config = config;
-
-    emulator_press_key = api_emulator_press_key;
-    emulator_release_key = api_emulator_release_key;
-    emulator_is_key_pressed = api_emulator_is_key_pressed;
-
-    emulator_is_display_on = api_emulator_is_display_on;
-    emulator_get_annunciators = api_emulator_get_annunciators;
-    emulator_get_lcd_buffer = api_emulator_get_lcd_buffer;
-    emulator_get_contrast = api_emulator_get_contrast;
 
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
