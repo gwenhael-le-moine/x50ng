@@ -1,4 +1,3 @@
-#include "inner.h"
 #ifndef _X50NG_UI_H
 #  define _X50NG_UI_H 1
 
