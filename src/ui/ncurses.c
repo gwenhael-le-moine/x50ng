@@ -578,7 +578,7 @@ void ncurses_init( void )
     }
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", ui4x_config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", ui4x_config.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     wrefresh( lcd_window );
 }
