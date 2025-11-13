@@ -20,8 +20,8 @@
 #include "flash.h"
 #include "module.h"
 
-static hdw_t* __hdw_state;
-static config_t* __config;
+#define UI_EVENTS_REFRESH_INTERVAL 30000LL
+#define UI_LCD_REFRESH_INTERVAL 50000LL
 
 typedef struct hp50g_key_t {
     int column;
@@ -90,10 +90,13 @@ static hp50g_key_t x50ng_keyboard[ NB_HP50g_KEYS ] = {
     {.column = 3, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 2, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 1, .row = 7, .eint = -1 /* 7 */, .pressed = false},
-    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false},
+    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false}, /* HP50g_KEY_ENTER */
 };
 
 static int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
+
+static hdw_t* __hdw_state;
+static config_t* __config;
 
 /***********/
 /* SD card */
@@ -109,8 +112,6 @@ void emulator_get_sd_path( char** filename ) { s3c2410_sdi_get_path( __hdw_state
 /***********/
 /* machine */
 /***********/
-void emulator_stop( void ) { hdw_stop( __hdw_state ); }
-
 void emulator_sleep( void ) { hdw_set_idle( __hdw_state, HDW_ARM_SLEEP ); }
 
 void emulator_wake( void ) { hdw_set_idle( __hdw_state, HDW_ARM_RUN ); }
@@ -121,6 +122,8 @@ void emulator_reset( void )
     cpu_reset( __hdw_state->env );
     emulator_wake();
 }
+
+void emulator_stop( void ) { hdw_stop( __hdw_state ); }
 
 /************/
 /* keyboard */
@@ -133,17 +136,15 @@ static void set_key_state( const hp50g_key_t key, bool state )
         s3c2410_io_port_g_update( __hdw_state, key.column, key.row, state );
 }
 
-void press_key( int hpkey )
+static void set_key( int hpkey, bool state )
 {
-    set_key_state( x50ng_keyboard[ hpkey ], true );
-    x50ng_keyboard[ hpkey ].pressed = true;
+    set_key_state( x50ng_keyboard[ hpkey ], state );
+    x50ng_keyboard[ hpkey ].pressed = state;
 }
 
-void release_key( int hpkey )
-{
-    set_key_state( x50ng_keyboard[ hpkey ], false );
-    x50ng_keyboard[ hpkey ].pressed = false;
-}
+void press_key( int hpkey ) { set_key( hpkey, true ); }
+
+void release_key( int hpkey ) { set_key( hpkey, false ); }
 
 bool is_key_pressed( int hpkey )
 {
@@ -165,12 +166,10 @@ bool is_display_on( void )
 
 unsigned char get_annunciators( void )
 {
-    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
-
     char annunciators = 0;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; ++i )
-        if ( s3c2410_get_pixel_color( lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
+        if ( s3c2410_get_pixel_color( __hdw_state->s3c2410_lcd, LCD_WIDTH, x50ng_annunciators_index[ i ] ) > 0 )
             annunciators |= 0x01 << i;
 
     return annunciators;
@@ -180,11 +179,9 @@ int get_contrast( void ) { return 19; }
 
 void get_lcd_buffer( int* target )
 {
-    s3c2410_lcd_t* lcd = __hdw_state->s3c2410_lcd;
-
     for ( int y = 0; y < LCD_HEIGHT; ++y )
         for ( int x = 0; x < LCD_WIDTH; ++x )
-            target[ ( y * LCD_WIDTH ) + x ] = s3c2410_get_pixel_color( lcd, x, y );
+            target[ ( y * LCD_WIDTH ) + x ] = s3c2410_get_pixel_color( __hdw_state->s3c2410_lcd, x, y );
 }
 
 /************/
@@ -192,34 +189,28 @@ void get_lcd_buffer( int* target )
 /************/
 void emulator_debug( void )
 {
-    if ( __config->debug_port != 0 && !gdbserver_isactive() ) {
-        gdbserver_start( __config->debug_port );
-        gdb_handlesig( __hdw_state->env, 0 );
-    }
+    if ( __config->debug_port == 0 || gdbserver_isactive() )
+        return;
+
+    gdbserver_start( __config->debug_port );
+    gdb_handlesig( __hdw_state->env, 0 );
 }
 
 /****************/
 /* used in main */
 /****************/
-#define UI_EVENTS_REFRESH_INTERVAL 30000LL
-#define UI_LCD_REFRESH_INTERVAL 50000LL
-
 static void callback_handle_pending_inputs( void* data )
 {
-    hdw_t* hdw_state = data;
-
     ui_handle_pending_inputs();
 
-    timer_mod( hdw_state->timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+    timer_mod( __hdw_state->timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
 }
 
 static void callback_refresh_output( void* data )
 {
-    hdw_t* hdw_state = data;
-
     ui_refresh_output();
 
-    timer_mod( hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
+    timer_mod( __hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
 hdw_t* emulator_init( config_t* config )
@@ -253,8 +244,8 @@ hdw_t* emulator_init( config_t* config )
 
     init_timer();
 
-    __hdw_state->timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, __hdw_state );
-    __hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, callback_refresh_output, __hdw_state );
+    __hdw_state->timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, NULL );
+    __hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, callback_refresh_output, NULL );
 
     init_s3c2410_arm( __hdw_state );
     init_flash( __hdw_state, config );
@@ -287,7 +278,7 @@ hdw_t* emulator_init( config_t* config )
     if ( __config->sd_dir != NULL ) {
         if ( __config->verbose )
             fprintf( stderr, "> mounting --sd-dir %s\n", __config->sd_dir );
-        // s3c2410_sdi_mount( __hdw_state, strdup( __config->sd_dir ) );
+
         emulator_mount_sd( __config->sd_dir );
     }
 
