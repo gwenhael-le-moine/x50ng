@@ -40,35 +40,35 @@ typedef enum {
     HP50g_KEY_T,
     HP50g_KEY_U,
 
-    HP50g_KEY_ENTER,
     HP50g_KEY_V,
     HP50g_KEY_W,
     HP50g_KEY_X,
-    HP50g_KEY_Y, /* 30 */
+    HP50g_KEY_Y,
+    HP50g_KEY_Z,
 
     HP50g_KEY_ALPHA,
     HP50g_KEY_7,
     HP50g_KEY_8,
     HP50g_KEY_9,
-    HP50g_KEY_Z,
+    HP50g_KEY_MULTIPLY,
 
     HP50g_KEY_SHIFT_LEFT,
     HP50g_KEY_4,
     HP50g_KEY_5,
     HP50g_KEY_6,
-    HP50g_KEY_MULTIPLY, /* 40 */
+    HP50g_KEY_MINUS,
 
     HP50g_KEY_SHIFT_RIGHT,
     HP50g_KEY_1,
     HP50g_KEY_2,
     HP50g_KEY_3,
-    HP50g_KEY_MINUS,
+    HP50g_KEY_PLUS,
 
     HP50g_KEY_ON,
     HP50g_KEY_0,
     HP50g_KEY_PERIOD,
     HP50g_KEY_SPACE,
-    HP50g_KEY_PLUS, /* 50 */
+    HP50g_KEY_ENTER,
 
     NB_HP50g_KEYS
 } hp50g_keynames_t;

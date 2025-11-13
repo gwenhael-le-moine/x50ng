@@ -62,35 +62,35 @@ static hp50g_key_t x50ng_keyboard[ NB_HP50g_KEYS ] = {
     {.column = 1, .row = 2, .eint = -1 /* 2 */, .pressed = false},
     {.column = 0, .row = 2, .eint = -1 /* 2 */, .pressed = false},
 
-    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 4, .row = 3, .eint = -1 /* 3 */, .pressed = false},
     {.column = 3, .row = 3, .eint = -1 /* 3 */, .pressed = false},
     {.column = 2, .row = 3, .eint = -1 /* 3 */, .pressed = false},
     {.column = 1, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 0, .row = 3, .eint = -1 /* 3 */, .pressed = false},
 
     {.column = 0, .row = 0, .eint = 4,          .pressed = false}, /* HP50g_KEY_ALPHA */
     {.column = 3, .row = 4, .eint = -1 /* 4 */, .pressed = false},
     {.column = 2, .row = 4, .eint = -1 /* 4 */, .pressed = false},
     {.column = 1, .row = 4, .eint = -1 /* 4 */, .pressed = false},
-    {.column = 0, .row = 3, .eint = -1 /* 3 */, .pressed = false},
+    {.column = 0, .row = 4, .eint = -1 /* 4 */, .pressed = false},
 
     {.column = 0, .row = 0, .eint = 5,          .pressed = false}, /* HP50g_KEY_SHIFT_LEFT */
     {.column = 3, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 2, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 1, .row = 5, .eint = -1 /* 5 */, .pressed = false},
-    {.column = 0, .row = 4, .eint = -1 /* 4 */, .pressed = false},
+    {.column = 0, .row = 5, .eint = -1 /* 5 */, .pressed = false},
 
     {.column = 0, .row = 0, .eint = 6,          .pressed = false}, /* HP50g_KEY_SHIFT_RIGHT */
     {.column = 3, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 2, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 1, .row = 6, .eint = -1 /* 6 */, .pressed = false},
-    {.column = 0, .row = 5, .eint = -1 /* 5 */, .pressed = false},
+    {.column = 0, .row = 6, .eint = -1 /* 6 */, .pressed = false},
 
     {.column = 0, .row = 0, .eint = 0,          .pressed = false}, /* HP50g_KEY_ON */
     {.column = 3, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 2, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 1, .row = 7, .eint = -1 /* 7 */, .pressed = false},
-    {.column = 0, .row = 6, .eint = -1 /* 6 */, .pressed = false},
+    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false},
 };
 
 static int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
