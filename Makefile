@@ -1,3 +1,7 @@
+WITH_GTK = yes
+WITH_SDL = yes
+WITH_SDL2 = no
+
 TARGET = x50ng
 
 VERSION_MAJOR = 2
@@ -21,13 +25,39 @@ PKG_CONFIG ?= pkg-config
 LUA_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
 LUA_LDLIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 
-# GTK
-GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4)
-GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4) -lz -lm
+ifeq ($(WITH_GTK), yes)
+	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
+	GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
+	GTK_SRC = src/ui/gtk.c
+	GTK_HEADERS = src/ui/gtk.h
+endif
+# # GTK
+# GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4)
+# GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
 
-# Ncurses
-NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
+### Text UI
+NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1 -DHAS_NCURSES=1
 NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
+NCURSES_SRC = src/ui/ncurses.c
+NCURSES_HEADERS = src/ui/ncurses.h
+# # Ncurses
+# NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
+# NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
+
+### SDL UI
+ifeq ($(WITH_SDL), yes)
+	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl3) -DHAS_SDL=1
+	SDL_LDLIBS = $(shell "$(PKG_CONFIG)" --libs sdl3)
+	SDL_SRC = src/ui/sdl.c
+	SDL_HEADERS = src/ui/sdl.h
+endif
+
+ifeq ($(WITH_SDL2), yes)
+	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2) -DHAS_SDL=1 -DHAS_SDL2=1
+	SDL_LDLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
+	SDL_SRC = src/ui/sdl.c
+	SDL_HEADERS = src/ui/sdl.h
+endif
 
 # Embedded qemu
 QEMU_CFLAGS = \
@@ -118,6 +148,7 @@ X50NG_CFLAGS = \
 	$(X50NG_INCLUDES) \
 	$(QEMU_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(SDL_CFLAGS) \
 	$(NCURSES_CFLAGS) \
 	$(LUA_CFLAGS) \
 	-D_GNU_SOURCE=1 \
@@ -130,7 +161,7 @@ X50NG_CFLAGS = \
 COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)
 
 X50NG_LDFLAGS = $(LDFLAGS)
-X50NG_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(NCURSES_LDLIBS) $(LUA_LDLIBS)
+X50NG_LDLIBS = $(QEMU_OBJS) $(GDB_LIBS) $(COCOA_LIBS) $(GTK_LDLIBS) $(SDL_LDLIBS) $(NCURSES_LDLIBS) $(LUA_LDLIBS) -lz -lm
 
 ifeq ($(DEBUG), yes)
 	X50NG_CFLAGS += $(X50NG_DEBUG)
@@ -156,10 +187,15 @@ SRCS = \
 	./src/s3c2410/s3c2410_uart.c \
 	./src/s3c2410/s3c2410_usbdev.c \
 	./src/s3c2410/s3c2410_watchdog.c \
+	./src/ui/fonts.c \
+	./src/ui/48sx.c \
+	./src/ui/48gx.c \
+	./src/ui/49g.c \
 	./src/ui/50g.c \
 	./src/ui/api.c \
-	./src/ui/gtk.c \
-	./src/ui/ncurses.c \
+	./$(GTK_SRC) \
+	./$(SDL_SRC) \
+	./$(NCURSES_SRC) \
 	./src/for_qemu.c \
 	./src/hdw.c \
 	./src/emulator_api.c \

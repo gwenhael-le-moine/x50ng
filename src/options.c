@@ -116,11 +116,9 @@ static char* config_to_string( void )
                    "netbook = %s -- (gui only)\n"
                    "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
                    "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
-                   /* "\n" */
-                   /* "sd_dir = \"%s\"\n" */
                    "--- End of x50ng configuration -----------------------------------------------\n",
                    __config.name,
-                   __config.frontend == FRONTEND_GTK ? "gui" : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) ),
+                   __config.frontend == FRONTEND_GTK ? "gtk" : (__config.frontend == FRONTEND_SDL ? "sdk" : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) )),
                    __config.style_filename, __config.zoom, __config.netbook ? "true" : "false", __config.netbook_pivot_line,
                    __config.newrpl_keyboard ? "true" : "false" ) )
         exit( EXIT_FAILURE );
@@ -199,24 +197,27 @@ config_t* config_init( int argc, char* argv[] )
 
     const char* optstring = "d:hn:rs:vVz:";
     struct option long_options[] = {
-        {"help",               no_argument,       NULL,                   'h' },
-        {"version",            no_argument,       NULL,                   'v' },
-        {"verbose",            no_argument,       NULL,                   'V' },
+        {"help",             no_argument,       NULL,                   'h' },
+        {"version",          no_argument,       NULL,                   'v' },
+        {"verbose",          no_argument,       NULL,                   'V' },
 
-        {"print-config",       no_argument,       &print_config_and_exit, true},
-        {"overwrite-config",   no_argument,       &overwrite_config,      true},
-        {"datadir",            required_argument, NULL,                   'd' },
+        {"print-config",     no_argument,       &print_config_and_exit, true},
+        {"overwrite-config", no_argument,       &overwrite_config,      true},
+        {"datadir",          required_argument, NULL,                   'd' },
 
-        {"sd-dir",             required_argument, NULL,                   800 },
+        {"sd-dir",           required_argument, NULL,                   800 },
 
-        {"name",               required_argument, NULL,                   'n' },
+        {"name",             required_argument, NULL,                   'n' },
 
-        {"gui",                no_argument,       NULL,                   900 },
-        {"tui",                no_argument,       NULL,                   901 },
-        {"tui-small",          no_argument,       NULL,                   902 },
-        {"tui-tiny",           no_argument,       NULL,                   903 },
+        {"gtk",              no_argument,       NULL,                   900 },
+        {"gui",              no_argument,       NULL,                   900 }, /* DEPRECATED */
+        {"tui",              no_argument,       NULL,                   901 },
+        {"tui-small",        no_argument,       NULL,                   902 },
+        {"tui-tiny",         no_argument,       NULL,                   903 },
+        {"sdl",              no_argument,       NULL,                   904 },
+
+                /* {"fullscreen",         no_argument,       &clopt_fullscreen,      true}, */
         {"chromeless",         no_argument,       &clopt_chromeless,      true},
-
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"style",              required_argument, NULL,                   's' },
         {"zoom",               required_argument, NULL,                   'z' },
@@ -324,6 +325,11 @@ config_t* config_init( int argc, char* argv[] )
                 clopt_small = false;
                 clopt_tiny = true;
                 break;
+            case 904:
+                clopt_frontend = FRONTEND_SDL;
+                /* clopt_small = false; */
+                /* clopt_tiny = false; */
+                break;
             case 1001:
                 clopt_netbook_pivot_line = atoi( optarg );
                 break;
@@ -379,10 +385,15 @@ config_t* config_init( int argc, char* argv[] )
             __config.name = strdup( lua_name );
 
         lua_getglobal( config_lua_values, "frontend" );
-        const char* frontend = luaL_optstring( config_lua_values, -1, "gui" );
+        const char* frontend = luaL_optstring( config_lua_values, -1, "gtk" );
         if ( frontend != NULL ) {
-            if ( strcmp( frontend, "gui" ) == 0 ) {
+            if ( strcmp( frontend, "gtk" ) == 0 || strcmp( frontend, "gui" ) == 0 ) {
                 __config.frontend = FRONTEND_GTK;
+                __config.small = false;
+                __config.tiny = false;
+            }
+            if ( strcmp( frontend, "sdl" ) == 0 ) {
+                __config.frontend = FRONTEND_SDL;
                 __config.small = false;
                 __config.tiny = false;
             }

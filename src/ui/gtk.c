@@ -706,7 +706,7 @@ static void gtk_ui_activate( GtkApplication* app, void* data )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
             button = &gtk_ui_buttons[ key_index ];
-            button->key = &buttons_hp50g[ key_index ];
+            button->key = &buttons_50g[ key_index ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
             gtk_widget_add_css_class( keys_top_labels_containers[ key_index ], "top-labels-container" );
