@@ -1,3 +1,4 @@
+#include "inner.h"
 #ifndef _X50NG_UI_H
 #  define _X50NG_UI_H 1
 
@@ -112,18 +113,35 @@ typedef struct ui4x_config_t {
     char* sd_dir;
 } ui4x_config_t;
 
+typedef struct ui4x_emulator_api_t {
+    /* keyboard */
+    void ( *press_key )( int hpkey );
+    void ( *release_key )( int hpkey );
+    bool ( *is_key_pressed )( int hpkey );
+    /* display */
+    bool ( *is_display_on )( void );
+    unsigned char ( *get_annunciators )( void );
+    void ( *get_lcd_buffer )( int* target );
+    int ( *get_contrast )( void );
+    /* SD card */
+    int ( *do_mount_sd )( char* filename );
+    void ( *do_unmount_sd )( void );
+    bool ( *is_sd_mounted )( void );
+    void ( *get_sd_path )( char** filename );
+    /* machine */
+    void ( *do_reset )( void );
+    void ( *do_stop )( void );
+    void ( *do_sleep )( void );
+    void ( *do_wake )( void );
+    /* debugger */
+    void ( *do_debug )( void );
+} ui4x_emulator_api_t;
+
 extern ui4x_config_t ui4x_config; /* exposed as it's indirectly used outside of ui/ by LCD_HEIGHT */
 
 extern void ui_handle_pending_inputs( void );
 extern void ui_refresh_output( void );
-extern void ui_init( ui4x_config_t* opt, void ( *api_emulator_press_key )( int hpkey ), void ( *api_emulator_release_key )( int hpkey ),
-                     bool ( *api_emulator_is_key_pressed )( int hpkey ), bool ( *api_emulator_is_display_on )( void ),
-                     unsigned char ( *api_emulator_get_annunciators )( void ), void ( *api_emulator_get_lcd_buffer )( int* target ),
-                     int ( *api_emulator_get_contrast )( void ), void ( *api_emulator_do_reset )( void ),
-                     void ( *api_emulator_stop )( void ), void ( *api_emulator_sleep )( void ), void ( *api_emulator_wake )( void ),
-                     void ( *api_emulator_debug )( void ), int ( *api_emulator_do_mount_sd )( char* filename ),
-                     void ( *api_emulator_do_unmount_sd )( void ), bool ( *api_emulator_do_is_sd_mounted )( void ),
-                     void ( *api_emulator_do_get_sd_path )( char** filename ) );
+extern void ui_init( ui4x_config_t* opt, ui4x_emulator_api_t* emulator_api );
 extern void ui_exit( void );
 
 #endif /* !(_X50NG_UI_H) */

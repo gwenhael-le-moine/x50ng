@@ -279,7 +279,7 @@ static void toggle_help_window( void )
 
 static void ncurses_refresh_annunciators( void )
 {
-    int annunciators = emulator_get_annunciators();
+    int annunciators = ui4x_emulator_api.get_annunciators();
 
     if ( last_annunciators == annunciators )
         return;
@@ -295,12 +295,12 @@ static void ncurses_refresh_annunciators( void )
 /**********/
 void ncurses_refresh_lcd( void )
 {
-    if ( !emulator_is_display_on() )
+    if ( !ui4x_emulator_api.is_display_on() )
         return;
 
     ncurses_refresh_annunciators();
 
-    emulator_get_lcd_buffer( display_buffer_grayscale );
+    ui4x_emulator_api.get_lcd_buffer( display_buffer_grayscale );
 
     if ( ui4x_config.small )
         ncurses_draw_lcd_small();
@@ -509,11 +509,11 @@ void ncurses_handle_pending_inputs( void )
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                emulator_do_stop();
+                ui4x_emulator_api.do_stop();
                 break;
 
             case KEY_F( 12 ):
-                emulator_do_reset();
+                ui4x_emulator_api.do_reset();
                 break;
         }
     }
@@ -522,10 +522,10 @@ void ncurses_handle_pending_inputs( void )
         if ( keyboard_state[ key ] == new_keyboard_state[ key ] )
             continue; /* key hasn't changed state */
 
-        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !emulator_is_key_pressed( key ) )
-            emulator_press_key( key );
-        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && emulator_is_key_pressed( key ) )
-            emulator_release_key( key );
+        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !ui4x_emulator_api.is_key_pressed( key ) )
+            ui4x_emulator_api.press_key( key );
+        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && ui4x_emulator_api.is_key_pressed( key ) )
+            ui4x_emulator_api.release_key( key );
 
         keyboard_state[ key ] = new_keyboard_state[ key ];
     }

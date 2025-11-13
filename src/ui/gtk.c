@@ -50,7 +50,7 @@ static void gtk_ui_release_button( gtk_button_t* button )
 
     gtk_widget_remove_css_class( button->button, "key-down" );
 
-    emulator_release_key( key->hpkey );
+    ui4x_emulator_api.release_key( key->hpkey );
 }
 
 static bool gtk_ui_press_button( gtk_button_t* button, bool hold )
@@ -70,7 +70,7 @@ static bool gtk_ui_press_button( gtk_button_t* button, bool hold )
 
     gtk_widget_add_css_class( button->button, "key-down" );
 
-    emulator_press_key( key->hpkey );
+    ui4x_emulator_api.press_key( key->hpkey );
 
     return GDK_EVENT_STOP;
 }
@@ -81,7 +81,7 @@ static void gtk_ui_react_to_button_press( GtkGesture* _gesture, int _n_press, do
 
     gtk_ui_press_button( button, false );
 
-    emulator_press_key( key->hpkey );
+    ui4x_emulator_api.press_key( key->hpkey );
 }
 
 static void gtk_ui_react_to_button_release( GtkGesture* _gesture, int _n_press, double _x, double _y, gtk_button_t* button )
@@ -98,7 +98,7 @@ static void gtk_ui_react_to_button_right_click_release( gtk_button_t* button, Gt
 
     gtk_ui_press_button( button, true );
 
-    emulator_press_key( key->hpkey );
+    ui4x_emulator_api.press_key( key->hpkey );
 }
 
 static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, void* _data )
@@ -106,7 +106,7 @@ static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, 
     g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
     if ( file != NULL )
-        emulator_do_mount_sd( ( char* )g_file_peek_path( file ) );
+        ui4x_emulator_api.do_mount_sd( ( char* )g_file_peek_path( file ) );
 }
 
 static void gtk_ui_do_select_and_mount_sd_folder( void* data, GMenuItem* _menuitem )
@@ -118,9 +118,9 @@ static void gtk_ui_do_select_and_mount_sd_folder( void* data, GMenuItem* _menuit
                                    ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, data );
 }
 
-static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, void* _data ) { emulator_do_debug(); }
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, void* _data ) { ui4x_emulator_api.do_debug(); }
 
-static void gtk_ui_do_reset( void* _data, GMenuItem* _menuitem ) { emulator_do_reset(); }
+static void gtk_ui_do_reset( void* _data, GMenuItem* _menuitem ) { ui4x_emulator_api.do_reset(); }
 
 #ifdef TEST_PASTE
 static void x50g_string_to_keys_sequence( void* _data, const char* input )
@@ -152,7 +152,7 @@ static void gtk_ui_do_paste( void* data, GtkWidget* _menuitem )
 }
 #endif
 
-static void gtk_ui_do_quit( void* _data, GtkWidget* _menuitem ) { emulator_do_stop(); }
+static void gtk_ui_do_quit( void* _data, GtkWidget* _menuitem ) { ui4x_emulator_api.do_stop(); }
 
 static void gtk_ui_open_menu( int x, int y, void* data )
 {
@@ -166,21 +166,21 @@ static void gtk_ui_open_menu( int x, int y, void* data )
     g_menu_append( menu, "Paste", "app.paste" );
 #endif
 
-    if ( emulator_do_mount_sd != NULL && emulator_do_unmount_sd != NULL && emulator_do_is_sd_mounted != NULL &&
-         emulator_do_get_sd_path != NULL ) {
+    if ( ui4x_emulator_api.do_mount_sd != NULL && ui4x_emulator_api.do_unmount_sd != NULL && ui4x_emulator_api.is_sd_mounted != NULL &&
+         ui4x_emulator_api.get_sd_path != NULL ) {
         g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
         g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), data );
-        if ( !emulator_do_is_sd_mounted() )
+        if ( !ui4x_emulator_api.is_sd_mounted() )
             g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
         g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
 
         g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
-        g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( emulator_do_unmount_sd ), data );
+        g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( ui4x_emulator_api.do_unmount_sd ), data );
         char* unmount_label;
-        if ( emulator_do_is_sd_mounted() ) {
+        if ( ui4x_emulator_api.is_sd_mounted() ) {
             g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
             char* sd_path;
-            emulator_do_get_sd_path( &sd_path );
+            ui4x_emulator_api.get_sd_path( &sd_path );
             if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
                 exit( EXIT_FAILURE );
             free( sd_path );
@@ -190,7 +190,7 @@ static void gtk_ui_open_menu( int x, int y, void* data )
         free( unmount_label );
     }
 
-    if ( emulator_do_debug != NULL ) {
+    if ( ui4x_emulator_api.do_debug != NULL ) {
         g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
         g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), data );
         /* if ( ui4x_config.debug_port != 0 ) */
@@ -198,14 +198,14 @@ static void gtk_ui_open_menu( int x, int y, void* data )
         g_menu_append( menu, "Start gdb server", "app.debug" );
     }
 
-    if ( emulator_do_reset != NULL ) {
+    if ( ui4x_emulator_api.do_reset != NULL ) {
         g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
         g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), data );
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
         g_menu_append( menu, "Reset", "app.reset" );
     }
 
-    if ( emulator_do_stop != NULL ) {
+    if ( ui4x_emulator_api.do_stop != NULL ) {
         g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
         g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), data );
         g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
@@ -457,17 +457,17 @@ static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_t
 
         case GDK_KEY_F7:
         case GDK_KEY_F10:
-            emulator_do_stop();
+            ui4x_emulator_api.do_stop();
             return GDK_EVENT_STOP;
 
         case GDK_KEY_F12:
             switch ( event_type ) {
                 case KEY_PRESS:
-                    emulator_do_reset();
-                    emulator_do_sleep();
+                    ui4x_emulator_api.do_reset();
+                    ui4x_emulator_api.do_sleep();
                     break;
                 case KEY_RELEASE:
-                    emulator_do_wake();
+                    ui4x_emulator_api.do_wake();
                     break;
                 default:
                     break;
@@ -788,7 +788,7 @@ void gtk_ui_handle_pending_inputs( void )
 
 static void gtk_ui_refresh_annunciators( void )
 {
-    int annunciators = emulator_get_annunciators();
+    int annunciators = ui4x_emulator_api.get_annunciators();
 
     if ( last_annunciators == annunciators )
         return;
@@ -801,7 +801,7 @@ static void gtk_ui_refresh_annunciators( void )
 
 void gtk_ui_refresh_lcd( void )
 {
-    if ( !emulator_is_display_on() )
+    if ( !ui4x_emulator_api.is_display_on() )
         return;
 
     gtk_ui_refresh_annunciators();
@@ -811,7 +811,7 @@ void gtk_ui_refresh_lcd( void )
     gtk_ui_lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
     cairo_t* cr = cairo_create( gtk_ui_lcd_surface );
 
-    emulator_get_lcd_buffer( display_buffer_grayscale );
+    ui4x_emulator_api.get_lcd_buffer( display_buffer_grayscale );
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
             cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] / 15.0 );
