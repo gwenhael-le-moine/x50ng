@@ -166,42 +166,51 @@ static void gtk_ui_open_menu( int x, int y, void* data )
     g_menu_append( menu, "Paste", "app.paste" );
 #endif
 
-    g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
-    g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), data );
-    if ( !emulator_do_is_sd_mounted() )
-        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
-    g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
+    if ( emulator_do_mount_sd != NULL && emulator_do_unmount_sd != NULL && emulator_do_is_sd_mounted != NULL &&
+         emulator_do_get_sd_path != NULL ) {
+        g_autoptr( GSimpleAction ) act_mount_SD = g_simple_action_new( "mount_SD", NULL );
+        g_signal_connect_swapped( act_mount_SD, "activate", G_CALLBACK( gtk_ui_do_select_and_mount_sd_folder ), data );
+        if ( !emulator_do_is_sd_mounted() )
+            g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_mount_SD ) );
+        g_menu_append( menu, "Mount SD folder…", "app.mount_SD" );
 
-    g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
-    g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( emulator_do_unmount_sd ), data );
-    char* unmount_label;
-    if ( emulator_do_is_sd_mounted() ) {
-        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
-        char* sd_path;
-        emulator_do_get_sd_path( &sd_path );
-        if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
+        g_autoptr( GSimpleAction ) act_unmount_SD = g_simple_action_new( "unmount_SD", NULL );
+        g_signal_connect_swapped( act_unmount_SD, "activate", G_CALLBACK( emulator_do_unmount_sd ), data );
+        char* unmount_label;
+        if ( emulator_do_is_sd_mounted() ) {
+            g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_unmount_SD ) );
+            char* sd_path;
+            emulator_do_get_sd_path( &sd_path );
+            if ( -1 == asprintf( &unmount_label, "Unmount SD (%s)", sd_path ) )
+                exit( EXIT_FAILURE );
+            free( sd_path );
+        } else if ( -1 == asprintf( &unmount_label, "Unmount SD" ) )
             exit( EXIT_FAILURE );
-        free( sd_path );
-    } else if ( -1 == asprintf( &unmount_label, "Unmount SD" ) )
-        exit( EXIT_FAILURE );
-    g_menu_append( menu, unmount_label, "app.unmount_SD" );
-    free( unmount_label );
+        g_menu_append( menu, unmount_label, "app.unmount_SD" );
+        free( unmount_label );
+    }
 
-    g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
-    g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), data );
-    /* if ( ui4x_config.debug_port != 0 ) */
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
-    g_menu_append( menu, "Start gdb server", "app.debug" );
+    if ( emulator_do_debug != NULL ) {
+        g_autoptr( GSimpleAction ) act_debug = g_simple_action_new( "debug", NULL );
+        g_signal_connect_swapped( act_debug, "activate", G_CALLBACK( gtk_ui_do_start_gdb_server ), data );
+        /* if ( ui4x_config.debug_port != 0 ) */
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_debug ) );
+        g_menu_append( menu, "Start gdb server", "app.debug" );
+    }
 
-    g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
-    g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), data );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
-    g_menu_append( menu, "Reset", "app.reset" );
+    if ( emulator_do_reset != NULL ) {
+        g_autoptr( GSimpleAction ) act_reset = g_simple_action_new( "reset", NULL );
+        g_signal_connect_swapped( act_reset, "activate", G_CALLBACK( gtk_ui_do_reset ), data );
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_reset ) );
+        g_menu_append( menu, "Reset", "app.reset" );
+    }
 
-    g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
-    g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), data );
-    g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
-    g_menu_append( menu, "Quit", "app.quit" );
+    if ( emulator_do_stop != NULL ) {
+        g_autoptr( GSimpleAction ) act_quit = g_simple_action_new( "quit", NULL );
+        g_signal_connect_swapped( act_quit, "activate", G_CALLBACK( gtk_ui_do_quit ), data );
+        g_action_map_add_action( G_ACTION_MAP( action_group ), G_ACTION( act_quit ) );
+        g_menu_append( menu, "Quit", "app.quit" );
+    }
 
     GtkWidget* popup = gtk_popover_menu_new_from_model( G_MENU_MODEL( menu ) );
     gtk_widget_insert_action_group( popup, "app", G_ACTION_GROUP( action_group ) );
