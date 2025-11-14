@@ -16,6 +16,6 @@ jobs:
     - name: update deps
       run: sudo apt-get -y update
     - name: install deps
-      run: sudo apt install pkgconf libgtk-4-dev liblua5.4-dev
+      run: sudo apt install pkgconf libgtk-4-dev liblua5.4-dev libsdl3-dev
     - name: make standard
       run: make
