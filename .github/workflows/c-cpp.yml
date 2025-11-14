@@ -17,8 +17,8 @@ jobs:
       run: sudo apt-get -y update
     - name: install deps
       run: sudo apt install pkgconf libgtk-4-dev liblua5.4-dev libsdl2-dev
-    - name: make standard
-      run: make
+    - name: make without sdl
+      run: make WITH_SDL=no
     - name: clean
       run: make mrproper
     - name: make with sdl2 ui also
