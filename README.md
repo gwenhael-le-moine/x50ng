@@ -157,4 +157,5 @@ window {
 
 ## Limits
 
+- Doesn't compile with clang
 - The embedded and patched qemu is old (0.12.50) and doesn't support `aarch64`
