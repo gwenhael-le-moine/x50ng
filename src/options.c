@@ -118,7 +118,10 @@ static char* config_to_string( void )
                    "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
                    "--- End of x50ng configuration -----------------------------------------------\n",
                    __config.name,
-                   __config.frontend == FRONTEND_GTK ? "gtk" : (__config.frontend == FRONTEND_SDL ? "sdk" : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) )),
+                   __config.frontend == FRONTEND_GTK
+                       ? "gtk"
+                       : ( __config.frontend == FRONTEND_SDL ? "sdk"
+                                                             : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) ) ),
                    __config.style_filename, __config.zoom, __config.netbook ? "true" : "false", __config.netbook_pivot_line,
                    __config.newrpl_keyboard ? "true" : "false" ) )
         exit( EXIT_FAILURE );
@@ -197,26 +200,26 @@ config_t* config_init( int argc, char* argv[] )
 
     const char* optstring = "d:hn:rs:vVz:";
     struct option long_options[] = {
-        {"help",             no_argument,       NULL,                   'h' },
-        {"version",          no_argument,       NULL,                   'v' },
-        {"verbose",          no_argument,       NULL,                   'V' },
+        {"help",               no_argument,       NULL,                   'h' },
+        {"version",            no_argument,       NULL,                   'v' },
+        {"verbose",            no_argument,       NULL,                   'V' },
 
-        {"print-config",     no_argument,       &print_config_and_exit, true},
-        {"overwrite-config", no_argument,       &overwrite_config,      true},
-        {"datadir",          required_argument, NULL,                   'd' },
+        {"print-config",       no_argument,       &print_config_and_exit, true},
+        {"overwrite-config",   no_argument,       &overwrite_config,      true},
+        {"datadir",            required_argument, NULL,                   'd' },
 
-        {"sd-dir",           required_argument, NULL,                   800 },
+        {"sd-dir",             required_argument, NULL,                   800 },
 
-        {"name",             required_argument, NULL,                   'n' },
+        {"name",               required_argument, NULL,                   'n' },
 
-        {"gtk",              no_argument,       NULL,                   900 },
-        {"gui",              no_argument,       NULL,                   900 }, /* DEPRECATED */
-        {"tui",              no_argument,       NULL,                   901 },
-        {"tui-small",        no_argument,       NULL,                   902 },
-        {"tui-tiny",         no_argument,       NULL,                   903 },
-        {"sdl",              no_argument,       NULL,                   904 },
+        {"gtk",                no_argument,       NULL,                   900 },
+        {"gui",                no_argument,       NULL,                   900 }, /* DEPRECATED */
+        {"tui",                no_argument,       NULL,                   901 },
+        {"tui-small",          no_argument,       NULL,                   902 },
+        {"tui-tiny",           no_argument,       NULL,                   903 },
+        {"sdl",                no_argument,       NULL,                   904 },
 
-                /* {"fullscreen",         no_argument,       &clopt_fullscreen,      true}, */
+        /* {"fullscreen",         no_argument,       &clopt_fullscreen,      true}, */
         {"chromeless",         no_argument,       &clopt_chromeless,      true},
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"style",              required_argument, NULL,                   's' },

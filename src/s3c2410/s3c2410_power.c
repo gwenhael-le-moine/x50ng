@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include "../ui/api.h"
+#include "../ui4x/api.h"
 
 #include "../module.h"
 

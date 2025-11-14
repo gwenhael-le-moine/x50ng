@@ -14,7 +14,7 @@
 
 #include <memory.h>
 
-#include "ui/api.h"
+#include "ui4x/api.h"
 
 #include "emulator_api.h"
 #include "hdw.h"

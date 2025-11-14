@@ -247,8 +247,7 @@ static void __draw_texture( int x, int y, unsigned int w, unsigned int h, SDL_Te
 
 static void __draw_bitmap( int x, int y, unsigned int w, unsigned int h, unsigned char* data, int color_fg, int color_bg )
 {
-    // FIXME: segfault in bitmap_to_texture()
-    //__draw_texture( x, y, w, h, bitmap_to_texture( w, h, data, color_fg, color_bg ) );
+    __draw_texture( x, y, w, h, bitmap_to_texture( w, h, data, color_fg, color_bg ) );
 }
 
 static void write_with_small_font( int x, int y, const char* string, int color_fg, int color_bg )

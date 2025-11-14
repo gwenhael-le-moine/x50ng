@@ -246,7 +246,7 @@ typedef struct ui4x_emulator_api_t {
     void ( *do_debug )( void );
 } ui4x_emulator_api_t;
 
-extern ui4x_config_t ui4x_config; /* exposed as it's indirectly used outside of ui/ by LCD_HEIGHT */
+extern ui4x_config_t ui4x_config; /* exposed as it's indirectly used outside of ui4x/ by LCD_HEIGHT */
 
 extern void ui_handle_pending_inputs( void );
 extern void ui_refresh_output( void );

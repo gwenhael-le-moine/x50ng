@@ -28,8 +28,8 @@ LUA_LDLIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 ifeq ($(WITH_GTK), yes)
 	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
 	GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
-	GTK_SRC = src/ui/gtk.c
-	GTK_HEADERS = src/ui/gtk.h
+	GTK_SRC = src/ui4x/gtk.c
+	GTK_HEADERS = src/ui4x/gtk.h
 endif
 # # GTK
 # GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4)
@@ -38,8 +38,8 @@ endif
 ### Text UI
 NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1 -DHAS_NCURSES=1
 NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
-NCURSES_SRC = src/ui/ncurses.c
-NCURSES_HEADERS = src/ui/ncurses.h
+NCURSES_SRC = src/ui4x/ncurses.c
+NCURSES_HEADERS = src/ui4x/ncurses.h
 # # Ncurses
 # NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
 # NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
@@ -48,15 +48,15 @@ NCURSES_HEADERS = src/ui/ncurses.h
 ifeq ($(WITH_SDL), yes)
 	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl3) -DHAS_SDL=1
 	SDL_LDLIBS = $(shell "$(PKG_CONFIG)" --libs sdl3)
-	SDL_SRC = src/ui/sdl.c
-	SDL_HEADERS = src/ui/sdl.h
+	SDL_SRC = src/ui4x/sdl.c
+	SDL_HEADERS = src/ui4x/sdl.h
 endif
 
 ifeq ($(WITH_SDL2), yes)
 	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2) -DHAS_SDL=1 -DHAS_SDL2=1
 	SDL_LDLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
-	SDL_SRC = src/ui/sdl.c
-	SDL_HEADERS = src/ui/sdl.h
+	SDL_SRC = src/ui4x/sdl.c
+	SDL_HEADERS = src/ui4x/sdl.h
 endif
 
 # Embedded qemu
@@ -187,12 +187,13 @@ SRCS = \
 	./src/s3c2410/s3c2410_uart.c \
 	./src/s3c2410/s3c2410_usbdev.c \
 	./src/s3c2410/s3c2410_watchdog.c \
-	./src/ui/fonts.c \
-	./src/ui/48sx.c \
-	./src/ui/48gx.c \
-	./src/ui/49g.c \
-	./src/ui/50g.c \
-	./src/ui/api.c \
+	./src/ui4x/bitmaps_misc.c \
+	./src/ui4x/fonts.c \
+	./src/ui4x/48sx.c \
+	./src/ui4x/48gx.c \
+	./src/ui4x/49g.c \
+	./src/ui4x/50g.c \
+	./src/ui4x/api.c \
 	./$(GTK_SRC) \
 	./$(SDL_SRC) \
 	./$(NCURSES_SRC) \
@@ -250,7 +251,7 @@ compile_commands.json: distclean $(QEMU_DIR)/config-host.h
 
 # auto-format code
 pretty-code:
-	clang-format -i ./src/*.c ./src/*.h ./src/ui/*.c ./src/ui/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
+	clang-format -i ./src/*.c ./src/*.h ./src/ui4x/*.c ./src/ui4x/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
 
 
 # Cleaning
