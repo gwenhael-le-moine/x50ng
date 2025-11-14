@@ -242,114 +242,114 @@ static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_t
     switch ( keyval ) {
         case GDK_KEY_a:
         case GDK_KEY_F1:
-            hpkey = HP50g_KEY_A;
+            hpkey = UI4X_KEY_A;
             break;
         case GDK_KEY_b:
         case GDK_KEY_F2:
-            hpkey = HP50g_KEY_B;
+            hpkey = UI4X_KEY_B;
             break;
         case GDK_KEY_c:
         case GDK_KEY_F3:
-            hpkey = HP50g_KEY_C;
+            hpkey = UI4X_KEY_C;
             break;
         case GDK_KEY_d:
         case GDK_KEY_F4:
-            hpkey = HP50g_KEY_D;
+            hpkey = UI4X_KEY_D;
             break;
         case GDK_KEY_e:
         case GDK_KEY_F5:
-            hpkey = HP50g_KEY_E;
+            hpkey = UI4X_KEY_E;
             break;
         case GDK_KEY_f:
         case GDK_KEY_F6:
-            hpkey = HP50g_KEY_F;
+            hpkey = UI4X_KEY_F;
             break;
         case GDK_KEY_g:
-            hpkey = HP50g_KEY_G;
+            hpkey = UI4X_KEY_G;
             break;
         case GDK_KEY_h:
-            hpkey = HP50g_KEY_H;
+            hpkey = UI4X_KEY_H;
             break;
         case GDK_KEY_i:
-            hpkey = HP50g_KEY_I;
+            hpkey = UI4X_KEY_I;
             break;
         case GDK_KEY_j:
-            hpkey = HP50g_KEY_J;
+            hpkey = UI4X_KEY_J;
             break;
         case GDK_KEY_k:
-            hpkey = HP50g_KEY_K;
+            hpkey = UI4X_KEY_K;
             break;
         case GDK_KEY_l:
-            hpkey = HP50g_KEY_L;
+            hpkey = UI4X_KEY_L;
             break;
         case GDK_KEY_Up:
         case GDK_KEY_KP_Up:
-            hpkey = HP50g_KEY_UP;
+            hpkey = UI4X_KEY_UP;
             break;
         case GDK_KEY_Left:
         case GDK_KEY_KP_Left:
-            hpkey = HP50g_KEY_LEFT;
+            hpkey = UI4X_KEY_LEFT;
             break;
         case GDK_KEY_Down:
         case GDK_KEY_KP_Down:
-            hpkey = HP50g_KEY_DOWN;
+            hpkey = UI4X_KEY_DOWN;
             break;
         case GDK_KEY_Right:
         case GDK_KEY_KP_Right:
-            hpkey = HP50g_KEY_RIGHT;
+            hpkey = UI4X_KEY_RIGHT;
             break;
         case GDK_KEY_m:
-            hpkey = HP50g_KEY_M;
+            hpkey = UI4X_KEY_M;
             break;
         case GDK_KEY_n:
-            hpkey = HP50g_KEY_N;
+            hpkey = UI4X_KEY_N;
             break;
         case GDK_KEY_o:
         case GDK_KEY_apostrophe:
-            hpkey = HP50g_KEY_O;
+            hpkey = UI4X_KEY_O;
             break;
         case GDK_KEY_p:
-            hpkey = HP50g_KEY_P;
+            hpkey = UI4X_KEY_P;
             break;
         case GDK_KEY_BackSpace:
         case GDK_KEY_Delete:
         case GDK_KEY_KP_Delete:
-            hpkey = HP50g_KEY_BACKSPACE;
+            hpkey = UI4X_KEY_BACKSPACE;
             break;
         case GDK_KEY_dead_circumflex:
         case GDK_KEY_asciicircum:
         case GDK_KEY_q:
         case GDK_KEY_caret:
-            hpkey = HP50g_KEY_Q;
+            hpkey = UI4X_KEY_Q;
             break;
         case GDK_KEY_r:
-            hpkey = HP50g_KEY_R;
+            hpkey = UI4X_KEY_R;
             break;
         case GDK_KEY_s:
-            hpkey = HP50g_KEY_S;
+            hpkey = UI4X_KEY_S;
             break;
         case GDK_KEY_t:
-            hpkey = HP50g_KEY_T;
+            hpkey = UI4X_KEY_T;
             break;
         case GDK_KEY_u:
-            hpkey = HP50g_KEY_U;
+            hpkey = UI4X_KEY_U;
             break;
         case GDK_KEY_v:
-            hpkey = HP50g_KEY_V;
+            hpkey = UI4X_KEY_V;
             break;
         case GDK_KEY_w:
-            hpkey = HP50g_KEY_W;
+            hpkey = UI4X_KEY_W;
             break;
         case GDK_KEY_x:
-            hpkey = HP50g_KEY_X;
+            hpkey = UI4X_KEY_X;
             break;
         case GDK_KEY_y:
-            hpkey = HP50g_KEY_Y;
+            hpkey = UI4X_KEY_Y;
             break;
         case GDK_KEY_z:
         case GDK_KEY_slash:
         case GDK_KEY_KP_Divide:
-            hpkey = HP50g_KEY_Z;
+            hpkey = UI4X_KEY_Z;
             break;
         case GDK_KEY_Tab:
 #ifndef __APPLE__
@@ -359,100 +359,100 @@ static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_t
         case GDK_KEY_Meta_R:
         case GDK_KEY_Mode_switch:
 #endif
-            hpkey = HP50g_KEY_ALPHA;
+            hpkey = UI4X_KEY_ALPHA;
             break;
         case GDK_KEY_7:
         case GDK_KEY_KP_7:
-            hpkey = HP50g_KEY_7;
+            hpkey = UI4X_KEY_7;
             break;
         case GDK_KEY_8:
         case GDK_KEY_KP_8:
-            hpkey = HP50g_KEY_8;
+            hpkey = UI4X_KEY_8;
             break;
         case GDK_KEY_9:
         case GDK_KEY_KP_9:
-            hpkey = HP50g_KEY_9;
+            hpkey = UI4X_KEY_9;
             break;
         case GDK_KEY_multiply:
         case GDK_KEY_KP_Multiply:
-            hpkey = HP50g_KEY_MULTIPLY;
+            hpkey = UI4X_KEY_MULTIPLY;
             break;
         case GDK_KEY_Shift_L:
         case GDK_KEY_Shift_R:
-            hpkey = HP50g_KEY_SHIFT_LEFT;
+            hpkey = UI4X_KEY_LSHIFT;
             break;
         case GDK_KEY_4:
         case GDK_KEY_KP_4:
-            hpkey = HP50g_KEY_4;
+            hpkey = UI4X_KEY_4;
             break;
         case GDK_KEY_5:
         case GDK_KEY_KP_5:
-            hpkey = HP50g_KEY_5;
+            hpkey = UI4X_KEY_5;
             break;
         case GDK_KEY_6:
         case GDK_KEY_KP_6:
-            hpkey = HP50g_KEY_6;
+            hpkey = UI4X_KEY_6;
             break;
         case GDK_KEY_minus:
         case GDK_KEY_KP_Subtract:
-            hpkey = HP50g_KEY_MINUS;
+            hpkey = UI4X_KEY_MINUS;
             break;
         case GDK_KEY_Control_L:
         case GDK_KEY_Control_R:
-            hpkey = HP50g_KEY_SHIFT_RIGHT;
+            hpkey = UI4X_KEY_RSHIFT;
             break;
         case GDK_KEY_1:
         case GDK_KEY_KP_1:
-            hpkey = HP50g_KEY_1;
+            hpkey = UI4X_KEY_1;
             break;
         case GDK_KEY_2:
         case GDK_KEY_KP_2:
-            hpkey = HP50g_KEY_2;
+            hpkey = UI4X_KEY_2;
             break;
         case GDK_KEY_3:
         case GDK_KEY_KP_3:
-            hpkey = HP50g_KEY_3;
+            hpkey = UI4X_KEY_3;
             break;
         case GDK_KEY_plus:
         case GDK_KEY_KP_Add:
-            hpkey = HP50g_KEY_PLUS;
+            hpkey = UI4X_KEY_PLUS;
             break;
         case GDK_KEY_Escape:
-            hpkey = HP50g_KEY_ON;
+            hpkey = UI4X_KEY_ON;
             break;
         case GDK_KEY_0:
         case GDK_KEY_KP_0:
-            hpkey = HP50g_KEY_0;
+            hpkey = UI4X_KEY_0;
             break;
         case GDK_KEY_period:
         case GDK_KEY_comma:
         case GDK_KEY_KP_Decimal:
         case GDK_KEY_KP_Separator:
-            hpkey = HP50g_KEY_PERIOD;
+            hpkey = UI4X_KEY_PERIOD;
             break;
         case GDK_KEY_space:
         case GDK_KEY_KP_Space:
-            hpkey = HP50g_KEY_SPACE;
+            hpkey = UI4X_KEY_SPACE;
             break;
         case GDK_KEY_Return:
         case GDK_KEY_KP_Enter:
-            hpkey = HP50g_KEY_ENTER;
+            hpkey = UI4X_KEY_ENTER;
             break;
 
         /* QWERTY compat: US English, UK English, International English */
         case GDK_KEY_backslash:
-            hpkey = HP50g_KEY_MULTIPLY;
+            hpkey = UI4X_KEY_MULTIPLY;
             break;
         case GDK_KEY_equal:
-            hpkey = HP50g_KEY_PLUS;
+            hpkey = UI4X_KEY_PLUS;
             break;
 
         /* QWERTZ compat: German */
         case GDK_KEY_ssharp:
-            hpkey = HP50g_KEY_Z;
+            hpkey = UI4X_KEY_Z;
             break;
         case GDK_KEY_numbersign:
-            hpkey = HP50g_KEY_MULTIPLY;
+            hpkey = UI4X_KEY_MULTIPLY;
             break;
 
         case GDK_KEY_F7:

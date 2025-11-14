@@ -319,7 +319,7 @@ void ncurses_handle_pending_inputs( void )
 
     // each run records the state of the keyboard (pressed keys)
     // This allow to diff with previous state and issue PRESS and RELEASE calls
-    for ( int key = 0; key < NB_HP50g_KEYS; key++ )
+    for ( int key = 0; key < NB_KEYS; key++ )
         new_keyboard_state[ key ] = false;
 
     // READ KB STATE
@@ -330,175 +330,175 @@ void ncurses_handle_pending_inputs( void )
 
         switch ( k ) {
             case '0':
-                new_keyboard_state[ HP50g_KEY_0 ] = true;
+                new_keyboard_state[ UI4X_KEY_0 ] = true;
                 break;
             case '1':
-                new_keyboard_state[ HP50g_KEY_1 ] = true;
+                new_keyboard_state[ UI4X_KEY_1 ] = true;
                 break;
             case '2':
-                new_keyboard_state[ HP50g_KEY_2 ] = true;
+                new_keyboard_state[ UI4X_KEY_2 ] = true;
                 break;
             case '3':
-                new_keyboard_state[ HP50g_KEY_3 ] = true;
+                new_keyboard_state[ UI4X_KEY_3 ] = true;
                 break;
             case '4':
-                new_keyboard_state[ HP50g_KEY_4 ] = true;
+                new_keyboard_state[ UI4X_KEY_4 ] = true;
                 break;
             case '5':
-                new_keyboard_state[ HP50g_KEY_5 ] = true;
+                new_keyboard_state[ UI4X_KEY_5 ] = true;
                 break;
             case '6':
-                new_keyboard_state[ HP50g_KEY_6 ] = true;
+                new_keyboard_state[ UI4X_KEY_6 ] = true;
                 break;
             case '7':
-                new_keyboard_state[ HP50g_KEY_7 ] = true;
+                new_keyboard_state[ UI4X_KEY_7 ] = true;
                 break;
             case '8':
-                new_keyboard_state[ HP50g_KEY_8 ] = true;
+                new_keyboard_state[ UI4X_KEY_8 ] = true;
                 break;
             case '9':
-                new_keyboard_state[ HP50g_KEY_9 ] = true;
+                new_keyboard_state[ UI4X_KEY_9 ] = true;
                 break;
             case 'a':
-                new_keyboard_state[ HP50g_KEY_A ] = true;
+                new_keyboard_state[ UI4X_KEY_A ] = true;
                 break;
             case 'b':
-                new_keyboard_state[ HP50g_KEY_B ] = true;
+                new_keyboard_state[ UI4X_KEY_B ] = true;
                 break;
             case 'c':
-                new_keyboard_state[ HP50g_KEY_C ] = true;
+                new_keyboard_state[ UI4X_KEY_C ] = true;
                 break;
             case 'd':
-                new_keyboard_state[ HP50g_KEY_D ] = true;
+                new_keyboard_state[ UI4X_KEY_D ] = true;
                 break;
             case 'e':
-                new_keyboard_state[ HP50g_KEY_E ] = true;
+                new_keyboard_state[ UI4X_KEY_E ] = true;
                 break;
             case 'f':
-                new_keyboard_state[ HP50g_KEY_F ] = true;
+                new_keyboard_state[ UI4X_KEY_F ] = true;
                 break;
             case 'g':
-                new_keyboard_state[ HP50g_KEY_G ] = true;
+                new_keyboard_state[ UI4X_KEY_G ] = true;
                 break;
             case 'h':
-                new_keyboard_state[ HP50g_KEY_H ] = true;
+                new_keyboard_state[ UI4X_KEY_H ] = true;
                 break;
             case 'i':
-                new_keyboard_state[ HP50g_KEY_I ] = true;
+                new_keyboard_state[ UI4X_KEY_I ] = true;
                 break;
             case 'j':
-                new_keyboard_state[ HP50g_KEY_J ] = true;
+                new_keyboard_state[ UI4X_KEY_J ] = true;
                 break;
             case 'k':
-                new_keyboard_state[ HP50g_KEY_K ] = true;
+                new_keyboard_state[ UI4X_KEY_K ] = true;
                 break;
             case KEY_UP:
-                new_keyboard_state[ HP50g_KEY_UP ] = true;
+                new_keyboard_state[ UI4X_KEY_UP ] = true;
                 break;
             case 'l':
-                new_keyboard_state[ HP50g_KEY_L ] = true;
+                new_keyboard_state[ UI4X_KEY_L ] = true;
                 break;
             case 'm':
-                new_keyboard_state[ HP50g_KEY_M ] = true;
+                new_keyboard_state[ UI4X_KEY_M ] = true;
                 break;
             case 'n':
-                new_keyboard_state[ HP50g_KEY_N ] = true;
+                new_keyboard_state[ UI4X_KEY_N ] = true;
                 break;
             case 'o':
-                new_keyboard_state[ HP50g_KEY_O ] = true;
+                new_keyboard_state[ UI4X_KEY_O ] = true;
                 break;
             case 'p':
-                new_keyboard_state[ HP50g_KEY_P ] = true;
+                new_keyboard_state[ UI4X_KEY_P ] = true;
                 break;
             case KEY_LEFT:
-                new_keyboard_state[ HP50g_KEY_LEFT ] = true;
+                new_keyboard_state[ UI4X_KEY_LEFT ] = true;
                 break;
             case 'q':
-                new_keyboard_state[ HP50g_KEY_Q ] = true;
+                new_keyboard_state[ UI4X_KEY_Q ] = true;
                 break;
             case KEY_DOWN:
-                new_keyboard_state[ HP50g_KEY_DOWN ] = true;
+                new_keyboard_state[ UI4X_KEY_DOWN ] = true;
                 break;
             case 'r':
-                new_keyboard_state[ HP50g_KEY_R ] = true;
+                new_keyboard_state[ UI4X_KEY_R ] = true;
                 break;
             case KEY_RIGHT:
-                new_keyboard_state[ HP50g_KEY_RIGHT ] = true;
+                new_keyboard_state[ UI4X_KEY_RIGHT ] = true;
                 break;
             case 's':
-                new_keyboard_state[ HP50g_KEY_S ] = true;
+                new_keyboard_state[ UI4X_KEY_S ] = true;
                 break;
             case 't':
-                new_keyboard_state[ HP50g_KEY_T ] = true;
+                new_keyboard_state[ UI4X_KEY_T ] = true;
                 break;
             case 'u':
-                new_keyboard_state[ HP50g_KEY_U ] = true;
+                new_keyboard_state[ UI4X_KEY_U ] = true;
                 break;
             case 'v':
-                new_keyboard_state[ HP50g_KEY_V ] = true;
+                new_keyboard_state[ UI4X_KEY_V ] = true;
                 break;
             case 'w':
-                new_keyboard_state[ HP50g_KEY_W ] = true;
+                new_keyboard_state[ UI4X_KEY_W ] = true;
                 break;
             case 'x':
-                new_keyboard_state[ HP50g_KEY_X ] = true;
+                new_keyboard_state[ UI4X_KEY_X ] = true;
                 break;
             case 'y':
-                new_keyboard_state[ HP50g_KEY_Y ] = true;
+                new_keyboard_state[ UI4X_KEY_Y ] = true;
                 break;
             case 'z':
             case '/':
-                new_keyboard_state[ HP50g_KEY_Z ] = true;
+                new_keyboard_state[ UI4X_KEY_Z ] = true;
                 break;
             case ' ':
-                new_keyboard_state[ HP50g_KEY_SPACE ] = true;
+                new_keyboard_state[ UI4X_KEY_SPACE ] = true;
                 break;
             case KEY_DC:
             case KEY_BACKSPACE:
             case 127:
             case '\b':
-                new_keyboard_state[ HP50g_KEY_BACKSPACE ] = true;
+                new_keyboard_state[ UI4X_KEY_BACKSPACE ] = true;
                 break;
             case '.':
-                new_keyboard_state[ HP50g_KEY_PERIOD ] = true;
+                new_keyboard_state[ UI4X_KEY_PERIOD ] = true;
                 break;
             case '+':
-                new_keyboard_state[ HP50g_KEY_PLUS ] = true;
+                new_keyboard_state[ UI4X_KEY_PLUS ] = true;
                 break;
             case '-':
-                new_keyboard_state[ HP50g_KEY_MINUS ] = true;
+                new_keyboard_state[ UI4X_KEY_MINUS ] = true;
                 break;
             case '*':
-                new_keyboard_state[ HP50g_KEY_MULTIPLY ] = true;
+                new_keyboard_state[ UI4X_KEY_MULTIPLY ] = true;
                 break;
 
             case KEY_F( 2 ):
             case '[':
             case 339: /* PgUp */
-                new_keyboard_state[ HP50g_KEY_SHIFT_LEFT ] = true;
+                new_keyboard_state[ UI4X_KEY_LSHIFT ] = true;
                 break;
             case KEY_F( 3 ):
             case ']':
             case 338: /* PgDn */
-                new_keyboard_state[ HP50g_KEY_SHIFT_RIGHT ] = true;
+                new_keyboard_state[ UI4X_KEY_RSHIFT ] = true;
                 break;
             case KEY_F( 4 ):
             case ';':
             case KEY_IC: /* Ins */
-                new_keyboard_state[ HP50g_KEY_ALPHA ] = true;
+                new_keyboard_state[ UI4X_KEY_ALPHA ] = true;
                 break;
             case KEY_F( 5 ):
             case '\\':
             case 27:  /* Esc */
             case 262: /* Home */
-                new_keyboard_state[ HP50g_KEY_ON ] = true;
+                new_keyboard_state[ UI4X_KEY_ON ] = true;
                 break;
             case KEY_F( 6 ):
             case KEY_ENTER:
             case '\n':
             case ',':
             case 13:
-                new_keyboard_state[ HP50g_KEY_ENTER ] = true;
+                new_keyboard_state[ UI4X_KEY_ENTER ] = true;
                 break;
 
             case KEY_F( 1 ):
@@ -518,7 +518,7 @@ void ncurses_handle_pending_inputs( void )
         }
     }
 
-    for ( int key = 0; key < NB_HP50g_KEYS; key++ ) {
+    for ( int key = 0; key < NB_KEYS; key++ ) {
         if ( keyboard_state[ key ] == new_keyboard_state[ key ] )
             continue; /* key hasn't changed state */
 
