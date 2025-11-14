@@ -80,6 +80,7 @@ typedef struct button_t {
     const char* css_class;
     const char* css_id;
     const char* label;
+    const char* label_sdl;
     const char* letter;
     const char* left;
     const char* left_sdl;

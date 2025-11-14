@@ -668,6 +668,12 @@ static unsigned char big_font_A_bits[] = {
     30, 51, 51, 51, 51, 51, 63, 51, 51, 51,
 };
 
+#define big_font_B_width 8
+#define big_font_B_height 10
+static unsigned char big_font_B_bits[] = {
+    0b1111, 0b11011, 0b110011, 0b110011, 0b1111, 0b110011, 0b110011, 0b110011, 0b11011, 0b1111,
+};
+
 #define big_font_C_width 8
 #define big_font_C_height 10
 static unsigned char big_font_C_bits[] = {
@@ -714,6 +720,12 @@ static unsigned char big_font_I_bits[] = {
 #define big_font_J_height 10
 static unsigned char big_font_J_bits[] = {
     96, 96, 96, 96, 96, 96, 96, 51, 51, 30,
+};
+
+#define big_font_K_width 8
+#define big_font_K_height 10
+static unsigned char big_font_K_bits[] = {
+    0b110011, 0b110011, 0b110011, 0b11011, 0b1111, 0b11011, 0b110011, 0b110011, 0b11011, 0b110011,
 };
 
 #define big_font_L_width 8
@@ -797,7 +809,7 @@ static unsigned char big_font_X_bits[] = {
 #define big_font_Y_width 8
 #define big_font_Y_height 10
 static unsigned char big_font_Y_bits[] = {
-    51, 51, 30, 30, 12, 12, 12, 12, 12, 12,
+    0b110011, 51, 30, 30, 12, 12, 12, 12, 12, 12,
 };
 
 letter_t big_font[ 128 ] = {
@@ -867,7 +879,7 @@ letter_t big_font[ 128 ] = {
     {0,                  0,                   0                },
     {0,                  0,                   0                }, /* # 64 */
     {big_font_A_width,   big_font_A_height,   big_font_A_bits  },
-    {0,                  0,                   0                },
+    {big_font_B_width,   big_font_B_height,   big_font_B_bits  },
     {big_font_C_width,   big_font_C_height,   big_font_C_bits  },
     {big_font_D_width,   big_font_D_height,   big_font_D_bits  },
     {big_font_E_width,   big_font_E_height,   big_font_E_bits  },
@@ -876,7 +888,7 @@ letter_t big_font[ 128 ] = {
     {big_font_H_width,   big_font_H_height,   big_font_H_bits  },
     {big_font_I_width,   big_font_I_height,   big_font_I_bits  },
     {big_font_J_width,   big_font_J_height,   big_font_J_bits  },
-    {0,                  0,                   0                },
+    {big_font_K_width,   big_font_K_height,   big_font_K_bits  },
     {big_font_L_width,   big_font_L_height,   big_font_L_bits  },
     {big_font_M_width,   big_font_M_height,   big_font_M_bits  },
     {big_font_N_width,   big_font_N_height,   big_font_N_bits  },
