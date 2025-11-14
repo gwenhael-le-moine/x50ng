@@ -57,18 +57,18 @@ int main( int argc, char** argv )
 
     ui4x_config_t config_ui = {
         .model = MODEL_50G,
-        .shiftless = false,
         .big_screen = true,
         .black_lcd = true,
 
         .frontend = __config.frontend,
         .newrpl_keyboard = __config.newrpl_keyboard,
+        .shiftless = __config.shiftless,
 
-        .mono = false,
-        .gray = false,
+        .mono = __config.mono,
+        .gray = __config.gray,
 
-        .chromeless = false,
-        .fullscreen = false,
+        .chromeless = __config.chromeless,
+        .fullscreen = __config.fullscreen,
         .zoom = __config.zoom,
 
         .tiny = __config.tiny,

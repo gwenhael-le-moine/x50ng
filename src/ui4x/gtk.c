@@ -378,8 +378,16 @@ static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_t
             hpkey = UI4X_KEY_MULTIPLY;
             break;
         case GDK_KEY_Shift_L:
+            if ( ui4x_config.shiftless )
+                return GDK_EVENT_PROPAGATE;
+            else
+                hpkey = UI4X_KEY_LSHIFT;
+            break;
         case GDK_KEY_Shift_R:
-            hpkey = UI4X_KEY_LSHIFT;
+            if ( ui4x_config.shiftless )
+                return GDK_EVENT_PROPAGATE;
+            else
+                hpkey = UI4X_KEY_RSHIFT;
             break;
         case GDK_KEY_4:
         case GDK_KEY_KP_4:
@@ -398,8 +406,10 @@ static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_t
             hpkey = UI4X_KEY_MINUS;
             break;
         case GDK_KEY_Control_L:
-        case GDK_KEY_Control_R:
             hpkey = UI4X_KEY_RSHIFT;
+            break;
+        case GDK_KEY_Control_R:
+            hpkey = UI4X_KEY_LSHIFT;
             break;
         case GDK_KEY_1:
         case GDK_KEY_KP_1:

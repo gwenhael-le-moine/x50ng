@@ -39,6 +39,10 @@ typedef struct config_t {
     bool small;
     bool tiny;
     bool chromeless;
+    bool fullscreen;
+    bool shiftless;
+    bool mono;
+    bool gray;
 
     bool newrpl_keyboard;
     char* name;

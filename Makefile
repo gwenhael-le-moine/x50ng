@@ -1,4 +1,3 @@
-WITH_GTK = yes
 WITH_SDL = yes
 WITH_SDL2 = no
 
@@ -25,24 +24,16 @@ PKG_CONFIG ?= pkg-config
 LUA_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
 LUA_LDLIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 
-ifeq ($(WITH_GTK), yes)
-	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
-	GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
-	GTK_SRC = src/ui4x/gtk.c
-	GTK_HEADERS = src/ui4x/gtk.h
-endif
-# # GTK
-# GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4)
-# GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
+GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
+GTK_LDLIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
+GTK_SRC = src/ui4x/gtk.c
+GTK_HEADERS = src/ui4x/gtk.h
 
 ### Text UI
 NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1 -DHAS_NCURSES=1
 NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 NCURSES_SRC = src/ui4x/ncurses.c
 NCURSES_HEADERS = src/ui4x/ncurses.h
-# # Ncurses
-# NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
-# NCURSES_LDLIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
 ### SDL UI
 ifeq ($(WITH_SDL), yes)
@@ -93,9 +84,9 @@ QEMU_OBJS = $(QEMU_SRCS:.c=.o)
 # TEMPO hack
 VVFAT_SRCS =	\
 	$(QEMU_DIR)/cutils.c \
-	./src/s3c2410/block-vvfat.c \
-	./src/s3c2410/block-qcow.c \
-	./src/s3c2410/block-raw.c
+	src/s3c2410/block-vvfat.c \
+	src/s3c2410/block-qcow.c \
+	src/s3c2410/block-raw.c
 VVFAT_OBJS = $(VVFAT_SRCS:.c=.o)
 
 X50NG_DEBUG = \
@@ -126,9 +117,9 @@ X50NG_DEBUG = \
 	-DDEBUG_X50NG_MAIN
 
 X50NG_INCLUDES = \
-	-I./src/ \
-	-I./src/s3c2410/ \
-	-I./${QEMU_DIR}/ \
+	-Isrc/ \
+	-Isrc/s3c2410/ \
+	-I${QEMU_DIR}/ \
 	$(QEMU_INCLUDES)
 
 X50NG_DISABLED_WARNINGS = \
@@ -169,44 +160,44 @@ ifeq ($(DEBUG), yes)
 endif
 
 SRCS = \
-	./src/s3c2410/block.c \
-	./src/s3c2410/s3c2410.c \
-	./src/s3c2410/s3c2410_adc.c \
-	./src/s3c2410/s3c2410_arm.c \
-	./src/s3c2410/s3c2410_intc.c \
-	./src/s3c2410/s3c2410_io_port.c \
-	./src/s3c2410/s3c2410_lcd.c \
-	./src/s3c2410/s3c2410_memc.c \
-	./src/s3c2410/s3c2410_nand.c \
-	./src/s3c2410/s3c2410_power.c \
-	./src/s3c2410/s3c2410_rtc.c \
-	./src/s3c2410/s3c2410_sdi.c \
-	./src/s3c2410/s3c2410_spi.c \
-	./src/s3c2410/s3c2410_sram.c \
-	./src/s3c2410/s3c2410_timer.c \
-	./src/s3c2410/s3c2410_uart.c \
-	./src/s3c2410/s3c2410_usbdev.c \
-	./src/s3c2410/s3c2410_watchdog.c \
-	./src/ui4x/bitmaps_misc.c \
-	./src/ui4x/fonts.c \
-	./src/ui4x/48sx.c \
-	./src/ui4x/48gx.c \
-	./src/ui4x/49g.c \
-	./src/ui4x/50g.c \
-	./src/ui4x/api.c \
-	./$(GTK_SRC) \
-	./$(SDL_SRC) \
-	./$(NCURSES_SRC) \
-	./src/for_qemu.c \
-	./src/hdw.c \
-	./src/emulator_api.c \
-	./src/flash.c \
-	./src/gdbstub.c \
-	./src/main.c \
-	./src/module.c \
-	./src/options.c \
-	./src/sram.c \
-	./src/timer.c
+	src/s3c2410/block.c \
+	src/s3c2410/s3c2410.c \
+	src/s3c2410/s3c2410_adc.c \
+	src/s3c2410/s3c2410_arm.c \
+	src/s3c2410/s3c2410_intc.c \
+	src/s3c2410/s3c2410_io_port.c \
+	src/s3c2410/s3c2410_lcd.c \
+	src/s3c2410/s3c2410_memc.c \
+	src/s3c2410/s3c2410_nand.c \
+	src/s3c2410/s3c2410_power.c \
+	src/s3c2410/s3c2410_rtc.c \
+	src/s3c2410/s3c2410_sdi.c \
+	src/s3c2410/s3c2410_spi.c \
+	src/s3c2410/s3c2410_sram.c \
+	src/s3c2410/s3c2410_timer.c \
+	src/s3c2410/s3c2410_uart.c \
+	src/s3c2410/s3c2410_usbdev.c \
+	src/s3c2410/s3c2410_watchdog.c \
+	src/ui4x/bitmaps_misc.c \
+	src/ui4x/fonts.c \
+	src/ui4x/48sx.c \
+	src/ui4x/48gx.c \
+	src/ui4x/49g.c \
+	src/ui4x/50g.c \
+	src/ui4x/api.c \
+	src/for_qemu.c \
+	src/hdw.c \
+	src/emulator_api.c \
+	src/flash.c \
+	src/gdbstub.c \
+	src/main.c \
+	src/module.c \
+	src/options.c \
+	src/sram.c \
+	src/timer.c \
+	$(GTK_SRC) \
+	$(NCURSES_SRC) \
+	$(SDL_SRC)
 
 OBJS = $(SRCS:.c=.o)
 
@@ -251,7 +242,7 @@ compile_commands.json: distclean $(QEMU_DIR)/config-host.h
 
 # auto-format code
 pretty-code:
-	clang-format -i ./src/*.c ./src/*.h ./src/ui4x/*.c ./src/ui4x/*.h ./src/s3c2410/*.c $(shell ls ./src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
+	clang-format -i src/*.c src/*.h src/ui4x/*.c src/ui4x/*.h src/s3c2410/*.c $(shell ls src/s3c2410/*.h | grep -v s3c2410.h) ## s3c2410.h triggers an error
 
 
 # Cleaning

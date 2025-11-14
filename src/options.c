@@ -32,6 +32,10 @@ static config_t __config = {
     .small = false,
     .tiny = false,
     .chromeless = false,
+    .fullscreen = false,
+    .shiftless = false,
+    .mono = false,
+    .gray = false,
 
     .newrpl_keyboard = false,
     .name = NULL,
@@ -108,14 +112,18 @@ static char* config_to_string( void )
                    "-- This is a comment\n"
                    "name = \"%s\"  -- this customize the title of the window\n"
                    "\n"
-                   "frontend = \"%s\" -- possible values are: \"gui\" (default), \"tui\", \"tui-small\", \"tui-tiny\"\n"
+                   "frontend = \"%s\" -- possible values are: \"gtk\" (default), \"sdl\", \"tui\", \"tui-small\", \"tui-tiny\"\n"
                    "\n"
-                   "-- the following only apply to 'gui' frontend \n"
-                   "style = \"%s\" -- CSS file (relative to this file) (gui only)\n"
-                   "zoom = %f -- (gui only)\n"
-                   "netbook = %s -- (gui only)\n"
-                   "netbook_pivot_line = %i -- this marks the transition between higher and lower keyboard (gui only)\n"
-                   "newrpl_keyboard = %s -- when true this makes the keyboard labels more suited to newRPL use (gui only)\n"
+                   "style = \"%s\" -- CSS file (relative to this file) (gtk only)\n"
+                   "zoom = %f -- (gtk or sdl only)\n"
+                   "netbook = %s -- (gtk only)\n"
+                   "netbook_pivot_line = %i -- marks the transition between higher and lower keyboard (gtk only)\n"
+                   "newrpl_keyboard = %s -- makes the keyboard labels more suited to newRPL use (gtk or sdl only)\n"
+                   "shiftless = %s\n"
+                   "chromeless = %s\n"
+                   "fullscreen = %s\n"
+                   "mono = %s\n"
+                   "gray = %s\n"
                    "--- End of x50ng configuration -----------------------------------------------\n",
                    __config.name,
                    __config.frontend == FRONTEND_GTK
@@ -123,7 +131,9 @@ static char* config_to_string( void )
                        : ( __config.frontend == FRONTEND_SDL ? "sdk"
                                                              : ( __config.tiny ? "tui-tiny" : ( __config.small ? "tui-small" : "tui" ) ) ),
                    __config.style_filename, __config.zoom, __config.netbook ? "true" : "false", __config.netbook_pivot_line,
-                   __config.newrpl_keyboard ? "true" : "false" ) )
+                   __config.newrpl_keyboard ? "true" : "false", __config.shiftless ? "true" : "false",
+                   __config.chromeless ? "true" : "false", __config.fullscreen ? "true" : "false", __config.mono ? "true" : "false",
+                   __config.gray ? "true" : "false" ) )
         exit( EXIT_FAILURE );
 
     return config;
@@ -194,6 +204,10 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_small = -1;
     int clopt_tiny = -1;
     int clopt_chromeless = -1;
+    int clopt_fullscreen = -1;
+    int clopt_shiftless = -1;
+    int clopt_mono = -1;
+    int clopt_gray = -1;
 
     int print_config_and_exit = false;
     int overwrite_config = false;
@@ -217,9 +231,13 @@ config_t* config_init( int argc, char* argv[] )
         {"tui",                no_argument,       NULL,                   901 },
         {"tui-small",          no_argument,       NULL,                   902 },
         {"tui-tiny",           no_argument,       NULL,                   903 },
+#ifdef HAS_SDL
         {"sdl",                no_argument,       NULL,                   904 },
-
-        /* {"fullscreen",         no_argument,       &clopt_fullscreen,      true}, */
+#endif
+        {"fullscreen",         no_argument,       &clopt_fullscreen,      true},
+        {"shiftless",          no_argument,       &clopt_shiftless,       true},
+        {"mono",               no_argument,       &clopt_mono,            true},
+        {"gray",               no_argument,       &clopt_gray,            true},
         {"chromeless",         no_argument,       &clopt_chromeless,      true},
         {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
         {"style",              required_argument, NULL,                   's' },
@@ -261,16 +279,23 @@ config_t* config_init( int argc, char* argv[] )
                          "to its latest format if needed)\n"
                          "\n"
                          "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
-                         "   --gui                     use GUI (Graphical UI) (default: true)\n"
-                         "   --tui                     use TUI (Terminal text UI) (default: false)\n"
-                         "   --tui-small               use TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
-                         "   --tui-tiny                use TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
-                         "   --chromeless              borderless LCD (TUI only) (default: false)\n"
-                         "   --netbook                 horizontal window (GUI only) (default: false)\n"
+                         "   --gtk                     use gtk GUI (Graphical UI) (default: true)\n"
+                         "   --sdl                     use sdl GUI (Graphical UI) (default: false)\n"
+                         "   --tui                     use ncurses TUI (Terminal text UI) (default: false)\n"
+                         "   --tui-small               use ncurses TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
+                         "   --tui-tiny                use ncurses TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
+                         "   --chromeless              borderless LCD (ncurses or sdl only) (default: false)\n"
+                         "   --fullscreen              fullscreen (sdl only) (default: false)\n"
+                         "   --netbook                 horizontal window (gtk only) (default: false)\n"
                          "   --netbook-pivot-line      at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
                          "   --newrpl-keyboard         label keyboard for newRPL (GUI only)\n"
-                         "-s --style[=filename]        css filename in <datadir> (GUI only) (default: style-50g.css)\n"
-                         "-z --zoom[=X]                scale LCD by X (GUI only) (default: 2.0)\n"
+                         "-s --style[=filename]        css filename in <datadir> (gtk only) (default: style-50g.css)\n"
+                         "-z --zoom[=X]                scale LCD by X (gtk or sdl only) (default: 2.0)\n"
+                         "   --chromeless   only show display (default: false)\n"
+                         "   --fullscreen   make the UI fullscreen (default: false)\n"
+                         "   --mono         make the UI monochrome (default: false)\n"
+                         "   --gray         make the UI grayscale (default: false)\n"
+                         "   --shiftless    don't map the shift keys to let them free for numbers (default: false)\n"
                          "\n"
                          "   --enable-debug[=port]     enable the debugger interface (default port: %i)\n"
                          "   --debug                   use along -D to also start the debugger immediately\n"
@@ -310,8 +335,6 @@ config_t* config_init( int argc, char* argv[] )
                 break;
             case 900:
                 clopt_frontend = FRONTEND_GTK;
-                /* clopt_small = false; */
-                /* clopt_tiny = false; */
                 break;
             case 901:
                 clopt_frontend = FRONTEND_NCURSES;
@@ -330,8 +353,6 @@ config_t* config_init( int argc, char* argv[] )
                 break;
             case 904:
                 clopt_frontend = FRONTEND_SDL;
-                /* clopt_small = false; */
-                /* clopt_tiny = false; */
                 break;
             case 1001:
                 clopt_netbook_pivot_line = atoi( optarg );
@@ -387,6 +408,9 @@ config_t* config_init( int argc, char* argv[] )
         if ( lua_name != NULL )
             __config.name = strdup( lua_name );
 
+        lua_getglobal( config_lua_values, "shiftless" );
+        __config.shiftless = lua_toboolean( config_lua_values, -1 );
+
         lua_getglobal( config_lua_values, "frontend" );
         const char* frontend = luaL_optstring( config_lua_values, -1, "gtk" );
         if ( frontend != NULL ) {
@@ -428,14 +452,23 @@ config_t* config_init( int argc, char* argv[] )
         lua_getglobal( config_lua_values, "netbook" );
         __config.netbook = lua_toboolean( config_lua_values, -1 );
 
-        /* lua_getglobal( config_lua_values, "tui" ); */
-        /* __config.tui = lua_toboolean( config_lua_values, -1 ); */
-
         lua_getglobal( config_lua_values, "netbook_pivot_line" );
         __config.netbook_pivot_line = luaL_optinteger( config_lua_values, -1, __config.netbook_pivot_line );
 
         lua_getglobal( config_lua_values, "newrpl_keyboard" );
         __config.newrpl_keyboard = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "chromeless" );
+        __config.chromeless = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "fullscreen" );
+        __config.fullscreen = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "mono" );
+        __config.mono = lua_toboolean( config_lua_values, -1 );
+
+        lua_getglobal( config_lua_values, "gray" );
+        __config.gray = lua_toboolean( config_lua_values, -1 );
     }
     if ( __config.haz_config_file && overwrite_config )
         __config.haz_config_file = false;
@@ -476,6 +509,18 @@ config_t* config_init( int argc, char* argv[] )
 
     if ( clopt_chromeless != -1 )
         __config.chromeless = clopt_chromeless == true;
+
+    if ( clopt_fullscreen != -1 )
+        __config.fullscreen = clopt_fullscreen == true;
+
+    if ( clopt_shiftless != -1 )
+        __config.shiftless = clopt_shiftless == true;
+
+    if ( clopt_mono != -1 )
+        __config.mono = clopt_mono == true;
+
+    if ( clopt_gray != -1 )
+        __config.gray = clopt_gray == true;
 
     if ( clopt_netbook_pivot_line != -1 )
         __config.netbook_pivot_line = clopt_netbook_pivot_line;

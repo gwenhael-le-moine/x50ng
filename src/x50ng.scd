@@ -66,23 +66,35 @@ Note: this path is persisted in _<datadir>/state_ so this option is only needed 
 
 *-z* *--zoom*[=_X_]                scale LCD by X (GUI only) (default: 2.0)
 
-*--gui*                        use GUI (Graphical UI) (default: true)
+*--gtk*                        use gtk (Graphical UI) (default: true)
 
-*--tui*                        use TUI (Terminal text UI) (default: false)
+*--sdl*                        use sdl (Graphical UI) (default: false)
 
-*--tui-small*                  use small TUI (4 pixels per character) (Terminal text UI) (default: false)
+*--tui*                        use ncurses (Terminal text UI) (default: false)
 
-*--tui-tiny*                   use tiny TUI (8 pixels per character) (Terminal text UI) (default: false)
+*--tui-small*                  use ncurses small LCD (4 pixels per character) (Terminal text UI) (default: false)
 
-*--netbook*                    horizontal window (GUI only) (default: false)
+*--tui-tiny*                   use ncurses tiny LCD (8 pixels per character) (Terminal text UI) (default: false)
 
-*--netbook-pivot-line*[=_X_]     at which line is the keyboard split in netbook mode (GUI only) (default: 3)
+*--chromeless*                 only show display (default: false)
+
+*--fullscreen*                 make the UI fullscreen (default: false)
+
+*--mono*                       make the UI monochrome (default: false)
+
+*--gray*                       make the UI grayscale (default: false)
+
+*--shiftless*                  don't map the shift keys to let them free for numbers (default: false)
+
+*--netbook*                    horizontal window (gtk only) (default: false)
+
+*--netbook-pivot-line*[=_X_]     at which line is the keyboard split in netbook mode (gtk only) (default: 3)
 
 *-r* *--reset*                   reboot on startup instead of continuing from the saved state in the state file
 
 *--overwrite-config*           force writing <datadir>/config.lua even if it exists
 
-*--newrpl-keyboard*            label keyboard for newRPL (GUI only)
+*--newrpl-keyboard*            label keyboard for newRPL (gtk or sdl only)
 
 *--enable-debug*[=_port_]        enable the debugger interface (default port: 1234)
 
