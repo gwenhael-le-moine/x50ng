@@ -134,6 +134,7 @@ X50NG_CFLAGS = \
 	-Wall \
 	-Wextra \
 	-pedantic \
+	-std=gnu2x \
 	$(X50NG_DISABLED_WARNINGS) \
 	$(DEBUG_CFLAGS) \
 	$(X50NG_INCLUDES) \
