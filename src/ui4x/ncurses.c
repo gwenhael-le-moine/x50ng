@@ -219,8 +219,12 @@ static inline void ncurses_draw_lcd_fullsize( void )
         wcscpy( line, L"" );
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
             val = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
+            if ( ui4x_config.model == MODEL_50G )
+                val /= 3;
+            else if ( val == 3 )
+                val = 4;
 
-            switch ( val / 3 ) {
+            switch ( val ) {
                 case 0:
                     pixel = L' ';
                     break;
