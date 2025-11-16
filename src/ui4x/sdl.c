@@ -73,15 +73,8 @@
     ( ui4x_config.model == MODEL_48GX                                                                                                      \
           ? colors_48gx                                                                                                                    \
           : ( ui4x_config.model == MODEL_48SX ? colors_48sx : ( ui4x_config.model == MODEL_49G ? colors_49g : colors_50g ) ) )
-#define BUTTONS                                                                                                                            \
-    ( ui4x_config.model == MODEL_48GX                                                                                                      \
-          ? buttons_48gx                                                                                                                   \
-          : ( ui4x_config.model == MODEL_48SX ? buttons_48sx : ( ui4x_config.model == MODEL_49G ? buttons_49g : buttons_50g ) ) )
 
 #define COLOR_PIXEL_OFF ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_OFF : UI4X_COLOR_PIXEL_OFF )
-#define COLOR_PIXEL_GREY_1 ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_GREY_1 : UI4X_COLOR_PIXEL_GREY_1 )
-#define COLOR_PIXEL_GREY_2 ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_GREY_2 : UI4X_COLOR_PIXEL_GREY_2 )
-#define COLOR_PIXEL_ON ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_ON : UI4X_COLOR_PIXEL_ON )
 
 #define PADDING_TOP ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? 48 : 65 )
 #define PADDING_SIDE 20
@@ -287,7 +280,7 @@ static void create_annunciators_textures( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         annunciators_textures[ i ].up = bitmap_to_texture( annunciators_ui[ i ].width, annunciators_ui[ i ].height,
-                                                           annunciators_ui[ i ].bits, COLOR_PIXEL_ON, COLOR_PIXEL_OFF );
+                                                           annunciators_ui[ i ].bits, UI4X_COLOR_ANNUNCIATOR, COLOR_PIXEL_OFF );
         annunciators_textures[ i ].down = bitmap_to_texture( annunciators_ui[ i ].width, annunciators_ui[ i ].height,
                                                              annunciators_ui[ i ].bits, COLOR_PIXEL_OFF, COLOR_PIXEL_OFF );
     }
@@ -463,7 +456,8 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
             ui4x_emulator_api.do_stop();
             return -1;
         case SDLK_F12:
-            ui4x_emulator_api.do_reset();
+            if ( ui4x_emulator_api.do_reset != NULL )
+                ui4x_emulator_api.do_reset();
             return -1;
 
         default:
@@ -632,12 +626,12 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int outer_color = UI4X_COLOR_FACEPLATE;
     if ( BUTTONS[ hpkey ].highlight )
         outer_color = UI4X_COLOR_KEYPAD_HIGHLIGHT;
-    if ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && hpkey < HP48_KEY_MTH )
+    if ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && hpkey < HP48_KEY_G )
         outer_color = UI4X_COLOR_UPPER_FACEPLATE;
     int inner_color = UI4X_COLOR_BUTTON;
     int edge_top_color = UI4X_COLOR_BUTTON_EDGE_TOP;
     int edge_bottom_color = UI4X_COLOR_BUTTON_EDGE_BOTTOM;
-    if ( ui4x_config.model == MODEL_49G && ( hpkey == HP49_KEY_ALPHA || hpkey == HP49_KEY_SHL || hpkey == HP49_KEY_SHR ) ) {
+    if ( ui4x_config.model == MODEL_49G && ( hpkey == HP49_KEY_ALPHA || hpkey == HP49_KEY_SHIFT_LEFT || hpkey == HP49_KEY_SHIFT_RIGHT ) ) {
         // inner_color = BUTTONS[ hpkey ].label_color;
         edge_top_color = BUTTONS[ hpkey ].label_color;
         edge_bottom_color = BUTTONS[ hpkey ].label_color;
@@ -790,7 +784,7 @@ static void _draw_keypad( void )
                 y -= 2;
 
             write_with_small_font( x, y, BUTTONS[ i ].letter, UI4X_COLOR_ALPHA,
-                                   ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && i < HP48_KEY_MTH )
+                                   ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && i < HP48_KEY_G )
                                        ? UI4X_COLOR_UPPER_FACEPLATE
                                        : UI4X_COLOR_FACEPLATE );
         }
@@ -1008,14 +1002,14 @@ static void sdl_update_annunciators( void )
     SDL_RenderPresent( renderer );
 }
 
-static int apply_contrast( int value, int contrast )
-{
-    int max = 19;
-    int min = 3;
+/* static int apply_contrast( int value, int contrast ) */
+/* { */
+/*     int max = 19; */
+/*     int min = 3; */
 
-    int contrasted = ( value / ( max - min ) ) * ( max - contrast );
-    return contrasted;
-}
+/*     int contrasted = ( value / ( max - min ) ) * ( max - contrast ); */
+/*     return contrasted; */
+/* } */
 
 static void setup_colors( void )
 {
@@ -1048,17 +1042,17 @@ static void setup_colors( void )
                 colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
                 colors[ i ].b = colors[ i ].rgb & 0xff;
             }
-            if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) {
-                // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are
-                // computed based on COLOR_PIXEL_OFF and contrast
-                colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast );
-                colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast );
+            /* if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) { */
+            /*     // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are */
+            /*     // computed based on COLOR_PIXEL_OFF and contrast */
+            /*     colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast ); */
+            /*     colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast ); */
 
-                if ( ui4x_config.black_lcd )
-                    colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast );
-                else
-                    colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) );
-            }
+            /*     if ( ui4x_config.black_lcd ) */
+            /*         colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast ); */
+            /*     else */
+            /*         colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) ); */
+            /* } */
         }
     }
 
@@ -1202,7 +1196,7 @@ void sdl_ui_init( void )
     setup_colors();
 
     if ( !ui4x_config.chromeless ) {
-        int cut = BUTTONS[ HP48_KEY_MTH ].y + OFFSET_Y_KEYBOARD - 19;
+        int cut = BUTTONS[ HP48_KEY_G ].y + OFFSET_Y_KEYBOARD - 19;
 
         create_buttons_textures();
 

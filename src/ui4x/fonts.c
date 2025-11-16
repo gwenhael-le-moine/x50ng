@@ -1,5 +1,5 @@
-#include "bitmaps_misc.h"
 #include "fonts.h"
+#include "bitmaps_misc.h"
 
 /**************/
 /* SMALL FONT */

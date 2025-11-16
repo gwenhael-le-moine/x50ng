@@ -673,50 +673,53 @@ static void gtk_ui_activate( GtkApplication* app, void* data )
 
     gtk_button_t* button;
 
-    GtkWidget* rows_containers[ KB_NB_ROWS ];
+    GtkWidget* rows_containers[ 10 ]; /* max rows is 10 */
     GtkWidget* keys_containers[ NB_HP50g_KEYS ];
     GtkWidget* keys_top_labels_containers[ NB_HP50g_KEYS ];
 
-    gtk_ui_buttons = malloc( NB_HP50g_KEYS * sizeof( gtk_button_t ) );
+    gtk_ui_buttons = malloc( NB_KEYS * sizeof( gtk_button_t ) );
     if ( NULL == gtk_ui_buttons ) {
         fprintf( stderr, "%s:%u: Out of memory\n", __func__, __LINE__ );
         return;
     }
-    memset( gtk_ui_buttons, 0, NB_HP50g_KEYS * sizeof( gtk_button_t ) );
+    memset( gtk_ui_buttons, 0, NB_KEYS * sizeof( gtk_button_t ) );
 
     int key_index = 0;
     int nb_keys_in_row = 0;
-    for ( int row = 0; row < KB_NB_ROWS; row++ ) {
+    for ( int row = 0; row < ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ? 9 : 10 ); row++ ) {
         rows_containers[ row ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
         gtk_widget_add_css_class( rows_containers[ row ], "row-container" );
         gtk_box_set_homogeneous( GTK_BOX( rows_containers[ row ] ), true );
         gtk_box_append( ( GTK_BOX( row < ui4x_config.netbook_pivot_line ? high_keyboard_container : low_keyboard_container ) ),
                         rows_containers[ row ] );
 
-        switch ( row ) {
-            case 1:
-                nb_keys_in_row = 4;
-                break;
-            case 0:
-            case 2:
-                nb_keys_in_row = 6;
-                break;
-            default:
-                nb_keys_in_row = 5;
-        }
+        if ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G )
+            switch ( row ) {
+                case 1:
+                    nb_keys_in_row = 4;
+                    break;
+                case 0:
+                case 2:
+                    nb_keys_in_row = 6;
+                    break;
+                default:
+                    nb_keys_in_row = 5;
+            }
+        else
+            nb_keys_in_row = row < 4 ? 6 : 5;
 
         for ( int column = 0; column < nb_keys_in_row; column++ ) {
             keys_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
             gtk_widget_add_css_class( keys_containers[ key_index ], "key-container" );
             gtk_box_set_homogeneous( GTK_BOX( keys_containers[ key_index ] ), false );
-            if ( row == 1 && column == 3 )
+            if ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) && row == 1 && column == 3 )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
             gtk_box_append( GTK_BOX( rows_containers[ row ] ), keys_containers[ key_index ] );
-            if ( row == 1 && column == 3 )
+            if ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) && row == 1 && column == 3 )
                 gtk_box_append( GTK_BOX( rows_containers[ row ] ), gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 ) );
 
             button = &gtk_ui_buttons[ key_index ];
-            button->key = &buttons_50g[ key_index ];
+            button->key = &BUTTONS[ key_index ];
 
             keys_top_labels_containers[ key_index ] = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
             gtk_widget_add_css_class( keys_top_labels_containers[ key_index ], "top-labels-container" );
@@ -728,6 +731,9 @@ static void gtk_ui_activate( GtkApplication* app, void* data )
                 label_left = _gtk_ui_activate__create_label( "label-left", button->key->left );
 
             GtkWidget* label_right = NULL;
+            if ( button->key->right )
+                label_right = _gtk_ui_activate__create_label( "label-right", button->key->right );
+
             if ( button->key->right )
                 label_right = _gtk_ui_activate__create_label( "label-right", button->key->right );
 
@@ -744,12 +750,20 @@ static void gtk_ui_activate( GtkApplication* app, void* data )
                 gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_left );
                 gtk_widget_set_halign( GTK_WIDGET( label_left ), GTK_ALIGN_CENTER );
                 gtk_widget_set_hexpand( GTK_WIDGET( label_left ), false );
+            } else if ( button->key->right ) {
+                gtk_widget_set_halign( GTK_WIDGET( keys_top_labels_containers[ key_index ] ), GTK_ALIGN_CENTER );
+
+                gtk_box_append( GTK_BOX( keys_top_labels_containers[ key_index ] ), label_right );
+                gtk_widget_set_halign( GTK_WIDGET( label_right ), GTK_ALIGN_CENTER );
+                gtk_widget_set_hexpand( GTK_WIDGET( label_right ), false );
             }
 
             button->button = gtk_button_new();
             gtk_widget_add_css_class( button->button, "key" );
-            gtk_widget_add_css_class( button->button, button->key->css_class );
-            gtk_widget_set_name( button->button, button->key->css_id );
+            if ( button->key->css_class != NULL )
+                gtk_widget_add_css_class( button->button, button->key->css_class );
+            if ( button->key->css_id != NULL )
+                gtk_widget_set_name( button->button, button->key->css_id );
 
             // There's always a label, even if it's empty.
             GtkWidget* label = _gtk_ui_activate__create_label( "label-key", button->key->label );
