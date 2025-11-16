@@ -210,10 +210,15 @@ static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned 
     return tex;
 }
 
+static void __draw_pixel_rgba( int x, int y, int r, int g, int b, int a )
+{
+    SDL_SetRenderDrawColor( renderer, r, g, b, a );
+    SDL_RenderPoint( renderer, x, y );
+}
+
 static void __draw_pixel( int x, int y, int color )
 {
-    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
-    SDL_RenderPoint( renderer, x, y );
+    __draw_pixel_rgba( x, y, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
 }
 
 static void __draw_line( int x1, int y1, int x2, int y2, int color )
@@ -1121,28 +1126,17 @@ void sdl_ui_refresh_lcd( void )
 
     SDL_SetRenderTarget( renderer, display_texture );
 
-    int color = COLOR_PIXEL_OFF;
-    int pixel;
+    int n_levels_of_gray = ( ui4x_config.model == MODEL_50G ) ? 16 : 4;
+    int pixel, r, g, b, a;
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
             pixel = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
-            switch ( pixel ) {
-                case 0:
-                    color = COLOR_PIXEL_OFF;
-                    break;
-                case 1:
-                    color = COLOR_PIXEL_GREY_1;
-                    break;
-                case 2:
-                    color = COLOR_PIXEL_GREY_2;
-                    break;
-                case 3:
-                default:
-                    color = COLOR_PIXEL_ON;
-                    break;
-            }
+            r = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].r / n_levels_of_gray ) );
+            g = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].g / n_levels_of_gray ) );
+            b = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].b / n_levels_of_gray ) );
+            a = 0xff;
 
-            __draw_pixel( x, y, color );
+            __draw_pixel_rgba( x, y, r, g, b, a );
         }
     }
 
