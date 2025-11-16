@@ -160,7 +160,7 @@ void ui_init( ui4x_config_t* config, ui4x_emulator_api_t* emulator_api )
     ui4x_config = *config;
     ui4x_emulator_api = *emulator_api;
 
-    if ( ui4x_config.newrpl_keyboard )
+    if ( ui4x_config.model == MODEL_50G && ui4x_config.newrpl_keyboard )
         newrplify_buttons_50g();
 
     switch ( ui4x_config.frontend ) {
