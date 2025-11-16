@@ -809,7 +809,7 @@ static unsigned char big_font_X_bits[] = {
 #define big_font_Y_width 8
 #define big_font_Y_height 10
 static unsigned char big_font_Y_bits[] = {
-    0b110011, 51, 30, 30, 12, 12, 12, 12, 12, 12,
+    51, 51, 30, 30, 12, 12, 12, 12, 12, 12,
 };
 
 letter_t big_font[ 128 ] = {

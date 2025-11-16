@@ -1,10 +1,10 @@
-#ifndef _X50NG_UI_H
-#  define _X50NG_UI_H 1
+#ifndef _UI4x_API_H
+#  define _UI4x_API_H 1
 
 #  include <stdbool.h>
 
 #  define LCD_WIDTH ( 131 )
-#  define LCD_HEIGHT ( ui4x_config.model == MODEL_50G ? 80 : 64 )
+#  define LCD_HEIGHT ( ui4x_config.big_screen ? 80 : 64 )
 
 #  define NB_ANNUNCIATORS ( 6 )
 
@@ -253,4 +253,4 @@ extern void ui_refresh_output( void );
 extern void ui_init( ui4x_config_t* opt, ui4x_emulator_api_t* emulator_api );
 extern void ui_exit( void );
 
-#endif /* !(_X50NG_UI_H) */
+#endif /* !_UI4x_API_H */

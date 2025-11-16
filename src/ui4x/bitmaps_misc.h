@@ -59,11 +59,6 @@ extern unsigned char ann_left_bitmap[];
 #  define ann_right_height 12
 extern unsigned char ann_right_bitmap[];
 
-/* #endif /\* !_ANNUNC_H *\/ */
-
-/* #ifndef _BUTTONS_H */
-/* #define _BUTTONS_H 1 */
-
 #  define menu_label_width 24
 #  define menu_label_height 11
 extern unsigned char menu_label_bitmap[];

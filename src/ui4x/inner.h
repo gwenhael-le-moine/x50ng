@@ -1,5 +1,5 @@
-#ifndef _UI4X_INNER_H
-#  define _UI4X_INNER_H 1
+#ifndef _UI4x_INNER_H
+#  define _UI4x_INNER_H 1
 
 #  include "api.h"
 #  include "bitmaps_misc.h"
@@ -183,4 +183,4 @@ extern ui4x_emulator_api_t ui4x_emulator_api;
 extern int SmallTextWidth( const char* string, unsigned int length );
 extern int BigTextWidth( const char* string, unsigned int length );
 
-#endif /* !(_UI4X_INNER_H) */
+#endif /* !(_UI4x_INNER_H) */
