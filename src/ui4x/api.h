@@ -4,7 +4,7 @@
 #  include <stdbool.h>
 
 #  define LCD_WIDTH ( 131 )
-#  define LCD_HEIGHT ( ui4x_config.big_screen ? 80 : 64 )
+#  define LCD_HEIGHT ( ui4x_config.model == MODEL_50G ? 80 : 64 )
 
 #  define NB_ANNUNCIATORS ( 6 )
 
@@ -190,7 +190,6 @@ typedef enum { MODEL_48SX = 485, MODEL_48GX = 486, MODEL_40G = 406, MODEL_49G = 
 typedef struct ui4x_config_t {
     ui4x_model_t model;
     bool shiftless;
-    bool big_screen;
     bool black_lcd;
     bool newrpl_keyboard;
 

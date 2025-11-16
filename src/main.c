@@ -57,7 +57,6 @@ int main( int argc, char** argv )
 
     ui4x_config_t config_ui = {
         .model = MODEL_50G,
-        .big_screen = true,
         .black_lcd = true,
 
         .frontend = __config.frontend,
