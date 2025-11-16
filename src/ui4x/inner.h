@@ -3,6 +3,7 @@
 
 #  include "api.h"
 #  include "bitmaps_misc.h"
+#  include "fonts.h"
 
 #  define KB_NB_ROWS ( 10 )
 
@@ -117,11 +118,6 @@ typedef enum { KEY_PRESS, KEY_RELEASE } key_event_t;
 /***********/
 /* typedef */
 /***********/
-typedef struct letter_t {
-    unsigned int w, h;
-    unsigned char* bits;
-} letter_t;
-
 typedef struct color_t {
     int r, g, b, a;
     int mono_rgb;
