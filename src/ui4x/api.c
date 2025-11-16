@@ -1,12 +1,12 @@
-#include <unistd.h>
+#include <fcntl.h>
 #include <stdarg.h>
 #include <stdbool.h>
-#include <fcntl.h>
 #include <sys/times.h>
+#include <unistd.h>
 
 #include "api.h"
-#include "inner.h"
 #include "gtk.h"
+#include "inner.h"
 #include "ncurses.h"
 #ifdef HAS_SDL
 #  include "sdl.h"

@@ -1,7 +1,7 @@
-#include <gtk/gtk.h>
-#include <glib.h>
 #include <cairo.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib.h>
+#include <gtk/gtk.h>
 
 #include "api.h"
 #include "inner.h"
@@ -756,19 +756,19 @@ static void gtk_ui_activate( GtkApplication* app, void* data )
             gtk_button_set_child( GTK_BUTTON( button->button ), label );
 
             gtk_widget_set_can_focus( button->button, false );
-            GtkGesture* left_click_controller = gtk_gesture_click_new();
-            gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( left_click_controller ), 1 );
-            g_signal_connect( left_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_button_press ), button );
-            g_signal_connect( left_click_controller, /* "released" */ "end", G_CALLBACK( gtk_ui_react_to_button_release ), button );
+            GtkGesture* btn_left_click_controller = gtk_gesture_click_new();
+            gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( btn_left_click_controller ), 1 );
+            g_signal_connect( btn_left_click_controller, "pressed", G_CALLBACK( gtk_ui_react_to_button_press ), button );
+            g_signal_connect( btn_left_click_controller, /* "released" */ "end", G_CALLBACK( gtk_ui_react_to_button_release ), button );
             /* Here we attach the controller to the label because… gtk4 reasons? gtk4 button only handles 'clicked' event now but we
              * actually need pressed and released (AKA end?) */
-            gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( left_click_controller ) );
+            gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( btn_left_click_controller ) );
 
-            GtkGesture* right_click_controller = gtk_gesture_click_new();
-            gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( right_click_controller ), 3 );
-            g_signal_connect_swapped( right_click_controller, /* "released" */ "pressed",
+            GtkGesture* btn_right_click_controller = gtk_gesture_click_new();
+            gtk_gesture_single_set_button( GTK_GESTURE_SINGLE( btn_right_click_controller ), 3 );
+            g_signal_connect_swapped( btn_right_click_controller, /* "released" */ "pressed",
                                       G_CALLBACK( gtk_ui_react_to_button_right_click_release ), button );
-            gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( right_click_controller ) );
+            gtk_widget_add_controller( label, GTK_EVENT_CONTROLLER( btn_right_click_controller ) );
 
             gtk_box_append( GTK_BOX( keys_containers[ key_index ] ), button->button );
 
