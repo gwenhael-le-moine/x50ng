@@ -103,6 +103,8 @@ static void gtk_ui_react_to_button_right_click_release( gtk_button_t* button, Gt
 
 static void gtk_ui_mount_sd_folder_file_dialog_callback( GtkFileDialog* dialog, GAsyncResult* result, void* _data )
 {
+    if ( ui4x_emulator_api.do_mount_sd == NULL )
+        return;
     g_autoptr( GFile ) file = gtk_file_dialog_select_folder_finish( dialog, result, NULL );
 
     if ( file != NULL )
@@ -118,9 +120,21 @@ static void gtk_ui_do_select_and_mount_sd_folder( void* data, GMenuItem* _menuit
                                    ( GAsyncReadyCallback )gtk_ui_mount_sd_folder_file_dialog_callback, data );
 }
 
-static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, void* _data ) { ui4x_emulator_api.do_debug(); }
+static void gtk_ui_do_start_gdb_server( GMenuItem* _menuitem, void* _data )
+{
+    if ( ui4x_emulator_api.do_debug == NULL )
+        return;
 
-static void gtk_ui_do_reset( void* _data, GMenuItem* _menuitem ) { ui4x_emulator_api.do_reset(); }
+    ui4x_emulator_api.do_debug();
+}
+
+static void gtk_ui_do_reset( void* _data, GMenuItem* _menuitem )
+{
+    if ( ui4x_emulator_api.do_reset == NULL )
+        return;
+
+    ui4x_emulator_api.do_reset();
+}
 
 #ifdef TEST_PASTE
 static void x50g_string_to_keys_sequence( void* _data, const char* input )
@@ -152,7 +166,13 @@ static void gtk_ui_do_paste( void* data, GtkWidget* _menuitem )
 }
 #endif
 
-static void gtk_ui_do_quit( void* _data, GtkWidget* _menuitem ) { ui4x_emulator_api.do_stop(); }
+static void gtk_ui_do_quit( void* _data, GtkWidget* _menuitem )
+{
+    if ( ui4x_emulator_api.do_stop == NULL )
+        return;
+
+    ui4x_emulator_api.do_stop();
+}
 
 static void gtk_ui_open_menu( int x, int y, void* data )
 {
@@ -467,17 +487,21 @@ static bool gtk_ui_handle_key_event( int keyval, void* data, key_event_t event_t
 
         case GDK_KEY_F7:
         case GDK_KEY_F10:
-            ui4x_emulator_api.do_stop();
+            if ( ui4x_emulator_api.do_stop != NULL )
+                ui4x_emulator_api.do_stop();
             return GDK_EVENT_STOP;
 
         case GDK_KEY_F12:
             switch ( event_type ) {
                 case KEY_PRESS:
-                    ui4x_emulator_api.do_reset();
-                    ui4x_emulator_api.do_sleep();
+                    if ( ui4x_emulator_api.do_reset != NULL )
+                        ui4x_emulator_api.do_reset();
+                    if ( ui4x_emulator_api.do_sleep != NULL )
+                        ui4x_emulator_api.do_sleep();
                     break;
                 case KEY_RELEASE:
-                    ui4x_emulator_api.do_wake();
+                    if ( ui4x_emulator_api.do_wake != NULL )
+                        ui4x_emulator_api.do_wake();
                     break;
                 default:
                     break;
