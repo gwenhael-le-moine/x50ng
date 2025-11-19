@@ -18,6 +18,7 @@
 
 #include "emulator_api.h"
 #include "hdw.h"
+#include "module.h"
 #include "timer.h"
 #include "options.h"
 
@@ -46,6 +47,9 @@ void signal_handler( int sig )
 
 int main( int argc, char** argv )
 {
+    /*********/
+    /* Setup */
+    /*********/
     config_t __config = *config_init( argc, argv );
 
     __hdw_state = emulator_init( &__config );
@@ -100,18 +104,30 @@ int main( int argc, char** argv )
                                          .do_unmount_sd = emulator_unmount_sd,
                                          .is_sd_mounted = emulator_is_sd_mounted,
                                          .get_sd_path = emulator_get_sd_path,
-                                         .do_reset = emulator_reset,
-                                         .do_stop = emulator_stop,
-                                         .do_sleep = emulator_sleep,
-                                         .do_wake = emulator_wake,
+                                         .do_reset = emulator_hdw_reset,
+                                         .do_stop = emulator_hdw_stop,
+                                         .do_sleep = emulator_hdw_set_asleep,
+                                         .do_wake = emulator_hdw_set_awake,
                                          .do_debug = emulator_debug };
     ui_init( &config_ui, &emulator_api );
 
+    /*************/
+    /* Main loop */
+    /*************/
     main_loop( __hdw_state ); /* runs until hdw_state->arm_exit is true */
+
+    /***************************/
+    /* After exiting main loop */
+    /***************************/
 
     ui_exit();
 
-    emulator_exit();
+    save_modules( __hdw_state );
+
+    exit_modules( __hdw_state );
+
+    if ( !__config.haz_config_file )
+        save_config();
 
     return EXIT_SUCCESS;
 }

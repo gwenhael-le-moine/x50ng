@@ -7,11 +7,10 @@
 #  include "options.h"
 
 extern hdw_t* emulator_init( config_t* config );
-extern void emulator_exit( void );
-extern void emulator_reset( void );
-extern void emulator_stop( void );
-extern void emulator_sleep( void );
-extern void emulator_wake( void );
+extern void emulator_hdw_reset( void );
+extern void emulator_hdw_stop( void );
+extern void emulator_hdw_set_asleep( void );
+extern void emulator_hdw_set_awake( void );
 extern void emulator_debug( void );
 
 extern int emulator_mount_sd( char* filename );

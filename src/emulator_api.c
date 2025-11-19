@@ -112,18 +112,18 @@ void emulator_get_sd_path( char** filename ) { s3c2410_sdi_get_path( __hdw_state
 /***********/
 /* machine */
 /***********/
-void emulator_sleep( void ) { hdw_set_idle( __hdw_state, HDW_ARM_SLEEP ); }
+void emulator_hdw_set_asleep( void ) { hdw_set_idle( __hdw_state, HDW_ARM_SLEEP ); }
 
-void emulator_wake( void ) { hdw_set_idle( __hdw_state, HDW_ARM_RUN ); }
+void emulator_hdw_set_awake( void ) { hdw_set_idle( __hdw_state, HDW_ARM_RUN ); }
 
-void emulator_reset( void )
+void emulator_hdw_reset( void )
 {
     reset_modules( __hdw_state, HDW_RESET_POWER_ON );
     cpu_reset( __hdw_state->env );
-    emulator_wake();
+    emulator_hdw_set_awake();
 }
 
-void emulator_stop( void ) { hdw_stop( __hdw_state ); }
+void emulator_hdw_stop( void ) { hdw_stop( __hdw_state ); }
 
 /************/
 /* keyboard */
@@ -215,6 +215,8 @@ static void callback_refresh_output( void* data )
 
 hdw_t* emulator_init( config_t* config )
 {
+    int error;
+
     __config = config;
     __hdw_state = malloc( sizeof( hdw_t ) );
     if ( NULL == __hdw_state ) {
@@ -252,10 +254,11 @@ hdw_t* emulator_init( config_t* config )
     init_sram( __hdw_state );
     init_s3c2410( __hdw_state );
 
-    if ( init_modules( __hdw_state, config ) )
+    error = init_modules( __hdw_state, config );
+    if ( error )
         exit( EXIT_FAILURE );
 
-    int error = load_modules( __hdw_state );
+    error = load_modules( __hdw_state );
     if ( error || __config->reinit >= HDW_REINIT_REBOOT_ONLY ) {
         if ( error && error != -EAGAIN )
             exit( EXIT_FAILURE );
@@ -263,7 +266,7 @@ hdw_t* emulator_init( config_t* config )
         reset_modules( __hdw_state, HDW_RESET_POWER_ON );
     }
 
-    emulator_wake();
+    emulator_hdw_set_awake();
 
     // stl_phys(0x08000a1c, 0x55555555);
 
@@ -283,14 +286,4 @@ hdw_t* emulator_init( config_t* config )
     }
 
     return __hdw_state;
-}
-
-void emulator_exit( void )
-{
-    save_modules( __hdw_state );
-
-    if ( !__config->haz_config_file )
-        save_config();
-
-    exit_modules( __hdw_state );
 }
