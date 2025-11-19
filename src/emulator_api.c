@@ -20,9 +20,6 @@
 #include "flash.h"
 #include "module.h"
 
-#define UI_EVENTS_REFRESH_INTERVAL 30000LL
-#define UI_LCD_REFRESH_INTERVAL 50000LL
-
 typedef struct hp50g_key_t {
     int column;
     int row;
@@ -199,20 +196,6 @@ void emulator_debug( void )
 /****************/
 /* used in main */
 /****************/
-static void callback_handle_pending_inputs( void* data )
-{
-    ui_handle_pending_inputs();
-
-    timer_mod( __hdw_state->timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
-}
-
-static void callback_refresh_output( void* data )
-{
-    ui_refresh_output();
-
-    timer_mod( __hdw_state->timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
-}
-
 hdw_t* emulator_init( config_t* config )
 {
     int error;
@@ -246,9 +229,6 @@ hdw_t* emulator_init( config_t* config )
 
     init_timer();
 
-    __hdw_state->timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, NULL );
-    __hdw_state->timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, callback_refresh_output, NULL );
-
     init_s3c2410_arm( __hdw_state );
     init_flash( __hdw_state, config );
     init_sram( __hdw_state );
@@ -269,9 +249,6 @@ hdw_t* emulator_init( config_t* config )
     emulator_hdw_set_awake();
 
     // stl_phys(0x08000a1c, 0x55555555);
-
-    timer_mod( __hdw_state->timer_ui_input, timer_get_clock() );
-    timer_mod( __hdw_state->timer_ui_output, timer_get_clock() );
 
     if ( __config->debug_port != 0 && __config->start_debugger ) {
         gdbserver_start( __config->debug_port );

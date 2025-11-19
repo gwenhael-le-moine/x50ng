@@ -22,12 +22,17 @@
 #include "timer.h"
 #include "options.h"
 
+#define UI_EVENTS_REFRESH_INTERVAL 30000LL
+#define UI_LCD_REFRESH_INTERVAL 50000LL
+
 static hdw_t* __hdw_state;
+static hdw_timer_t* __timer_ui_input;
+static hdw_timer_t* __timer_ui_output;
 
 /*******************/
 /* signal handlers */
 /*******************/
-void signal_handler( int sig )
+static void signal_handler( int sig )
 {
     switch ( sig ) {
         case SIGINT:
@@ -43,6 +48,20 @@ void signal_handler( int sig )
             fprintf( stderr, "%s: sig %u\n", __func__, sig );
             break;
     }
+}
+
+static void callback_handle_pending_inputs( void* data )
+{
+    ui_handle_pending_inputs();
+
+    timer_mod( __timer_ui_input, timer_get_clock() + UI_EVENTS_REFRESH_INTERVAL );
+}
+
+static void callback_refresh_output( void* data )
+{
+    ui_refresh_output();
+
+    timer_mod( __timer_ui_output, timer_get_clock() + UI_LCD_REFRESH_INTERVAL );
 }
 
 int main( int argc, char** argv )
@@ -110,6 +129,12 @@ int main( int argc, char** argv )
                                          .do_wake = emulator_hdw_set_awake,
                                          .do_debug = emulator_debug };
     ui_init( &config_ui, &emulator_api );
+
+    __timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, NULL );
+    timer_mod( __timer_ui_input, timer_get_clock() );
+
+    __timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, callback_refresh_output, NULL );
+    timer_mod( __timer_ui_output, timer_get_clock() );
 
     /*************/
     /* Main loop */
