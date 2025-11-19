@@ -4,7 +4,6 @@
 #  include <stdbool.h>
 
 #  define LCD_WIDTH ( 131 )
-#  define LCD_HEIGHT ( ui4x_config.model == MODEL_50G ? 80 : 64 )
 
 #  define NB_ANNUNCIATORS ( 6 )
 
@@ -197,8 +196,7 @@ typedef struct ui4x_emulator_api_t {
     void ( *do_debug )( void );
 } ui4x_emulator_api_t;
 
-extern ui4x_config_t ui4x_config; /* exposed as it's indirectly used outside of ui4x/ by LCD_HEIGHT */
-
+extern int ui_get_lcd_height( void );
 extern void ui_handle_pending_inputs( void );
 extern void ui_refresh_output( void );
 

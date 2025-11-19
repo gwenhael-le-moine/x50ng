@@ -5,6 +5,8 @@
 #  include "bitmaps_misc.h"
 #  include "fonts.h"
 
+#  define LCD_HEIGHT ( ui4x_config.model == MODEL_50G ? 80 : 64 )
+
 #  define BUTTONS                                                                                                                          \
       ( ui4x_config.model == MODEL_48GX                                                                                                    \
             ? buttons_48gx                                                                                                                 \
@@ -153,6 +155,8 @@ extern button_t buttons_49g[ NB_HP4950_KEYS ];
 extern button_t buttons_50g[ NB_HP4950_KEYS ];
 
 extern char* ui_annunciators[ NB_ANNUNCIATORS ];
+
+extern ui4x_config_t ui4x_config;
 
 /********************************************/
 /* API for UI to interact with the emulator */

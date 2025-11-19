@@ -122,6 +122,8 @@ static void newrplify_buttons_50g()
 /********************/
 /* Public functions */
 /********************/
+int ui_get_lcd_height( void ) { return LCD_HEIGHT; }
+
 void ui_handle_pending_inputs( void )
 {
     switch ( ui4x_config.frontend ) {
