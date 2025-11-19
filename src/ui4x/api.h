@@ -70,136 +70,70 @@ typedef enum {
     NB_HP48_KEYS
 } hp48sx_gx_keynames_t;
 
-// HP 4{0,9}G Keys
 typedef enum {
-    HP49_KEY_A = 0,
-    HP49_KEY_B,
-    HP49_KEY_C,
-    HP49_KEY_D,
-    HP49_KEY_E,
-    HP49_KEY_F,
+    HP4950_KEY_A = 0,
+    HP4950_KEY_B,
+    HP4950_KEY_C,
+    HP4950_KEY_D,
+    HP4950_KEY_E,
+    HP4950_KEY_F,
 
-    HP49_KEY_G,
-    HP49_KEY_H,
-    HP49_KEY_I,
-    HP49_KEY_UP,
-    HP49_KEY_J, /* 10 */
+    HP4950_KEY_G,
+    HP4950_KEY_H,
+    HP4950_KEY_I,
+    HP4950_KEY_UP,
+    HP4950_KEY_J, /* 10 */
 
-    HP49_KEY_K,
-    HP49_KEY_L,
-    HP49_KEY_LEFT,
-    HP49_KEY_DOWN,
-    HP49_KEY_RIGHT,
+    HP4950_KEY_K,
+    HP4950_KEY_L,
+    HP4950_KEY_LEFT,
+    HP4950_KEY_DOWN,
+    HP4950_KEY_RIGHT,
 
-    HP49_KEY_M,
-    HP49_KEY_N,
-    HP49_KEY_O,
-    HP49_KEY_P,
-    HP49_KEY_BACKSPACE, /* 20 */
+    HP4950_KEY_M,
+    HP4950_KEY_N,
+    HP4950_KEY_O,
+    HP4950_KEY_P,
+    HP4950_KEY_BACKSPACE, /* 20 */
 
-    HP49_KEY_Q,
-    HP49_KEY_R,
-    HP49_KEY_S,
-    HP49_KEY_T,
-    HP49_KEY_U,
+    HP4950_KEY_Q,
+    HP4950_KEY_R,
+    HP4950_KEY_S,
+    HP4950_KEY_T,
+    HP4950_KEY_U,
 
-    HP49_KEY_V,
-    HP49_KEY_W,
-    HP49_KEY_X,
-    HP49_KEY_Y,
-    HP49_KEY_Z,
+    HP4950_KEY_V,
+    HP4950_KEY_W,
+    HP4950_KEY_X,
+    HP4950_KEY_Y,
+    HP4950_KEY_Z,
 
-    HP49_KEY_ALPHA,
-    HP49_KEY_7,
-    HP49_KEY_8,
-    HP49_KEY_9,
-    HP49_KEY_MULTIPLY,
+    HP4950_KEY_ALPHA,
+    HP4950_KEY_7,
+    HP4950_KEY_8,
+    HP4950_KEY_9,
+    HP4950_KEY_MULTIPLY,
 
-    HP49_KEY_SHIFT_LEFT,
-    HP49_KEY_4,
-    HP49_KEY_5,
-    HP49_KEY_6,
-    HP49_KEY_MINUS,
+    HP4950_KEY_SHIFT_LEFT,
+    HP4950_KEY_4,
+    HP4950_KEY_5,
+    HP4950_KEY_6,
+    HP4950_KEY_MINUS,
 
-    HP49_KEY_SHIFT_RIGHT,
-    HP49_KEY_1,
-    HP49_KEY_2,
-    HP49_KEY_3,
-    HP49_KEY_PLUS,
+    HP4950_KEY_SHIFT_RIGHT,
+    HP4950_KEY_1,
+    HP4950_KEY_2,
+    HP4950_KEY_3,
+    HP4950_KEY_PLUS,
 
-    HP49_KEY_ON,
-    HP49_KEY_0,
-    HP49_KEY_PERIOD,
-    HP49_KEY_SPACE,
-    HP49_KEY_ENTER,
+    HP4950_KEY_ON,
+    HP4950_KEY_0,
+    HP4950_KEY_PERIOD,
+    HP4950_KEY_SPACE,
+    HP4950_KEY_ENTER,
 
-    NB_HP49_KEYS
-} hp49g_keynames_t;
-
-typedef enum {
-    HP50g_KEY_A = 0,
-    HP50g_KEY_B,
-    HP50g_KEY_C,
-    HP50g_KEY_D,
-    HP50g_KEY_E,
-    HP50g_KEY_F,
-
-    HP50g_KEY_G,
-    HP50g_KEY_H,
-    HP50g_KEY_I,
-    HP50g_KEY_UP,
-    HP50g_KEY_J, /* 10 */
-
-    HP50g_KEY_K,
-    HP50g_KEY_L,
-    HP50g_KEY_LEFT,
-    HP50g_KEY_DOWN,
-    HP50g_KEY_RIGHT,
-
-    HP50g_KEY_M,
-    HP50g_KEY_N,
-    HP50g_KEY_O,
-    HP50g_KEY_P,
-    HP50g_KEY_BACKSPACE, /* 20 */
-
-    HP50g_KEY_Q,
-    HP50g_KEY_R,
-    HP50g_KEY_S,
-    HP50g_KEY_T,
-    HP50g_KEY_U,
-
-    HP50g_KEY_V,
-    HP50g_KEY_W,
-    HP50g_KEY_X,
-    HP50g_KEY_Y,
-    HP50g_KEY_Z,
-
-    HP50g_KEY_ALPHA,
-    HP50g_KEY_7,
-    HP50g_KEY_8,
-    HP50g_KEY_9,
-    HP50g_KEY_MULTIPLY,
-
-    HP50g_KEY_SHIFT_LEFT,
-    HP50g_KEY_4,
-    HP50g_KEY_5,
-    HP50g_KEY_6,
-    HP50g_KEY_MINUS,
-
-    HP50g_KEY_SHIFT_RIGHT,
-    HP50g_KEY_1,
-    HP50g_KEY_2,
-    HP50g_KEY_3,
-    HP50g_KEY_PLUS,
-
-    HP50g_KEY_ON,
-    HP50g_KEY_0,
-    HP50g_KEY_PERIOD,
-    HP50g_KEY_SPACE,
-    HP50g_KEY_ENTER,
-
-    NB_HP50g_KEYS
-} hp50g_keynames_t;
+    NB_HP4950_KEYS
+} hp49g_50g_keynames_t;
 
 typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } ui4x_frontend_t;
 

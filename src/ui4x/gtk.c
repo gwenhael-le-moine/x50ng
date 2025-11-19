@@ -698,8 +698,8 @@ static void gtk_ui_activate( GtkApplication* app, void* data )
     gtk_button_t* button;
 
     GtkWidget* rows_containers[ 10 ]; /* max rows is 10 */
-    GtkWidget* keys_containers[ NB_HP50g_KEYS ];
-    GtkWidget* keys_top_labels_containers[ NB_HP50g_KEYS ];
+    GtkWidget* keys_containers[ NB_HP4950_KEYS ];
+    GtkWidget* keys_top_labels_containers[ NB_HP4950_KEYS ];
 
     gtk_ui_buttons = malloc( NB_KEYS * sizeof( gtk_button_t ) );
     if ( NULL == gtk_ui_buttons ) {

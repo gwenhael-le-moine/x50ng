@@ -125,7 +125,7 @@ static int last_annunciators = -1;
 static int last_contrast = -1;
 
 static color_t colors[ NB_COLORS ];
-static on_off_sdl_textures_struct_t buttons_textures[ NB_HP49_KEYS ];
+static on_off_sdl_textures_struct_t buttons_textures[ NB_HP4950_KEYS ];
 static on_off_sdl_textures_struct_t annunciators_textures[ NB_ANNUNCIATORS ];
 
 static SDL_Window* window;
@@ -616,7 +616,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
 {
     bool is_down = !is_up;
     int x, y;
-    int on_key_offset_y = ( hpkey == HP48_KEY_ON || hpkey == HP49_KEY_ON ) ? 1 : 0;
+    int on_key_offset_y = ( hpkey == UI4X_KEY_ON ) ? 1 : 0;
     SDL_Texture* texture =
         SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h );
     SDL_SetRenderTarget( renderer, texture );
@@ -631,7 +631,8 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int inner_color = UI4X_COLOR_BUTTON;
     int edge_top_color = UI4X_COLOR_BUTTON_EDGE_TOP;
     int edge_bottom_color = UI4X_COLOR_BUTTON_EDGE_BOTTOM;
-    if ( ui4x_config.model == MODEL_49G && ( hpkey == HP49_KEY_ALPHA || hpkey == HP49_KEY_SHIFT_LEFT || hpkey == HP49_KEY_SHIFT_RIGHT ) ) {
+    if ( ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ) &&
+         ( hpkey == HP4950_KEY_ALPHA || hpkey == HP4950_KEY_SHIFT_LEFT || hpkey == HP4950_KEY_SHIFT_RIGHT ) ) {
         // inner_color = BUTTONS[ hpkey ].label_color;
         edge_top_color = BUTTONS[ hpkey ].label_color;
         edge_bottom_color = BUTTONS[ hpkey ].label_color;
@@ -704,7 +705,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     __draw_pixel( 1, BUTTONS[ hpkey ].h - 2, UI4X_COLOR_FRAME );
     // bottom-right
     __draw_pixel( BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h - 2, UI4X_COLOR_FRAME );
-    if ( ( ui4x_config.model == MODEL_49G && hpkey == HP49_KEY_ON ) || hpkey == HP48_KEY_ON ) {
+    if ( hpkey == UI4X_KEY_ON ) {
         // top
         __draw_line( 2, 1, BUTTONS[ hpkey ].w - 3, 1, UI4X_COLOR_FRAME );
         // top-left
@@ -1223,7 +1224,7 @@ void sdl_ui_exit( void )
         SDL_DestroyTexture( annunciators_textures[ i ].down );
     }
 
-    for ( int i = 0; i < NB_HP49_KEYS; i++ ) {
+    for ( int i = 0; i < NB_KEYS; i++ ) {
         SDL_DestroyTexture( buttons_textures[ i ].up );
         SDL_DestroyTexture( buttons_textures[ i ].down );
     }

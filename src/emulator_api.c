@@ -27,7 +27,7 @@ typedef struct hp50g_key_t {
     bool pressed;
 } hp50g_key_t;
 
-static hp50g_key_t x50ng_keyboard[ NB_HP50g_KEYS ] = {
+static hp50g_key_t x50ng_keyboard[ NB_HP4950_KEYS ] = {
     {.column = 5, .row = 1, .eint = -1 /* 1 */, .pressed = false},
     {.column = 5, .row = 2, .eint = -1 /* 2 */, .pressed = false},
     {.column = 5, .row = 3, .eint = -1 /* 3 */, .pressed = false},
@@ -65,29 +65,29 @@ static hp50g_key_t x50ng_keyboard[ NB_HP50g_KEYS ] = {
     {.column = 1, .row = 3, .eint = -1 /* 3 */, .pressed = false},
     {.column = 0, .row = 3, .eint = -1 /* 3 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 4,          .pressed = false}, /* HP50g_KEY_ALPHA */
+    {.column = 0, .row = 0, .eint = 4,          .pressed = false}, /* HP4950_KEY_ALPHA */
     {.column = 3, .row = 4, .eint = -1 /* 4 */, .pressed = false},
     {.column = 2, .row = 4, .eint = -1 /* 4 */, .pressed = false},
     {.column = 1, .row = 4, .eint = -1 /* 4 */, .pressed = false},
     {.column = 0, .row = 4, .eint = -1 /* 4 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 5,          .pressed = false}, /* HP50g_KEY_SHIFT_LEFT */
+    {.column = 0, .row = 0, .eint = 5,          .pressed = false}, /* HP4950_KEY_SHIFT_LEFT */
     {.column = 3, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 2, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 1, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 0, .row = 5, .eint = -1 /* 5 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 6,          .pressed = false}, /* HP50g_KEY_SHIFT_RIGHT */
+    {.column = 0, .row = 0, .eint = 6,          .pressed = false}, /* HP4950_KEY_SHIFT_RIGHT */
     {.column = 3, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 2, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 1, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 0, .row = 6, .eint = -1 /* 6 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 0,          .pressed = false}, /* HP50g_KEY_ON */
+    {.column = 0, .row = 0, .eint = 0,          .pressed = false}, /* HP4950_KEY_ON */
     {.column = 3, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 2, .row = 7, .eint = -1 /* 7 */, .pressed = false},
     {.column = 1, .row = 7, .eint = -1 /* 7 */, .pressed = false},
-    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false}, /* HP50g_KEY_ENTER */
+    {.column = 0, .row = 7, .eint = -1 /* 7 */, .pressed = false}, /* HP4950_KEY_ENTER */
 };
 
 static int x50ng_annunciators_index[ 6 ] = { 1, 2, 3, 4, 5, 0 };
@@ -145,7 +145,7 @@ void release_key( int hpkey ) { set_key( hpkey, false ); }
 
 bool is_key_pressed( int hpkey )
 {
-    if ( hpkey < 0 || hpkey > NB_HP50g_KEYS )
+    if ( hpkey < 0 || hpkey > NB_HP4950_KEYS )
         return false;
 
     return x50ng_keyboard[ hpkey ].pressed;

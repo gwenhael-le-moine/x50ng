@@ -55,7 +55,7 @@
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static char last_annunciators = -1;
 
-static bool keyboard_state[ NB_HP50g_KEYS ];
+static bool keyboard_state[ NB_HP4950_KEYS ];
 
 static WINDOW* lcd_window;
 static WINDOW* help_window;
@@ -318,7 +318,7 @@ void ncurses_refresh_lcd( void )
 
 void ncurses_handle_pending_inputs( void )
 {
-    bool new_keyboard_state[ NB_HP50g_KEYS ];
+    bool new_keyboard_state[ NB_HP4950_KEYS ];
     uint32_t k;
 
     // each run records the state of the keyboard (pressed keys)
