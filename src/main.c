@@ -69,15 +69,23 @@ int main( int argc, char** argv )
     /*********/
     /* Setup */
     /*********/
+    /* Set the config (from, by order of priority):
+       - command line arguments
+       - configuration file
+       - hard-coded default values
+     */
     config_t __config = *config_init( argc, argv );
 
+    /* Initialize the emulator's hardware  */
     __hdw_state = emulator_init( &__config );
 
+    /* Setup the signals */
     signal( SIGINT, signal_handler );
     signal( SIGTERM, signal_handler );
     signal( SIGQUIT, signal_handler );
     signal( SIGUSR1, signal_handler );
 
+    /* Initialize and start the UI */
     ui4x_config_t config_ui = {
         .model = MODEL_50G,
         .black_lcd = true,
@@ -130,29 +138,30 @@ int main( int argc, char** argv )
                                          .do_debug = emulator_debug };
     ui_init( &config_ui, &emulator_api );
 
+    /* Setup and start the timers handling inputs and display */
     __timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, NULL );
     timer_mod( __timer_ui_input, timer_get_clock() );
 
     __timer_ui_output = timer_new( HDW_TIMER_VIRTUAL, callback_refresh_output, NULL );
     timer_mod( __timer_ui_output, timer_get_clock() );
 
-    /*************/
-    /* Main loop */
-    /*************/
-    main_loop( __hdw_state ); /* runs until hdw_state->arm_exit is true */
+    /* Run the Main loop until hdw_state->arm_exit is set to true */
+    main_loop( __hdw_state );
 
-    /***************************/
-    /* After exiting main loop */
-    /***************************/
-
+    /* After exiting main loop: */
+    /* Stop and close the UI */
     ui_exit();
 
+    /* Persist hardware state to files */
     save_modules( __hdw_state );
 
+    /* Cleanly shutdown the various emulated hardware components */
     exit_modules( __hdw_state );
 
+    /* Persist the configuration to file if needed or asked */
     if ( !__config.haz_config_file )
         save_config();
 
+    /* exit program */
     return EXIT_SUCCESS;
 }
