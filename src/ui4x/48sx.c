@@ -137,14 +137,14 @@ color_t colors_48sx[ NB_COLORS ] = {
      .gray_rgb = 0xFF,
      .rgb = 0xFFFFFF,
      },
-    /* UI4X_COLOR_SHIFT_LEFT */
+    /* UI4X_COLOR_LEFTSHIFT */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xE6,
      .rgb = 0xFFA600,
      },
-    /* UI4X_COLOR_SHIFT_RIGHT */
+    /* UI4X_COLOR_RIGHTSHIFT */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
@@ -822,7 +822,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .below = NULL,
      .css_class = "function",
      .css_id = "BACKSPACE",
-     .hpkey = HP48_KEY_BS,
+     .hpkey = HP48_KEY_BACKSPACE,
      },
 
     {
@@ -937,7 +937,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .below = NULL,
      .css_class = "core",
      .css_id = "DIVIDE",
-     .hpkey = HP48_KEY_DIV,
+     .hpkey = HP48_KEY_DIVIDE,
      },
 
     {
@@ -945,7 +945,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .y = 6 * KB_LINE_HEIGHT,
      .w = 36,
      .h = 26,
-     .label_color = UI4X_COLOR_SHIFT_LEFT,
+     .label_color = UI4X_COLOR_LEFTSHIFT,
      .label = "⮪",
      .label_sdl = NULL,
      .label_graphic_w = shl_width,
@@ -960,7 +960,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .below = NULL,
      .css_class = "shift-left",
      .css_id = "SHIFTLEFT",
-     .hpkey = HP48_KEY_SHL,
+     .hpkey = HP48_KEY_LEFTSHIFT,
      },
 
     {
@@ -1060,7 +1060,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .y = 7 * KB_LINE_HEIGHT,
      .w = 36,
      .h = 26,
-     .label_color = UI4X_COLOR_SHIFT_RIGHT,
+     .label_color = UI4X_COLOR_RIGHTSHIFT,
      .label = "⮫",
      .label_sdl = NULL,
      .label_graphic_w = shr_width,
@@ -1075,7 +1075,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .below = NULL,
      .css_class = "shift-right",
      .css_id = "SHIFTRIGHT",
-     .hpkey = HP48_KEY_SHR,
+     .hpkey = HP48_KEY_RIGHTSHIFT,
      },
 
     {
@@ -1259,7 +1259,7 @@ button_t buttons_48sx[ NB_HP48_KEYS ] = {
      .below = NULL,
      .css_class = "core",
      .css_id = "SPACE",
-     .hpkey = HP48_KEY_SPC,
+     .hpkey = HP48_KEY_SPACE,
      },
 
     {

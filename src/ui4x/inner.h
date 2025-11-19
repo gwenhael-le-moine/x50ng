@@ -54,18 +54,19 @@
 #  define UI4X_KEY_DOWN ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_DOWN : HP48_KEY_Q )
 #  define UI4X_KEY_LEFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_LEFT : HP48_KEY_P )
 #  define UI4X_KEY_RIGHT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_RIGHT : HP48_KEY_R )
-#  define UI4X_KEY_SPACE ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SPACE : HP48_KEY_SPC )
+#  define UI4X_KEY_SPACE ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SPACE : HP48_KEY_SPACE )
 #  define UI4X_KEY_ENTER ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_ENTER : HP48_KEY_ENTER )
-#  define UI4X_KEY_BACKSPACE ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_BACKSPACE : HP48_KEY_BS )
+#  define UI4X_KEY_BACKSPACE                                                                                                               \
+      ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_BACKSPACE : HP48_KEY_BACKSPACE )
 #  define UI4X_KEY_DELETE ( ui4x_config.model == MODEL_50G ? -1 : ui4x_config.model == MODEL_49G ? -1 : HP48_KEY_DEL )
 #  define UI4X_KEY_PERIOD ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_PERIOD : HP48_KEY_PERIOD )
 #  define UI4X_KEY_PLUS ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_PLUS : HP48_KEY_PLUS )
 #  define UI4X_KEY_MINUS ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_MINUS : HP48_KEY_MINUS )
 #  define UI4X_KEY_MULTIPLY ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_MULTIPLY : HP48_KEY_MUL )
-#  define UI4X_KEY_DIVIDE ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_Z : HP48_KEY_DIV )
-#  define UI4X_KEY_LSHIFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SHIFT_LEFT : HP48_KEY_SHL )
-#  define UI4X_KEY_RSHIFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SHIFT_RIGHT : HP48_KEY_SHR )
-#  define UI4X_KEY_ALPHA ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SPACE : HP48_KEY_SPC )
+#  define UI4X_KEY_DIVIDE ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_Z : HP48_KEY_DIVIDE )
+#  define UI4X_KEY_LSHIFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_LEFTSHIFT : HP48_KEY_LEFTSHIFT )
+#  define UI4X_KEY_RSHIFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_RIGHTSHIFT : HP48_KEY_RIGHTSHIFT )
+#  define UI4X_KEY_ALPHA ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SPACE : HP48_KEY_SPACE )
 #  define UI4X_KEY_ON ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_ON : HP48_KEY_ON )
 
 /* 4.1.1.1: When defined, this symbol represents the threshold of the long
@@ -96,8 +97,8 @@ typedef enum {
     UI4X_COLOR_ANNUNCIATOR,
     UI4X_COLOR_LABEL,
     UI4X_COLOR_ALPHA,
-    UI4X_COLOR_SHIFT_LEFT,
-    UI4X_COLOR_SHIFT_RIGHT,
+    UI4X_COLOR_LEFTSHIFT,
+    UI4X_COLOR_RIGHTSHIFT,
     NB_COLORS,
 } colors_t;
 

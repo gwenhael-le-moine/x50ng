@@ -71,13 +71,13 @@ static hp50g_key_t x50ng_keyboard[ NB_HP4950_KEYS ] = {
     {.column = 1, .row = 4, .eint = -1 /* 4 */, .pressed = false},
     {.column = 0, .row = 4, .eint = -1 /* 4 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 5,          .pressed = false}, /* HP4950_KEY_SHIFT_LEFT */
+    {.column = 0, .row = 0, .eint = 5,          .pressed = false}, /* HP4950_KEY_LEFTSHIFT */
     {.column = 3, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 2, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 1, .row = 5, .eint = -1 /* 5 */, .pressed = false},
     {.column = 0, .row = 5, .eint = -1 /* 5 */, .pressed = false},
 
-    {.column = 0, .row = 0, .eint = 6,          .pressed = false}, /* HP4950_KEY_SHIFT_RIGHT */
+    {.column = 0, .row = 0, .eint = 6,          .pressed = false}, /* HP4950_KEY_RIGHTSHIFT */
     {.column = 3, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 2, .row = 6, .eint = -1 /* 6 */, .pressed = false},
     {.column = 1, .row = 6, .eint = -1 /* 6 */, .pressed = false},

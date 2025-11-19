@@ -137,14 +137,14 @@ color_t colors_50g[ NB_COLORS ] = {
      .gray_rgb = 0xDC,
      .rgb = 0x67c184,
      },
-    /* UI4X_COLOR_SHIFT_LEFT */
+    /* UI4X_COLOR_LEFTSHIFT */
     {
      .a = 0xff,
      .mono_rgb = 0xff,
      .gray_rgb = 0xDC,
      .rgb = 0x82b1ff,
      },
-    /* UI4X_COLOR_SHIFT_RIGHT */
+    /* UI4X_COLOR_RIGHTSHIFT */
     {
      .a = 0xff,
      .mono_rgb = 0xff,
@@ -178,7 +178,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "Y=",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_A          },
+     .hpkey = HP4950_KEY_A         },
 
     {.x = KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
@@ -200,7 +200,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "WIN",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_B          },
+     .hpkey = HP4950_KEY_B         },
 
     {.x = 2 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
@@ -222,7 +222,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "GRAPH",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_C          },
+     .hpkey = HP4950_KEY_C         },
 
     {.x = 3 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
@@ -244,7 +244,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "2D/3D",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_D          },
+     .hpkey = HP4950_KEY_D         },
 
     {.x = 4 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
@@ -266,7 +266,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "TBLSET",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_E          },
+     .hpkey = HP4950_KEY_E         },
 
     {.x = 5 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0,
@@ -288,7 +288,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "TABLE",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_F          },
+     .hpkey = HP4950_KEY_F         },
 
     {.x = 0,
      .y = 1 * KB_LINE_HEIGHT,
@@ -310,7 +310,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "FILES",
      .right = "BEGIN",
      .below = NULL,
-     .hpkey = HP4950_KEY_G          },
+     .hpkey = HP4950_KEY_G         },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 1 * KB_LINE_HEIGHT,
@@ -332,7 +332,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "CUSTOM",
      .right = "END",
      .below = NULL,
-     .hpkey = HP4950_KEY_H          },
+     .hpkey = HP4950_KEY_H         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 1 * KB_LINE_HEIGHT,
@@ -354,7 +354,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "i",
      .right = "I",
      .below = NULL,
-     .hpkey = HP4950_KEY_I          },
+     .hpkey = HP4950_KEY_I         },
 
     {.x = 4.25 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 0.75 * KB_LINE_HEIGHT,
@@ -376,7 +376,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_UP         },
+     .hpkey = HP4950_KEY_UP        },
 
     {.x = 0,
      .y = 2 * KB_LINE_HEIGHT,
@@ -398,7 +398,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "UPDIR",
      .right = "COPY",
      .below = NULL,
-     .hpkey = HP4950_KEY_J          },
+     .hpkey = HP4950_KEY_J         },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
@@ -420,7 +420,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "RCL",
      .right = "CUT",
      .below = NULL,
-     .hpkey = HP4950_KEY_K          },
+     .hpkey = HP4950_KEY_K         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
@@ -442,7 +442,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "PREV",
      .right = "PASTE",
      .below = NULL,
-     .hpkey = HP4950_KEY_L          },
+     .hpkey = HP4950_KEY_L         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 1.4 * KB_LINE_HEIGHT,
@@ -464,7 +464,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_LEFT       },
+     .hpkey = HP4950_KEY_LEFT      },
 
     {.x = 4.25 * KB_COLUMN_WIDTH_6_KEYS,
      .y = 2 * KB_LINE_HEIGHT,
@@ -486,7 +486,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_DOWN       },
+     .hpkey = HP4950_KEY_DOWN      },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 1.4 * KB_LINE_HEIGHT,
@@ -508,7 +508,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_RIGHT      },
+     .hpkey = HP4950_KEY_RIGHT     },
 
     {.x = 0,
      .y = 3 * KB_LINE_HEIGHT,
@@ -530,7 +530,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "CMD",
      .right = "UNDO",
      .below = NULL,
-     .hpkey = HP4950_KEY_M          },
+     .hpkey = HP4950_KEY_M         },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
@@ -552,7 +552,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "PRG",
      .right = "CHARS",
      .below = NULL,
-     .hpkey = HP4950_KEY_N          },
+     .hpkey = HP4950_KEY_N         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
@@ -574,7 +574,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "MTRW",
      .right = "EQW",
      .below = NULL,
-     .hpkey = HP4950_KEY_O          },
+     .hpkey = HP4950_KEY_O         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
@@ -596,7 +596,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "MTH",
      .right = "CAT",
      .below = NULL,
-     .hpkey = HP4950_KEY_P          },
+     .hpkey = HP4950_KEY_P         },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 3 * KB_LINE_HEIGHT,
@@ -618,7 +618,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "DEL",
      .right = "CLEAR",
      .below = NULL,
-     .hpkey = HP4950_KEY_BACKSPACE  },
+     .hpkey = HP4950_KEY_BACKSPACE },
 
     {.x = 0,
      .y = 4 * KB_LINE_HEIGHT,
@@ -640,7 +640,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "𝑒<sup>x</sup>",
      .right = "LN",
      .below = NULL,
-     .hpkey = HP4950_KEY_Q          },
+     .hpkey = HP4950_KEY_Q         },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
@@ -662,7 +662,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "𝓍<sup>2</sup>",
      .right = "<sup>x</sup>√𝓎",
      .below = NULL,
-     .hpkey = HP4950_KEY_R          },
+     .hpkey = HP4950_KEY_R         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
@@ -684,7 +684,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "ASIN",
      .right = "∑",
      .below = NULL,
-     .hpkey = HP4950_KEY_S          },
+     .hpkey = HP4950_KEY_S         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
@@ -706,7 +706,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "ACOS",
      .right = "∂",
      .below = NULL,
-     .hpkey = HP4950_KEY_T          },
+     .hpkey = HP4950_KEY_T         },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 4 * KB_LINE_HEIGHT,
@@ -728,7 +728,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "ATAN",
      .right = "∫",
      .below = NULL,
-     .hpkey = HP4950_KEY_U          },
+     .hpkey = HP4950_KEY_U         },
 
     {.x = 0,
      .y = 5 * KB_LINE_HEIGHT,
@@ -750,7 +750,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "10<sup>𝓍</sup>",
      .right = "LOG",
      .below = NULL,
-     .hpkey = HP4950_KEY_V          },
+     .hpkey = HP4950_KEY_V         },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
@@ -772,7 +772,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "≠",
      .right = "=",
      .below = NULL,
-     .hpkey = HP4950_KEY_W          },
+     .hpkey = HP4950_KEY_W         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
@@ -794,7 +794,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "≤",
      .right = "&gt;",
      .below = NULL,
-     .hpkey = HP4950_KEY_X          },
+     .hpkey = HP4950_KEY_X         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
@@ -816,7 +816,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "≥",
      .right = ">",
      .below = NULL,
-     .hpkey = HP4950_KEY_Y          },
+     .hpkey = HP4950_KEY_Y         },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 5 * KB_LINE_HEIGHT,
@@ -838,7 +838,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "ABS",
      .right = "ARG",
      .below = NULL,
-     .hpkey = HP4950_KEY_Z          },
+     .hpkey = HP4950_KEY_Z         },
 
     {.x = 0,
      .y = 6 * KB_LINE_HEIGHT,
@@ -860,7 +860,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "USER",
      .right = "ENTRY",
      .below = NULL,
-     .hpkey = HP4950_KEY_ALPHA      },
+     .hpkey = HP4950_KEY_ALPHA     },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
@@ -882,7 +882,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "S.SLV",
      .right = "NUM.SLV",
      .below = NULL,
-     .hpkey = HP4950_KEY_7          },
+     .hpkey = HP4950_KEY_7         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
@@ -904,7 +904,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "EXP&amp;LN",
      .right = "TRIG",
      .below = NULL,
-     .hpkey = HP4950_KEY_8          },
+     .hpkey = HP4950_KEY_8         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
@@ -926,7 +926,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "FINANCE",
      .right = "TIME",
      .below = NULL,
-     .hpkey = HP4950_KEY_9          },
+     .hpkey = HP4950_KEY_9         },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 6 * KB_LINE_HEIGHT,
@@ -948,13 +948,13 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "[ ]",
      .right = "\" \"",
      .below = NULL,
-     .hpkey = HP4950_KEY_MULTIPLY   },
+     .hpkey = HP4950_KEY_MULTIPLY  },
 
     {.x = 0,
      .y = 7 * KB_LINE_HEIGHT,
      .w = 46,
      .h = 26,
-     .label_color = UI4X_COLOR_SHIFT_LEFT,
+     .label_color = UI4X_COLOR_LEFTSHIFT,
      .label_graphic_w = shl_width,
      .label_graphic_h = shl_height,
      .label_graphic = shl_bitmap,
@@ -970,7 +970,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_SHIFT_LEFT },
+     .hpkey = HP4950_KEY_LEFTSHIFT },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
@@ -992,7 +992,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "CALC",
      .right = "ALG",
      .below = NULL,
-     .hpkey = HP4950_KEY_4          },
+     .hpkey = HP4950_KEY_4         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
@@ -1014,7 +1014,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "MATRICES",
      .right = "STAT",
      .below = NULL,
-     .hpkey = HP4950_KEY_5          },
+     .hpkey = HP4950_KEY_5         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
@@ -1036,7 +1036,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "CONVERT",
      .right = "UNITS",
      .below = NULL,
-     .hpkey = HP4950_KEY_6          },
+     .hpkey = HP4950_KEY_6         },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 7 * KB_LINE_HEIGHT,
@@ -1058,13 +1058,13 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "( )",
      .right = "_",
      .below = NULL,
-     .hpkey = HP4950_KEY_MINUS      },
+     .hpkey = HP4950_KEY_MINUS     },
 
     {.x = 0,
      .y = 8 * KB_LINE_HEIGHT,
      .w = 46,
      .h = 26,
-     .label_color = UI4X_COLOR_SHIFT_RIGHT,
+     .label_color = UI4X_COLOR_RIGHTSHIFT,
      .label_graphic_w = shr_width,
      .label_graphic_h = shr_height,
      .label_graphic = shr_bitmap,
@@ -1080,7 +1080,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "",
      .right = NULL,
      .below = NULL,
-     .hpkey = HP4950_KEY_SHIFT_RIGHT},
+     .hpkey = HP4950_KEY_RIGHTSHIFT},
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
@@ -1102,7 +1102,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "ARITH",
      .right = "CMPLX",
      .below = NULL,
-     .hpkey = HP4950_KEY_1          },
+     .hpkey = HP4950_KEY_1         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
@@ -1124,7 +1124,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "DEF",
      .right = "LIB",
      .below = NULL,
-     .hpkey = HP4950_KEY_2          },
+     .hpkey = HP4950_KEY_2         },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
@@ -1146,7 +1146,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "#",
      .right = "BASE",
      .below = NULL,
-     .hpkey = HP4950_KEY_3          },
+     .hpkey = HP4950_KEY_3         },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 8 * KB_LINE_HEIGHT,
@@ -1168,7 +1168,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "{ }",
      .right = "« »",
      .below = NULL,
-     .hpkey = HP4950_KEY_PLUS       },
+     .hpkey = HP4950_KEY_PLUS      },
 
     {.x = 0,
      .y = 9 * KB_LINE_HEIGHT,
@@ -1190,7 +1190,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "CONT",
      .right = "OFF",
      .below = "CANCEL",
-     .hpkey = HP4950_KEY_ON         },
+     .hpkey = HP4950_KEY_ON        },
 
     {.x = KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
@@ -1212,7 +1212,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "∞",
      .right = "→",
      .below = NULL,
-     .hpkey = HP4950_KEY_0          },
+     .hpkey = HP4950_KEY_0         },
 
     {.x = 2 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
@@ -1234,7 +1234,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = ": :",
      .right = "↲",
      .below = NULL,
-     .hpkey = HP4950_KEY_PERIOD     },
+     .hpkey = HP4950_KEY_PERIOD    },
 
     {.x = 3 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
@@ -1256,7 +1256,7 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "𝚷",
      .right = ",",
      .below = NULL,
-     .hpkey = HP4950_KEY_SPACE      },
+     .hpkey = HP4950_KEY_SPACE     },
 
     {.x = 4 * KB_COLUMN_WIDTH_5_KEYS,
      .y = 9 * KB_LINE_HEIGHT,
@@ -1278,5 +1278,5 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left = "ANS",
      .right = "→NUM",
      .below = NULL,
-     .hpkey = HP4950_KEY_ENTER      },
+     .hpkey = HP4950_KEY_ENTER     },
 };

@@ -589,7 +589,7 @@ static void _draw_header( void )
 
         x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
-        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, UI4X_COLOR_SHIFT_RIGHT, UI4X_COLOR_UPPER_FACEPLATE );
+        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, UI4X_COLOR_RIGHTSHIFT, UI4X_COLOR_UPPER_FACEPLATE );
 
         x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
@@ -632,7 +632,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int edge_top_color = UI4X_COLOR_BUTTON_EDGE_TOP;
     int edge_bottom_color = UI4X_COLOR_BUTTON_EDGE_BOTTOM;
     if ( ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ) &&
-         ( hpkey == HP4950_KEY_ALPHA || hpkey == HP4950_KEY_SHIFT_LEFT || hpkey == HP4950_KEY_SHIFT_RIGHT ) ) {
+         ( hpkey == HP4950_KEY_ALPHA || hpkey == HP4950_KEY_LEFTSHIFT || hpkey == HP4950_KEY_RIGHTSHIFT ) ) {
         // inner_color = BUTTONS[ hpkey ].label_color;
         edge_top_color = BUTTONS[ hpkey ].label_color;
         edge_bottom_color = BUTTONS[ hpkey ].label_color;
@@ -834,10 +834,10 @@ static void _draw_keypad( void )
 
         // finally draw labels
         if ( left_label_width > 0 )
-            write_with_small_font( x, y, BUTTONS[ i ].left_sdl, UI4X_COLOR_SHIFT_LEFT,
+            write_with_small_font( x, y, BUTTONS[ i ].left_sdl, UI4X_COLOR_LEFTSHIFT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
         if ( right_label_width > 0 )
-            write_with_small_font( xr, y, BUTTONS[ i ].right_sdl, UI4X_COLOR_SHIFT_RIGHT,
+            write_with_small_font( xr, y, BUTTONS[ i ].right_sdl, UI4X_COLOR_RIGHTSHIFT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
     }
 

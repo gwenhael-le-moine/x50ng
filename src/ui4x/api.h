@@ -41,21 +41,21 @@ typedef enum {
     HP48_KEY_Y,
     HP48_KEY_Z,
     HP48_KEY_DEL,
-    HP48_KEY_BS,
+    HP48_KEY_BACKSPACE,
 
     HP48_KEY_ALPHA,
     HP48_KEY_7,
     HP48_KEY_8,
     HP48_KEY_9,
-    HP48_KEY_DIV,
+    HP48_KEY_DIVIDE,
 
-    HP48_KEY_SHL,
+    HP48_KEY_LEFTSHIFT,
     HP48_KEY_4,
     HP48_KEY_5,
     HP48_KEY_6,
     HP48_KEY_MUL,
 
-    HP48_KEY_SHR,
+    HP48_KEY_RIGHTSHIFT,
     HP48_KEY_1,
     HP48_KEY_2,
     HP48_KEY_3,
@@ -64,8 +64,9 @@ typedef enum {
     HP48_KEY_ON,
     HP48_KEY_0,
     HP48_KEY_PERIOD,
-    HP48_KEY_SPC,
+    HP48_KEY_SPACE,
     HP48_KEY_PLUS,
+
     NB_HP48_KEYS
 } hp48sx_gx_keynames_t;
 
@@ -113,13 +114,13 @@ typedef enum {
     HP4950_KEY_9,
     HP4950_KEY_MULTIPLY,
 
-    HP4950_KEY_SHIFT_LEFT,
+    HP4950_KEY_LEFTSHIFT,
     HP4950_KEY_4,
     HP4950_KEY_5,
     HP4950_KEY_6,
     HP4950_KEY_MINUS,
 
-    HP4950_KEY_SHIFT_RIGHT,
+    HP4950_KEY_RIGHTSHIFT,
     HP4950_KEY_1,
     HP4950_KEY_2,
     HP4950_KEY_3,
