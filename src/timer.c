@@ -65,8 +65,8 @@ static void alarm_handler( int _sig )
 
 static void main_loop_wait( hdw_t* hdw_state, int timeout )
 {
-    if ( gdb_poll( hdw_state->env ) )
-        gdb_handlesig( hdw_state->env, 0 );
+    if ( gdb_poll( hdw_state->cpu ) )
+        gdb_handlesig( hdw_state->cpu, 0 );
     else
         poll( NULL, 0, timeout );
 
@@ -181,28 +181,28 @@ void main_loop( hdw_t* hdw_state )
 
         if ( hdw_state->arm_idle == HDW_ARM_RUN ) {
 #ifdef DEBUG_HDW_TIMER_IDLE
-            printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )timer_get_clock(), __func__, hdw_state->env );
+            printf( "%lld: %s: call cpu_exec(%p)\n", ( unsigned long long )timer_get_clock(), __func__, hdw_state->cpu );
 #endif
-            ret = cpu_exec( hdw_state->env );
+            ret = cpu_exec( hdw_state->cpu );
 #ifdef DEBUG_HDW_TIMER_IDLE
             printf( "%lld: %s: cpu_exec(): %d, PC %08x\n", ( unsigned long long )timer_get_clock(), __func__, ret,
-                    hdw_state->env->regs[ 15 ] );
+                    hdw_state->cpu->regs[ 15 ] );
 #endif
 
-            if ( hdw_state->env->regs[ 15 ] == 0x8620 ) {
-                printf( "PC %08x: SRAM %08x: %08x %08x %08x <%08x>\n", hdw_state->env->regs[ 15 ], 0x08000a0c,
+            if ( hdw_state->cpu->regs[ 15 ] == 0x8620 ) {
+                printf( "PC %08x: SRAM %08x: %08x %08x %08x <%08x>\n", hdw_state->cpu->regs[ 15 ], 0x08000a0c,
                         *( ( uint32_t* )&hdw_state->sram[ 0x0a00 ] ), *( ( uint32_t* )&hdw_state->sram[ 0x0a04 ] ),
                         *( ( uint32_t* )&hdw_state->sram[ 0x0a08 ] ), *( ( uint32_t* )&hdw_state->sram[ 0x0a0c ] ) );
                 *( ( uint32_t* )&hdw_state->sram[ 0x0a0c ] ) = 0x00000000;
             }
 
             if ( ret == EXCP_DEBUG ) {
-                gdb_handlesig( hdw_state->env, SIGTRAP );
+                gdb_handlesig( hdw_state->cpu, SIGTRAP );
                 continue;
             }
 
             if ( ( hdw_state->arm_idle != prev_idle ) && ( hdw_state->arm_idle == HDW_ARM_OFF ) )
-                cpu_reset( hdw_state->env );
+                cpu_reset( hdw_state->cpu );
 
             timeout = ( ret == EXCP_HALTED ) ? 10 : 0;
         } else

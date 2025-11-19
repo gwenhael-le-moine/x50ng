@@ -256,12 +256,12 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #ifdef DEBUG_S3C2410_INTC
         printf( "INTC: vector to %08x\n", 0x1c );
 #endif
-        cpu_interrupt( hdw_state->env, CPU_INTERRUPT_FIQ );
+        cpu_interrupt( hdw_state->cpu, CPU_INTERRUPT_FIQ );
 
         hdw_set_idle( hdw_state, HDW_ARM_RUN );
         return;
     } else {
-        cpu_reset_interrupt( hdw_state->env, CPU_INTERRUPT_FIQ );
+        cpu_reset_interrupt( hdw_state->cpu, CPU_INTERRUPT_FIQ );
     }
 
 #ifdef DEBUG_S3C2410_INTC0
@@ -275,7 +275,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #ifdef DEBUG_S3C2410_INTC
         printf( "INTC: vector to %08x\n", 0x18 );
 #endif
-        cpu_interrupt( hdw_state->env, CPU_INTERRUPT_HARD );
+        cpu_interrupt( hdw_state->cpu, CPU_INTERRUPT_HARD );
 
         hdw_set_idle( hdw_state, HDW_ARM_RUN );
         return;
@@ -292,7 +292,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #endif
 
     if ( 0 == service ) {
-        cpu_reset_interrupt( hdw_state->env, CPU_INTERRUPT_HARD );
+        cpu_reset_interrupt( hdw_state->cpu, CPU_INTERRUPT_HARD );
         return;
     }
 
@@ -326,7 +326,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
 #ifdef DEBUG_S3C2410_INTC
         printf( "INTC: vector to %08x\n", 0x18 );
 #endif
-        cpu_interrupt( hdw_state->env, CPU_INTERRUPT_HARD );
+        cpu_interrupt( hdw_state->cpu, CPU_INTERRUPT_HARD );
 
         hdw_set_idle( hdw_state, HDW_ARM_RUN );
         return;
@@ -336,7 +336,7 @@ static void s3c2410_intc_gen_int( s3c2410_intc_t* intc )
     printf( "INTC: No irq pending\n" );
 #endif
 
-    cpu_reset_interrupt( hdw_state->env, CPU_INTERRUPT_HARD );
+    cpu_reset_interrupt( hdw_state->cpu, CPU_INTERRUPT_HARD );
 }
 
 void s3c2410_intc_assert( hdw_t* hdw_state, int irq, int level )

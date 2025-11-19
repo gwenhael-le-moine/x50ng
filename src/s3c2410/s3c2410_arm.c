@@ -231,7 +231,7 @@ static int s3c2410_arm_init( hdw_module_t* module )
     printf( "%s: %s:%u\n", module->name, __func__, __LINE__ );
 #endif
 
-    module->user_data = hdw_state->env;
+    module->user_data = hdw_state->cpu;
     return 0;
 }
 

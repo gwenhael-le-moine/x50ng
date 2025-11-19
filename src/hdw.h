@@ -36,7 +36,7 @@ typedef struct hdw_module_t {
 } hdw_module_t;
 
 struct hdw_t {
-    CPUARMState* env;
+    CPUARMState* cpu;
 
     struct list_head modules;
 

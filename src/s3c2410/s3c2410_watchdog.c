@@ -77,7 +77,7 @@ static void s3c2410_watchdog_tick( void* data )
 #endif
 
         reset_modules( hdw_state, HDW_RESET_WATCHDOG );
-        cpu_reset( hdw_state->env );
+        cpu_reset( hdw_state->cpu );
 
         //		if (hdw_state->arm->NresetSig != LOW) {
         //			hdw_state->arm->NresetSig = LOW;

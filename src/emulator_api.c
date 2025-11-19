@@ -116,7 +116,7 @@ void emulator_hdw_set_awake( void ) { hdw_set_idle( __hdw_state, HDW_ARM_RUN ); 
 void emulator_hdw_reset( void )
 {
     reset_modules( __hdw_state, HDW_RESET_POWER_ON );
-    cpu_reset( __hdw_state->env );
+    cpu_reset( __hdw_state->cpu );
     emulator_hdw_set_awake();
 }
 
@@ -190,7 +190,7 @@ void emulator_debug( void )
         return;
 
     gdbserver_start( __config->debug_port );
-    gdb_handlesig( __hdw_state->env, 0 );
+    gdb_handlesig( __hdw_state->cpu, 0 );
 }
 
 /****************/
@@ -223,7 +223,7 @@ hdw_t* emulator_init( config_t* config )
 
     // cpu_set_log(0xffffffff);
     cpu_exec_init_all( 0 );
-    __hdw_state->env = cpu_init( "arm926" );
+    __hdw_state->cpu = cpu_init( "arm926" );
 
     //	cpu_set_log(cpu_str_to_log_mask("all"));
 
@@ -252,7 +252,7 @@ hdw_t* emulator_init( config_t* config )
 
     if ( __config->debug_port != 0 && __config->start_debugger ) {
         gdbserver_start( __config->debug_port );
-        gdb_handlesig( __hdw_state->env, 0 );
+        gdb_handlesig( __hdw_state->cpu, 0 );
     }
 
     if ( __config->sd_dir != NULL ) {
