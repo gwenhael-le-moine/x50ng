@@ -47,7 +47,6 @@ struct hdw_t {
     void* s3c2410_io_port;
     void* s3c2410_sdi;
 
-    void* timer;
     uint8_t* sram;
 
     uint32_t MCLK;
