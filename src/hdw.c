@@ -11,16 +11,13 @@ void hdw_set_idle( hdw_t* hdw_state, hdw_arm_idle_t idle )
 
     hdw_state->arm_idle = idle;
 
-    if ( hdw_state->arm_idle == HDW_ARM_RUN )
-        hdw_state->env->halted = 0;
-    else {
-        hdw_state->env->halted = 1;
+    hdw_state->env->halted = ( hdw_state->arm_idle != HDW_ARM_RUN );
+    if ( hdw_state->env->halted )
         cpu_exit( hdw_state->env );
-    }
 }
 
 void hdw_stop( hdw_t* hdw_state )
 {
-    hdw_state->arm_exit = 1;
+    hdw_state->arm_exit = true;
     cpu_exit( hdw_state->env );
 }

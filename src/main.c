@@ -94,7 +94,7 @@ int main( int argc, char** argv )
              emulator_reset, emulator_stop, emulator_sleep, emulator_wake, emulator_debug, emulator_mount_sd, emulator_unmount_sd,
              emulator_is_sd_mounted, emulator_get_sd_path );
 
-    main_loop( __hdw_state );
+    main_loop( __hdw_state ); /* runs until hdw_state->arm_exit is true */
 
     ui_exit();
 
