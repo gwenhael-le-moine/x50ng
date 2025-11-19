@@ -158,7 +158,7 @@ void ui_refresh_output( void )
     }
 }
 
-void ui_init( ui4x_config_t* config, ui4x_emulator_api_t* emulator_api )
+void init_ui( ui4x_config_t* config, ui4x_emulator_api_t* emulator_api )
 {
     ui4x_config = *config;
     ui4x_emulator_api = *emulator_api;
@@ -172,17 +172,17 @@ void ui_init( ui4x_config_t* config, ui4x_emulator_api_t* emulator_api )
             break;
 #ifdef HAS_SDL
         case FRONTEND_SDL:
-            sdl_ui_init();
+            sdl_init_ui();
             break;
 #endif
         case FRONTEND_GTK:
         default:
-            gtk_ui_init();
+            gtk_init_ui();
             break;
     }
 }
 
-void ui_exit( void )
+void exit_ui( void )
 {
     switch ( ui4x_config.frontend ) {
         case FRONTEND_NCURSES:
@@ -190,12 +190,12 @@ void ui_exit( void )
             break;
 #ifdef HAS_SDL
         case FRONTEND_SDL:
-            sdl_ui_exit();
+            sdl_exit_ui();
             break;
 #endif
         case FRONTEND_GTK:
         default:
-            gtk_ui_exit();
+            gtk_exit_ui();
             break;
     }
 }

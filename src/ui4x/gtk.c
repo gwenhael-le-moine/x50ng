@@ -875,7 +875,7 @@ void gtk_ui_refresh_lcd( void )
     gdk_display_flush( gdk_display_get_default() );
 }
 
-void gtk_ui_init( void )
+void gtk_init_ui( void )
 {
     /* g_autoptr( GtkApplication ) app = gtk_application_new( NULL, 0 ); */
 
@@ -887,4 +887,4 @@ void gtk_ui_init( void )
     gtk_ui_activate( NULL, NULL );
 }
 
-void gtk_ui_exit( void ) {}
+void gtk_exit_ui( void ) {}

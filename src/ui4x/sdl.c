@@ -979,7 +979,7 @@ static int sdl_emulator_release_key( int hpkey )
     return hpkey;
 }
 
-static void ui_init_LCD( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
+static void blank_lcd( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
 
 static void sdl_update_annunciators( void )
 {
@@ -1117,7 +1117,7 @@ void sdl_ui_refresh_lcd( void )
     if ( ui4x_emulator_api.is_display_on() )
         ui4x_emulator_api.get_lcd_buffer( display_buffer_grayscale );
     else
-        ui_init_LCD();
+        blank_lcd();
 
     SDL_SetRenderTarget( renderer, display_texture );
 
@@ -1150,9 +1150,9 @@ void sdl_ui_refresh_lcd( void )
     sdl_update_annunciators();
 }
 
-void sdl_ui_init( void )
+void sdl_init_ui( void )
 {
-    ui_init_LCD();
+    blank_lcd();
 
     // Initialize SDL
     if ( !SDL_Init( SDL_INIT_VIDEO ) ) {
@@ -1217,7 +1217,7 @@ void sdl_ui_init( void )
     SDL_RenderPresent( renderer );
 }
 
-void sdl_ui_exit( void )
+void sdl_exit_ui( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         SDL_DestroyTexture( annunciators_textures[ i ].up );

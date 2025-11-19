@@ -201,7 +201,8 @@ extern ui4x_config_t ui4x_config; /* exposed as it's indirectly used outside of 
 
 extern void ui_handle_pending_inputs( void );
 extern void ui_refresh_output( void );
-extern void ui_init( ui4x_config_t* opt, ui4x_emulator_api_t* emulator_api );
-extern void ui_exit( void );
+
+extern void init_ui( ui4x_config_t* opt, ui4x_emulator_api_t* emulator_api );
+extern void exit_ui( void );
 
 #endif /* !_UI4x_API_H */

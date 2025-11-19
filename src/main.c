@@ -136,7 +136,7 @@ int main( int argc, char** argv )
                                          .do_sleep = emulator_hdw_set_asleep,
                                          .do_wake = emulator_hdw_set_awake,
                                          .do_debug = emulator_debug };
-    ui_init( &config_ui, &emulator_api );
+    init_ui( &config_ui, &emulator_api );
 
     /* Setup and start the timers handling inputs and display */
     __timer_ui_input = timer_new( HDW_TIMER_REALTIME, callback_handle_pending_inputs, NULL );
@@ -150,7 +150,7 @@ int main( int argc, char** argv )
 
     /* After exiting main loop: */
     /* Stop and close the UI */
-    ui_exit();
+    exit_ui();
 
     /* Persist hardware state to files */
     save_modules( __hdw_state );
