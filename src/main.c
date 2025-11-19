@@ -14,7 +14,7 @@
 
 #include <memory.h>
 
-#include "ui/api.h"
+#include "ui4x/api.h"
 
 #include "emulator_api.h"
 #include "hdw.h"
@@ -57,18 +57,17 @@ int main( int argc, char** argv )
 
     ui4x_config_t config_ui = {
         .model = MODEL_50G,
-        .shiftless = false,
-        .big_screen = true,
         .black_lcd = true,
 
         .frontend = __config.frontend,
         .newrpl_keyboard = __config.newrpl_keyboard,
+        .shiftless = __config.shiftless,
 
-        .mono = false,
-        .gray = false,
+        .mono = __config.mono,
+        .gray = __config.gray,
 
-        .chromeless = false,
-        .fullscreen = false,
+        .chromeless = __config.chromeless,
+        .fullscreen = __config.fullscreen,
         .zoom = __config.zoom,
 
         .tiny = __config.tiny,
@@ -90,9 +89,23 @@ int main( int argc, char** argv )
 
         .sd_dir = __config.sd_dir,
     };
-    ui_init( &config_ui, press_key, release_key, is_key_pressed, is_display_on, get_annunciators, get_lcd_buffer, get_contrast,
-             emulator_reset, emulator_stop, emulator_sleep, emulator_wake, emulator_debug, emulator_mount_sd, emulator_unmount_sd,
-             emulator_is_sd_mounted, emulator_get_sd_path );
+    ui4x_emulator_api_t emulator_api = { .press_key = press_key,
+                                         .release_key = release_key,
+                                         .is_key_pressed = is_key_pressed,
+                                         .is_display_on = is_display_on,
+                                         .get_annunciators = get_annunciators,
+                                         .get_lcd_buffer = get_lcd_buffer,
+                                         .get_contrast = get_contrast,
+                                         .do_mount_sd = emulator_mount_sd,
+                                         .do_unmount_sd = emulator_unmount_sd,
+                                         .is_sd_mounted = emulator_is_sd_mounted,
+                                         .get_sd_path = emulator_get_sd_path,
+                                         .do_reset = emulator_reset,
+                                         .do_stop = emulator_stop,
+                                         .do_sleep = emulator_sleep,
+                                         .do_wake = emulator_wake,
+                                         .do_debug = emulator_debug };
+    ui_init( &config_ui, &emulator_api );
 
     main_loop( __hdw_state ); /* runs until hdw_state->arm_exit is true */
 

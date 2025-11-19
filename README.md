@@ -65,7 +65,7 @@ screenshot of x50ng running in a terminal (`--tui-tiny`) (click to expand )
 ## Usage
 `x50ng --help`
 
-A full man-page is available: `man x50ng`
+A man-page is available: `man x50ng`
 
 When running you can right-click on the display (or use your keayboard's Menu key) to open a small menu allowing you to:
 - mount and unmount a directory as the SD card
@@ -93,6 +93,12 @@ Problem solved (reference: [1](https://www.site2241.net/october2008.htm) [2](htt
 - `lua` (`luajit` also works, see `LUA_VERSION` in `Makefile`)
 - `gtk4`
 - `ncurses`
+
+If you build with `make WITH_SDL=yes`:
+- `sdl3`
+
+If you build with `make WITH_SDL2=yes`:
+- `sdl2`
 
 ## Installation
 
@@ -157,4 +163,5 @@ window {
 
 ## Limits
 
+- Doesn't compile with clang
 - The embedded and patched qemu is old (0.12.50) and doesn't support `aarch64`

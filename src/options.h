@@ -3,7 +3,7 @@
 
 #  include <stdbool.h>
 
-#  include "ui/api.h"
+#  include "ui4x/api.h"
 
 #  ifndef VERSION_MAJOR
 #    define VERSION_MAJOR 0
@@ -39,6 +39,10 @@ typedef struct config_t {
     bool small;
     bool tiny;
     bool chromeless;
+    bool fullscreen;
+    bool shiftless;
+    bool mono;
+    bool gray;
 
     bool newrpl_keyboard;
     char* name;
