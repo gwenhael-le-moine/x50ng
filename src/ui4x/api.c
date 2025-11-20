@@ -20,7 +20,7 @@ ui4x_emulator_api_t ui4x_emulator_api;
 /*************/
 /* functions */
 /*************/
-static void newrplify_buttons_50g()
+static void newrplify_buttons_50g( void )
 {
     if ( ui4x_config.model != MODEL_50G )
         return;
@@ -123,6 +123,8 @@ static void newrplify_buttons_50g()
 /* Public functions */
 /********************/
 int ui_get_lcd_height( void ) { return LCD_HEIGHT; }
+
+int ui_get_nb_keys( void ) { return NB_KEYS; }
 
 void ui_handle_pending_inputs( void )
 {

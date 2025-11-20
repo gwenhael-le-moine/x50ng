@@ -573,18 +573,23 @@ static GtkWidget* _gtk_ui_activate__create_label( const char* css_class, const c
 
 static void _gtk_ui_activate__load_and_apply_CSS( void )
 {
-    if ( !g_file_test( ui4x_config.style_filename, G_FILE_TEST_EXISTS ) )
-        fprintf( stderr, "Can't load style %s\n", ui4x_config.style_filename );
-    else {
-        g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
-        gtk_css_provider_load_from_path( style_provider, ui4x_config.style_filename );
-
-        gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
-                                                    GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
-
-        if ( ui4x_config.verbose )
-            fprintf( stderr, "Loaded style from %s\n", ui4x_config.style_filename );
+    if ( ui4x_config.style_filename == NULL ) {
+        fprintf( stderr, "No style defined\n" );
+        return;
     }
+    if ( !g_file_test( ui4x_config.style_filename, G_FILE_TEST_EXISTS ) ) {
+        fprintf( stderr, "Can't load style %s\n", ui4x_config.style_filename );
+        return;
+    }
+
+    g_autoptr( GtkCssProvider ) style_provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path( style_provider, ui4x_config.style_filename );
+
+    gtk_style_context_add_provider_for_display( gdk_display_get_default(), GTK_STYLE_PROVIDER( style_provider ),
+                                                GTK_STYLE_PROVIDER_PRIORITY_USER + 1 );
+
+    if ( ui4x_config.verbose )
+        fprintf( stderr, "Loaded style from %s\n", ui4x_config.style_filename );
 }
 
 static void gtk_ui_activate( GtkApplication* app, void* data )
