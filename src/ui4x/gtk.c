@@ -859,10 +859,11 @@ void gtk_ui_refresh_lcd( void )
     gtk_ui_lcd_surface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, LCD_WIDTH, LCD_HEIGHT );
     cairo_t* cr = cairo_create( gtk_ui_lcd_surface );
 
+    int n_levels_of_gray = ( ui4x_config.model == MODEL_50G ) ? 16.0 : 4.0;
     ui4x_emulator_api.get_lcd_buffer( display_buffer_grayscale );
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
-            cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] / 15.0 );
+            cairo_set_source_rgba( cr, 0, 0, 0, display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] / ( n_levels_of_gray - 1.0 ) );
             cairo_rectangle( cr, x, y, 1.0, 1.0 );
             cairo_fill( cr );
         }
