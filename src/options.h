@@ -3,7 +3,7 @@
 
 #  include <stdbool.h>
 
-#  include "ui4x/api.h"
+#  include "ui4x/src/api.h"
 
 #  ifndef VERSION_MAJOR
 #    define VERSION_MAJOR 0

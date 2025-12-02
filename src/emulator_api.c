@@ -9,7 +9,7 @@
 #include "s3c2410/s3c2410_lcd.h"
 #include "s3c2410/s3c2410_sdi.h"
 
-#include "ui4x/api.h"
+#include "ui4x/src/api.h"
 
 #include "emulator_api.h"
 #include "list.h"
