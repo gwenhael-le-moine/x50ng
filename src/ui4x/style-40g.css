@@ -1,8 +1,8 @@
 @import "style-common.css";
 
 /* :root { */
-/*     --color-faceplate: #f5deb3; */
-/*     --color-border: #f7ffe5; */
+/*     --color-faceplate: #272727; */
+/*     --color-border: #000000; */
 /*     --color-display: #dcdcdc; */
 /*     --color-border-display: #012321; */
 
@@ -18,27 +18,27 @@
 
 /*     --color-label-key-light: #ffffff; */
 /*     --color-label-key-dark: #3f3f3f; */
-/*     --color-label-below: #8b0000; */
+/*     --color-label-below: #ffdead; */
 /* } */
 
-@define-color color-faceplate #f5deb3;
-@define-color color-border #f7ffe5;
+@define-color color-faceplate #272727;
+@define-color color-border #000000;
 @define-color color-display #dcdcdc;
 @define-color color-border-display #012321;
 
-@define-color color-key-enter #088080;
+@define-color color-key-enter #065b5b;
 @define-color color-key-menu #a9a9a9;
-@define-color color-key-function #696969;
+@define-color color-key-function #595959;
 @define-color color-key-arrow #e0e0e0;
-@define-color color-key-alpha #67c184;
-@define-color color-key-shift-left #82b1ff;
-@define-color color-key-shift-right #ff8a80;
+@define-color color-key-alpha #6ec489;
+@define-color color-key-shift-left #85b4ff;
+@define-color color-key-shift-right #ff988f;
 @define-color color-key-core #3f3f3f;
 @define-color color-key-number #3f3f3f;
 
 @define-color color-label-key-light #ffffff;
 @define-color color-label-key-dark #3f3f3f;
-@define-color color-label-below #8b0000;
+@define-color color-label-below #ffdead;
 
 window {
     /* background-color: var( --color-faceplate ); */
@@ -54,7 +54,7 @@ window {
 
 #window-container,
 .keyboard-container,
-#high-keyboard-container > .row-container:first-child {
+#high-keyboard-container > .row-container {
     /* border-color: var( --color-border ); */
     border-color: @color-border;
 }
