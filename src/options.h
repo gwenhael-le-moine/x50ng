@@ -21,7 +21,6 @@
 #    define GLOBAL_DATADIR opt.progpath
 #  endif
 
-/* typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t; */
 typedef enum { HDW_REINIT_NONE = 0, HDW_REINIT_REBOOT_ONLY, HDW_REINIT_FLASH, HDW_REINIT_FLASH_FULL } hdw_reinit_t;
 
 typedef struct config_t {
