@@ -24,30 +24,38 @@
 typedef enum { HDW_REINIT_NONE = 0, HDW_REINIT_REBOOT_ONLY, HDW_REINIT_FLASH, HDW_REINIT_FLASH_FULL } hdw_reinit_t;
 
 typedef struct config_t {
-    char* progname;
-    char* progpath;
+    /* duplicating ui4x_config_t here so that config_init can return one big struct */
+    ui4x_model_t model;
+    bool shiftless;
+    bool black_lcd;
+    bool newrpl_keyboard;
+
+    ui4x_frontend_t frontend;
+    bool mono;
+    bool gray;
+
+    bool chromeless;
+    bool fullscreen;
+
+    bool tiny;
+    bool small;
 
     bool verbose;
+
+    double zoom;
+    bool netbook;
+    int netbook_pivot_line;
+
+    char* name;
+    char* progname;
+    char* progpath;
+    char* wire_name;
+    char* ir_name;
 
     char* datadir;
     char* style_filename;
 
     char* sd_dir;
-
-    ui4x_frontend_t frontend;
-    bool small;
-    bool tiny;
-    bool chromeless;
-    bool fullscreen;
-    bool shiftless;
-    bool mono;
-    bool gray;
-
-    bool newrpl_keyboard;
-    char* name;
-    double zoom;
-    bool netbook;
-    int netbook_pivot_line;
 
     /* options below not copied to UI */
     bool haz_config_file;

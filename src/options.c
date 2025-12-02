@@ -13,35 +13,53 @@
 #include "options.h"
 
 #include "gdbstub.h"
+#include "ui4x/src/api.h"
 
 #define CONFIG_LUA_FILE_NAME "config.lua"
 
 static config_t __config = {
+    .model = MODEL_50G,
+    .shiftless = false,
+    .black_lcd = true,
+    .newrpl_keyboard = false,
+
+    /* #if defined( HAS_SDL ) */
+    /*     .frontend = FRONTEND_SDL, */
+    /* #elif defined( HAS_GTK ) */
+    .frontend = FRONTEND_GTK,
+    /* #else */
+    /*     .frontend = FRONTEND_NCURSES, */
+    /* #endif */
+    .mono = false,
+    .gray = false,
+
+    .chromeless = false,
+    .fullscreen = false,
+
+    .tiny = false,
+    .small = false,
+
     .verbose = false,
+
+    .zoom = 2.0,
+    .netbook = false,
+    .netbook_pivot_line = 3,
+
+    .name = NULL,
+    .progname = NULL,
+    .progpath = NULL,
+    .wire_name = NULL,
+    .ir_name = NULL,
 
     .datadir = NULL,
     .style_filename = NULL,
 
     .sd_dir = NULL,
 
+    /* x50ng */
     .debug_port = 0,
     .start_debugger = false,
     .reinit = HDW_REINIT_NONE,
-
-    .frontend = FRONTEND_GTK,
-    .small = false,
-    .tiny = false,
-    .chromeless = false,
-    .fullscreen = false,
-    .shiftless = false,
-    .mono = false,
-    .gray = false,
-
-    .newrpl_keyboard = false,
-    .name = NULL,
-    .zoom = 2.0,
-    .netbook = false,
-    .netbook_pivot_line = 3,
 };
 
 static lua_State* config_lua_values;

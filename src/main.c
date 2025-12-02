@@ -87,55 +87,48 @@ int main( int argc, char** argv )
 
     /* Initialize and start the UI */
     ui4x_config_t config_ui = {
-        .model = MODEL_50G,
-        .black_lcd = true,
-
+        .model = __config.model,
+        .black_lcd = __config.black_lcd,
         .frontend = __config.frontend,
         .newrpl_keyboard = __config.newrpl_keyboard,
         .shiftless = __config.shiftless,
-
         .mono = __config.mono,
         .gray = __config.gray,
-
         .chromeless = __config.chromeless,
         .fullscreen = __config.fullscreen,
         .zoom = __config.zoom,
-
         .tiny = __config.tiny,
         .small = __config.small,
-
         .netbook = __config.netbook,
         .netbook_pivot_line = __config.netbook_pivot_line,
-
         .verbose = __config.verbose,
-
         .name = __config.name,
         .progname = __config.progname,
         .progpath = __config.progpath,
-        .wire_name = NULL,
-        .ir_name = NULL,
-
+        .wire_name = __config.wire_name,
+        .ir_name = __config.ir_name,
         .datadir = __config.datadir,
         .style_filename = __config.style_filename,
-
         .sd_dir = __config.sd_dir,
     };
-    ui4x_emulator_api_t emulator_api = { .press_key = press_key,
-                                         .release_key = release_key,
-                                         .is_key_pressed = is_key_pressed,
-                                         .is_display_on = is_display_on,
-                                         .get_annunciators = get_annunciators,
-                                         .get_lcd_buffer = get_lcd_buffer,
-                                         .get_contrast = get_contrast,
-                                         .do_mount_sd = emulator_mount_sd,
-                                         .do_unmount_sd = emulator_unmount_sd,
-                                         .is_sd_mounted = emulator_is_sd_mounted,
-                                         .get_sd_path = emulator_get_sd_path,
-                                         .do_reset = emulator_hdw_reset,
-                                         .do_stop = emulator_hdw_stop,
-                                         .do_sleep = emulator_hdw_set_asleep,
-                                         .do_wake = emulator_hdw_set_awake,
-                                         .do_debug = emulator_debug };
+    ui4x_emulator_api_t emulator_api = {
+        .press_key = press_key,
+        .release_key = release_key,
+        .is_key_pressed = is_key_pressed,
+        .is_display_on = is_display_on,
+        .get_annunciators = get_annunciators,
+        .get_lcd_buffer = get_lcd_buffer,
+        .get_contrast = get_contrast,
+        .do_mount_sd = emulator_mount_sd,
+        .do_unmount_sd = emulator_unmount_sd,
+        .is_sd_mounted = emulator_is_sd_mounted,
+        .get_sd_path = emulator_get_sd_path,
+        .do_reset = emulator_hdw_reset,
+        .do_stop = emulator_hdw_stop,
+        .do_sleep = emulator_hdw_set_asleep,
+        .do_wake = emulator_hdw_set_awake,
+        .do_debug = emulator_debug
+    };
     init_ui( &config_ui, &emulator_api );
 
     /* Setup and start the timers handling inputs and display */
