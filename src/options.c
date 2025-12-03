@@ -276,15 +276,8 @@ config_t* config_init( int argc, char* argv[] )
     /* 1. command-line options */
     /***************************/
     /* The cli options are temporaly stored in their clopt_* variables */
-    bool clopt_do_enable_debugger = false;
-    bool clopt_do_start_debugger = false;
-    bool clopt_do_flash = false;
-    bool clopt_do_flash_full = false;
-
     char* clopt_style_filename = NULL;
     char* clopt_name = NULL;
-    char* clopt_sd_dir = NULL;
-    int clopt_newrpl_keyboard = -1;
     double clopt_zoom = -1.0;
     int clopt_netbook = -1;
     int clopt_netbook_pivot_line = -1;
@@ -300,6 +293,14 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_print_config_and_exit = false;
     int clopt_overwrite_config = false;
 
+    /* specific */
+    bool clopt_do_enable_debugger = false;
+    bool clopt_do_start_debugger = false;
+    bool clopt_do_flash = false;
+    bool clopt_do_flash_full = false;
+    char* clopt_sd_dir = NULL;
+    int clopt_newrpl_keyboard = -1;
+
     const char* optstring = "d:hn:rs:vVz:";
     struct option long_options[] = {
         {"help",               no_argument,       NULL,                         'h' },
@@ -309,8 +310,6 @@ config_t* config_init( int argc, char* argv[] )
         {"print-config",       no_argument,       &clopt_print_config_and_exit, true},
         {"overwrite-config",   no_argument,       &clopt_overwrite_config,      true},
         {"datadir",            required_argument, NULL,                         'd' },
-
-        {"sd-dir",             required_argument, NULL,                         800 },
 
         {"name",               required_argument, NULL,                         'n' },
 
@@ -327,7 +326,6 @@ config_t* config_init( int argc, char* argv[] )
         {"mono",               no_argument,       &clopt_mono,                  true},
         {"gray",               no_argument,       &clopt_gray,                  true},
         {"chromeless",         no_argument,       &clopt_chromeless,            true},
-        {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard,       true},
         {"style",              required_argument, NULL,                         's' },
         {"zoom",               required_argument, NULL,                         'z' },
         {"netbook",            no_argument,       &clopt_netbook,               true},
@@ -336,6 +334,9 @@ config_t* config_init( int argc, char* argv[] )
         {"reset",              no_argument,       NULL,                         'r' },
 
         /* specific x50ng */
+        /* {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard,       true}, */
+        {"sd-dir",             required_argument, NULL,                         800 },
+
         {"enable-debug",       required_argument, NULL,                         10  },
         {"debug",              no_argument,       NULL,                         11  },
 
@@ -355,9 +356,6 @@ config_t* config_init( int argc, char* argv[] )
             case 'h':
                 show_help();
                 exit( EXIT_SUCCESS );
-                break;
-            case 800:
-                clopt_sd_dir = strdup( optarg );
                 break;
             case 900:
                 clopt_frontend = FRONTEND_GTK;
@@ -427,6 +425,9 @@ config_t* config_init( int argc, char* argv[] )
                 break;
             case 93:
                 firmware_filename = strdup( optarg );
+                break;
+            case 800:
+                clopt_sd_dir = strdup( optarg );
                 break;
 
             default:
