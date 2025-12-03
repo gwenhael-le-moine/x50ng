@@ -15,7 +15,16 @@
 #include "gdbstub.h"
 #include "ui4x/src/api.h"
 
+#ifdef X50NG_DATADIR
+#  define GLOBAL_DATADIR X50NG_DATADIR
+#else
+#  define GLOBAL_DATADIR __config.progpath
+#endif
+
 #define CONFIG_LUA_FILE_NAME "config.lua"
+#define DEFAULT_STYLE_FILE_NAME "style-50g.css"
+#define DEFAULT_BOOTLOADER_FILE_NAME "firmware/boot-50g.bin"
+#define DEFAULT_FIRMWARE_FILE_NAME "firmware/hp4950v215/2MB_FIX/2MB_215f.bin"
 
 static config_t __config = {
     .model = MODEL_50G,
@@ -23,13 +32,7 @@ static config_t __config = {
     .black_lcd = true,
     .newrpl_keyboard = false,
 
-    /* #if defined( HAS_SDL ) */
-    /*     .frontend = FRONTEND_SDL, */
-    /* #elif defined( HAS_GTK ) */
     .frontend = FRONTEND_GTK,
-    /* #else */
-    /*     .frontend = FRONTEND_NCURSES, */
-    /* #endif */
     .mono = false,
     .gray = false,
 
@@ -66,8 +69,6 @@ static lua_State* config_lua_values;
 
 static inline bool config_read( const char* filename )
 {
-    int rc;
-
     assert( filename != NULL );
 
     /*---------------------------------------------------
@@ -89,12 +90,12 @@ static inline bool config_read( const char* filename )
     ; such attacks in a configuration file, you have bigger
     ; security issues to worry about than this.
     ;------------------------------------------------------*/
-#ifdef PARANOID
+    // #ifdef PARANOID
     lua_pushliteral( config_lua_values, "x" );
     lua_pushnil( config_lua_values );
     lua_setmetatable( config_lua_values, -2 );
     lua_pop( config_lua_values, 1 );
-#endif
+    // #endif
 
     /*-----------------------------------------------------
     ; Lua 5.2+ can restrict scripts to being text only,
@@ -105,7 +106,7 @@ static inline bool config_read( const char* filename )
     ; issues to worry about.  But in any case, here I'm
     ; restricting the file to "text" only.
     ;------------------------------------------------------*/
-    rc = luaL_loadfile( config_lua_values, filename );
+    int rc = luaL_loadfile( config_lua_values, filename );
     if ( rc != LUA_OK ) {
         /* fprintf( stderr, "Lua error: (%d) %s\n", rc, lua_tostring( config_lua_values, -1 ) ); */
         return false;
@@ -118,6 +119,55 @@ static inline bool config_read( const char* filename )
     }
 
     return true;
+}
+
+static void show_help( void )
+{
+    fprintf( stdout,
+             "%s %i.%i.%i\n"
+             "Emulator for HP 49G+ / 50G calculators' hardware\n"
+             "Usage: %s [<options>]\n"
+             "Valid options:\n"
+             "-h --help                    print this message and exit\n"
+             "-v --version                 print out version\n"
+             "-V --verbose                 print out more information\n"
+             "-d --datadir[=absolute path] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
+             "   --sd-dir[=absolute path]  directory to mount as SD card (default: none)\n"
+             "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
+             "   --overwrite-config        force writing <datadir>/config.lua even if it exists (allows migrating config file "
+             "to its latest format if needed)\n"
+             "\n"
+             "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
+             "   --gtk                     use gtk GUI (Graphical UI) (default: true)\n"
+             "   --sdl                     use sdl GUI (Graphical UI) (default: false)\n"
+             "   --tui                     use ncurses TUI (Terminal text UI) (default: false)\n"
+             "   --tui-small               use ncurses TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
+             "   --tui-tiny                use ncurses TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
+             "   --chromeless              borderless LCD (ncurses or sdl only) (default: false)\n"
+             "   --fullscreen              fullscreen (sdl only) (default: false)\n"
+             "   --netbook                 horizontal window (gtk only) (default: false)\n"
+             "   --netbook-pivot-line      at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
+             "   --newrpl-keyboard         label keyboard for newRPL (GUI only)\n"
+             "-s --style[=filename]        css filename in <datadir> (gtk only) (default: %s)\n"
+             "-z --zoom[=X]                scale LCD by X (gtk or sdl only) (default: 2.0)\n"
+             "   --chromeless              only show display (default: false)\n"
+             "   --fullscreen              make the UI fullscreen (default: false)\n"
+             "   --mono                    make the UI monochrome (default: false)\n"
+             "   --gray                    make the UI grayscale (default: false)\n"
+             "   --shiftless               don't map the shift keys to let them free for numbers (default: false)\n"
+             /* specific x50ng */
+             "\n"
+             "   --enable-debug[=port]     enable the debugger interface (default port: %i)\n"
+             "   --debug                   use along -D to also start the debugger immediately\n"
+             "\n"
+             "   --flash                   rebuild the flash using the supplied firmware (requires --firmware=) "
+             "(implies -r for safety reasons)\n"
+             "   --flash-full              rebuild the flash using the supplied firmware and drop the flash contents in the "
+             "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
+             "   --bootloader[=filename]   bootloader file (default: %s)\n"
+             "   --firmware[=filename]     firmware file (default: %s)\n",
+             __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, __config.progname, __config.progname, __config.progname,
+             DEFAULT_STYLE_FILE_NAME, DEFAULT_GDBSTUB_PORT, DEFAULT_BOOTLOADER_FILE_NAME, DEFAULT_FIRMWARE_FILE_NAME );
 }
 
 static char* config_to_string( void )
@@ -159,12 +209,18 @@ static char* config_to_string( void )
 
 static char* make_filename_absolute( char* filename )
 {
+    /* is filename readable as-is? */
     char* full_path = g_build_filename( filename, NULL );
     if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        /* does filename exist in configured datadir? */
         full_path = g_build_filename( __config.datadir, filename, NULL );
+
     if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        /* does filename exist in global datadir? */
         full_path = g_build_filename( GLOBAL_DATADIR, filename, NULL );
+
     if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        /* out of options, hope filename exists relatively to binary */
         full_path = g_build_filename( __config.progpath, filename, NULL );
 
     return full_path;
@@ -200,17 +256,23 @@ int save_config( void )
 
 config_t* config_init( int argc, char* argv[] )
 {
-    int option_index;
-    int c = '?';
+    __config.progname = g_path_get_basename( argv[ 0 ] );
+    __config.progpath = g_path_get_dirname( argv[ 0 ] );
 
-    bool do_enable_debugger = false;
-    bool do_start_debugger = false;
-    bool do_flash = false;
-    bool do_flash_full = false;
-
+    /* temporary variables for filenames later treated with make_filename_absolute() */
     char* bootloader_filename = NULL;
     char* firmware_filename = NULL;
     char* style_filename = NULL;
+
+    /***************************/
+    /* 1. command-line options */
+    /***************************/
+    /* The cli options are temporaly stored in their clopt_* variables */
+    bool clopt_do_enable_debugger = false;
+    bool clopt_do_start_debugger = false;
+    bool clopt_do_flash = false;
+    bool clopt_do_flash_full = false;
+
     char* clopt_style_filename = NULL;
     char* clopt_name = NULL;
     char* clopt_sd_dir = NULL;
@@ -227,126 +289,64 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_mono = -1;
     int clopt_gray = -1;
 
-    int print_config_and_exit = false;
-    int overwrite_config = false;
+    int clopt_print_config_and_exit = false;
+    int clopt_overwrite_config = false;
 
     const char* optstring = "d:hn:rs:vVz:";
     struct option long_options[] = {
-        {"help",               no_argument,       NULL,                   'h' },
-        {"version",            no_argument,       NULL,                   'v' },
-        {"verbose",            no_argument,       NULL,                   'V' },
+        {"help",               no_argument,       NULL,                         'h' },
+        {"version",            no_argument,       NULL,                         'v' },
+        {"verbose",            no_argument,       NULL,                         'V' },
 
-        {"print-config",       no_argument,       &print_config_and_exit, true},
-        {"overwrite-config",   no_argument,       &overwrite_config,      true},
-        {"datadir",            required_argument, NULL,                   'd' },
+        {"print-config",       no_argument,       &clopt_print_config_and_exit, true},
+        {"overwrite-config",   no_argument,       &clopt_overwrite_config,      true},
+        {"datadir",            required_argument, NULL,                         'd' },
 
-        {"sd-dir",             required_argument, NULL,                   800 },
+        {"sd-dir",             required_argument, NULL,                         800 },
 
-        {"name",               required_argument, NULL,                   'n' },
+        {"name",               required_argument, NULL,                         'n' },
 
-        {"gtk",                no_argument,       NULL,                   900 },
-        {"gui",                no_argument,       NULL,                   900 }, /* DEPRECATED */
-        {"tui",                no_argument,       NULL,                   901 },
-        {"tui-small",          no_argument,       NULL,                   902 },
-        {"tui-tiny",           no_argument,       NULL,                   903 },
+        {"gtk",                no_argument,       NULL,                         900 },
+        {"gui",                no_argument,       NULL,                         900 }, /* DEPRECATED */
+        {"tui",                no_argument,       NULL,                         901 },
+        {"tui-small",          no_argument,       NULL,                         902 },
+        {"tui-tiny",           no_argument,       NULL,                         903 },
 #ifdef HAS_SDL
-        {"sdl",                no_argument,       NULL,                   904 },
+        {"sdl",                no_argument,       NULL,                         904 },
 #endif
-        {"fullscreen",         no_argument,       &clopt_fullscreen,      true},
-        {"shiftless",          no_argument,       &clopt_shiftless,       true},
-        {"mono",               no_argument,       &clopt_mono,            true},
-        {"gray",               no_argument,       &clopt_gray,            true},
-        {"chromeless",         no_argument,       &clopt_chromeless,      true},
-        {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard, true},
-        {"style",              required_argument, NULL,                   's' },
-        {"zoom",               required_argument, NULL,                   'z' },
-        {"netbook",            no_argument,       &clopt_netbook,         true},
-        {"netbook-pivot-line", required_argument, NULL,                   1001},
+        {"fullscreen",         no_argument,       &clopt_fullscreen,            true},
+        {"shiftless",          no_argument,       &clopt_shiftless,             true},
+        {"mono",               no_argument,       &clopt_mono,                  true},
+        {"gray",               no_argument,       &clopt_gray,                  true},
+        {"chromeless",         no_argument,       &clopt_chromeless,            true},
+        {"newrpl-keyboard",    no_argument,       &clopt_newrpl_keyboard,       true},
+        {"style",              required_argument, NULL,                         's' },
+        {"zoom",               required_argument, NULL,                         'z' },
+        {"netbook",            no_argument,       &clopt_netbook,               true},
+        {"netbook-pivot-line", required_argument, NULL,                         1001},
 
-        {"enable-debug",       required_argument, NULL,                   10  },
-        {"debug",              no_argument,       NULL,                   11  },
-        {"flash",              no_argument,       NULL,                   90  },
-        {"flash-full",         no_argument,       NULL,                   91  },
-        {"bootloader",         required_argument, NULL,                   92  },
-        {"firmware",           required_argument, NULL,                   93  },
-        {"reset",              no_argument,       NULL,                   'r' },
+        {"reset",              no_argument,       NULL,                         'r' },
 
-        {0,                    0,                 0,                      0   }
+        /* specific x50ng */
+        {"enable-debug",       required_argument, NULL,                         10  },
+        {"debug",              no_argument,       NULL,                         11  },
+
+        {"flash",              no_argument,       NULL,                         90  },
+        {"flash-full",         no_argument,       NULL,                         91  },
+        {"bootloader",         required_argument, NULL,                         92  },
+        {"firmware",           required_argument, NULL,                         93  },
+
+        {0,                    0,                 0,                            0   }
     };
+    int option_index;
+    int arg = '?';
+    while ( arg != EOF ) {
+        arg = getopt_long( argc, argv, optstring, long_options, &option_index );
 
-    __config.progname = g_path_get_basename( argv[ 0 ] );
-    __config.progpath = g_path_get_dirname( argv[ 0 ] );
-
-    while ( c != EOF ) {
-        c = getopt_long( argc, argv, optstring, long_options, &option_index );
-
-        switch ( c ) {
+        switch ( arg ) {
             case 'h':
-                fprintf( stderr,
-                         "%s %i.%i.%i\n"
-                         "Emulator for HP 49G+ / 50G calculators' hardware\n"
-                         "Usage: %s [<options>]\n"
-                         "Valid options:\n"
-                         "-h --help                    print this message and exit\n"
-                         "-v --version                 print out version\n"
-                         "-V --verbose                 print out more information\n"
-                         "-d --datadir[=absolute path] alternate datadir (default: $XDG_CONFIG_HOME/%s/)\n"
-                         "   --sd-dir[=absolute path]  directory to mount as SD card (default: none)\n"
-                         "-r --reset                   reboot on startup instead of continuing from the saved state in the state file\n"
-                         "   --overwrite-config        force writing <datadir>/config.lua even if it exists (allows migrating config file "
-                         "to its latest format if needed)\n"
-                         "\n"
-                         "-n --name[=text]             customize the title of the window (default: \"%s\")\n"
-                         "   --gtk                     use gtk GUI (Graphical UI) (default: true)\n"
-                         "   --sdl                     use sdl GUI (Graphical UI) (default: false)\n"
-                         "   --tui                     use ncurses TUI (Terminal text UI) (default: false)\n"
-                         "   --tui-small               use ncurses TUI (4 pixels per character) (Terminal text UI) (default: false)\n"
-                         "   --tui-tiny                use ncurses TUI (8 pixels per character) (Terminal text UI) (default: false)\n"
-                         "   --chromeless              borderless LCD (ncurses or sdl only) (default: false)\n"
-                         "   --fullscreen              fullscreen (sdl only) (default: false)\n"
-                         "   --netbook                 horizontal window (gtk only) (default: false)\n"
-                         "   --netbook-pivot-line      at which line is the keyboard split in netbook mode (GUI only) (default: 3)\n"
-                         "   --newrpl-keyboard         label keyboard for newRPL (GUI only)\n"
-                         "-s --style[=filename]        css filename in <datadir> (gtk only) (default: style-50g.css)\n"
-                         "-z --zoom[=X]                scale LCD by X (gtk or sdl only) (default: 2.0)\n"
-                         "   --chromeless   only show display (default: false)\n"
-                         "   --fullscreen   make the UI fullscreen (default: false)\n"
-                         "   --mono         make the UI monochrome (default: false)\n"
-                         "   --gray         make the UI grayscale (default: false)\n"
-                         "   --shiftless    don't map the shift keys to let them free for numbers (default: false)\n"
-                         "\n"
-                         "   --enable-debug[=port]     enable the debugger interface (default port: %i)\n"
-                         "   --debug                   use along -D to also start the debugger immediately\n"
-                         "\n"
-                         "   --flash                   rebuild the flash using the supplied firmware (requires --firmware=) "
-                         "(implies -r for safety reasons)\n"
-                         "   --flash-full              rebuild the flash using the supplied firmware and drop the flash contents in the "
-                         "area beyond the firmware (requires --firmware=) (implies -r for safety reasons)\n"
-                         "   --bootloader[=filename]   bootloader file (default: %s)\n"
-                         "   --firmware[=filename]     firmware file (default: %s)\n",
-                         __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, __config.progname, __config.progname,
-                         __config.progname, DEFAULT_GDBSTUB_PORT, bootloader_filename, firmware_filename );
+                show_help();
                 exit( EXIT_SUCCESS );
-                break;
-            case 10:
-                do_enable_debugger = true;
-                __config.debug_port = atoi( optarg );
-                break;
-            case 11:
-                do_start_debugger = true;
-                break;
-            case 90:
-                do_flash = true;
-                break;
-            case 91:
-                do_flash = true;
-                do_flash_full = true;
-                break;
-            case 92:
-                bootloader_filename = strdup( optarg );
-                break;
-            case 93:
-                firmware_filename = strdup( optarg );
                 break;
             case 800:
                 clopt_sd_dir = strdup( optarg );
@@ -399,35 +399,56 @@ config_t* config_init( int argc, char* argv[] )
                 __config.verbose = true;
                 break;
 
+            /* specific x50ng */
+            case 10:
+                clopt_do_enable_debugger = true;
+                __config.debug_port = atoi( optarg );
+                break;
+            case 11:
+                clopt_do_start_debugger = true;
+                break;
+            case 90:
+                clopt_do_flash = true;
+                break;
+            case 91:
+                clopt_do_flash = true;
+                clopt_do_flash_full = true;
+                break;
+            case 92:
+                bootloader_filename = strdup( optarg );
+                break;
+            case 93:
+                firmware_filename = strdup( optarg );
+                break;
+
             default:
                 break;
         }
     }
 
+    /******************************************************************************/
+    /* 2. if datadir hasn't been set through --datadir then set it to its default */
+    /******************************************************************************/
     if ( __config.datadir == NULL )
         __config.datadir = g_build_filename( g_get_user_config_dir(), __config.progname, NULL );
 
+    /**********************/
+    /* 3. read config.lua */
+    /**********************/
     const char* config_lua_filename = g_build_filename( __config.datadir, CONFIG_LUA_FILE_NAME, NULL );
     if ( __config.verbose )
         fprintf( stderr, "Loading configuration file %s\n", config_lua_filename );
 
-    /**********************/
-    /* 1. read config.lua */
-    /**********************/
+    /* populates config_lua_values[]  */
     __config.haz_config_file = config_read( config_lua_filename );
     if ( __config.haz_config_file ) {
-        lua_getglobal( config_lua_values, "style" );
-        const char* lua_style_filename = luaL_optstring( config_lua_values, -1, NULL );
-        if ( lua_style_filename != NULL )
-            style_filename = strdup( lua_style_filename );
+        if ( clopt_overwrite_config )
+            // pretends config file hasn't been found to force it being overwritten
+            __config.haz_config_file = false;
 
-        lua_getglobal( config_lua_values, "name" );
-        const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
-        if ( lua_name != NULL )
-            __config.name = strdup( lua_name );
-
-        lua_getglobal( config_lua_values, "shiftless" );
-        __config.shiftless = lua_toboolean( config_lua_values, -1 );
+        /* Now pull config options' values from config_lua_values by name
+           options are set directly into __config or temp filename variables
+         */
 
         lua_getglobal( config_lua_values, "frontend" );
         const char* frontend = luaL_optstring( config_lua_values, -1, "gtk" );
@@ -459,10 +480,18 @@ config_t* config_init( int argc, char* argv[] )
             }
         }
 
-        /* lua_getglobal( config_lua_values, "sd_dir" ); */
-        /* const char* lua_sd_dir = luaL_optstring( config_lua_values, -1, NULL ); */
-        /* if ( lua_sd_dir != NULL && 0 < strlen( lua_sd_dir ) ) */
-        /*     __config.sd_dir = strdup( lua_sd_dir ); */
+        lua_getglobal( config_lua_values, "style" );
+        const char* lua_style_filename = luaL_optstring( config_lua_values, -1, NULL );
+        if ( lua_style_filename != NULL )
+            style_filename = strdup( lua_style_filename );
+
+        lua_getglobal( config_lua_values, "name" );
+        const char* lua_name = luaL_optstring( config_lua_values, -1, NULL );
+        if ( lua_name != NULL )
+            __config.name = strdup( lua_name );
+
+        lua_getglobal( config_lua_values, "shiftless" );
+        __config.shiftless = lua_toboolean( config_lua_values, -1 );
 
         lua_getglobal( config_lua_values, "zoom" );
         __config.zoom = luaL_optnumber( config_lua_values, -1, __config.zoom );
@@ -487,17 +516,20 @@ config_t* config_init( int argc, char* argv[] )
 
         lua_getglobal( config_lua_values, "gray" );
         __config.gray = lua_toboolean( config_lua_values, -1 );
-    }
-    if ( __config.haz_config_file && overwrite_config )
-        __config.haz_config_file = false;
 
-    /****************************************************/
-    /* 2. treat command-line params which have priority */
-    /****************************************************/
+        /* lua_getglobal( config_lua_values, "sd_dir" ); */
+        /* const char* lua_sd_dir = luaL_optstring( config_lua_values, -1, NULL ); */
+        /* if ( lua_sd_dir != NULL && 0 < strlen( lua_sd_dir ) ) */
+        /*     __config.sd_dir = strdup( lua_sd_dir ); */
+    }
+
+    /********************************************************************************/
+    /* 4. Finally chck if any cli options overrides its config file options's value */
+    /********************************************************************************/
     if ( clopt_style_filename != NULL )
         style_filename = strdup( clopt_style_filename );
     else if ( style_filename == NULL )
-        style_filename = "style-50g.css";
+        style_filename = DEFAULT_STYLE_FILE_NAME;
 
     if ( clopt_name != NULL )
         __config.name = strdup( clopt_name );
@@ -514,16 +546,16 @@ config_t* config_init( int argc, char* argv[] )
         __config.zoom = clopt_zoom;
 
     if ( clopt_netbook != -1 )
-        __config.netbook = clopt_netbook;
+        __config.netbook = clopt_netbook == true;
 
     if ( clopt_frontend != -1 )
         __config.frontend = clopt_frontend;
 
     if ( clopt_small != -1 )
-        __config.small = clopt_small;
+        __config.small = clopt_small == true;
 
     if ( clopt_tiny != -1 )
-        __config.tiny = clopt_tiny;
+        __config.tiny = clopt_tiny == true;
 
     if ( clopt_chromeless != -1 )
         __config.chromeless = clopt_chromeless == true;
@@ -540,36 +572,33 @@ config_t* config_init( int argc, char* argv[] )
     if ( clopt_gray != -1 )
         __config.gray = clopt_gray == true;
 
-    if ( clopt_netbook_pivot_line != -1 )
+    if ( clopt_netbook_pivot_line > -1 )
         __config.netbook_pivot_line = clopt_netbook_pivot_line;
 
-    if ( print_config_and_exit ) {
-        fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
-        exit( EXIT_SUCCESS );
-    }
-
-    if ( __config.verbose )
-        fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
-
-    if ( do_enable_debugger ) {
+    /* setup debugger if needed */
+    if ( clopt_do_enable_debugger ) {
         if ( __config.debug_port == 0 )
             __config.debug_port = DEFAULT_GDBSTUB_PORT;
 
-        __config.start_debugger = do_start_debugger;
+        __config.start_debugger = clopt_do_start_debugger;
     }
-    if ( do_flash ) {
+
+    /* setup flashing if needed */
+    if ( clopt_do_flash ) {
         if ( __config.reinit < HDW_REINIT_FLASH )
             __config.reinit = HDW_REINIT_FLASH;
 
-        if ( do_flash_full )
+        if ( clopt_do_flash_full )
             __config.reinit = HDW_REINIT_FLASH_FULL;
     }
 
+    /* set default bootloader and firmware filenames if needed */
     if ( bootloader_filename == NULL )
-        bootloader_filename = "firmware/boot-50g.bin";
+        bootloader_filename = DEFAULT_BOOTLOADER_FILE_NAME;
     if ( firmware_filename == NULL )
-        firmware_filename = "firmware/hp4950v215/2MB_FIX/2MB_215f.bin";
+        firmware_filename = DEFAULT_FIRMWARE_FILE_NAME;
 
+    /* make style, bootloader and firmware filenames absolute */
     __config.style_filename = make_filename_absolute( style_filename );
     __config.bootloader = make_filename_absolute( bootloader_filename );
     __config.firmware = make_filename_absolute( firmware_filename );
@@ -579,12 +608,13 @@ config_t* config_init( int argc, char* argv[] )
     free( clopt_name );
     free( clopt_sd_dir );
 
-    if ( do_flash && ( __config.bootloader == NULL || __config.firmware == NULL ) ) {
-        fprintf(
-            stderr,
-            "Error: --flash(-full) requires you to provide a bootloader and firmware using --bootloader and --firmware respectively!\n" );
-        exit( EXIT_FAILURE );
+    if ( clopt_print_config_and_exit ) {
+        fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
+        exit( EXIT_SUCCESS );
     }
+
+    if ( __config.verbose )
+        fprintf( stdout, "Calculated configuration:\n%s", config_to_string() );
 
     return &__config;
 }

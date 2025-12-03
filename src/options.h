@@ -1,5 +1,5 @@
-#ifndef _CONFIG_H
-#  define _CONFIG_H 1
+#ifndef _OPTIONS_H
+#  define _OPTIONS_H 1
 
 #  include <stdbool.h>
 
@@ -13,12 +13,6 @@
 #  endif
 #  ifndef PATCHLEVEL
 #    define PATCHLEVEL 0
-#  endif
-
-#  ifdef X50NG_DATADIR
-#    define GLOBAL_DATADIR X50NG_DATADIR
-#  else
-#    define GLOBAL_DATADIR opt.progpath
 #  endif
 
 typedef enum { HDW_REINIT_NONE = 0, HDW_REINIT_REBOOT_ONLY, HDW_REINIT_FLASH, HDW_REINIT_FLASH_FULL } hdw_reinit_t;
@@ -72,4 +66,4 @@ typedef struct config_t {
 extern config_t* config_init( int argc, char* argv[] );
 extern int save_config( void );
 
-#endif /* !_CONFIG_H */
+#endif /* !_OPTIONS_H */
