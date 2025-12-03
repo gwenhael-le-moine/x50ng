@@ -547,6 +547,9 @@ config_t* config_init( int argc, char* argv[] )
     if ( clopt_sd_dir != NULL )
         __config.sd_dir = strdup( clopt_sd_dir );
 
+    if ( clopt_frontend != -1 )
+        __config.frontend = clopt_frontend;
+
     if ( clopt_newrpl_keyboard != -1 )
         __config.newrpl_keyboard = clopt_newrpl_keyboard;
 
@@ -555,9 +558,6 @@ config_t* config_init( int argc, char* argv[] )
 
     if ( clopt_netbook != -1 )
         __config.netbook = clopt_netbook == true;
-
-    if ( clopt_frontend != -1 )
-        __config.frontend = clopt_frontend;
 
     if ( clopt_small != -1 )
         __config.small = clopt_small == true;
