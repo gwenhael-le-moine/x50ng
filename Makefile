@@ -147,7 +147,7 @@ X50NG_CFLAGS = \
 	-DVERSION_MAJOR=$(VERSION_MAJOR) \
 	-DVERSION_MINOR=$(VERSION_MINOR) \
 	-DPATCHLEVEL=$(PATCHLEVEL) \
-	-DX50NG_DATADIR=\"$(DATADIR)\"
+	-DDATADIR=\"$(DATADIR)\"
 
 # What if this is MacOSX
 COCOA_LIBS=$(shell if [ "`uname -s`" = "Darwin" ]; then echo "-F/System/Library/Frameworks -framework Cocoa -framework IOKit"; fi)

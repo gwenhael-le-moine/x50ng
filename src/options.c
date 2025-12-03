@@ -19,8 +19,8 @@
 #  define LUA_OK 0
 #endif
 
-#ifdef X50NG_DATADIR
-#  define GLOBAL_DATADIR X50NG_DATADIR
+#ifdef DATADIR
+#  define GLOBAL_DATADIR DATADIR
 #else
 #  define GLOBAL_DATADIR __config.progpath
 #endif
