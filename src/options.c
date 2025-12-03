@@ -215,17 +215,21 @@ static char* make_filename_absolute( char* filename )
 {
     /* is filename readable as-is? */
     char* full_path = g_build_filename( filename, NULL );
-    if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
-        /* does filename exist in configured datadir? */
-        full_path = g_build_filename( __config.datadir, filename, NULL );
+    if ( g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        return full_path;
 
-    if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
-        /* does filename exist in global datadir? */
-        full_path = g_build_filename( GLOBAL_DATADIR, filename, NULL );
+    /* does filename exist in configured datadir? */
+    full_path = g_build_filename( __config.datadir, filename, NULL );
+    if ( g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        return full_path;
 
-    if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) )
-        /* out of options, hope filename exists relatively to binary */
-        full_path = g_build_filename( __config.progpath, filename, NULL );
+    /* does filename exist in global datadir? */
+    full_path = g_build_filename( GLOBAL_DATADIR, filename, NULL );
+    if ( g_file_test( full_path, G_FILE_TEST_EXISTS ) )
+        return full_path;
+
+    /* out of options, hope filename exists relatively to binary */
+    full_path = g_build_filename( __config.progpath, filename, NULL );
 
     return full_path;
 }
