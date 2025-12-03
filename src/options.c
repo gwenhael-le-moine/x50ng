@@ -15,6 +15,10 @@
 #include "gdbstub.h"
 #include "ui4x/src/api.h"
 
+#ifndef LUA_OK
+#  define LUA_OK 0
+#endif
+
 #ifdef X50NG_DATADIR
 #  define GLOBAL_DATADIR X50NG_DATADIR
 #else
