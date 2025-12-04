@@ -176,6 +176,8 @@ int get_contrast( void ) { return 19; }
 
 void get_lcd_buffer( int* target )
 {
+    ( void )memset( target, 0, LCD_WIDTH * ui_get_lcd_height() );
+
     for ( int y = 0; y < ui_get_lcd_height(); ++y )
         for ( int x = 0; x < LCD_WIDTH; ++x )
             target[ ( y * LCD_WIDTH ) + x ] = s3c2410_get_pixel_color( __hdw_state->s3c2410_lcd, x, y );
