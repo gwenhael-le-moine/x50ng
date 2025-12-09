@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=TARGET
-Icon=
-Exec=TARGET
-Terminal=false
-Categories=Office;Science;Math
-Comment=An emulator for HP 49g+ / 50g calculators
